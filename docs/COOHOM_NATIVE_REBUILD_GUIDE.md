@@ -17,14 +17,14 @@ Use the exported 2D plan as a background only. Rebuild the room, counters, cabin
 - Wall height: 2700 mm.
 - South door: 1100 mm wide, centered at x612 mm.
 - North window: 1100 mm wide x 1800 mm high, sill 900 mm.
-- North clear zone: 300 mm with no counter.
+- North window below-sill reference: 300 mm deep only below the 1100 mm window; it is not a full-width no-counter zone.
 
 ## Native Cabinet Runs
 
-- East wall: create a 600D base counter from South y0 to y4446.
+- East wall: create a 600D base counter from South y0 to y4746.
 - East wall: create 320D lower upper cabinets and 550D top upper cabinets above the counter.
 - West wall: keep y0 to y1220 completely clear for the door zone from floor to ceiling.
-- West wall: create a 400D counter only from y1220 to y4446.
+- West wall: create a 400D counter only from y1220 to y4746.
 - West wall: create 320D lower upper cabinets and 450D top upper cabinets only after the door clear zone.
 
 ## Placement Table
@@ -33,10 +33,9 @@ Y is measured in millimeters from the South wall toward the North wall.
 
 | Wall | Item | South Y mm | Width Along Wall mm | Depth mm | Height mm |
 | --- | --- | ---: | ---: | ---: | ---: |
-| East | spice | 1850 | 150 | 500 | 200 |
 | East | gas | 2000 | 700 | 600 | 900 |
 | East | dishwasher | 2850 | 600 | 600 | 880 |
-| East | washing | 3800 | 600 | 600 | 880 |
+| East | washing | 4146 | 600 | 600 | 880 |
 | West | microwave | 1300 | 500 | 400 | 350 |
 | West | foodprocessor | 1900 | 500 | 400 | 300 |
 | West | waterpurifier | 3350 | 300 | 300 | 400 |
@@ -45,9 +44,10 @@ Y is measured in millimeters from the South wall toward the North wall.
 
 ## Coohom Rebuild Notes
 
-- Use Coohom native base cabinets, wall cabinets, appliances, sink, chimney, and shaft objects.
-- Keep the East gas as a cooktop with a compact chimney above it.
-- Keep dishwasher north of gas, and washing machine last near the north window.
-- Keep purifier close to sink on the West wall.
+- Use Coohom native base cabinets, wall cabinets, appliances, sink, hidden chimney insert, and shaft objects.
+- Keep the East gas as a cooktop with the chimney body hidden inside the 320D upper cabinet; only a slim under-cabinet vent slot should remain visible.
+- Use a 3-burner gas hob. Do not add the old East-side spice unit.
+- Show the covered East appliances for placement clarity: from North to South, washing machine first, then dishwasher, then gas.
+- Keep purifier close to sink on the West wall and add clean-dish storage above the sink.
 - Keep the West shaft fixed at the north-west end.
 - Hide or delete the imported background after native cabinets are rebuilt.

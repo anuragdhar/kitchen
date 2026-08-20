@@ -9,7 +9,7 @@ Scope:
 - Preserve all millimeter dimensions:
   - room 2324 x 4746 x 2700.
   - west full-height door clear zone y0-y1220.
-  - north clear zone 300 mm.
+  - 300 mm below-window reference only; no full-width north no-counter zone.
   - east base 600D, east lower upper 320D, east top upper 550D.
   - west counter 400D, west lower upper 320D, west top upper 450D.
 - Keep East elevation with North left and South right.
@@ -27,9 +27,9 @@ Implement:
    - Show module splits in Top View and elevations.
    - Add a compact module summary/editor panel.
 3. Phase 5 improved 3D preview:
-   - Gas as cooktop, burner rings, compact chimney hood.
+   - Gas as cooktop, burner rings, hidden chimney insert inside the upper cabinet, and a slim under-cabinet vent slot.
    - Sink as counter cutout/bowl/faucet, not just a black block.
-   - Basic doors/drawer lines/handles/plinth/countertop thickness.
+   - Basic handleless doors/drawer reveal lines/plinth/countertop thickness.
    - Wall labels and camera presets.
 4. Phase 6 wall elevation designer:
    - Add North and South elevation views.

@@ -1,0 +1,33 @@
+You are working in /mnt/c/source/Github/kitchen.
+
+Do not edit files for this task. This is a visual QA delegation pass.
+
+Run:
+1. cd react-configurator
+2. npm run build
+3. Start or reuse a fresh current-code Vite server, for example:
+   npm run dev -- --host 127.0.0.1 --port 5174
+4. Run visual QA against that fresh URL, not a stale 5173 server:
+   KITCHEN_APP_URL=http://127.0.0.1:5174/ npm run visual:qa
+
+Then inspect the generated PNGs in react-configurator/tmp-visual-qa.
+
+Report:
+- whether build passed.
+- whether visual QA completed.
+- screenshots generated.
+- any obvious visual failures: blank 3D canvas, selected view not at top, toolbar jump/overlap, wrong East/West orientation, missing sink/purifier/garage, dishwasher not adjacent to washing, missing door-swing markers, wall/ceiling obstruction toggle not visible, validation not passing.
+
+Current expected layout:
+- East appliance garage y300-y1150.
+- East gas cooktop y2300.
+- East dishwasher y3546 directly adjacent to washing y4146.
+- Washing machine door opens left.
+- Dishwasher door opens down.
+- West sink y3146, water purifier cabinet y3746, shaft y4146.
+- 3D view has a "Hide blocking walls/ceiling" option that behaves as live cutaway mode while rotating.
+- Cabinet marking is interpreted from North to South.
+
+Do not regenerate Coohom files.
+Do not copy QA screenshots into docs.
+Do not commit.

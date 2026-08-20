@@ -12,7 +12,7 @@ As of the current repo state, all phases have a working baseline implementation:
 | 2 | Done | Dimension/ruler overlay, wall labels, grid snap, 2D export scale text. |
 | 3 | Done | Detailed validation panel and exported validation rows. |
 | 4 | Done | Cabinet module definitions, auto-fill, editor, plan/elevation splits. |
-| 5 | Done | Improved Three.js gas, chimney, sink, cabinet details, labels, camera presets. |
+| 5 | Done | Improved Three.js gas, hidden chimney insert, sink, appliance door markers, cabinet details, labels, camera presets, and obstruction-hiding option. |
 | 6 | Done | East, West, North, and South elevations with SVG/PNG export buttons. |
 | 7 | Done | Material/finish selector stored in JSON and reflected in views. |
 | 8 | Done | BOM calculator with CSV and Markdown exports. |
@@ -21,8 +21,9 @@ As of the current repo state, all phases have a working baseline implementation:
 | 11 | Done | FreeCAD script emits plan SVG/DXF and dimension summary. |
 | 12 | Done | Blender automation script and launcher added; requires Blender on PATH to run renders. |
 | 13 | Done | Browser ZIP package export with layout, plan, BOM, guide, validation, and manifest. |
+| 14 | In progress | Visual QA script plus upgraded React 3D render placed at the top when selected, with handleless cabinet fronts, reveal lines, warm LEDs, PBR environment lighting, cleaned view, and refreshed screenshots. |
 
-Remaining work is polish and deeper QA, not first implementation: cross-browser testing, prettier UI separation, richer cabinet editing, real pricing, optional PDF export, and final Blender render validation after Blender is installed.
+Remaining work is polish and deeper QA, not first implementation: cross-browser testing, prettier UI separation, richer cabinet editing, real pricing, BOM-specific PDF quoting, and final Blender render validation after Blender is installed.
 
 ## Tool Strategy
 
@@ -32,7 +33,7 @@ Use this tool ownership model:
 - **Shared JSON is the layout data source.** React owns editing and exports the layout model. FreeCAD and Blender pipelines should consume this data instead of duplicating design rules manually.
 - **FreeCAD BIM is the construction/export target.** It produces exact millimeter geometry, construction-ready objects, cabinetry depths, wall openings, shaft, counters, upper cabinets, LED strips, and dimensional validation from the shared JSON.
 - **Blender is for final photoreal renders.** Use it only after the React layout and FreeCAD BIM model are correct and export-ready. Blender should not become the design source of truth.
-- **Coohom is optional/background-only.** Use Coohom only if a designer needs a quick native-cabinet rebuild reference. Do not depend on Coohom for precise construction decisions.
+- **Coohom is paused.** Keep the old reference files in the repo, but do not depend on Coohom for current implementation or QA.
 
 ## Non-Negotiable Geometry Rules
 
@@ -45,9 +46,9 @@ Use this tool ownership model:
   - West lower upper cabinets: 320D.
   - West top upper cabinets: 450D.
 - Preserve west full-height door clear zone from y0 to y1220.
-- Preserve north 300 mm clear zone.
+- Preserve the 300 mm north marker as a window-only below-sill reference, not as a full-width no-counter zone.
 - Preserve warm LED strips under lower upper cabinets.
-- Do not represent the gas/chimney as one tall box. Use a cooktop plus a compact chimney/hood form.
+- Do not represent the gas/chimney as one tall box. Use a cooktop plus a chimney body hidden inside the 320D upper cabinet, with only a slim under-cabinet vent slot visible.
 - Preserve current Rule #9 appliance order unless a later phase explicitly creates design alternatives.
 
 ## Current Baseline
@@ -65,13 +66,13 @@ Use this tool ownership model:
   - Interactive Three.js 3D render.
   - 3D screenshot export.
   - 2D SVG/PNG/DXF export.
-  - Coohom rebuild guide export.
+  - Coohom rebuild guide code exists but is hidden/paused in the active UI.
   - JSON layout export.
 - Current locked layout:
   - Room: 2324 mm wide x 4746 mm long x 2700 mm high.
-  - East wall: 600D run with gas, spice, dishwasher, washing machine.
-  - West wall: y0-y1220 full-height clear door zone, then 400D run with microwave, processor, purifier, sink, shaft.
-  - North: 300 mm clear zone and window reference.
+  - East wall: 600D run from y0-y4746 with appliance garage y300-y1150 for microwave + food processor, 3-burner gas hob y2300, dishwasher y3546 directly adjacent to washing machine y4146, and washing machine at y4146 touching the north wall; old spice unit removed. Rendered views show covered-appliance markers, washing door opening left, dishwasher door opening down, and a hidden chimney vent only.
+  - West wall: y0-y1220 full-height clear door zone, then 400D run with real sink y3146, 400W x 350D x 550H purifier cabinet y3746, and shaft y4146.
+  - North: 1100W window plus 300 mm below-window reference only.
 
 ## Phase 1: React Shared Layout Model
 
@@ -96,7 +97,7 @@ Tasks:
    - room length: 4746 mm.
    - room height: 2700 mm.
    - west clear zone: y0-y1220.
-   - north clear zone: 300 mm.
+   - window below-sill reference: 300 mm under the north window only.
    - shaft position: y4146.
 6. Add metadata to each item:
    - `category`
@@ -132,7 +133,7 @@ Tasks:
    - East base depth: 600 mm.
    - West counter depth: 400 mm.
    - Walkway width.
-   - North clear zone: 300 mm.
+   - Window-only north below-sill reference: 300 mm.
    - West door clear zone: y0-y1220.
 2. Add wall labels:
    - North `(N)`
@@ -159,11 +160,11 @@ Goal: show clear pass/fail design rules instead of only a single valid/invalid b
 Tasks:
 
 1. Create validation functions for:
-   - East order: gas before dishwasher before washing.
-   - West order: microwave before processor before purifier before sink before shaft.
-   - Purifier near sink.
+   - East order: gas before dishwasher before washing, with dishwasher directly adjacent to washing.
+   - West order: sink before purifier cabinet before shaft.
+   - Purifier cabinet contiguous between sink and shaft.
    - Door clear zone empty from y0 to y1220.
-   - North 300 mm clear zone empty.
+   - No full-width north exclusion validation; only normal bounds and collisions apply near the north wall.
    - Walkway minimum.
    - Cabinet/appliance collision.
    - Item outside room bounds.
@@ -225,16 +226,18 @@ Tasks:
 
 1. Replace block gas with:
    - thin cooktop slab.
-   - four burner rings.
-   - compact chimney hood.
+   - three burner rings.
+   - hidden chimney insert inside the upper cabinet.
+   - slim under-cabinet vent slot.
 2. Replace block sink with:
    - counter cutout.
    - sink bowl.
    - faucet.
+   - clean-dish storage above the sink.
 3. Add cabinet details:
    - doors.
    - drawer lines.
-   - handles.
+   - handleless fronts with slim reveal lines.
    - plinth.
    - countertop thickness.
 4. Add wall labels in 3D:
@@ -249,6 +252,7 @@ Tasks:
    - North view.
    - South view.
    - Walkthrough.
+7. Add a 3D view live cutaway option to hide blocking side walls, ceiling, and the near-side cabinet run during rotation.
 6. Add material presets:
    - cabinet body.
    - shutters.
@@ -261,6 +265,7 @@ Acceptance checks:
 - East cabinets appear on east/right side.
 - West cabinets appear on west/left side.
 - Camera presets work.
+- The `Hide blocking walls/ceiling` option removes obstructing side walls/ceiling and dynamically hides the near-side cabinet run while rotating.
 - 3D screenshot export still works.
 
 ## Phase 6: React Wall Elevation Designer
@@ -340,11 +345,11 @@ Tasks:
 2. Add export formats:
    - CSV.
    - Markdown.
-   - PDF later.
+   - Project package PDF summary.
 3. Include dimensions for each module.
 4. Include notes:
    - door clear zone.
-   - north clear zone.
+   - window-only below-sill reference.
    - shaft.
    - window.
 
@@ -409,23 +414,24 @@ Tasks:
    - `West_450D_Top_Upper`
    - `Warm_LED_East`
    - `Warm_LED_West`
-4. Model the gas/chimney as separate objects:
+4. Model the gas/hidden chimney as separate objects:
    - cooktop slab.
    - burner circles or ring markers.
-   - compact chimney hood.
+   - hidden chimney insert inside the upper cabinet.
+   - slim under-cabinet vent slot.
 5. Add validation output from the FreeCAD script:
    - object count.
    - bounding boxes.
    - clear zones preserved.
    - no objects in west y0-y1220 clear zone.
-   - no objects in north 300 mm clear zone.
+   - no accidental full-width north exclusion restriction.
 
 Acceptance checks:
 
 - Running `Generate-FreeCAD-3D.bat` regenerates `freecad/kitchen_rule9.FCStd`.
 - FreeCAD model has separate named objects for every depth level.
 - West y0-y1220 has no counter, upper cabinet, or LED object.
-- Gas/chimney is not a single tall box.
+- Gas/hidden chimney is not a single tall box and does not show an exposed chimney body.
 - FreeCAD output matches React JSON.
 
 ## Phase 11: FreeCAD Drawings And Dimensions
@@ -448,7 +454,7 @@ Tasks:
    - lower upper cabinet height.
    - top upper cabinet height.
    - west door clear zone.
-   - north clear zone.
+   - window-only below-sill reference.
 3. Add object labels that match BIM object names.
 
 Acceptance checks:
@@ -479,7 +485,7 @@ Tasks:
    - wide kitchen view.
    - east wall detail.
    - west wall detail.
-   - cooktop/chimney detail.
+   - cooktop/hidden vent detail.
    - sink/purifier detail.
 6. Add lighting:
    - room fill.

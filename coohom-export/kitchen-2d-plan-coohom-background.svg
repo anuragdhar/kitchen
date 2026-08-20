@@ -1,39 +1,57 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="2324mm" height="4746mm" viewBox="0 0 2324 4746">
-<rect width="2324" height="4746" fill="#fffefb"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="2324mm" height="4746mm" viewBox="-220 -220 2764 5186">
+<rect x="-220" y="-220" width="2764" height="5186" fill="#f6f2ec"/>
+<rect width="2324" height="4746" fill="#f6efe6"/>
 <rect x="0" y="0" width="2324" height="4746" fill="#f7f1e9" stroke="#111" stroke-width="8"/>
-<rect x="612" y="0" width="1100" height="110" fill="#7eb8e8" stroke="#111" stroke-width="8"/>
-<text x="1162" y="90" text-anchor="middle" font-family="Arial, sans-serif" font-size="85" font-weight="700" fill="#114f78">NORTH WINDOW</text>
-<rect x="612" y="4636" width="1100" height="110" fill="#fffefb" stroke="#111" stroke-width="8"/>
-<text x="1162" y="4711" text-anchor="middle" font-family="Arial, sans-serif" font-size="85" font-weight="700" fill="#7b3f21">SOUTH DOOR</text>
-<rect x="1724" y="300" width="600" height="4446" fill="#c8b39d" stroke="#111" stroke-width="8"/>
-<text x="2024" y="480" text-anchor="middle" font-family="Arial, sans-serif" font-size="75" font-weight="700" fill="#111">EAST 600D RUN</text>
-<rect x="0" y="300" width="400" height="3226" fill="#c8b39d" stroke="#111" stroke-width="8"/>
-<text x="200" y="480" text-anchor="middle" font-family="Arial, sans-serif" font-size="75" font-weight="700" fill="#111">WEST 400D RUN</text>
+<rect x="612" y="0" width="1100" height="100" fill="#7eb8e8" stroke="#111" stroke-width="8"/>
+<text x="1162" y="78" text-anchor="middle" font-family="Arial, sans-serif" font-size="72" font-weight="700" fill="#114f78">NORTH WINDOW</text>
+<rect x="612" y="4646" width="1100" height="100" fill="#fffefb" stroke="#111" stroke-width="8"/>
+<text x="1162" y="4714" text-anchor="middle" font-family="Arial, sans-serif" font-size="72" font-weight="700" fill="#7b3f21">SOUTH DOOR</text>
+<rect x="1724" y="0" width="600" height="4746" fill="#c8b39d" stroke="#111" stroke-width="8"/>
+<text x="2024" y="180" text-anchor="middle" font-family="Arial, sans-serif" font-size="70" font-weight="700" fill="#111">EAST 600D RUN</text>
+<rect x="0" y="0" width="400" height="3526" fill="#c8b39d" stroke="#111" stroke-width="8"/>
+<text x="200" y="180" text-anchor="middle" font-family="Arial, sans-serif" font-size="70" font-weight="700" fill="#111">WEST 400D RUN</text>
 <rect x="0" y="3526" width="400" height="1220" fill="#fffaf3" stroke="#7b3f21" stroke-width="8" stroke-dasharray="45 28"/>
-<text x="210" y="4136" text-anchor="middle" font-family="Arial, sans-serif" font-size="62" font-weight="700" fill="#7b3f21">DOOR CLEAR ZONE</text>
-<rect x="0" y="0" width="2324" height="300" fill="#eaf6fd" stroke="#2f8ac6" stroke-width="8" stroke-dasharray="45 28"/>
-<text x="1162" y="170" text-anchor="middle" font-family="Arial, sans-serif" font-size="75" font-weight="700" fill="#1f5f88">300 MM NORTH CLEAR</text>
-<rect x="1824" y="2746" width="500" height="150" fill="#D9C7B5" stroke="#111" stroke-width="8"/>
-<text x="2074" y="2821" text-anchor="middle" font-family="Arial, sans-serif" font-size="70" font-weight="700" fill="#111">SPICE y185cm</text>
+<text x="210" y="4136" text-anchor="middle" font-family="Arial, sans-serif" font-size="58" font-weight="700" fill="#7b3f21">DOOR CLEAR ZONE</text>
+<rect x="612" y="0" width="1100" height="300" fill="#eaf6fd" stroke="#2f8ac6" stroke-width="8" stroke-dasharray="45 28"/>
+<text x="1162" y="120" text-anchor="middle" font-family="Arial, sans-serif" font-size="54" font-weight="700" fill="#1f5f88">BELOW WINDOW AREA</text>
+<line x1="1724" y1="3846" x2="2324" y2="3846" stroke="#111" stroke-width="4" />
+<line x1="1724" y1="2946" x2="2324" y2="2946" stroke="#111" stroke-width="4" />
+<line x1="1724" y1="2046" x2="2324" y2="2046" stroke="#111" stroke-width="4" />
+<line x1="1724" y1="1146" x2="2324" y2="1146" stroke="#111" stroke-width="4" />
+<line x1="1724" y1="246" x2="2324" y2="246" stroke="#111" stroke-width="4" />
+<rect x="1724" y="0" width="600" height="246" fill="none" stroke="#7b3f21" stroke-width="5" stroke-dasharray="18 12"/>
+<line x1="0" y1="2626" x2="400" y2="2626" stroke="#111" stroke-width="4" />
+<line x1="0" y1="1726" x2="400" y2="1726" stroke="#111" stroke-width="4" />
+<line x1="0" y1="826" x2="400" y2="826" stroke="#111" stroke-width="4" />
+<line x1="0" y1="76" x2="400" y2="76" stroke="#111" stroke-width="4" />
+<rect x="0" y="0" width="400" height="76" fill="none" stroke="#7b3f21" stroke-width="5" stroke-dasharray="18 12"/>
 <rect x="1724" y="2046" width="600" height="700" fill="#2a2a2a" stroke="#111" stroke-width="8"/>
-<text x="2024" y="2396" text-anchor="middle" font-family="Arial, sans-serif" font-size="70" font-weight="700" fill="#fff">GAS y200cm</text>
+<text x="2024" y="2396" text-anchor="middle" font-family="Arial, sans-serif" font-size="64" font-weight="700" fill="#fff">GAS y200cm</text>
 <rect x="1724" y="1296" width="600" height="600" fill="#A8A8A8" stroke="#111" stroke-width="8"/>
-<text x="2024" y="1596" text-anchor="middle" font-family="Arial, sans-serif" font-size="70" font-weight="700" fill="#111">DISHWASHER y285cm</text>
-<rect x="1724" y="346" width="600" height="600" fill="#E5E0DA" stroke="#111" stroke-width="8"/>
-<text x="2024" y="646" text-anchor="middle" font-family="Arial, sans-serif" font-size="70" font-weight="700" fill="#111">WASHING y380cm</text>
+<text x="2024" y="1596" text-anchor="middle" font-family="Arial, sans-serif" font-size="64" font-weight="700" fill="#111">DISHWASHER y285cm</text>
+<rect x="1724" y="0" width="600" height="600" fill="#E5E0DA" stroke="#111" stroke-width="8"/>
+<text x="2024" y="300" text-anchor="middle" font-family="Arial, sans-serif" font-size="64" font-weight="700" fill="#111">WASHING y415cm</text>
 <rect x="0" y="2946" width="400" height="500" fill="#1a1a1a" stroke="#111" stroke-width="8"/>
-<text x="200" y="3196" text-anchor="middle" font-family="Arial, sans-serif" font-size="70" font-weight="700" fill="#fff">MICROWAVE y130cm</text>
+<text x="200" y="3196" text-anchor="middle" font-family="Arial, sans-serif" font-size="64" font-weight="700" fill="#fff">MICROWAVE y130cm</text>
 <rect x="0" y="2346" width="400" height="500" fill="#C0C0C0" stroke="#111" stroke-width="8"/>
-<text x="200" y="2596" text-anchor="middle" font-family="Arial, sans-serif" font-size="70" font-weight="700" fill="#111">FOODPROCESSOR y190cm</text>
+<text x="200" y="2596" text-anchor="middle" font-family="Arial, sans-serif" font-size="64" font-weight="700" fill="#111">FOODPROCESSOR y190cm</text>
 <rect x="0" y="1096" width="300" height="300" fill="#7EB8E8" stroke="#111" stroke-width="8"/>
-<text x="150" y="1246" text-anchor="middle" font-family="Arial, sans-serif" font-size="70" font-weight="700" fill="#111">WATERPURIFIER y335cm</text>
+<text x="150" y="1246" text-anchor="middle" font-family="Arial, sans-serif" font-size="64" font-weight="700" fill="#111">WATERPURIFIER y335cm</text>
 <rect x="0" y="596" width="400" height="600" fill="#222" stroke="#111" stroke-width="8"/>
-<text x="200" y="896" text-anchor="middle" font-family="Arial, sans-serif" font-size="70" font-weight="700" fill="#fff">SINK y355cm</text>
+<text x="200" y="896" text-anchor="middle" font-family="Arial, sans-serif" font-size="64" font-weight="700" fill="#fff">SINK y355cm</text>
 <rect x="0" y="-10" width="838" height="610" fill="#999" stroke="#111" stroke-width="8"/>
-<text x="419" y="295" text-anchor="middle" font-family="Arial, sans-serif" font-size="70" font-weight="700" fill="#111">SHAFT y415cm</text>
-<text x="1162" y="170" text-anchor="middle" font-family="Arial, sans-serif" font-size="95" font-weight="700" fill="#111">NORTH (N)</text>
-<text x="1162" y="4576" text-anchor="middle" font-family="Arial, sans-serif" font-size="95" font-weight="700" fill="#111">SOUTH (S)</text>
-<text x="190" y="2373" text-anchor="middle" font-family="Arial, sans-serif" font-size="90" font-weight="700" fill="#111">WEST</text>
-<text x="2134" y="2373" text-anchor="middle" font-family="Arial, sans-serif" font-size="90" font-weight="700" fill="#111">EAST</text>
+<text x="419" y="295" text-anchor="middle" font-family="Arial, sans-serif" font-size="64" font-weight="700" fill="#111">SHAFT y415cm</text>
+<text x="1162" y="170" text-anchor="middle" font-family="Arial, sans-serif" font-size="88" font-weight="700" fill="#111">NORTH (N)</text>
+<text x="1162" y="4576" text-anchor="middle" font-family="Arial, sans-serif" font-size="88" font-weight="700" fill="#111">SOUTH (S)</text>
+<text x="170" y="2373" text-anchor="middle" font-family="Arial, sans-serif" font-size="82" font-weight="700" fill="#111">WEST (W)</text>
+<text x="2154" y="2373" text-anchor="middle" font-family="Arial, sans-serif" font-size="82" font-weight="700" fill="#111">EAST (E)</text>
+<g stroke="#1a1a1a" stroke-width="6" fill="none"><line x1="0" y1="-120" x2="2324" y2="-120"/><line x1="0" y1="-148" x2="0" y2="-92"/><line x1="2324" y1="-148" x2="2324" y2="-92"/></g><rect x="882" y="-172" width="560" height="36" fill="#fff" stroke="#111" stroke-width="2" rx="6"/><text x="1162" y="-146" text-anchor="middle" font-family="Arial,sans-serif" font-size="34" font-weight="800" fill="#111">Room width 2324 mm</text>
+<g stroke="#1a1a1a" stroke-width="6" fill="none"><line x1="2444" y1="0" x2="2444" y2="4746"/><line x1="2416" y1="0" x2="2472" y2="0"/><line x1="2416" y1="4746" x2="2472" y2="4746"/></g><g transform="rotate(-90 2444 2373)"><rect x="2093" y="2424" width="560" height="36" fill="#fff" stroke="#111" stroke-width="2" rx="6"/><text x="2373" y="2450" text-anchor="middle" font-family="Arial,sans-serif" font-size="34" font-weight="800" fill="#111">Room length 4746 mm</text></g>
+<g stroke="#1a1a1a" stroke-width="6" fill="none"><line x1="1724" y1="36" x2="2324" y2="36"/><line x1="1724" y1="8" x2="1724" y2="64"/><line x1="2324" y1="8" x2="2324" y2="64"/></g><rect x="1744" y="-16" width="560" height="36" fill="#fff" stroke="#111" stroke-width="2" rx="6"/><text x="2024" y="10" text-anchor="middle" font-family="Arial,sans-serif" font-size="34" font-weight="800" fill="#111">East 600 mm</text>
+<g stroke="#1a1a1a" stroke-width="6" fill="none"><line x1="0" y1="36" x2="400" y2="36"/><line x1="0" y1="8" x2="0" y2="64"/><line x1="400" y1="8" x2="400" y2="64"/></g><rect x="-80" y="-16" width="560" height="36" fill="#fff" stroke="#111" stroke-width="2" rx="6"/><text x="200" y="10" text-anchor="middle" font-family="Arial,sans-serif" font-size="34" font-weight="800" fill="#111">West 400 mm</text>
+<g stroke="#1a1a1a" stroke-width="6" fill="none"><line x1="400" y1="2373" x2="1724" y2="2373"/><line x1="400" y1="2345" x2="400" y2="2401"/><line x1="1724" y1="2345" x2="1724" y2="2401"/></g><rect x="782" y="2321" width="560" height="36" fill="#fff" stroke="#111" stroke-width="2" rx="6"/><text x="1062" y="2347" text-anchor="middle" font-family="Arial,sans-serif" font-size="34" font-weight="800" fill="#111">Walkway 1324 mm</text>
+<g stroke="#1a1a1a" stroke-width="6" fill="none"><line x1="-120" y1="3526" x2="-120" y2="4746"/><line x1="-148" y1="3526" x2="-92" y2="3526"/><line x1="-148" y1="4746" x2="-92" y2="4746"/></g><g transform="rotate(-90 -120 4136)"><rect x="3856" y="-140" width="560" height="36" fill="#fff" stroke="#111" stroke-width="2" rx="6"/><text x="4136" y="-114" text-anchor="middle" font-family="Arial,sans-serif" font-size="34" font-weight="800" fill="#111">Door clear y0-y1220 (1220 mm)</text></g>
+<rect x="-210" y="4904" width="980" height="48" fill="#111" rx="8"/>
+<text x="-198" y="4936" font-family="Arial,sans-serif" font-size="28" font-weight="800" fill="#fff">Scale 1:1 mm  |  2324W x 4746L x 2700H  |  Walkway 1324 mm  |  Grid Off  |  East 600D  West 400D</text>
 </svg>

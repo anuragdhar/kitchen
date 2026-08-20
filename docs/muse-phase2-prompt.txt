@@ -15,7 +15,7 @@ Current baseline:
   - Room: 2324W x 4746L x 2700H mm.
   - East wall: 600D base, 320D lower upper, 550D top upper.
   - West wall: y0-y1220 full-height door clear zone, then 400D counter, 320D lower upper, 450D top upper.
-  - North 300 mm clear zone.
+  - 300 mm below-window reference only; no full-width north no-counter zone.
   - Gas/chimney must not become one tall box.
   - East elevation orientation: North (N) left to South (S) right.
   - West elevation orientation: South (S) left to North (N) right.
@@ -27,7 +27,7 @@ Required features:
    - East base depth 600 mm,
    - West counter depth 400 mm,
    - walkway width,
-   - north clear zone 300 mm,
+   - 300 mm below-window reference under the north window only,
    - west door clear zone y0-y1220.
 2. Add visible wall labels in plan view:
    - North (N), South (S), East (E), West (W).

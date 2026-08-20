@@ -43,7 +43,8 @@ Run one phase at a time:
 3. Codex reviews the diff.
 4. Codex runs verification:
    - `npm run build` in `react-configurator`.
-   - screenshots if visual UI changed.
+   - `npm run visual:qa` in `react-configurator` if visual UI changed.
+   - inspect the generated screenshots under `react-configurator/tmp-visual-qa/`.
    - `Generate-FreeCAD-3D.bat` if FreeCAD files changed.
 5. Codex fixes integration issues.
 6. Commit only after the phase is stable.
@@ -54,14 +55,14 @@ Run one phase at a time:
 - Shared JSON is the layout data source.
 - FreeCAD is construction/export target.
 - Blender is final render target only.
-- Coohom is optional/background-only.
+- Coohom is paused for now; do not edit or regenerate files under `coohom-export/`.
 - Preserve Rule #9 defaults.
 - Preserve exact dimensions:
   - room width: 2324 mm.
   - room length: 4746 mm.
   - room height: 2700 mm.
   - west clear zone: y0-y1220.
-  - north clear zone: 300 mm.
+  - window below-sill reference: 300 mm only under the north window; no full-width north no-counter zone.
   - east base: 600D.
   - east lower upper: 320D.
   - east top upper: 550D.
@@ -69,9 +70,17 @@ Run one phase at a time:
   - west lower upper: 320D.
   - west top upper: 450D.
 - Do not put cabinets, counters, or LED in the west y0-y1220 door clear zone.
-- Do not model gas/chimney as one tall box.
+- Do not model gas/chimney as one tall box; the chimney body should stay hidden inside the upper cabinet with only a slim under-cabinet vent slot visible.
 - Keep East wall elevation as North left to South right.
 - Keep West wall elevation as South left to North right.
+- If visual UI changes, Muse should run its own visual smoke test:
+  - `cd react-configurator`
+  - `npm run build`
+  - start or reuse a fresh Vite server for the current repo, for example `npm run dev -- --host 127.0.0.1 --port 5174`
+  - set `KITCHEN_APP_URL=http://127.0.0.1:5174/` before running `npm run visual:qa` so the screenshots do not hit an older server on port 5173
+  - inspect screenshot dimensions/file existence under `tmp-visual-qa/`
+  - report obvious issues such as blank canvas, overlapping text, missing selected view, wrong wall orientation, or validation failures.
+- Muse should not copy visual QA screenshots into `docs/` unless explicitly asked.
 
 ## Phase Prompt Template
 
@@ -113,7 +122,7 @@ Constraints:
 - Keep current EAST_INIT and WEST_INIT compatibility while adding the richer model.
 - Preserve Rule #9 defaults.
 - Preserve west y0-y1220 clear zone.
-- Preserve north 300 mm clear zone.
+- Preserve the 300 mm marker only as a below-window reference, not as a full-width no-counter zone.
 - Preserve East/West wall orientation.
 - Do not change FreeCAD yet.
 - Do not add new dependencies.
@@ -129,6 +138,32 @@ After edits, summarize:
 - schema shape.
 - compatibility approach.
 - verification results.
+```
+
+## Visual QA Prompt
+
+Use this when Muse is delegated a visual review instead of implementation:
+
+```text
+You are working in /mnt/c/source/Github/kitchen.
+
+Do not edit files unless a small, obvious test-script fix is required.
+
+Run:
+1. cd react-configurator
+2. npm run build
+3. npm run visual:qa
+
+Then inspect the generated PNGs in react-configurator/tmp-visual-qa.
+
+Report:
+- whether build passed.
+- whether visual QA completed.
+- screenshots generated.
+- any obvious visual failures: blank 3D canvas, selected view not at top, toolbar jump/overlap, wrong East/West orientation, missing sink/purifier/garage, dishwasher not adjacent to washing, missing door-swing markers, wall/ceiling obstruction toggle not visible, validation not passing.
+
+Do not regenerate Coohom files.
+Do not commit.
 ```
 
 ## Recommended Phase Order

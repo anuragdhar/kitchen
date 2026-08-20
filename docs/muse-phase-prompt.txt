@@ -30,7 +30,7 @@ Required behavior:
   - Export JSON.
 - Preserve current Rule #9 defaults.
 - Preserve west y0-y1220 as a full-height clear door zone.
-- Preserve north 300 mm clear zone.
+- Preserve the 300 mm marker only as a below-window reference, not as a full-width no-counter zone.
 - Preserve East wall elevation orientation: North on the left, South on the right.
 - Preserve West wall elevation orientation: South on the left, North on the right.
 - Preserve the 3D East/West orientation fix.

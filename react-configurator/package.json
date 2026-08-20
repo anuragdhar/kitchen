@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "scripts": {
     "dev": "vite",
-    "build": "vite build"
+    "build": "vite build",
+    "visual:qa": "node scripts/visual-qa.cjs"
   },
   "dependencies": {
     "jspdf": "^4.2.1",
@@ -13,6 +14,7 @@
     "three": "^0.185.1"
   },
   "devDependencies": {
+    "playwright": "^1.62.1",
     "vite": "^8.2.2"
   }
 }

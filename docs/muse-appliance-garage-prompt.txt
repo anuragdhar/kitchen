@@ -1,0 +1,40 @@
+You are working in /mnt/c/source/Github/kitchen.
+
+Implement this React-only kitchen layout/view update. Keep changes scoped.
+
+User goal:
+- Add an East-wall appliance garage near the South door/start of the East counter. It should sit on the counter and store the microwave and food processor as countertop clutter.
+- Remove microwave and food processor from the West wall layout.
+- Add a dedicated West-side water purifier cabinet near the sink and closest to the shaft. Use size 400W x 350D x 550H.
+- Leave a clear gap between the sink and shaft by moving the sink south enough to fit the purifier cabinet between sink and shaft.
+- Make the sink look like an actual kitchen sink in top view, wall elevation, and 3D.
+- Keep the East washing machine/dishwasher/gas visible as placement markers.
+- Improve the top toolbar so clicking views does not cause layout jump/dynamic movement: keep the view selector/export controls in a stable top area with enough space.
+- Comment/hide Coohom UI for now. Do not remove the code permanently; hide the Coohom Guide button and do not regenerate or edit files under coohom-export.
+
+Constraints:
+- Edit primarily react-configurator/src/App.jsx and react-configurator/src/config/kitchenConfig.js.
+- Update README and docs/KITCHEN_APP_IMPLEMENTATION_PLAN.md only if needed for user-facing behavior.
+- Do not edit coohom-export files.
+- Do not edit generated dist files.
+- Do not add dependencies.
+- Preserve room dimensions: 2324W x 4746L x 2700H mm.
+- Preserve west door clear zone y0-y1220.
+- Preserve East wall orientation: North left, South right.
+- Preserve West wall orientation: South left, North right.
+- Preserve no full-width north clear zone. The 300 mm north marker remains only a below-window reference.
+- Keep build passing.
+
+Suggested layout:
+- East appliance garage near South door: y around 300-1150, width along wall around 820-900, depth 350, height 550, z/counter-mounted above 900. It should contain/label microwave and food processor.
+- West sink: move south enough that a 400 mm purifier cabinet can fit before the shaft at y4146.
+- West purifier cabinet: y = 3746, width along wall 400, depth 350, height 550, close to shaft; sink can be y3146 with width 600 so sink ends at y3746.
+- West order should become sink -> purifier cabinet -> shaft after the door clear zone. Microwave and foodprocessor should no longer be on West.
+
+Acceptance checks:
+- npm run build passes in react-configurator.
+- Top view shows appliance garage on East near South, sink on West, purifier cabinet between sink and shaft.
+- East wall elevation shows appliance garage plus visible washer/dishwasher/gas.
+- West wall elevation shows actual sink and purifier cabinet next to shaft.
+- Coohom button is hidden/commented from the main toolbar.
+- No coohom-export files are modified.

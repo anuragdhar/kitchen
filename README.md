@@ -2,22 +2,23 @@
 
 Current layout: Rule #9 locked galley kitchen, 2324 mm wide x 4746 mm long x 2700 mm high.
 
-React is now the primary implementation surface. FreeCAD remains the construction-ready 3D/BIM target, Blender is the future photoreal render target, and Coohom is only a background/reference workflow.
+React is now the primary implementation surface. FreeCAD remains the construction-ready 3D/BIM target, Blender is the future photoreal render target, and Coohom is paused for now.
 
 ## Current Rules
 
-- East wall, 600 mm deep: spice slider near gas, gas cooktop in the middle with compact hidden chimney, dishwasher north of gas, washing machine last near the north window.
+- East wall, 600 mm deep: appliance garage near the south door at y300-y1150 for microwave + food processor, 3-burner gas cooktop shifted north to y2300 with the chimney body hidden inside the 320D upper cabinet, dishwasher at y3546 directly adjacent to the washing machine, and washing machine last at y4146 touching the north wall. The old right-side spice unit has been removed.
+- East render visibility: the covered washing machine and covered dishwasher are still represented behind handleless fronts, with door-swing markers. Washing machine door opens left; dishwasher door opens down.
 - East wall elevation is shown with North `(N)` on the left and South `(S)` on the right.
 - West wall, 400 mm deep after the door zone: South 0 to y1220 is a full-height clear door zone with no counter, no upper cabinet, and no LED strip.
-- West wall after y1220: microwave, food processor, purifier near sink, sink almost touching shaft, then shaft last at the north-west end.
-- North clear zone: 300 mm at the north end with no counter.
+- West wall after y1220: real sink at y3146, then a 400W x 350D x 550H water purifier cabinet at y3746 filling the gap to the shaft, then shaft last at the north-west end. Clean-dish storage is shown above the sink.
+- North window area: the 300 mm marker is only a below-window reference, not a full-width no-counter zone.
 - Window: north wall, 1100 mm wide x 1800 mm high, sill 900 mm.
 - Door: south side, 1100 mm wide.
 
 ## Main Files
 
 - `react-configurator/` - React configurator app.
-- `react-configurator/src/App.jsx` - Top, front, east wall, west wall, and interactive 3D views.
+- `react-configurator/src/App.jsx` - Top, front, east/west/north/south elevations, and interactive 3D render.
 - `react-configurator/src/config/kitchenConfig.js` - Shared millimeter layout model, kitchen dimensions, cabinet runs, openings, materials, validation rules, and item positions.
 - `Kitchen-design-2D-layout.ps1` - PowerShell helper that checks the current React app files and copies the layout JSON for FreeCAD/SweetHome3D.
 - `Run-Kitchen-React-App.bat` - Double-click launcher for the React app.
@@ -30,11 +31,12 @@ React is now the primary implementation surface. FreeCAD remains the constructio
 - `blender/render_kitchen.py` - Blender batch render script that imports the FreeCAD OBJ export.
 - `Render-Blender-Kitchen.bat` - Runs Blender render automation when `blender.exe` is on PATH.
 - `docs/3D_Render_Rule9_Current.webp` - Existing rendered concept image.
-- `docs/react-3d-desktop.png` and `docs/react-3d-mobile.png` - Verification screenshots of the React 3D view.
+- `docs/react-3d-desktop.png` and `docs/react-3d-mobile.png` - Verification screenshots of the upgraded React 3D render.
 - `docs/react-east-wall.png` and `docs/react-west-wall.png` - Verification screenshots of the current wall elevations.
-- `docs/COOHOM_NATIVE_REBUILD_GUIDE.md` - Coohom import and native-cabinet rebuild guide.
+- `docs/COOHOM_NATIVE_REBUILD_GUIDE.md` - archived Coohom import and native-cabinet rebuild guide.
 - `docs/KITCHEN_APP_IMPLEMENTATION_PLAN.md` - Step-by-step implementation plan for future AI-assisted phases.
 - `docs/MUSE_SPARK_DELEGATION_GUIDE.md` - Muse Spark CLI usage and supervision rules for this repo.
+- `react-configurator/scripts/visual-qa.cjs` - Playwright screenshot smoke test for desktop/mobile views.
 
 ## Run The React App
 
@@ -58,12 +60,21 @@ Then open:
 http://127.0.0.1:5173/
 ```
 
+Run visual QA screenshots:
+
+```powershell
+cd react-configurator
+npm run visual:qa
+```
+
+Screenshots are written to `react-configurator/tmp-visual-qa/`.
+
 ## React Features
 
-- Top View: draggable plan view with wall labels, room dimensions, cabinet depths, walkway dimensions, north clear zone, west door clear zone, and scale text.
+- Top View: draggable plan view with wall labels, room dimensions, cabinet depths, walkway dimensions, below-window reference area, west door clear zone, and scale text.
 - Front View: simplified front perspective.
-- East Wall View: elevation with North `(N)` on the left and South `(S)` on the right.
-- West Wall View: elevation with clear full-height door zone from y0 to y1220.
+- East Wall View: render-style wall elevation with handleless panels, warm LED, North `(N)` on the left, South `(S)` on the right, visible covered washing/dishwasher markers, and only a slim hidden chimney vent below the upper cabinet.
+- West Wall View: render-style wall elevation with clear full-height door zone from y0 to y1220.
 - North Elevation and South Elevation: cross-wall elevations with SVG/PNG/PDF export buttons.
 - Grid snap: Off, 50 mm, or 100 mm.
 - Validation Panel: detailed pass/fail rows for order, clear zones, walkway, collision, and bounds.
@@ -71,14 +82,16 @@ http://127.0.0.1:5173/
 - Materials & Finishes: editable colors/finishes stored in exported JSON.
 - BOM / Quote: cabinet, shutter, drawer, handle, countertop, backsplash, appliance, CSV, and Markdown outputs.
 - Save / Load / Versions: project JSON import/export, autosave, reset to Rule #9, and local Option A/B versions.
-- Create 3D Render: interactive Three.js model with improved cooktop, chimney, sink, cabinet details, wall labels, and camera presets.
+- Create 3D Render: interactive Three.js model shown at the top of the page when selected, with handleless cabinet fronts, reveal lines, warm LED strips/glow, PBR environment lighting, procedural wood/counter/floor materials, softer shadows/daylight, a 3-burner gas hob, clean-dish storage above the sink, improved appliances, camera presets, and a `Hide blocking walls/ceiling` live cutaway option. In cutaway mode, walls/ceiling stay hidden and the near-side cabinet run hides dynamically as you rotate.
+- Cabinet module marking is interpreted from North to South in plan, elevations, and 3D.
+- View buttons render the selected Top/Front/East/West/North/South/3D view directly under the toolbar, before validation, materials, BOM, and save/load panels.
 - 3D Screenshot: downloads the current 3D canvas camera view as `kitchen-3d-render.png`.
 - Export 2D SVG: downloads `kitchen-2d-plan-coohom-background.svg`.
 - Export 2D PNG: downloads `kitchen-2d-plan-coohom-background.png`.
 - Export 2D DXF: downloads `kitchen-2d-plan-coohom-background.dxf`.
-- Coohom Guide: downloads `coohom-native-rebuild-guide.md`.
+- Coohom Guide: currently hidden/paused in the React toolbar.
 - Export JSON: exports the current layout, validation, grid, dimensions, and shared layout model.
-- Export Project Package: downloads a ZIP with layout JSON, 2D SVG/DXF, BOM CSV/Markdown, project summary PDF, Coohom guide, validation JSON, and manifest.
+- Export Project Package: downloads a ZIP with layout JSON, 2D SVG/DXF, BOM CSV/Markdown, project summary PDF, validation JSON, and manifest. Coohom guide is excluded while Coohom is out of scope.
 
 ## Shared Layout Model
 
@@ -90,9 +103,9 @@ http://127.0.0.1:5173/
 
 This model is intended to become the source data for later FreeCAD and Blender automation.
 
-## Coohom Workflow
+## Coohom Workflow Paused
 
-Use the React app to export the 2D plan as SVG, PNG, or DXF. Import that file into Coohom Floorplanner as a background, scale it to 2324 mm x 4746 mm, then rebuild the kitchen using Coohom native room, cabinet, appliance, sink, chimney, window, door, and shaft objects.
+Coohom is not part of the active workflow right now. The old reference docs remain in the repo in case that path is needed later.
 
 The static guide is also available at:
 
@@ -106,10 +119,13 @@ coohom-export\coohom-native-rebuild-guide.md
 Open the app and use the browser console:
 
 ```js
-window.kitchenAPI.moveItem('west','sink',355)      // centimeters, snaps to active grid
-window.kitchenAPI.moveItemMM('west','sink',3550)   // millimeters, snaps to active grid
-window.kitchenAPI.moveItem('east','washing',380)
-window.kitchenAPI.moveItem('west','waterpurifier',335)
+window.kitchenAPI.moveItemMM('east','applianceGarage',300)
+window.kitchenAPI.moveItemMM('east','gas',2300)
+window.kitchenAPI.moveItemMM('east','dishwasher',3546)
+window.kitchenAPI.moveItemMM('west','sink',3146)
+window.kitchenAPI.moveItemMM('west','waterpurifier',3746)
+window.kitchenAPI.moveItem('east','washing',414.6)
+window.kitchenAPI.set3DHideObstructions(true)
 window.kitchenAPI.getLayout()
 window.kitchenAPI.getLayoutModel()
 window.kitchenAPI.validate()
@@ -173,11 +189,11 @@ blender\renders\
 
 Current validation checks:
 
-- East order: gas before dishwasher before washing.
-- West order: microwave before food processor before purifier before sink before shaft.
-- Purifier remains near the sink.
+- East order: gas before dishwasher before washing, with dishwasher directly adjacent to washing and the appliance garage allowed near the south door.
+- West order: sink before purifier cabinet before shaft.
+- Purifier cabinet remains contiguous between the sink and shaft.
 - West door clear zone remains empty from y0 to y1220.
-- North 300 mm clear zone remains empty of counters/appliances.
+- The 300 mm north marker is only a below-window reference; counters and appliances may continue to the north wall outside normal bounds/collision rules.
 - Walkway remains 1324 mm floor / 1004 mm eye.
 - Cabinet/appliance collision checks include height ranges, so purifier above sink does not falsely fail.
 - Movable items stay inside room bounds.
