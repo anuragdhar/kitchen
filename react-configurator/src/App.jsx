@@ -45,7 +45,7 @@ export default function App(){
       const addBox=(name,x,y,z,w,d,h,c,opacity=1)=>{
         const mesh=new THREE.Mesh(new THREE.BoxGeometry(s(w),s(h),s(d)),material(c,opacity))
         mesh.name=name
-        mesh.position.set(s(x+w/2-KITCHEN.width/2),s(z+h/2),s(y+d/2-KITCHEN.length/2))
+        mesh.position.set(s(KITCHEN.width/2-(x+w/2)),s(z+h/2),s(y+d/2-KITCHEN.length/2))
         mesh.castShadow=true
         mesh.receiveShadow=true
         scene.add(mesh)
