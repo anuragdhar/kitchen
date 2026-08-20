@@ -1,0 +1,58 @@
+You are working in C:\source\Github\kitchen.
+
+Implement React phases 3 through 9 from docs/KITCHEN_APP_IMPLEMENTATION_PLAN.md.
+
+Scope:
+- Work primarily in react-configurator/src/App.jsx and react-configurator/src/config/kitchenConfig.js.
+- Keep the existing UI working: Top, Front, East, West, 3D, SVG/PNG/DXF/JSON/Coohom exports.
+- Preserve Rule #9 default layout exactly.
+- Preserve all millimeter dimensions:
+  - room 2324 x 4746 x 2700.
+  - west full-height door clear zone y0-y1220.
+  - north clear zone 300 mm.
+  - east base 600D, east lower upper 320D, east top upper 550D.
+  - west counter 400D, west lower upper 320D, west top upper 450D.
+- Keep East elevation with North left and South right.
+- Keep West elevation with South left and North right.
+- Do not change FreeCAD yet.
+- Do not add dependencies unless the app already has them.
+
+Implement:
+1. Phase 3 validation panel:
+   - Detailed rows with status, rule name, measured value, expected value, fix suggestion.
+   - Include results in window.kitchenAPI.validate(), getLayout(), and JSON export.
+2. Phase 4 cabinet module system:
+   - Module definitions for 300, 450, 600, 750, 900 mm, fillers/end panels.
+   - Auto-fill module runs for east base and west base.
+   - Show module splits in Top View and elevations.
+   - Add a compact module summary/editor panel.
+3. Phase 5 improved 3D preview:
+   - Gas as cooktop, burner rings, compact chimney hood.
+   - Sink as counter cutout/bowl/faucet, not just a black block.
+   - Basic doors/drawer lines/handles/plinth/countertop thickness.
+   - Wall labels and camera presets.
+4. Phase 6 wall elevation designer:
+   - Add North and South elevation views.
+   - Add elevation dimensions for counter height, backsplash, upper zones, ceiling.
+   - Add export buttons for elevation SVG/PNG where practical.
+5. Phase 7 materials:
+   - Add a material/finish panel for cabinet body, shutters, counter, backsplash, floor, wall, appliance finish, handle finish.
+   - Store material choices in exported JSON and reflect them in 2D/3D where practical.
+6. Phase 8 BOM/quote export:
+   - Add BOM calculator and CSV/Markdown exports.
+   - Include cabinet modules, countertop length, backsplash area, appliances, notes.
+7. Phase 9 save/load/versioning:
+   - Save Project JSON.
+   - Load Project JSON.
+   - Reset to Rule #9.
+   - localStorage autosave.
+   - named versions: Rule #9 current, Option A, Option B.
+   - Import validation that warns instead of crashing.
+
+Quality bar:
+- Keep code understandable and scoped.
+- Do not rewrite the whole app.
+- Do not remove existing exports or APIs.
+- Do not create visible instruction/marketing sections; make controls practical.
+- Avoid text overlap in compact panels.
+- After edits, run npm run build if possible and report what changed.

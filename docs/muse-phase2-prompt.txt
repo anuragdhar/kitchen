@@ -1,0 +1,49 @@
+You are working in /mnt/c/source/Github/kitchen.
+
+Implement Phase 2 from docs/KITCHEN_APP_IMPLEMENTATION_PLAN.md:
+React Dimension And Ruler Overlay.
+
+Scope:
+- Edit only React source files under react-configurator/src unless README must be updated for a user-visible button/behavior.
+- Do not edit FreeCAD, Blender, Coohom export artifacts, generated dist output, or Git history.
+- Do not add dependencies.
+
+Current baseline:
+- Phase 1 shared layout model is already present in react-configurator/src/config/kitchenConfig.js.
+- App.jsx already renders Top, Front, East Wall, West Wall, 3D, 2D SVG/PNG/DXF exports, Coohom Guide, Export JSON, and window.kitchenAPI.
+- Preserve current Rule #9 layout exactly:
+  - Room: 2324W x 4746L x 2700H mm.
+  - East wall: 600D base, 320D lower upper, 550D top upper.
+  - West wall: y0-y1220 full-height door clear zone, then 400D counter, 320D lower upper, 450D top upper.
+  - North 300 mm clear zone.
+  - Gas/chimney must not become one tall box.
+  - East elevation orientation: North (N) left to South (S) right.
+  - West elevation orientation: South (S) left to North (N) right.
+
+Required features:
+1. Top plan view must show dimension/ruler overlays for:
+   - room width 2324 mm,
+   - room length 4746 mm,
+   - East base depth 600 mm,
+   - West counter depth 400 mm,
+   - walkway width,
+   - north clear zone 300 mm,
+   - west door clear zone y0-y1220.
+2. Add visible wall labels in plan view:
+   - North (N), South (S), East (E), West (W).
+3. Add a grid toggle in the main controls:
+   - Off,
+   - 50 mm,
+   - 100 mm.
+4. Dragging should snap item y positions to the selected grid when grid is 50 or 100 mm. When grid is Off, keep current free dragging behavior.
+5. SVG/PNG/DXF exports must include the major dimensions and scale text.
+6. Keep dimensions readable on desktop/mobile and avoid overlapping primary item labels.
+7. Preserve window.kitchenAPI behavior; you may add helpful API fields/functions, but old functions must continue to work.
+
+Acceptance checks:
+- npm run build succeeds from react-configurator.
+- Rule #9 default remains valid.
+- Exported plan markup/text contains major dimension labels.
+- Dragging west items cannot accidentally move fixed shaft and should still respect current UI behavior.
+
+If environment checks hit WSL/Windows path issues, continue with code changes and report exact commands I should run from Windows.

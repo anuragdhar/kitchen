@@ -3,3 +3,7 @@ dist/
 
 react-configurator/node_modules/
 react-configurator/dist/
+react-configurator/tmp-*/
+react-configurator/tmp-*.png
+freecad/*.FCBak
+__pycache__/

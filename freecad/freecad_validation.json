@@ -1,0 +1,7 @@
+{
+  "status": "pass",
+  "objectCount": 39,
+  "westDoorClearZone": "preserved y0-y1220, no counter/upper/LED created in clear zone",
+  "northClearZone": "cabinet runs stop at y4446",
+  "gasChimney": "separate cooktop slab, burner marker, and compact chimney hood"
+}

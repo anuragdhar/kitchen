@@ -6,11 +6,13 @@
     "build": "vite build"
   },
   "dependencies": {
+    "jspdf": "^4.2.1",
+    "jszip": "^3.10.1",
     "react": "^18",
     "react-dom": "^18",
     "three": "^0.185.1"
   },
   "devDependencies": {
-    "vite": "^5"
+    "vite": "^8.2.2"
   }
 }

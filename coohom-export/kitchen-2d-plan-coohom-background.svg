@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="2324mm" height="4746mm" viewBox="0 0 2324 4746">
+<rect width="2324" height="4746" fill="#fffefb"/>
+<rect x="0" y="0" width="2324" height="4746" fill="#f7f1e9" stroke="#111" stroke-width="8"/>
+<rect x="612" y="0" width="1100" height="110" fill="#7eb8e8" stroke="#111" stroke-width="8"/>
+<text x="1162" y="90" text-anchor="middle" font-family="Arial, sans-serif" font-size="85" font-weight="700" fill="#114f78">NORTH WINDOW</text>
+<rect x="612" y="4636" width="1100" height="110" fill="#fffefb" stroke="#111" stroke-width="8"/>
+<text x="1162" y="4711" text-anchor="middle" font-family="Arial, sans-serif" font-size="85" font-weight="700" fill="#7b3f21">SOUTH DOOR</text>
+<rect x="1724" y="300" width="600" height="4446" fill="#c8b39d" stroke="#111" stroke-width="8"/>
+<text x="2024" y="480" text-anchor="middle" font-family="Arial, sans-serif" font-size="75" font-weight="700" fill="#111">EAST 600D RUN</text>
+<rect x="0" y="300" width="400" height="3226" fill="#c8b39d" stroke="#111" stroke-width="8"/>
+<text x="200" y="480" text-anchor="middle" font-family="Arial, sans-serif" font-size="75" font-weight="700" fill="#111">WEST 400D RUN</text>
+<rect x="0" y="3526" width="400" height="1220" fill="#fffaf3" stroke="#7b3f21" stroke-width="8" stroke-dasharray="45 28"/>
+<text x="210" y="4136" text-anchor="middle" font-family="Arial, sans-serif" font-size="62" font-weight="700" fill="#7b3f21">DOOR CLEAR ZONE</text>
+<rect x="0" y="0" width="2324" height="300" fill="#eaf6fd" stroke="#2f8ac6" stroke-width="8" stroke-dasharray="45 28"/>
+<text x="1162" y="170" text-anchor="middle" font-family="Arial, sans-serif" font-size="75" font-weight="700" fill="#1f5f88">300 MM NORTH CLEAR</text>
+<rect x="1824" y="2746" width="500" height="150" fill="#D9C7B5" stroke="#111" stroke-width="8"/>
+<text x="2074" y="2821" text-anchor="middle" font-family="Arial, sans-serif" font-size="70" font-weight="700" fill="#111">SPICE y185cm</text>
+<rect x="1724" y="2046" width="600" height="700" fill="#2a2a2a" stroke="#111" stroke-width="8"/>
+<text x="2024" y="2396" text-anchor="middle" font-family="Arial, sans-serif" font-size="70" font-weight="700" fill="#fff">GAS y200cm</text>
+<rect x="1724" y="1296" width="600" height="600" fill="#A8A8A8" stroke="#111" stroke-width="8"/>
+<text x="2024" y="1596" text-anchor="middle" font-family="Arial, sans-serif" font-size="70" font-weight="700" fill="#111">DISHWASHER y285cm</text>
+<rect x="1724" y="346" width="600" height="600" fill="#E5E0DA" stroke="#111" stroke-width="8"/>
+<text x="2024" y="646" text-anchor="middle" font-family="Arial, sans-serif" font-size="70" font-weight="700" fill="#111">WASHING y380cm</text>
+<rect x="0" y="2946" width="400" height="500" fill="#1a1a1a" stroke="#111" stroke-width="8"/>
+<text x="200" y="3196" text-anchor="middle" font-family="Arial, sans-serif" font-size="70" font-weight="700" fill="#fff">MICROWAVE y130cm</text>
+<rect x="0" y="2346" width="400" height="500" fill="#C0C0C0" stroke="#111" stroke-width="8"/>
+<text x="200" y="2596" text-anchor="middle" font-family="Arial, sans-serif" font-size="70" font-weight="700" fill="#111">FOODPROCESSOR y190cm</text>
+<rect x="0" y="1096" width="300" height="300" fill="#7EB8E8" stroke="#111" stroke-width="8"/>
+<text x="150" y="1246" text-anchor="middle" font-family="Arial, sans-serif" font-size="70" font-weight="700" fill="#111">WATERPURIFIER y335cm</text>
+<rect x="0" y="596" width="400" height="600" fill="#222" stroke="#111" stroke-width="8"/>
+<text x="200" y="896" text-anchor="middle" font-family="Arial, sans-serif" font-size="70" font-weight="700" fill="#fff">SINK y355cm</text>
+<rect x="0" y="-10" width="838" height="610" fill="#999" stroke="#111" stroke-width="8"/>
+<text x="419" y="295" text-anchor="middle" font-family="Arial, sans-serif" font-size="70" font-weight="700" fill="#111">SHAFT y415cm</text>
+<text x="1162" y="170" text-anchor="middle" font-family="Arial, sans-serif" font-size="95" font-weight="700" fill="#111">NORTH (N)</text>
+<text x="1162" y="4576" text-anchor="middle" font-family="Arial, sans-serif" font-size="95" font-weight="700" fill="#111">SOUTH (S)</text>
+<text x="190" y="2373" text-anchor="middle" font-family="Arial, sans-serif" font-size="90" font-weight="700" fill="#111">WEST</text>
+<text x="2134" y="2373" text-anchor="middle" font-family="Arial, sans-serif" font-size="90" font-weight="700" fill="#111">EAST</text>
+</svg>

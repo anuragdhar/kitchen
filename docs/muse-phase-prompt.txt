@@ -1,0 +1,84 @@
+You are working in /mnt/c/source/Github/kitchen.
+
+Implement only Phase 1: React Shared Layout Model from docs/KITCHEN_APP_IMPLEMENTATION_PLAN.md.
+
+Goal:
+Make React the primary implementation surface while creating a richer shared layout model that FreeCAD and Blender can consume later.
+
+Scope:
+- Edit React files only if needed:
+  - react-configurator/src/config/kitchenConfig.js
+  - react-configurator/src/App.jsx
+- You may update README only if a user-facing behavior changes.
+- Do not edit FreeCAD files.
+- Do not edit Blender files.
+- Do not edit Coohom export artifacts.
+- Do not commit changes.
+
+Required behavior:
+- Keep the current UI working:
+  - Top plan view.
+  - Front view.
+  - East Wall View.
+  - West Wall View.
+  - Create 3D Render.
+  - 3D Screenshot.
+  - Export 2D SVG.
+  - Export 2D PNG.
+  - Export 2D DXF.
+  - Coohom Guide.
+  - Export JSON.
+- Preserve current Rule #9 defaults.
+- Preserve west y0-y1220 as a full-height clear door zone.
+- Preserve north 300 mm clear zone.
+- Preserve East wall elevation orientation: North on the left, South on the right.
+- Preserve West wall elevation orientation: South on the left, North on the right.
+- Preserve the 3D East/West orientation fix.
+- Do not add dependencies.
+
+Implementation requirements:
+1. Create a shared layout schema in React config that includes:
+   - room
+   - openings
+   - walls
+   - cabinetRuns
+   - appliances
+   - validationRules
+   - materials
+   - exports
+2. Preserve compatibility exports:
+   - KITCHEN
+   - EAST_INIT
+   - WEST_INIT
+3. Add stable IDs and metadata for design entities:
+   - category
+   - wall
+   - x
+   - y
+   - z
+   - width
+   - depth
+   - height
+   - locked
+   - color
+   - material
+   - clearance where applicable
+4. Make Export JSON include the new richer shared model while keeping old fields too:
+   - kitchen
+   - east
+   - west
+   - layoutModel
+   - validation
+   - rule
+
+Acceptance checks:
+- npm run build passes from react-configurator.
+- Existing views still render logically from the same default layout.
+- Exported JSON includes layoutModel.
+- No object/cabinet/counter/LED is added to west y0-y1220 clear zone.
+
+After edits, summarize:
+- files changed.
+- schema shape.
+- compatibility approach.
+- exact verification commands to run.
