@@ -27,6 +27,7 @@ Current layout: Rule #9 locked galley kitchen, 2324 mm wide x 4746 mm long x 270
 - `docs/3D_Render_Rule9_Current.webp` - Existing rendered concept image.
 - `docs/react-3d-desktop.png` and `docs/react-3d-mobile.png` - Verification screenshots of the React 3D view.
 - `docs/react-east-wall.png` and `docs/react-west-wall.png` - Verification screenshots of the current wall elevations.
+- `docs/COOHOM_NATIVE_REBUILD_GUIDE.md` - Coohom import and native-cabinet rebuild guide.
 
 ## Run The React App
 
@@ -58,7 +59,21 @@ http://127.0.0.1:5173/
 - West Wall View: elevation with clear full-height door zone from y0 to y1220.
 - Create 3D Render: interactive Three.js model.
 - 3D Screenshot: downloads the current 3D canvas camera view as `kitchen-3d-render.png`.
+- Export 2D SVG: downloads `kitchen-2d-plan-coohom-background.svg`.
+- Export 2D PNG: downloads `kitchen-2d-plan-coohom-background.png`.
+- Export 2D DXF: downloads `kitchen-2d-plan-coohom-background.dxf`.
+- Coohom Guide: downloads `coohom-native-rebuild-guide.md`.
 - Export JSON: exports the current layout.
+
+## Coohom Workflow
+
+Use the React app to export the 2D plan as SVG, PNG, or DXF. Import that file into Coohom Floorplanner as a background, scale it to 2324 mm x 4746 mm, then rebuild the kitchen using Coohom native room, cabinet, appliance, sink, chimney, window, door, and shaft objects.
+
+The static guide is also available at:
+
+```text
+docs\COOHOM_NATIVE_REBUILD_GUIDE.md
+```
 
 ## Browser API
 

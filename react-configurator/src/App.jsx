@@ -23,8 +23,145 @@ export default function App(){
   const onDown=(e,wall,id)=>{const it=[...east,...west].find(x=>x.id===id); if(it?.fixed)return; setDrag({wall,id,startY:e.clientY,startItemY:it.y})}
   const onMove=(e)=>{if(!drag)return; const dy=(e.clientY-drag.startY)/scale; const ny=Math.max(0,Math.min(KITCHEN.length-600,drag.startItemY+dy)); if(drag.wall==='east')setEast(p=>p.map(it=>it.id===drag.id?{...it,y:ny}:it)); else setWest(p=>p.map(it=>it.id===drag.id?{...it,y:ny}:it))}
   const onUp=()=>setDrag(null)
+  const downloadText=(filename,text,type='text/plain')=>{const blob=new Blob([text],{type}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=filename; a.click(); URL.revokeObjectURL(url)}
   const exportJSON=()=>{const data={kitchen:KITCHEN,east,west,validation:v, rule:"Rule9: Gas middle to DW to WM LAST, MW to FP to Purifier near sink to Sink to Shaft LAST"}; const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='Galley_2324x4746_Rule9_Current.json'; a.click()}
   const export3DScreenshot=()=>{const view3d=threeViewRef.current; if(!view3d)return; view3d.renderer.render(view3d.scene,view3d.camera); const a=document.createElement('a'); a.href=view3d.renderer.domElement.toDataURL('image/png'); a.download='kitchen-3d-render.png'; a.click()}
+  const svgY=(southY,depth)=>KITCHEN.length-southY-depth
+  const buildPlanSvg=()=>{
+    const esc=(s)=>String(s).replace(/[&<>"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch]))
+    const rect=(x,y,w,h,fill,stroke='#111',dash='')=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${fill}" stroke="${stroke}" stroke-width="8"${dash?` stroke-dasharray="${dash}"`:''}/>`
+    const label=(x,y,text,size=80,fill='#111')=>`<text x="${x}" y="${y}" text-anchor="middle" font-family="Arial, sans-serif" font-size="${size}" font-weight="700" fill="${fill}">${esc(text)}</text>`
+    const usableLen=KITCHEN.length-KITCHEN.northClear
+    const parts=[
+      `<?xml version="1.0" encoding="UTF-8"?>`,
+      `<svg xmlns="http://www.w3.org/2000/svg" width="${KITCHEN.width}mm" height="${KITCHEN.length}mm" viewBox="0 0 ${KITCHEN.width} ${KITCHEN.length}">`,
+      `<rect width="${KITCHEN.width}" height="${KITCHEN.length}" fill="#fffefb"/>`,
+      rect(0,0,KITCHEN.width,KITCHEN.length,'#f7f1e9','#111'),
+      rect((KITCHEN.width-KITCHEN.window.w)/2,0,KITCHEN.window.w,110,'#7eb8e8','#111'),
+      label(KITCHEN.width/2,90,'NORTH WINDOW',85,'#114f78'),
+      rect(KITCHEN.door.x,KITCHEN.length-110,KITCHEN.door.w,110,'#fffefb','#111'),
+      label(KITCHEN.width/2,KITCHEN.length-35,'SOUTH DOOR',85,'#7b3f21'),
+      rect(KITCHEN.width-600,svgY(0,usableLen),600,usableLen,'#c8b39d'),
+      label(KITCHEN.width-300,svgY(0,usableLen)+180,'EAST 600D RUN',75),
+      rect(0,svgY(KITCHEN.westGap.to,usableLen-KITCHEN.westGap.to),400,usableLen-KITCHEN.westGap.to,'#c8b39d'),
+      label(200,svgY(KITCHEN.westGap.to,usableLen-KITCHEN.westGap.to)+180,'WEST 400D RUN',75),
+      rect(0,svgY(0,KITCHEN.westGap.to),400,KITCHEN.westGap.to,'#fffaf3','#7b3f21','45 28'),
+      label(210,svgY(0,KITCHEN.westGap.to)+KITCHEN.westGap.to/2,'DOOR CLEAR ZONE',62,'#7b3f21'),
+      rect(0,svgY(usableLen,KITCHEN.northClear),KITCHEN.width,KITCHEN.northClear,'#eaf6fd','#2f8ac6','45 28'),
+      label(KITCHEN.width/2,svgY(usableLen,KITCHEN.northClear)+170,'300 MM NORTH CLEAR',75,'#1f5f88')
+    ]
+    east.forEach(it=>{
+      const x=KITCHEN.width-it.d, y=svgY(it.y,it.w)
+      parts.push(rect(x,y,it.d,it.w,it.color))
+      parts.push(label(x+it.d/2,y+it.w/2,`${it.id.toUpperCase()} y${Math.round(it.y/10)}cm`,70,['gas'].includes(it.id)?'#fff':'#111'))
+    })
+    west.forEach(it=>{
+      const y=svgY(it.y,it.w)
+      parts.push(rect(0,y,it.d,it.w,it.color))
+      parts.push(label(it.d/2,y+it.w/2,`${it.id.toUpperCase()} y${Math.round(it.y/10)}cm`,70,['sink','microwave'].includes(it.id)?'#fff':'#111'))
+    })
+    parts.push(label(KITCHEN.width/2,170,'NORTH (N)',95))
+    parts.push(label(KITCHEN.width/2,KITCHEN.length-170,'SOUTH (S)',95))
+    parts.push(label(190,KITCHEN.length/2,'WEST',90))
+    parts.push(label(KITCHEN.width-190,KITCHEN.length/2,'EAST',90))
+    parts.push(`</svg>`)
+    return parts.join('\n')
+  }
+  const exportPlanSvg=()=>downloadText('kitchen-2d-plan-coohom-background.svg',buildPlanSvg(),'image/svg+xml')
+  const exportPlanPng=()=>{
+    const svg=buildPlanSvg()
+    const url=URL.createObjectURL(new Blob([svg],{type:'image/svg+xml'}))
+    const img=new Image()
+    img.onload=()=>{
+      const canvas=document.createElement('canvas')
+      canvas.width=KITCHEN.width
+      canvas.height=KITCHEN.length
+      const ctx=canvas.getContext('2d')
+      ctx.fillStyle='#fffefb'
+      ctx.fillRect(0,0,canvas.width,canvas.height)
+      ctx.drawImage(img,0,0)
+      URL.revokeObjectURL(url)
+      const a=document.createElement('a')
+      a.href=canvas.toDataURL('image/png')
+      a.download='kitchen-2d-plan-coohom-background.png'
+      a.click()
+    }
+    img.src=url
+  }
+  const buildPlanDxf=()=>{
+    const lines=['0','SECTION','2','ENTITIES']
+    const addLine=(x1,y1,x2,y2,layer='PLAN')=>lines.push('0','LINE','8',layer,'10',String(x1),'20',String(y1),'30','0','11',String(x2),'21',String(y2),'31','0')
+    const addText=(x,y,text,height=90,layer='TEXT')=>lines.push('0','TEXT','8',layer,'10',String(x),'20',String(y),'30','0','40',String(height),'1',text)
+    const addRect=(x,y,w,h,layer)=>{addLine(x,y,x+w,y,layer); addLine(x+w,y,x+w,y+h,layer); addLine(x+w,y+h,x,y+h,layer); addLine(x,y+h,x,y,layer)}
+    const usableLen=KITCHEN.length-KITCHEN.northClear
+    addRect(0,0,KITCHEN.width,KITCHEN.length,'ROOM')
+    addRect(KITCHEN.door.x,0,KITCHEN.door.w,110,'DOOR')
+    addRect((KITCHEN.width-KITCHEN.window.w)/2,KITCHEN.length-110,KITCHEN.window.w,110,'WINDOW')
+    addRect(KITCHEN.width-600,0,600,usableLen,'EAST_CABINETS')
+    addRect(0,KITCHEN.westGap.to,400,usableLen-KITCHEN.westGap.to,'WEST_CABINETS')
+    addRect(0,0,400,KITCHEN.westGap.to,'WEST_DOOR_CLEAR')
+    east.forEach(it=>{addRect(KITCHEN.width-it.d,it.y,it.d,it.w,`EAST_${it.id.toUpperCase()}`); addText(KITCHEN.width-it.d+35,it.y+it.w/2,`EAST ${it.id} y${it.y}mm`,70)})
+    west.forEach(it=>{addRect(0,it.y,it.d,it.w,`WEST_${it.id.toUpperCase()}`); addText(35,it.y+it.w/2,`WEST ${it.id} y${it.y}mm`,70)})
+    addText(KITCHEN.width/2,KITCHEN.length-220,'NORTH (N)',120)
+    addText(KITCHEN.width/2,120,'SOUTH (S)',120)
+    addText(120,KITCHEN.length/2,'WEST',100)
+    addText(KITCHEN.width-360,KITCHEN.length/2,'EAST',100)
+    lines.push('0','ENDSEC','0','EOF')
+    return lines.join('\n')
+  }
+  const exportPlanDxf=()=>downloadText('kitchen-2d-plan-coohom-background.dxf',buildPlanDxf(),'application/dxf')
+  const buildCoohomGuide=()=>{
+    const eastRows=east.map(it=>`| East | ${it.id} | ${it.y} | ${it.w} | ${it.d} | ${it.h||880} |`).join('\n')
+    const westRows=west.map(it=>`| West | ${it.id} | ${it.y} | ${it.w} | ${it.d} | ${it.h||400} |`).join('\n')
+    return `# Coohom Native Cabinet Rebuild Guide
+
+Use the exported 2D plan as a background only. Rebuild the room, counters, cabinets, appliances, window, and door with Coohom native objects.
+
+## Import Background
+
+1. Export SVG, PNG, or DXF from the React app.
+2. In Coohom Floorplanner, import it as a plan/background reference.
+3. Set scale using the full room size: ${KITCHEN.width} mm wide x ${KITCHEN.length} mm long.
+4. Confirm North is at the top of the imported plan and South is at the bottom.
+5. Lock the background layer before placing native cabinets.
+
+## Room
+
+- Room width: ${KITCHEN.width} mm.
+- Room length: ${KITCHEN.length} mm.
+- Wall height: ${KITCHEN.height} mm.
+- South door: ${KITCHEN.door.w} mm wide, centered at x${KITCHEN.door.x} mm.
+- North window: ${KITCHEN.window.w} mm wide, ${KITCHEN.window.h} mm high, sill ${KITCHEN.window.sill} mm.
+- North clear zone: ${KITCHEN.northClear} mm with no counter.
+
+## Native Cabinet Runs
+
+- East wall: create a 600D base counter from South y0 to y${KITCHEN.length-KITCHEN.northClear}.
+- East wall: create 320D lower upper cabinets and 550D top upper cabinets above the counter.
+- West wall: keep y0 to y${KITCHEN.westGap.to} completely clear for the door zone from floor to ceiling.
+- West wall: create a 400D counter only from y${KITCHEN.westGap.to} to y${KITCHEN.length-KITCHEN.northClear}.
+- West wall: create 320D lower upper cabinets and 450D top upper cabinets only after the door clear zone.
+
+## Placement Table
+
+Y is measured in millimeters from the South wall toward the North wall.
+
+| Wall | Item | South Y mm | Width Along Wall mm | Depth mm | Height mm |
+| --- | --- | ---: | ---: | ---: | ---: |
+${eastRows}
+${westRows}
+
+## Coohom Rebuild Notes
+
+- Use Coohom native base cabinets, wall cabinets, appliances, sink, chimney, and shaft objects.
+- Keep the East gas as a cooktop with a compact chimney above it.
+- Keep dishwasher north of gas, and washing machine last near the north window.
+- Keep purifier close to sink on the West wall.
+- Keep the West shaft fixed at the north-west end.
+- Hide or delete the imported background after native cabinets are rebuilt.
+`
+  }
+  const exportCoohomGuide=()=>downloadText('coohom-native-rebuild-guide.md',buildCoohomGuide(),'text/markdown')
   const ThreeDRender=()=>{
     const mountRef=useRef(null)
     useEffect(()=>{
@@ -229,6 +366,10 @@ export default function App(){
       <button onClick={()=>setView('west')} style={{padding:'10px 18px',background:view==='west'?'#C4B5A5':'#fff',color:view==='west'?'#111':'#111',border:'2px solid #C4B5A5',borderRadius:10,fontWeight:800}}>West Wall View + Cabinets</button>
       <button onClick={()=>setView('three')} style={{padding:'10px 18px',background:view==='three'?'#2f6f6d':'#fff',color:view==='three'?'#fff':'#111',border:'2px solid #2f6f6d',borderRadius:10,fontWeight:800}}>Create 3D Render</button>
       <button onClick={export3DScreenshot} disabled={view!=='three'} style={{padding:'10px 18px',background:view==='three'?'#111':'#ddd',color:view==='three'?'#fff':'#777',border:'none',borderRadius:10,fontWeight:800}}>3D Screenshot</button>
+      <button onClick={exportPlanSvg} style={{padding:'10px 18px',background:'#fff',color:'#111',border:'2px solid #7b3f21',borderRadius:10,fontWeight:800}}>Export 2D SVG</button>
+      <button onClick={exportPlanPng} style={{padding:'10px 18px',background:'#fff',color:'#111',border:'2px solid #7b3f21',borderRadius:10,fontWeight:800}}>Export 2D PNG</button>
+      <button onClick={exportPlanDxf} style={{padding:'10px 18px',background:'#fff',color:'#111',border:'2px solid #7b3f21',borderRadius:10,fontWeight:800}}>Export 2D DXF</button>
+      <button onClick={exportCoohomGuide} style={{padding:'10px 18px',background:'#7b3f21',color:'#fff',border:'2px solid #7b3f21',borderRadius:10,fontWeight:800}}>Coohom Guide</button>
       <button onClick={exportJSON} style={{padding:'10px 18px',background:'#111',color:'#fff',border:'none',borderRadius:10,fontWeight:800}}>Export JSON</button>
       <span style={{padding:'10px 14px',background:v.all?'#d1fae5':'#fee2e2',borderRadius:10,fontWeight:800}}>{v.all?'Rule #9 Valid':'Invalid'} East:{v.eastOk?'OK':'No'} West:{v.westOk?'OK':'No'}</span>
     </div>
