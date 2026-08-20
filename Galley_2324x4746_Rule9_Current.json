@@ -1,0 +1,150 @@
+{
+  "kitchen": {
+    "width_mm": 2324,
+    "length_mm": 4746,
+    "height_mm": 2700,
+    "doorWidth_mm": 1100,
+    "window": {
+      "w_mm": 1100,
+      "h_mm": 1800,
+      "sill_mm": 900
+    },
+    "shaft": {
+      "w_mm": 610,
+      "l_mm": 838
+    },
+    "northClear_mm": 300,
+    "westOpenGap_mm": 920,
+    "walkwayFloor_mm": 1324,
+    "walkwayEye_mm": 1004
+  },
+  "rule9_locked": {
+    "east_right_south_to_north": "Gas stove middle (y2000) -> Dishwasher north of gas (y2850) -> Washing Machine LAST near North window (y3800) - continuous shelves till north window wall no tall box going to roof, hidden chimney small covered, LED warm, 600D base",
+    "west_left_south_to_north": "920 open gap near South door (300-1220) no counter -> Microwave 500W (y1300) -> Food Processor 500W (y1900) -> Water Purifier near Sink (y3350) hidden under upper 320D with LED touching shaft side -> Sink almost touching shaft (y3550) -> Shaft 610x838 LAST at NW (y4146)"
+  },
+  "east_items": [
+    {
+      "id": "gas",
+      "name": "Gas Stove Middle - hidden chimney small",
+      "w": 70,
+      "d": 60,
+      "h": 90,
+      "x": 202.4,
+      "y": 200,
+      "angle": 0
+    },
+    {
+      "id": "spice",
+      "name": "Spice Slider 150 open",
+      "w": 15,
+      "d": 50,
+      "h": 90,
+      "x": 207.4,
+      "y": 185,
+      "angle": 0
+    },
+    {
+      "id": "dishwasher",
+      "name": "Dishwasher north of Gas - 600W",
+      "w": 60,
+      "d": 60,
+      "h": 88,
+      "x": 202.4,
+      "y": 285,
+      "angle": 0
+    },
+    {
+      "id": "washing",
+      "name": "Washing Machine LAST near North window",
+      "w": 60,
+      "d": 60,
+      "h": 88,
+      "x": 202.4,
+      "y": 380,
+      "angle": 0
+    }
+  ],
+  "west_items": [
+    {
+      "id": "microwave",
+      "name": "Microwave 500W",
+      "w": 50,
+      "d": 40,
+      "h": 45,
+      "x": 20,
+      "y": 130,
+      "angle": 0
+    },
+    {
+      "id": "foodprocessor",
+      "name": "Food Processor 500W",
+      "w": 50,
+      "d": 40,
+      "h": 35,
+      "x": 20,
+      "y": 190,
+      "angle": 0
+    },
+    {
+      "id": "waterpurifier",
+      "name": "Water Purifier near Sink touching shaft - hidden under upper",
+      "w": 30,
+      "d": 30,
+      "h": 40,
+      "x": 20,
+      "y": 335,
+      "angle": 0
+    },
+    {
+      "id": "sink",
+      "name": "Sink 600W almost touching shaft",
+      "w": 60,
+      "d": 40,
+      "h": 90,
+      "x": 20,
+      "y": 355,
+      "angle": 0
+    },
+    {
+      "id": "shaft",
+      "name": "Shaft 61x83.8 at NW LAST",
+      "w": 61,
+      "d": 83.8,
+      "h": 270,
+      "x": 30.5,
+      "y": 432.7,
+      "angle": 0
+    }
+  ],
+  "upper": {
+    "lower_shallow": {
+      "d_mm": 320,
+      "h_mm": 500,
+      "at_mm": 1350,
+      "led": true
+    },
+    "east_top": {
+      "d_mm": 550,
+      "h_mm": 800,
+      "from_mm": 1900,
+      "to_mm": 2700,
+      "led": true,
+      "rule": "continuous till north window wall no tall box"
+    },
+    "west_top": {
+      "d_mm": 450,
+      "h_mm": 800,
+      "from_mm": 1900,
+      "to_mm": 2700,
+      "led": true,
+      "rule": "full height to top till ceiling"
+    }
+  },
+  "ai_api": {
+    "move_examples": [
+      "window.kitchenAPI.moveItem('west','sink', 3550) // almost touching shaft",
+      "window.kitchenAPI.moveItem('east','washing', 3800) // LAST near north",
+      "window.kitchenAPI.moveItem('west','waterpurifier', 3350) // near sink"
+    ]
+  }
+}
