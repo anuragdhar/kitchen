@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>North Window — 2 Bays Centre Mullion (2' Fixed Transom)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#f4efe7;--paper:#fff;--ink:#1a1a18;--muted:#6b6560;--line:#d9d0c3;--frame:#2b2b2b;--accent:#c05a2b}
+  *{box-sizing:border-box} html,body{margin:0;background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans",system-ui,sans-serif}
+  .topbar{position:sticky;top:0;z-index:10;background:#11110f;color:#f4efe7;border-bottom:1px solid #2a2a28;display:flex;align-items:center;justify-content:space-between;padding:14px 24px;flex-wrap:wrap;gap:10px}
+  .topbar h1{margin:0;font-family:"Newsreader",serif;font-weight:500;font-size:19px;letter-spacing:-0.02em}
+  .topbar h1 span{font-weight:400;opacity:0.7;font-size:13px;font-family:"IBM Plex Sans",sans-serif;margin-left:10px;letter-spacing:0.02em}
+  .topbar .meta{font-family:"IBM Plex Mono",monospace;font-size:11px;opacity:0.7;letter-spacing:0.06em}
+  .wrap{max-width:1220px;margin:0 auto;padding:28px 20px 40px;display:grid;grid-template-columns:1.18fr 0.82fr;gap:22px}
+  @media(max-width:940px){.wrap{grid-template-columns:1fr}}
+  .card{background:var(--paper);border:1px solid var(--line);box-shadow:0 1px 0 rgba(0,0,0,0.04),0 8px 24px rgba(0,0,0,0.06)}
+  .card-pad{padding:18px}
+  .label{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);font-weight:500}
+  .h2{font-family:"Newsreader",serif;font-size:18px;font-weight:500;margin:6px 0 2px}
+  .sub{font-size:12.5px;color:var(--muted);line-height:1.5;margin:0}
+  .drawing{background:var(--paper);border:1px solid var(--line);padding:16px;display:flex;flex-direction:column;align-items:center}
+  .drawing-head{width:100%;display:flex;justify-content:space-between;align-items:center;padding:4px 2px 12px;border-bottom:1px solid var(--line);margin-bottom:14px;flex-wrap:wrap;gap:10px}
+  .pill{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:0.08em;padding:6px 10px;border:1px solid var(--line);background:#fff;cursor:pointer;text-transform:uppercase;color:var(--muted)}
+  .pill.active{background:var(--ink);color:#fff;border-color:var(--ink)}
+  svg.window-svg{width:100%;max-width:440px;height:auto;display:block}
+  .dim{font-family:"IBM Plex Mono",monospace;font-size:9px;fill:var(--muted)}
+  .dim-line{stroke:var(--muted);stroke-width:0.7}
+  .badge{font-family:"IBM Plex Mono",monospace;font-size:7.2px;letter-spacing:0.08em;fill:#fff;font-weight:600}
+  .controls{display:flex;flex-direction:column;gap:16px}
+  .control-group{border:1px solid var(--line);background:#fbfaf8;padding:14px}
+  .row{display:flex;justify-content:space-between;align-items:center;margin:10px 0;gap:10px}
+  .row label{font-size:12.5px;font-weight:500}
+  .row .val{font-family:"IBM Plex Mono",monospace;font-size:11px;background:#fff;border:1px solid var(--line);padding:4px 8px;min-width:92px;text-align:right}
+  input[type=range]{width:100%;accent-color:var(--ink);height:4px}
+  .select{width:100%;padding:8px 10px;border:1px solid var(--line);background:#fff;font-size:13px}
+  .btn{width:100%;padding:11px 12px;border:1px solid var(--ink);background:var(--ink);color:#fff;font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer}
+  .btn.secondary{background:#fff;color:var(--ink)}
+  .spec-table{width:100%;border-collapse:collapse;margin-top:8px}
+  .spec-table th{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);text-align:left;padding:6px 0;border-bottom:1px solid var(--line);font-weight:500}
+  .spec-table td{font-size:12.5px;padding:7px 0;border-bottom:1px solid #eee}
+  .spec-table td:last-child{text-align:right;font-family:"IBM Plex Mono",monospace;font-size:11px}
+  .note{font-size:11.5px;color:var(--muted);line-height:1.6;background:#fbfaf8;border-left:2px solid var(--accent);padding:10px 12px}
+  .chip{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:0.06em;padding:3px 7px;border:1px solid var(--line);background:#fff}
+  .open-actions{display:flex;gap:8px;margin-top:12px}
+  .open-actions button{flex:1}
+  .sill-bar{width:100%;height:8px;background:repeating-linear-gradient(45deg,#d9d0c3 0 6px,#c8bdaa 6px 12px);border:1px solid #b8aa95;margin-top:8px}
+  .explain{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+  .explain div{border:1px solid var(--line);background:#fbfaf8;padding:10px 12px}
+  .explain strong{font-size:12px}
+  .explain p{font-size:11.5px;color:var(--muted);margin:6px 0 0;line-height:1.5}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <h1>North Window — 2 Bays Centre Mullion <span>1100W × 1800H · Sill 900 AFFL · 2′-0″ Fixed Top</span></h1>
+  <div class="meta">KIT-09 · 2-BAY PROPER</div>
+</div>
+<div class="wrap">
+  <div>
+    <div class="drawing card">
+      <div class="drawing-head">
+        <div>
+          <div class="label">Elevation — North Wall (Inside View) — 2 Partitions at Centre</div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--muted);margin-top:4px">Scale 1:20 · Top 610 (2′-0″) FIXED ×2 · Bottom 1190 SLIDING ×2 — one centre mullion only</div>
+        </div>
+        <div style="display:flex;gap:6px"><button class="pill active" id="btnClosed">Closed</button><button class="pill" id="btnOpen">Open</button><button class="pill" id="btnPrint">Print</button></div>
+      </div>
+      <svg class="window-svg" viewBox="0 0 360 520" role="img">
+        <defs>
+          <marker id="arrowHead" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#c05a2b"/></marker>
+          <linearGradient id="glassGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#eef5fb"/><stop offset="100%" stop-color="#d6e6f2"/></linearGradient>
+          <pattern id="hatch" width="6" height="6" patternTransform="rotate(45)" patternUnits="userSpaceOnUse"><rect width="6" height="6" fill="#f4efe7"/><line x1="0" y1="0" x2="0" y2="6" stroke="#d9d0c3" stroke-width="1"/></pattern>
+        </defs>
+        <rect x="10" y="10" width="340" height="460" fill="url(#hatch)" stroke="#d9d0c3" stroke-width="0.8" stroke-dasharray="4 3"/>
+        <text x="180" y="26" text-anchor="middle" class="dim" style="font-size:8px;letter-spacing:0.14em">NORTH WALL — INSIDE VIEW</text>
+        <line x1="40" y1="38" x2="320" y2="38" class="dim-line"/><line x1="40" y1="34" x2="40" y2="42" class="dim-line"/><line x1="320" y1="34" x2="320" y2="42" class="dim-line"/>
+        <text x="180" y="36" text-anchor="middle" class="dim" dy="-6">1100 — 2 × 550 bays (centre partition)</text>
+        <line x1="18" y1="50" x2="18" y2="470" class="dim-line"/><line x1="14" y1="50" x2="22" y2="50" class="dim-line"/><line x1="14" y1="470" x2="22" y2="470" class="dim-line"/>
+        <text x="14" y="260" text-anchor="middle" class="dim" transform="rotate(-90 14 260)">1800 (5′-11″)</text>
+        <line x1="330" y1="470" x2="330" y2="500" class="dim-line" stroke-dasharray="2 2"/><text x="338" y="490" class="dim">900 SILL</text>
+        <g id="windowGroup" transform="translate(40,50)">
+          <rect x="0" y="0" width="280" height="420" fill="#fff" stroke="#2b2b2b" stroke-width="3"/>
+          <!-- LEFT-TOP: METAL 12-inch EXHAUST FAN (300mm) - HIGH CONTRAST -->
+          <rect x="6" y="6" width="132" height="118" rx="2" fill="#1a1a18" stroke="#111" stroke-width="1.4"/>
+          <rect x="10" y="10" width="124" height="110" rx="1" fill="#eef1f3" stroke="#c8cfd6" stroke-width="1"/>
+          <!-- louvre lines -->
+          <line x1="16" y1="24" x2="122" y2="24" stroke="#b8c2cc" stroke-width="0.9"/><line x1="16" y1="38" x2="122" y2="38" stroke="#b8c2cc" stroke-width="0.9"/><line x1="16" y1="52" x2="122" y2="52" stroke="#b8c2cc" stroke-width="0.9"/><line x1="16" y1="66" x2="122" y2="66" stroke="#b8c2cc" stroke-width="0.9"/><line x1="16" y1="80" x2="122" y2="80" stroke="#b8c2cc" stroke-width="0.9"/><line x1="16" y1="94" x2="122" y2="94" stroke="#b8c2cc" stroke-width="0.9"/><line x1="16" y1="108" x2="122" y2="108" stroke="#b8c2cc" stroke-width="0.9"/>
+          <!-- fan circle -->
+          <circle id="exhaustCircle" cx="72" cy="66" r="36" fill="#ffffff" stroke="#1a1a18" stroke-width="2.4"/>
+          <circle cx="72" cy="66" r="34" fill="none" stroke="#c05a2b" stroke-width="1" opacity="0.9"/>
+          <g id="fanBlades" opacity="0.95">
+            <ellipse cx="72" cy="46" rx="10" ry="16" fill="#2b2b2b" stroke="#fff" stroke-width="0.6" transform="rotate(0 72 66)"/>
+            <ellipse cx="72" cy="46" rx="10" ry="16" fill="#2b2b2b" stroke="#fff" stroke-width="0.6" transform="rotate(90 72 66)"/>
+            <ellipse cx="72" cy="46" rx="10" ry="16" fill="#2b2b2b" stroke="#fff" stroke-width="0.6" transform="rotate(180 72 66)"/>
+            <ellipse cx="72" cy="46" rx="10" ry="16" fill="#2b2b2b" stroke="#fff" stroke-width="0.6" transform="rotate(270 72 66)"/>
+          </g>
+          <circle cx="72" cy="66" r="7" fill="#c05a2b" stroke="#fff" stroke-width="1.2"/>
+          <rect id="top1" x="142" y="6" width="132" height="118" rx="1" fill="url(#glassGrad)" stroke="#b8cfe2" stroke-width="0.9"/>
+          <rect id="bot0Glass" x="6" y="132" width="132" height="282" rx="1" fill="url(#glassGrad)" stroke="#b8cfe2" stroke-width="0.9"/>
+          <rect id="bot1Glass" x="142" y="132" width="132" height="282" rx="1" fill="url(#glassGrad)" stroke="#b8cfe2" stroke-width="0.9"/>
+          <rect x="138" y="6" width="4" height="408" fill="#2b2b2b"/>
+          <rect id="hBar" x="0" y="124" width="280" height="8" fill="#2b2b2b"/><rect id="hCap" x="2" y="124" width="276" height="2" fill="#4a4a4a"/>
+          <g id="sashLeft" style="transition:transform 380ms cubic-bezier(.4,0,.2,1)"><rect x="8" y="134" width="128" height="278" fill="none" stroke="#2b2b2b" stroke-width="1.6"/><rect x="10" y="136" width="124" height="274" fill="none" stroke="#2b2b2b" stroke-width="0.6" opacity="0.45"/><rect x="118" y="255" width="5" height="28" rx="1.5" fill="#2b2b2b" stroke="#fff" stroke-width="0.6"/></g>
+          <g id="sashRight" style="transition:transform 380ms cubic-bezier(.4,0,.2,1)"><rect x="144" y="134" width="128" height="278" fill="none" stroke="#2b2b2b" stroke-width="1.6"/><rect x="146" y="136" width="124" height="274" fill="none" stroke="#2b2b2b" stroke-width="0.6" opacity="0.45"/><rect x="144" y="255" width="5" height="28" rx="1.5" fill="#2b2b2b" stroke="#fff" stroke-width="0.6"/></g>
+          <g><rect x="12" y="62" width="54" height="14" rx="7" fill="#c05a2b"/><text x="39" y="72" text-anchor="middle" class="badge">12″ METAL</text><rect x="18" y="82" width="54" height="10" rx="5" fill="#1a1a18"/><text x="45" y="89" text-anchor="middle" class="badge" style="font-size:6px">EXHAUST</text><rect x="164" y="62" width="48" height="14" rx="7" fill="#1a1a18"/><text x="188" y="72" text-anchor="middle" class="badge">FIXED</text></g>
+          <g id="openBadges"><rect x="24" y="360" width="62" height="14" rx="7" fill="#c05a2b"/><text x="55" y="370" text-anchor="middle" class="badge">OPEN →</text><rect x="194" y="360" width="62" height="14" rx="7" fill="#c05a2b"/><text x="225" y="370" text-anchor="middle" class="badge">← OPEN</text></g>
+          <g id="openArrows" opacity="0"><line x1="55" y1="300" x2="86" y2="300" stroke="#c05a2b" stroke-width="1.2" marker-end="url(#arrowHead)"/><line x1="225" y1="300" x2="194" y2="300" stroke="#c05a2b" stroke-width="1.2" marker-end="url(#arrowHead)"/></g>
+        </g>
+        <g id="dimTransom"><line x1="334" y1="50" x2="334" y2="174" class="dim-line"/><text x="334" y="114" text-anchor="middle" class="dim" transform="rotate(90 334 114)">610 (2′-0″) FIXED ×2</text></g>
+        <g id="dimBottom"><line x1="334" y1="182" x2="334" y2="470" class="dim-line"/><text x="334" y="330" text-anchor="middle" class="dim" transform="rotate(90 334 330)">1190 (3′-11″) SLIDING ×2</text></g>
+        <line x1="10" y1="500" x2="350" y2="500" stroke="#1a1a18" stroke-width="1.2"/><text x="12" y="514" class="dim">F.F.L ±0</text><text x="270" y="514" class="dim">SILL 900 AFFL</text>
+      </svg>
+      <div class="sill-bar"></div>
+      <div class="note" style="margin-top:10px;border-left-color:#1a1a18"><strong style="color:var(--ink)">Note — shaft alternative:</strong> Hole in shaft wall (west shaft 61×83.8 at y4146) can also host exhaust. Window left-top metal 12″ shown as primary; shaft mount kept as alternative per your note.</div>
+      <div style="width:100%;margin-top:12px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
+        <div style="display:flex;gap:12px;flex-wrap:wrap"><span class="chip"><i style="background:#1a1a18;width:12px;height:12px;display:inline-block;border:1px solid #0003;vertical-align:middle;margin-right:6px"></i> FIXED top ×2</span><span class="chip"><i style="background:#c05a2b;width:12px;height:12px;display:inline-block;border:1px solid #0003;vertical-align:middle;margin-right:6px"></i> SLIDING bottom ×2</span></div>
+        <div class="label" style="color:var(--accent)">One centre mullion only</div>
+      </div>
+      <div class="explain">
+        <div><strong>Top — 610 mm: LEFT 12″ METAL EXHAUST / RIGHT FIXED</strong><p>Left 550 mm bay now holds 300 mm metal exhaust (heavy-duty, auto-shutter). Right bay stays fixed glass. Both 610 high.</p></div>
+        <div style="border-left-color:var(--accent)"><strong style="color:var(--accent)">Bottom — 1190 mm SLIDING ×2</strong><p>Both side panels slide. One centre mullion only.</p></div>
+      </div>
+    </div>
+    <div class="card card-pad" style="margin-top:14px">
+      <div class="label">Section — Head → Transom → Sill (centre mullion)</div>
+      <svg viewBox="0 0 520 110" style="width:100%;height:auto;margin-top:10px">
+        <line x1="10" y1="70" x2="510" y2="70" stroke="#d9d0c3" stroke-width="0.8"/>
+        <rect x="20" y="20" width="480" height="12" fill="#2b2b2b"/><rect x="20" y="84" width="480" height="12" fill="#2b2b2b"/>
+        <rect x="140" y="20" width="240" height="76" fill="none" stroke="#1a1a18" stroke-width="1.6"/>
+        <rect x="140" y="52" width="240" height="10" fill="#1a1a18"/><rect x="144" y="54" width="232" height="2" fill="#6b6560"/>
+        <rect x="150" y="30" width="104" height="18" fill="#d6e6f2" stroke="#8fb3d1" stroke-width="1"/><rect x="266" y="30" width="104" height="18" fill="#d6e6f2" stroke="#8fb3d1" stroke-width="1"/>
+        <rect x="150" y="66" width="104" height="18" fill="#d6e6f2" stroke="#c05a2b" stroke-width="1"/><rect x="266" y="66" width="104" height="18" fill="#d6e6f2" stroke="#c05a2b" stroke-width="1"/>
+        <text x="260" y="15" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="8.5" fill="#6b6560">HEAD → TRANSOM (610) → SILL — 1 CENTRE MULLION</text>
+      </svg>
+    </div>
+  </div>
+  <div class="controls">
+    <div class="card card-pad">
+      <div class="label">Configuration — 2 Bays</div>
+      <div class="h2">Centre Partition Only</div>
+      <p class="sub">As you asked: <b>2 partitions (one centre mullion)</b>. Top = 610 mm fixed ×2. Bottom = 1190 mm sliding ×2 — both sides open. Each bay = 550 mm (for 1100W). Remaining height logic preserved.</p>
+      <div class="control-group" style="margin-top:14px">
+        <div class="row"><label>Frame finish</label><span class="val" id="valFinish">Charcoal #2B2B2B</span></div>
+        <select class="select" id="selFinish"><option value="#2b2b2b">Charcoal Aluminium — #2B2B2B</option><option value="#ffffff">White uPVC — #FFFFFF</option><option value="#7a5a3a">Teak Timber — #7A5A3A</option><option value="#1a1a18">Matt Black — #1A1A18</option></select>
+        <div class="row" style="margin-top:10px"><label>Bottom operation</label><span class="val" id="valOp">Sliding ×2</span></div>
+        <select class="select" id="selOp"><option value="sliding">Sliding — both panels</option><option value="casement">Casement — outward</option><option value="fixed">Fixed — display only</option></select>
+      </div>
+      <div class="control-group">
+        <div class="label" style="margin-bottom:8px">Dimensions</div>
+        <div class="row"><label>Overall Width (W)</label><span class="val" id="valW">1100 mm</span></div><input type="range" id="rngW" min="900" max="1500" step="10" value="1100">
+        <div class="row"><label>Overall Height (H)</label><span class="val" id="valH">1800 mm</span></div><input type="range" id="rngH" min="1500" max="2400" step="10" value="1800">
+        <div class="row"><label>Top Fixed Height</label><span class="val" id="valTop">610 mm · 2'-0"</span></div><input type="range" id="rngTop" min="450" max="750" step="5" value="610">
+        <div class="row" style="background:#fff;border:1px dashed #d9d0c3;padding:8px 10px"><label style="color:var(--accent)">Bottom Height</label><span class="val" id="valBot" style="border-color:var(--accent);color:var(--accent)">1190 mm</span></div>
+        <div class="row"><label>Each bay width</label><span class="val" id="valBay">550 mm</span></div>
+        <div class="row"><label>Sill AFFL</label><span class="val">900 mm</span></div>
+      </div>
+      <div class="open-actions"><button class="btn" id="btnAnimate">Animate Open / Close</button><button class="btn secondary" id="btnPrint">Print / Save PDF</button></div>
+      <div class="note" style="margin-top:12px"><strong style="color:var(--ink)">Proper:</strong> one centre mullion = 2 partitions. Top fixed for light, bottom sliding for ventilation at hand height. No extra mullions.</div>
+    </div>
+    <div class="card card-pad">
+      <div class="label">Spec — 2 Bays</div>
+      <table class="spec-table"><tr><th>Element</th><th>Detail</th></tr><tr><td>Bays</td><td>2 × 550 mm</td></tr><tr><td>Top — 2 lights</td><td>Fixed · 5 mm tough. · EPDM</td></tr><tr><td>Bottom — 2 lights</td><td>Sliding ×2 · twin-track + fly-mesh</td></tr><tr><td>Frame</td><td id="specFrame">90×45 Alu · charcoal</td></tr><tr><td>Ventilation</td><td id="specOpen">~50% bottom · 0.65 m²</td></tr><tr><td>Overall</td><td id="specOverall">1100×1800</td></tr></table>
+    </div>
+    <div class="card card-pad" style="background:#11110f;color:#f4efe7;border-color:#11110f">
+      <div class="label" style="color:#a8a29c">For kitchenConfig.js</div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;line-height:1.7;margin-top:8px;color:#d9d0c3">
+        <div>window: { width:<span id="codeW">1100</span>, height:<span id="codeH">1800</span>, sill:900,</div>
+        <div style="padding-left:14px">sections:2, transom:<span id="codeT">610</span>, top:"fixed×2", bottom:"sliding×2" }</div>
+      </div>
+      <button class="btn" style="background:#c05a2b;border-color:#c05a2b;margin-top:12px" id="btnApply">Copy snippet</button>
+    </div>
+  </div>
+</div>
+<script>
+const rngW=document.getElementById('rngW'),rngH=document.getElementById('rngH'),rngTop=document.getElementById('rngTop');
+const valW=document.getElementById('valW'),valH=document.getElementById('valH'),valTop=document.getElementById('valTop'),valBot=document.getElementById('valBot'),valBay=document.getElementById('valBay');
+const valFinish=document.getElementById('valFinish'),selFinish=document.getElementById('selFinish'),selOp=document.getElementById('selOp'),valOp=document.getElementById('valOp');
+const specFrame=document.getElementById('specFrame'),specOpen=document.getElementById('specOpen'),specOverall=document.getElementById('specOverall');
+const codeW=document.getElementById('codeW'),codeH=document.getElementById('codeH'),codeT=document.getElementById('codeT');
+const btnClosed=document.getElementById('btnClosed'),btnOpen=document.getElementById('btnOpen');
+const sashLeft=document.getElementById('sashLeft'),sashRight=document.getElementById('sashRight'),openArrows=document.getElementById('openArrows');
+let isOpen=false;
+function mmToFtIn(mm){const inch=mm/25.4;const ft=Math.floor(inch/12);const inn=Math.round(inch%12);return ft+"'"+String(inn).padStart(2,'0')+'"';}
+function update(){
+ const W=parseInt(rngW.value),H=parseInt(rngH.value),T=parseInt(rngTop.value);
+ const B=H-T; if(B<600){rngTop.value=H-600;return update();}
+ valW.textContent=W+" mm · "+mmToFtIn(W); valH.textContent=H+" mm · "+mmToFtIn(H); valTop.textContent=T+" mm · "+mmToFtIn(T);
+ valBot.textContent=B+" mm · "+mmToFtIn(B); valBay.textContent=Math.round(W/2)+" mm";
+ specOverall.textContent=W+"×"+H+" ("+Math.round(W/2)+" per bay)"; codeW.textContent=W;codeH.textContent=H;codeT.textContent=T;
+ const py=(T/H)*420;
+ const hBar=document.getElementById('hBar'),hCap=document.getElementById('hCap');
+ if(hBar) hBar.setAttribute('y',String(py-6)); if(hCap) hCap.setAttribute('y',String(py-6));
+ ["top0","top1"].forEach(id=>{const el=document.getElementById(id); if(el) el.setAttribute('height',String(py-12));});
+ ["bot0Glass","bot1Glass"].forEach(id=>{const el=document.getElementById(id); if(el){el.setAttribute('y',String(py+2)); el.setAttribute('height',String(420-(py+2)-6));}});
+ ["sashLeft","sashRight"].forEach(id=>{const g=document.getElementById(id); if(!g) return; const r=g.querySelectorAll('rect'); if(r[0]){r[0].setAttribute('y',String(py+4)); r[0].setAttribute('height',String(420-(py+4)-6));} if(r[1]){r[1].setAttribute('y',String(py+8)); r[1].setAttribute('height',String(420-(py+8)-10));}});
+ const m2=((W/1000)*(B/1000)*0.5).toFixed(2); specOpen.textContent="~50% bottom · "+m2+" m²";
+}
+function setFinish(c){document.querySelectorAll('#windowGroup rect[fill=\"#2b2b2b\"]').forEach(r=>r.setAttribute('fill',c)); const hBar=document.getElementById('hBar'); if(hBar) hBar.setAttribute('fill',c); document.querySelectorAll('rect[width=\"4\"]')[0]?.setAttribute('fill',c); const labels={"#2b2b2b":"Charcoal #2B2B2B","#ffffff":"White #FFFFFF","#7a5a3a":"Teak #7A5A3A","#1a1a18":"Matt Black #1A1A18"}; valFinish.textContent=labels[c]||c; }
+function applyOpen(open){ if(!sashLeft||!sashRight) return; const op=selOp.value; if(op==='fixed') open=false; if(open){ sashLeft.style.transform="translateX(-16px)"; sashRight.style.transform="translateX(16px)"; openArrows.style.opacity="1"; } else { sashLeft.style.transform="translateX(0)"; sashRight.style.transform="translateX(0)"; openArrows.style.opacity="0"; } }
+rngW.addEventListener('input',update);rngH.addEventListener('input',update);rngTop.addEventListener('input',update);
+selFinish.addEventListener('change',e=>setFinish(e.target.value)); selOp.addEventListener('change',e=>{valOp.textContent=e.target.options[e.target.selectedIndex].text.split(' —')[0]; applyOpen(isOpen);});
+btnClosed.addEventListener('click',()=>{btnClosed.classList.add('active');btnOpen.classList.remove('active');isOpen=false;applyOpen(false);});
+btnOpen.addEventListener('click',()=>{btnOpen.classList.add('active');btnClosed.classList.remove('active');isOpen=true;applyOpen(true);});
+document.getElementById('btnAnimate').addEventListener('click',()=>{isOpen=!isOpen;applyOpen(isOpen); if(isOpen){btnOpen.classList.add('active');btnClosed.classList.remove('active');} else {btnClosed.classList.add('active');btnOpen.classList.remove('active');}});
+document.getElementById('btnPrint').addEventListener('click',()=>window.print());
+document.getElementById('btnApply').addEventListener('click',async()=>{const t=`window: { width:${rngW.value}, height:${rngH.value}, sill:900, sections:2, transomHeight:${rngTop.value}, top:\"fixed ×2\", bottom:\"sliding ×2\" }`; try{await navigator.clipboard.writeText(t); const b=document.getElementById('btnApply'); b.textContent="Copied ✓"; setTimeout(()=>b.textContent="Copy snippet",1200);}catch(e){prompt("Copy:",t);}});
+document.getElementById('windowGroup').addEventListener('click',e=>{const rect=e.currentTarget.getBoundingClientRect(); const y=e.clientY-rect.top; if(y>rect.height*0.38){isOpen=!isOpen;applyOpen(isOpen); if(isOpen){btnOpen.classList.add('active');btnClosed.classList.remove('active');} else {btnClosed.classList.add('active');btnOpen.classList.remove('active');}}});
+document.getElementById('btnPrint').addEventListener('click',()=>window.print());
+update(); setFinish("#2b2b2b");
+</script>
+</body>
+</html>

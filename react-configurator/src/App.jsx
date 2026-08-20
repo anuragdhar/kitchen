@@ -819,9 +819,46 @@ ${westRows}
       addBox('north wall',0,KITCHEN.length,0,KITCHEN.width,45,KITCHEN.height,surface.wall,.88)
       addBox('ceiling',0,0,KITCHEN.height,KITCHEN.width,KITCHEN.length,36,'#f4eadf')
       addBox('recessed ceiling center',310,620,KITCHEN.height-50,1700,3500,28,'#eadac8')
-      addBox('north window',(KITCHEN.width-KITCHEN.window.w)/2,KITCHEN.length+8,KITCHEN.window.sill,KITCHEN.window.w,24,KITCHEN.window.h,surface.glass)
-      addBox('window black frame',(KITCHEN.width-KITCHEN.window.w)/2-24,KITCHEN.length+12,KITCHEN.window.sill-24,KITCHEN.window.w+48,18,32,'#1f2933')
-      addBox('window sill',(KITCHEN.width-KITCHEN.window.w)/2-60,KITCHEN.length-85,KITCHEN.window.sill-80,KITCHEN.window.w+120,150,55,surface.counter)
+      // --- Proper 2-bay north window: centre mullion only — top 610 fixed ×2 / bottom 1190 sliding ×2 ---
+      {
+        const winW = KITCHEN.window.w
+        const winH = KITCHEN.window.h
+        const winSill = KITCHEN.window.sill
+        const winTransom = KITCHEN.window.transomHeight || 610
+        const winBayW = winW / 2
+        const winBaseX = (KITCHEN.width - winW)/2
+        const winY = KITCHEN.length
+        const frameCol = '#2b2b2b'
+        // sill stone
+        addBox('window sill', winBaseX-60, KITCHEN.length-85, winSill-80, winW+120, 150, 55, surface.counter)
+        // outer frame
+        addBox('window head frame', winBaseX-12, winY+8, winSill+winH-14, winW+24, 28, 28, frameCol)
+        addBox('window sill frame', winBaseX-12, winY+8, winSill-14, winW+24, 28, 28, frameCol)
+        addBox('window left jamb', winBaseX-12, winY+8, winSill, 28, 28, winH, frameCol)
+        addBox('window right jamb', winBaseX+winW-16, winY+8, winSill, 28, 28, winH, frameCol)
+        // horizontal transom at 610 from head = sill + (H - 610)
+        addBox('window transom', winBaseX, winY+8, winSill + (winH - winTransom), winW, 28, 28, frameCol)
+        // single centre vertical mullion
+        addBox('window mullion centre', winBaseX+winBayW-10, winY+8, winSill, 20, 20, winH, frameCol)
+        // top: left-top METAL 12-inch exhaust, right-top fixed glass
+        // left-top exhaust housing (replaces glass)
+        addBox('north window exhaust housing left-top', winBaseX + 4, winY+8, winSill + (winH - winTransom) + 8, winBayW - 12, 24, winTransom - 16, '#3a3a3a')
+        addBox('exhaust fan metal face left-top', winBaseX + winBayW/2 - 155, winY+18, winSill + (winH - winTransom/2) - 155, 300, 10, 300, makeMat('#9a9a9a',1,{metalness:.68, roughness:.28}))
+        addBox('exhaust fan hub left-top', winBaseX + winBayW/2 - 28, winY+22, winSill + (winH - winTransom/2) - 28, 56, 12, 56, makeMat('#2b2b2b',1,{metalness:.2, roughness:.5}))
+        // 4 blades hint
+        addBox('exhaust blade 1', winBaseX + winBayW/2 - 110, winY+22, winSill + (winH - winTransom/2) - 12, 220, 4, 24, makeMat('#6e6e6e',1,{metalness:.55, roughness:.35}))
+        addBox('exhaust blade 2', winBaseX + winBayW/2 - 12, winY+22, winSill + (winH - winTransom/2) - 110, 24, 4, 220, makeMat('#6e6e6e',1,{metalness:.55, roughness:.35}))
+        // right-top fixed glass
+        addBox('north window top pane right fixed', winBaseX + winBayW + 10, winY+10, winSill + (winH - winTransom) + 14, winBayW - 22, 10, winTransom - 22, surface.glass)
+        // bottom 2 panes — both sliding (side opening as requested)
+        const bottomH = winH - winTransom - 28
+        for(let i=0;i<2;i++){
+          addBox(`north window bottom pane ${i} sliding`, winBaseX + i*winBayW + 10, winY+10, winSill + 10, winBayW - 22, 10, bottomH - 6, surface.glass)
+          const hx = i===0 ? winBaseX + i*winBayW + winBayW - 28 : winBaseX + i*winBayW + 12
+          addBox(`window handle ${i}`, hx, winY+16, winSill + bottomH/2 + 10, 6, 8, 42, surface.dark)
+        }
+        // note: alternative shaft hole (west shaft 61×83.8) kept as optional — not modelled in 3D, see config NOTES
+      }
       const usableLen=KITCHEN.length
       addBox('runner rug',750,1160,4,820,2500,8,'#8a674a')
       addBox('runner rug inner',810,1260,8,700,2300,6,'#d2b88e')
@@ -1356,9 +1393,29 @@ ${westRows}
       {isNorth? (
         <g>
           <rect x={xOf(612)} y={yOf(2700)} width={wOf(1100)} height={hOf(1800)} fill="rgba(126,184,232,0.32)" stroke="#2f8ac6" strokeWidth="2"/>
-          <text x={xOf(1162)} y={yOf(1800)} textAnchor="middle" fontSize="16" fontWeight="900" fill="#1f5f88">Window 1100 x 1800 sill 900</text>
+          {/* transom at 610 from head (2′-0″) */}
+          <line x1={xOf(612)} y1={yOf(2700-610)} x2={xOf(1712)} y2={yOf(2700-610)} stroke="#1a1a18" strokeWidth="3"/>
+          {/* centre vertical mullion — 2 partitions */}
+          <line x1={xOf(612+550)} y1={yOf(2700)} x2={xOf(612+550)} y2={yOf(900)} stroke="#1a1a18" strokeWidth="2.2"/>
+          {/* left-top exhaust fan 300mm - HIGH CONTRAST */}
+          <rect x={xOf(612)+8} y={yOf(2700)-10} width={wOf(550)-16} height={hOf(610)-10} fill="#1a1a18" stroke="#111" strokeWidth="1.4"/>
+          <rect x={xOf(612)+16} y={yOf(2700)-10+6} width={wOf(550)-32} height={hOf(610)-22} fill="#eaf0f4" stroke="#c8d2db" strokeWidth="1"/>
+          {/* louvre lines */}
+          <line x1={xOf(612)+20} y1={yOf(2700-120)} x2={xOf(612+550)-20} y2={yOf(2700-120)} stroke="#b8c7d4" strokeWidth="1"/>
+          <line x1={xOf(612)+20} y1={yOf(2700-200)} x2={xOf(612+550)-20} y2={yOf(2700-200)} stroke="#b8c7d4" strokeWidth="1"/>
+          <line x1={xOf(612)+20} y1={yOf(2700-280)} x2={xOf(612+550)-20} y2={yOf(2700-280)} stroke="#b8c7d4" strokeWidth="1"/>
+          <line x1={xOf(612)+20} y1={yOf(2700-360)} x2={xOf(612+550)-20} y2={yOf(2700-360)} stroke="#b8c7d4" strokeWidth="1"/>
+          <line x1={xOf(612)+20} y1={yOf(2700-440)} x2={xOf(612+550)-20} y2={yOf(2700-440)} stroke="#b8c7d4" strokeWidth="1"/>
+          <circle cx={xOf(612+275)} cy={yOf(2700-305)} r={Math.min(wOf(300)/2, hOf(300)/2)} fill="#ffffff" stroke="#1a1a18" strokeWidth="2.6"/>
+          <circle cx={xOf(612+275)} cy={yOf(2700-305)} r={Math.min(wOf(300)/2, hOf(300)/2)-6} fill="none" stroke="#c05a2b" strokeWidth="1.2"/>
+          <circle cx={xOf(612+275)} cy={yOf(2700-305)} r={7} fill="#c05a2b" stroke="#fff" strokeWidth="1.2"/>
+          <line x1={xOf(612+275)-34} y1={yOf(2700-305)} x2={xOf(612+275)+34} y2={yOf(2700-305)} stroke="#2b2b2b" strokeWidth="2.2"/>
+          <line x1={xOf(612+275)} y1={yOf(2700-305)-34} x2={xOf(612+275)} y2={yOf(2700-305)+34} stroke="#2b2b2b" strokeWidth="2.2"/>
+          <text x={xOf(1162)} y={yOf(2430)} textAnchor="middle" fontSize="10" fontWeight="800" fill="#1a1a18">TOP 610 — LEFT: 12″ METAL EXHAUST / RIGHT: FIXED ×1</text>
+          <text x={xOf(1162)} y={yOf(1500)} textAnchor="middle" fontSize="10" fontWeight="800" fill="#c05a2b">BOTTOM 1190 — SLIDING ×2 (both sides)</text>
+          <text x={xOf(1162)} y={yOf(1800)} textAnchor="middle" fontSize="11" fontWeight="900" fill="#1f5f88">Window 1100×1800 sill 900 — 2 BAYS (centre mullion)</text>
           <rect x={xOf(KITCHEN.windowBelow?.x||612)} y={yOf(300)} width={wOf(KITCHEN.windowBelow?.w||1100)} height={hOf(300)} fill="#eaf6fd" stroke="#2f8ac6" strokeDasharray="10 8" opacity="0.72"/>
-          <text x={xOf(1162)} y={yOf(150)} textAnchor="middle" fontSize="13" fontWeight="800" fill="#2e6f99">Below window area only</text>
+          <text x={xOf(1162)} y={yOf(150)} textAnchor="middle" fontSize="11" fontWeight="800" fill="#2e6f99">Below window area only — 300 deep</text>
         </g>
       ):(
         <g>
