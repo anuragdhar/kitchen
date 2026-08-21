@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Kitchen Sink — Family 6 — 3D Viewer (800W + Overhead Rack)</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400&family=Newsreader:opsz,wght@6..72,500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f4efe7;--paper:#fff;--ink:#1a1a18;--muted:#6b6560;--line:#d9d0c3;--accent:#c05a2b}
+*{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans",system-ui,sans-serif}
+.topbar{background:#11110f;color:#f4efe7;padding:14px 18px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+.topbar h1{margin:0;font-family:"Newsreader",serif;font-weight:500;font-size:18px}
+.topbar h1 span{opacity:.7;font-size:12px;font-family:"IBM Plex Sans",sans-serif;margin-left:8px}
+.topbar .meta{font-family:"IBM Plex Mono",monospace;font-size:10px;opacity:.7}
+.wrap{max-width:1180px;margin:0 auto;padding:18px;display:grid;grid-template-columns:1fr 340px;gap:16px}
+@media(max-width:900px){.wrap{grid-template-columns:1fr}}
+.card{background:var(--paper);border:1px solid var(--line);box-shadow:0 1px 0 rgba(0,0,0,.04),0 8px 24px rgba(0,0,0,.06)}
+.card-pad{padding:14px}
+.label{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:500}
+.h2{font-family:"Newsreader",serif;font-size:16px;font-weight:500;margin:6px 0 2px}
+.sub{font-size:12px;color:var(--muted);line-height:1.5;margin:0}
+canvas{width:100%;height:520px;display:block;background:#faf6f1}
+.btn{width:100%;padding:10px 12px;border:1px solid #1a1a18;background:#1a1a18;color:#fff;font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer}
+.btn.secondary{background:#fff;color:#1a1a18}
+.note{font-size:11.5px;color:var(--muted);line-height:1.6;background:#fbfaf8;border-left:2px solid var(--accent);padding:10px 12px;margin-top:10px}
+.chip{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.06em;padding:3px 7px;border:1px solid var(--line);background:#fff;display:inline-block;margin:2px}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{font-family:"IBM Plex Mono",monospace;font-size:10px;text-align:left;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;padding:6px 0;border-bottom:1px solid var(--line)}
+td{padding:7px 0;border-bottom:1px solid #eee}
+td:last-child{text-align:right;font-family:"IBM Plex Mono",monospace;font-size:11px}
+</style>
+<script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.160.0/examples/jsm/"}}</script>
+</head>
+<body>
+<div class="topbar">
+  <h1>West Wall Sink — Family of 6 <span>800W y2850 · 760×440×180 304 SS · Drainboard · 1800H window above · NO counter purifier</span></h1>
+  <div class="meta">3D OFFLINE VIEWER · y2850 + rack y2850 z1350 + purifier y3680</div>
+</div>
+<div class="wrap">
+  <div class="card">
+    <div style="padding:10px 14px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+      <div><div class="label">3D — Orbit to see sink bowl + faucet + overhead rack</div><div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted)">Drag to orbit · Scroll to zoom · Right-drag to pan</div></div>
+      <div style="display:flex;gap:6px"><button class="btn secondary" style="width:auto;padding:6px 10px" id="btnIso">Iso</button><button class="btn secondary" style="width:auto;padding:6px 10px" id="btnTop">Top</button><button class="btn secondary" style="width:auto;padding:6px 10px" id="btnCut">Cutaway walls</button></div>
+    </div>
+    <canvas id="c"></canvas>
+    <div style="padding:10px 14px;display:flex;gap:8px;flex-wrap:wrap">
+      <span class="chip" style="background:#1a1a18;color:#fff">SINK 800 y2850</span><span class="chip" style="background:#f0e6da">DISH RACK 800 z1350 family 6</span><span class="chip" style="background:#7EB8E8">PURIFIER y3680 above</span><span class="chip">SHAFT y4146</span>
+    </div>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:14px">
+    <div class="card card-pad">
+      <div class="label">West wall — what you asked</div>
+      <div class="h2">No item on counter · Purifier above · Sink + overhead dish storage</div>
+      <p class="sub">Counter at y2850 now holds only <b>800W sink</b> for Domestic help washing. Purifier is <b>wall-mounted inside upper at y3680 z1350</b> (not on counter). <b>Overhead 800W×700H rack at same y2850</b> holds family-of-6 vessels — help washes dirty dishes in sink then places directly above.</p>
+      <table style="margin-top:10px"><tr><th>Element</th><th>Detail</th></tr>
+        <tr><td>Counter item</td><td>REMOVED — purifier 400W deleted</td></tr>
+        <tr><td>Sink</td><td>800W 760×440×180 304 SS drainboard</td></tr>
+        <tr><td>Overhead rack</td><td>800×320×700 2-tier SS, 12 plates +12 katoris +6 glasses</td></tr>
+        <tr><td>Purifier</td><td>350W y3680 z1350 wall-mounted north of rack</td></tr>
+        <tr><td>Dishes flow</td><td>Dirty → sink → rack above (drip to sink)</td></tr>
+      </table>
+      <div class="note">In configurator 3D this is the same west block at <code>y2850</code> — if you still see old `y3146 600W` you are on cached <code>kitchen-autosave-v2</code>. Hard-reload <code>Ctrl+Shift+R</code> or click <b>Reset to Rule #9</b> — new key is <code>v3-ps1-west-sink800</code>.</div>
+    </div>
+    <div class="card card-pad">
+      <div class="label">Sink options for family of 6</div>
+      <table><tr><th>Option</th><th>Size / material</th></tr>
+        <tr><td><b>A Selected</b> 304 SS drainboard</td><td>800W 760×440</td></tr>
+        <tr><td>B Double-bowl</td><td>860W 400+340 SS</td></tr>
+        <tr><td>C Granite quartz black</td><td>900W composite</td></tr>
+      </table>
+      <p class="sub" style="margin-top:8px">A is in 3D. B needs 860W counter (reduces drainboard), C needs careful handling.</p>
+      <button class="btn" style="margin-top:10px" onclick="window.open('http://127.0.0.1:5173/','_blank')">Open configurator 3D at 127.0.0.1:5173</button>
+      <div class="label" style="margin-top:8px">Start if not running:</div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;background:#fbfaf8;border:1px solid var(--line);padding:8px;word-break:break-all">cd react-configurator<br/>npm run dev -- --host 127.0.0.1 --port 5173 --strictPort</div>
+    </div>
+  </div>
+</div>
+<script type="module">
+import * as THREE from 'three';
+import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
+const c=document.getElementById('c');
+const renderer=new THREE.WebGLRenderer({canvas:c,antialias:true,preserveDrawingBuffer:true,powerPreference:'high-performance'});
+renderer.shadowMap.enabled=true; renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+renderer.outputColorSpace=THREE.SRGBColorSpace; renderer.toneMapping=THREE.ACESFilmicToneMapping; renderer.toneMappingExposure=1.08;
+renderer.setPixelRatio(Math.min(2,window.devicePixelRatio));
+const scene=new THREE.Scene(); scene.background=new THREE.Color('#faf6f1'); scene.fog=new THREE.Fog('#faf6f1',950,1900);
+const camera=new THREE.PerspectiveCamera(44,1,0.1,5000);
+camera.position.set(900, 1100, 900);
+const controls=new OrbitControls(camera, renderer.domElement);
+controls.target.set(0, 120, 0); controls.enableDamping=true;
+const s=n=>n/10;
+function onResize(){const r=c.getBoundingClientRect(); renderer.setSize(r.width, r.height, false); camera.aspect=r.width/r.height; camera.updateProjectionMatrix();}
+window.addEventListener('resize', onResize); onResize();
+scene.add(new THREE.AmbientLight('#fff3e5',0.55));
+scene.add(new THREE.HemisphereLight('#fff8ee','#6b625a',0.9));
+const dl=new THREE.DirectionalLight('#fff4e5',1.8); dl.position.set(-180,320,-140); dl.castShadow=true; dl.shadow.mapSize.set(2048,2048); scene.add(dl);
+scene.add(new THREE.DirectionalLight('#e9f1ff',0.6).position.set(180,160,220));
+// materials
+const matCounter=new THREE.MeshStandardMaterial({color:'#d8c2a8', roughness:.35});
+const matWall=new THREE.MeshStandardMaterial({color:'#f6efe6', roughness:.9, transparent:true, opacity:.92});
+const matCab=new THREE.MeshStandardMaterial({color:'#c8b39d', roughness:.55});
+const matShutter=new THREE.MeshStandardMaterial({color:'#dac8b7', roughness:.6});
+const matInox=new THREE.MeshStandardMaterial({color:'#c0c0c0', metalness:.45, roughness:.28});
+const matInoxLight=new THREE.MeshStandardMaterial({color:'#e8e8e8', roughness:.25, metalness:.2});
+const matGlass=new THREE.MeshStandardMaterial({color:'#7EB8E8', roughness:.15, metalness:0, transparent:true, opacity:.45});
+const matDark=new THREE.MeshStandardMaterial({color:'#1c1a18', roughness:.5});
+function box(name,x,y,z,w,d,h,mat){const m=new THREE.Mesh(new THREE.BoxGeometry(s(w),s(h),s(d)), mat); m.name=name; m.position.set(s(x -400), s(z+h/2), s(y-280)); m.castShadow=true; m.receiveShadow=true; scene.add(m); return m;}
+// floor + west wall segment
+box('floor',0,0,-30,900,800,30, new THREE.MeshStandardMaterial({color:'#ded6cc'}));
+box('west wall',-20,1220,0,20,3526,2700, matWall);
+// counter run west 400D from y1220 to end
+box('west counter carcass',0,1220,100,400,3526,800, matCab);
+box('west counter top',0,1220,900-16,400,3526,16, matCounter);
+// sink 800 at y2850 — crisp stainless + rim + water (matches App.jsx #002 clear view)
+const sinkY=2850, sinkW=800;
+const sinkTop=900-10, sinkDepth=165, bowlZ=sinkTop-sinkDepth;
+box('sink bowl stainless',0,sinkY+12,bowlZ,376,sinkW-16,sinkDepth, new THREE.MeshStandardMaterial({color:'#d9dde0', metalness:.72, roughness:.2}));
+box('sink inner light',8,sinkY+20,bowlZ+6,360,sinkW-32,sinkDepth-10, new THREE.MeshStandardMaterial({color:'#eef1f3', metalness:.12, roughness:.42}));
+box('sink water',10,sinkY+22,bowlZ+32,356,sinkW-36,4, new THREE.MeshStandardMaterial({color:'#b8e4f5', transparent:true, opacity:.58, roughness:.08}));
+box('sink rim front',0,sinkY+10,892,380,sinkW-12,8, new THREE.MeshStandardMaterial({color:'#1a1a1a'}));
+box('sink rim back',0,sinkY+sinkW-28,892,380,12,8, new THREE.MeshStandardMaterial({color:'#4a443f'}));
+box('sink rim left',0,sinkY+12,892,8,sinkW-16,8, new THREE.MeshStandardMaterial({color:'#4a443f'}));
+box('sink rim right',368,sinkY+12,892,8,sinkW-16,8, new THREE.MeshStandardMaterial({color:'#4a443f'}));
+box('sink cabinet interior',8,sinkY+16,136,368,sinkW-32,520, new THREE.MeshStandardMaterial({color:'#fff6ec', roughness:.85}));
+box('sink interior shelf',20,sinkY+24,352,344,sinkW-48,18, new THREE.MeshStandardMaterial({color:'#d8c2a8', roughness:.5}));
+box('sink drain',168,sinkY+sinkW/2-16,bowlZ+6,18,48,2, new THREE.MeshStandardMaterial({color:'#9aa0a6', metalness:.6, roughness:.3}));
+box('sink front dark',398,sinkY+5,112,18,sinkW-10,800-112, matDark);
+// faucet — taller chrome with two handles
+const faucetMat=new THREE.MeshStandardMaterial({color:0xd8dde0, metalness:0.82, roughness:0.18});
+const faucet=new THREE.Mesh(new THREE.CylinderGeometry(s(9),s(9),s(155),16), faucetMat);
+faucet.position.set(s(-340), s(930), s(sinkY+34-280)); faucet.castShadow=true; scene.add(faucet);
+const spout=new THREE.Mesh(new THREE.TorusGeometry(s(34),s(7),10,20,Math.PI), faucetMat);
+spout.position.set(s(-340), s(985), s(sinkY+52-280)); spout.rotation.y=Math.PI/2; spout.castShadow=true; scene.add(spout);
+const hL=new THREE.Mesh(new THREE.CylinderGeometry(s(11),s(11),s(14),16), faucetMat); hL.position.set(s(-382), s(928), s(sinkY+28-280)); hL.rotation.z=Math.PI/2; scene.add(hL);
+const hR=hL.clone(); hR.position.set(s(-298), s(928), s(sinkY+28-280)); scene.add(hR);
+// sink task light
+const sinkGlow=new THREE.PointLight('#ffd8a6',1.2, s(900),1.8); sinkGlow.position.set(s(-210), s(1280), s(sinkY+sinkW/2-280)); scene.add(sinkGlow);
+// overhead dish rack 800 at same y, z1350, 700H — GAP in wall upper shown by not drawing wall cabinet there (we split)
+// Instead of drawing continuous west upper, draw two segments with gap for rack
+box('west lower upper before rack',0,1220,1350,320,1630,500, matShutter);
+box('west lower upper after rack',0,3650,1350,320,1096,500, matShutter);
+box('west top upper',0,1220,1900,450,3526,800, new THREE.MeshStandardMaterial({color:'#bfa891'}));
+// dish rack body
+box('dish rack interior',6,sinkY+10,1368,308,sinkW-20,664, new THREE.MeshStandardMaterial({color:'#fff8ee', roughness:.82}));
+box('dish rack interior light',12,sinkY+24,1530,300,sinkW-48,10, new THREE.MeshStandardMaterial({color:'#ffe8c8', emissive:'#ff9f2f', emissiveIntensity:1.2}));
+box('dish rack body',0,sinkY,1350,320,sinkW,700, matShutter);
+box('dish rack glass',320-18,sinkY+8,1366,18,sinkW-16,668, matGlass);
+box('rack lower shelf',20,sinkY+18,1570,280,sinkW-36,10, new THREE.MeshStandardMaterial({color:'#bfc4c7', metalness:.6, roughness:.25}));
+box('rack upper shelf',20,sinkY+18,1770,280,sinkW-36,10, new THREE.MeshStandardMaterial({color:'#bfc4c7', metalness:.6, roughness:.25}));
+function makeMat(c,o=1,opts={}){return new THREE.MeshStandardMaterial({color:new THREE.Color(c), roughness:opts.roughness??0.6, metalness:opts.metalness??0.05, transparent:o<1, opacity:o});}
+// plates for family 6
+for(let n=0;n<6;n++){
+  const pl=new THREE.Mesh(new THREE.CylinderGeometry(s(42),s(42),s(5),32), makeMat('#f7f2ea'));
+  pl.position.set(s(-305+400), s(1350+220), s(sinkY+80+n*80-280)); pl.rotation.z=Math.PI/2; pl.castShadow=true; scene.add(pl);
+  const ka=new THREE.Mesh(new THREE.CylinderGeometry(s(28),s(22),s(22),20), makeMat('#e8e0d0'));
+  ka.position.set(s(-285+400), s(1350+420), s(sinkY+80+n*80-280)); ka.castShadow=true; scene.add(ka);
+}
+for(let n=0;n<3;n++){
+  const gl=new THREE.Mesh(new THREE.CylinderGeometry(s(18),s(16),s(48),16), makeMat('#d6eaf8',.65,{roughness:.15}));
+  gl.position.set(s(-260+400), s(1350+240), s(sinkY+380+n*90-280)); scene.add(gl);
+}
+// purifier wall-mounted north of rack y3680 z1350
+const purY=3680;
+box('purifier body',0,purY,1350,320,350,400, matShutter);
+box('purifier front',320-18,purY+8,1366,18,334,368, new THREE.MeshStandardMaterial({color:'#d6eaf8'}));
+box('purifier inside',38,purY+76,1422,224,198,230, new THREE.MeshStandardMaterial({color:'#f4fbff'}));
+box('filter1',82,purY+135,1454,44,95,120, matGlass); box('filter2',146,purY+135,1454,44,95,120, matGlass);
+box('purifier pipe',320-26,purY-4,1410,18,22,12, new THREE.MeshStandardMaterial({color:'#bfc4c7', metalness:.6}));
+// shaft
+box('shaft',0,4146,0,610,838,2700, new THREE.MeshStandardMaterial({color:'#999'}));
+function animate(){requestAnimationFrame(animate); controls.update(); renderer.render(scene,camera);}
+animate();
+document.getElementById('btnIso').onclick=()=>{camera.position.set(900,1100,900); controls.target.set(0,120,0); controls.update();};
+document.getElementById('btnTop').onclick=()=>{camera.position.set(0,1800,0); controls.target.set(0,120,0); controls.update();};
+document.getElementById('btnCut').onclick=()=>{scene.traverse(o=>{if(o.name.includes('wall')||o.name.includes('top upper')) o.visible=!o.visible;});};
+</script>
+</body>
+</html>

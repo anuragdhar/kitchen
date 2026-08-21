@@ -5,7 +5,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js'
 import JSZip from 'jszip'
 
-const LS_KEY='kitchen-autosave-v2'
+const LS_KEY='kitchen-autosave-v3-ps1-west-sink800'
 const VERSION_KEYS={ current:'kitchen_version_Rule9', A:'kitchen_version_OptionA', B:'kitchen_version_OptionB' }
 
 const DEFAULT_MATERIALS={
@@ -20,8 +20,8 @@ const DEFAULT_MATERIALS={
 }
 
 export default function App(){
-  const eastIds=['applianceGarage','gas','dishwasher','washing']
-  const westIds=['sink','waterpurifier','shaft']
+  const eastIds=['spice','gas','dishwasher','washing','garage_NE']
+  const westIds=['sink','waterpurifier','sinkUpperDishRack','shaft']
   const byId=(items=[])=>Object.fromEntries(items.map(it=>[it.id,it]))
   const fixList=(list,init)=>list.map(it=>{
     const found=init.find(i=>i.id===it.id)
@@ -30,17 +30,23 @@ export default function App(){
   const migrateEastItems=(items=[])=>{
     const list=fixList(items,EAST_INIT).filter(it=>eastIds.includes(it.id))
     const current=byId(list)
-    const oldShape=items.some(it=>['spice','microwave','foodprocessor'].includes(it.id)) || !list.some(it=>it.id==='applianceGarage') || current.gas?.y===2000 || current.dishwasher?.y===2850
+    const hasNewShape= list.some(it=>['spice','garage_NE'].includes(it.id)) || current.gas?.y===2000 || current.dishwasher?.y===2850 || current.washing?.y===3400
+    if(hasNewShape) return list.length? list : EAST_INIT
+    const oldShape=items.some(it=>['applianceGarage','microwave','foodprocessor'].includes(it.id)) && !list.some(it=>it.id==='garage_NE')
     if(oldShape) return EAST_INIT
     return EAST_INIT.map(def=>{
       const merged={...def,...current[def.id]}
-      return merged.id==='washing' && merged.y===3800 ? {...merged,y:4146,label:'Washing LAST touching North y4146'} : merged
+      return merged.id==='washing' && merged.y===3800 ? {...merged,y:3400,label:'Washing y3400 below garage'} : merged
     })
   }
   const migrateWestItems=(items=[])=>{
     const list=fixList(items,WEST_INIT).filter(it=>westIds.includes(it.id))
     const current=byId(list)
-    const oldShape=items.some(it=>['microwave','foodprocessor'].includes(it.id)) || !current.waterpurifier || current.sink?.y===3550 || current.waterpurifier?.y===3350
+    const hasNewSink= current.sink?.w===800 && current.sink?.y===2850
+    const hasDishRack= !!current.sinkUpperDishRack
+    const hasMountedPurifier= !!current.waterpurifier?.mountedAbove
+    if(hasNewSink || hasDishRack || hasMountedPurifier) return list.length? list : WEST_INIT
+    const oldShape=items.some(it=>['microwave','foodprocessor'].includes(it.id)) || current.waterpurifier?.y===3350 || current.sink?.w===600
     if(oldShape) return WEST_INIT
     return WEST_INIT.map(def=>({...def,...current[def.id]}))
   }
@@ -67,7 +73,7 @@ export default function App(){
   const walkwayFloor = KITCHEN.width - 600 - 400
   const walkwayEye = KITCHEN.walkway?.eye ?? 1004
   const snapVal=(v)=> grid ? Math.round(v/grid)*grid : v
-  const planLabel=(id)=>({gas:'Gas cooktop',dishwasher:'Dishwasher',washing:'Washing',applianceGarage:'Garage (MW+FP)',microwave:'Microwave',foodprocessor:'Food processor',waterpurifier:'Purifier Cabinet',sink:'Sink',shaft:'Shaft'}[id]||id)
+  const planLabel=(id)=>({spice:'Spice 150',gas:'Gas 700',dishwasher:'Dishwasher hidden',washing:'Washing below garage',garage_NE:'Garage NE tall',sink:'Sink 800 family',waterpurifier:'Purifier above',sinkUpperDishRack:'Dish rack 800',shaft:'Shaft',applianceGarage:'Garage (MW+FP)',microwave:'Microwave',foodprocessor:'Food processor'}[id]||id)
   const moduleSegmentsFromNorth=(mods,startY=0,endY=KITCHEN.length)=>{
     let cursor=endY
     return mods.map((m,i)=>{
@@ -85,21 +91,15 @@ export default function App(){
   // detailed validation
   const buildValidationRows=()=>{
     const rows=[]
-    const e=[...east].sort((a,b)=>a.y-b.y); const gas=e.find(x=>x.id==='gas'), dw=e.find(x=>x.id==='dishwasher'), wm=e.find(x=>x.id==='washing')
+    const e=[...east].sort((a,b)=>a.y-b.y); const gas=e.find(x=>x.id==='gas'), dw=e.find(x=>x.id==='dishwasher'), wm=e.find(x=>x.id==='washing'), sp=e.find(x=>x.id==='spice'), garage=e.find(x=>x.id==='garage_NE')
     const dwEnd=dw ? dw.y + dw.w : null
-    const dwWmGap=(dw&&wm) ? wm.y - dwEnd : 9999
-    const eastOrderPass=!!(gas&&dw&&wm&&gas.y<dw.y&&dwEnd===wm.y&&wm.last)
-    rows.push({id:'east-order', rule:'East order: gas before dishwasher before washing; dishwasher adjacent to washing', status:eastOrderPass?'pass':'fail', measured: `gas y${gas?.y??'?'} < dw y${dw?.y??'?'}+${dw?.w??'?'}=>${dwEnd??'?'} = wm y${wm?.y??'?'} | gap ${dwWmGap}mm`, expected:'gas.y < dishwasher.y && dishwasher.y + dishwasher.w === washing.y && washing.last', fix:'Keep dishwasher y3546 directly adjacent to washing y4146 and gas south of dishwasher'})
-    const w=[...west].sort((a,b)=>a.y-b.y); const wp=w.find(x=>x.id==='waterpurifier'), sk=w.find(x=>x.id==='sink'), sh=w.find(x=>x.id==='shaft')
+    const eastOrderPass=!!(sp&&gas&&dw&&wm&&garage&&sp.y < gas.y && gas.y < dw.y && dw.y < wm.y && wm.y < garage.y && garage.last && garage.y===4146)
+    rows.push({id:'east-order', rule:'East order PS1: spice 150 y1850 < gas y2000 < dishwasher y2850 < washing y3400 < garage NE y4146', status:eastOrderPass?'pass':'fail', measured: `sp y${sp?.y??'?'} < gas y${gas?.y??'?'} < dw y${dw?.y??'?'} < wm y${wm?.y??'?'} < garage y${garage?.y??'?'}`, expected:'spice 1850 < gas 2000 < dishwasher 2850 < washing 3400 < garage_NE 4146', fix:'Keep east PS1 order'})
+    const w=[...west].sort((a,b)=>a.y-b.y); const wp=w.find(x=>x.id==='waterpurifier'), sk=w.find(x=>x.id==='sink'), sh=w.find(x=>x.id==='shaft'), rack=w.find(x=>x.id==='sinkUpperDishRack')
     const sinkEnd= sk ? sk.y + sk.w : null
-    const purifierEnd= wp ? wp.y + wp.w : null
-    const gapSinkPurifier= (sk&&wp)? wp.y - sinkEnd : 9999
-    const gapPurifierShaft= (wp&&sh)? sh.y - purifierEnd : 9999
-    const westOrderPass=!!(sk&&wp&&sh&& sk.y < wp.y && wp.y < sh.y && sh.last && sk.y >= KITCHEN.westGap.to && sinkEnd <= wp.y && purifierEnd <= sh.y)
-    const nearPass= gapSinkPurifier===0 && gapPurifierShaft===0
-    const westOkWithNear= westOrderPass && nearPass
-    rows.push({id:'west-order', rule:'West order: sink before purifier cabinet before shaft', status:westOkWithNear?'pass':'fail', measured:`sink y${sk?.y??'?'}+${sk?.w??'?'}=>${sinkEnd??'?'} < purifier y${wp?.y??'?'}+${wp?.w??'?'}=>${purifierEnd??'?'} < shaft y${sh?.y??'?'} | gaps sink-purifier ${gapSinkPurifier}mm purifier-shaft ${gapPurifierShaft}mm`, expected:'sink (3146+600=3746) < purifier (3746+400=4146) < shaft 4146 with zero gaps', fix:'Restore west order sink y3146 -> purifier y3746 -> shaft 4146 with contiguous gaps'})
-    rows.push({id:'purifier-near-sink', rule:'Purifier cabinet between sink and shaft', status:nearPass?'pass':'fail', measured:`sinkEnd ${sinkEnd??'?'} purifier y${wp?.y??'?'} gap ${gapSinkPurifier}mm; purifierEnd ${purifierEnd??'?'} shaft ${sh?.y??'?'} gap ${gapPurifierShaft}mm`, expected:'gap 0 mm (contiguous)', fix:'Place sink at y3146 (600W) and purifier at y3746 (400W) so purifier fills gap to shaft'})
+    const westOrderPass=!!(sk&&sh&& sk.y===2850 && sk.w===800 && sh.y===4146 && sh.last && wp?.mountedAbove && rack?.y===2850)
+    rows.push({id:'west-order', rule:'West: sink 800 y2850 + purifier above + dish rack 800 above → shaft y4146', status:westOrderPass?'pass':'fail', measured:`sink y${sk?.y??'?'} w${sk?.w??'?'} (end ${sinkEnd??'?'}), purifier mountedAbove:${!!wp?.mountedAbove}, rack y${rack?.y??'?'} w${rack?.w??'?'}, shaft y${sh?.y??'?'}`, expected:'sink 800@2850 + purifier above + rack 800@2850 → shaft 4146', fix:'West: sink 2850 800W with purifier wall-mounted above and 800W dish rack above sink'})
+    rows.push({id:'purifier-near-sink', rule:'Purifier above sink + dish rack over sink (family 6)', status:(wp?.mountedAbove && rack)?'pass':'fail', measured:`purifier y${wp?.y??'?'} z${wp?.z??'?'} above:${!!wp?.mountedAbove}, rack y${rack?.y??'?'}/${rack?.w??'?'}`, expected:'purifier z1350 above sink + 800W rack over sink', fix:'Keep purifier at z1350 above sink and dish rack 800W over sink y2850'})
     // door clear zone
     const doorViolations= west.filter(it=> !it.fixed && it.y < 1220 && (it.y+it.w) > 0)
     const doorPass=doorViolations.length===0
@@ -669,21 +669,26 @@ ${westRows}
     const mountRef=useRef(null)
     const controlsRef=useRef(null)
     const cameraRef=useRef(null)
+    const [diagnostics,setDiagnostics]=useState(()=>{try{return JSON.parse(localStorage.getItem('kitchen-diagnostics')||'[]')}catch{return []}})
+    const saveDiagnostics=(list)=>{ localStorage.setItem('kitchen-diagnostics',JSON.stringify(list)); setDiagnostics(list) }
     useEffect(()=>{
       const mount=mountRef.current
       if(!mount)return
       const scene=new THREE.Scene()
       scene.background=new THREE.Color('#f3eee7')
-      scene.fog=new THREE.Fog('#f3eee7',520,1100)
+      scene.fog=new THREE.Fog('#f3eee7',950,1900)
       const camera=new THREE.PerspectiveCamera(42,1,1,2000)
       cameraRef.current=camera
-      const renderer=new THREE.WebGLRenderer({antialias:true,preserveDrawingBuffer:true})
+      const renderer=new THREE.WebGLRenderer({antialias:true,preserveDrawingBuffer:true,alpha:false,powerPreference:'high-performance'})
       renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2))
       renderer.outputColorSpace=THREE.SRGBColorSpace
       renderer.toneMapping=THREE.ACESFilmicToneMapping
-      renderer.toneMappingExposure=1.05
+      renderer.toneMappingExposure=1.08
       renderer.shadowMap.enabled=true
-      renderer.shadowMap.type=THREE.PCFShadowMap
+      renderer.shadowMap.type=THREE.PCFSoftShadowMap
+      renderer.domElement.style.width='100%'
+      renderer.domElement.style.height='auto'
+      renderer.domElement.style.display='block'
       mount.appendChild(renderer.domElement)
       const pmremGenerator=new THREE.PMREMGenerator(renderer)
       const envTexture=pmremGenerator.fromScene(new RoomEnvironment(),.04).texture
@@ -696,13 +701,15 @@ ${westRows}
 
       const textureFromCanvas=(paint)=>{
         const canvas=document.createElement('canvas')
-        canvas.width=512; canvas.height=512
+        canvas.width=1024; canvas.height=1024
         const ctx=canvas.getContext('2d')
         paint(ctx,canvas.width,canvas.height)
         const tex=new THREE.CanvasTexture(canvas)
         tex.colorSpace=THREE.SRGBColorSpace
         tex.wrapS=THREE.RepeatWrapping
         tex.wrapT=THREE.RepeatWrapping
+        tex.anisotropy=16
+        tex.needsUpdate=true
         return tex
       }
       const woodTex=textureFromCanvas((ctx,w,h)=>{
@@ -799,14 +806,24 @@ ${westRows}
         if(tags.includes('east')) eastCutawayObjects.push(mesh)
         if(tags.includes('west')) westCutawayObjects.push(mesh)
       }
+      const clickableCabinets=[]
       const addBox=(name,x,y,z,w,d,h,c,opacity=1)=>{
         const mesh=new THREE.Mesh(new THREE.BoxGeometry(s(w),s(h),s(d)),material(c,opacity))
         mesh.name=name
         const isShell=name==='west wall'||name==='east wall'||name==='north wall'||name==='ceiling'||name==='recessed ceiling center'
         if(isShell) registerCutaway(mesh,['shell'])
         else if(/^east\b|^garage\b|^hob\b|^three burner\b|^cooktop\b/.test(name)) registerCutaway(mesh,['east'])
-        else if(/^west\b|^microwave\b|^clean dish\b/.test(name)) registerCutaway(mesh,['west'])
+        else if(/^west\b|^microwave\b|^clean dish\b|^dish rack\b|^purifier\b/.test(name)) registerCutaway(mesh,['west'])
+        // mark cabinet fronts as clickable
+        if(/(front|garage|dish rack|purifier cabinet front|upper front|base front)/.test(name)){
+          mesh.userData.isCabinetFront=true
+          mesh.userData.originalPosition=new THREE.Vector3()
+          mesh.userData.opened=false
+          clickableCabinets.push(mesh)
+        }
         mesh.position.set(s(KITCHEN.width/2-(x+w/2)),s(z+h/2),s(y+d/2-KITCHEN.length/2))
+        // store original for animation
+        if(mesh.userData.isCabinetFront) mesh.userData.originalPosition.copy(mesh.position)
         mesh.castShadow=opacity>.45
         mesh.receiveShadow=true
         scene.add(mesh)
@@ -841,13 +858,28 @@ ${westRows}
         // single centre vertical mullion
         addBox('window mullion centre', winBaseX+winBayW-10, winY+8, winSill, 20, 20, winH, frameCol)
         // top: left-top METAL 12-inch exhaust, right-top fixed glass
-        // left-top exhaust housing (replaces glass)
-        addBox('north window exhaust housing left-top', winBaseX + 4, winY+8, winSill + (winH - winTransom) + 8, winBayW - 12, 24, winTransom - 16, '#3a3a3a')
-        addBox('exhaust fan metal face left-top', winBaseX + winBayW/2 - 155, winY+18, winSill + (winH - winTransom/2) - 155, 300, 10, 300, makeMat('#9a9a9a',1,{metalness:.68, roughness:.28}))
-        addBox('exhaust fan hub left-top', winBaseX + winBayW/2 - 28, winY+22, winSill + (winH - winTransom/2) - 28, 56, 12, 56, makeMat('#2b2b2b',1,{metalness:.2, roughness:.5}))
-        // 4 blades hint
-        addBox('exhaust blade 1', winBaseX + winBayW/2 - 110, winY+22, winSill + (winH - winTransom/2) - 12, 220, 4, 24, makeMat('#6e6e6e',1,{metalness:.55, roughness:.35}))
-        addBox('exhaust blade 2', winBaseX + winBayW/2 - 12, winY+22, winSill + (winH - winTransom/2) - 110, 24, 4, 220, makeMat('#6e6e6e',1,{metalness:.55, roughness:.35}))
+        // left-top METAL 12-inch exhaust — high-contrast stainless, clearly visible
+        addBox('north window exhaust housing left-top', winBaseX + 4, winY+8, winSill + (winH - winTransom) + 8, winBayW - 12, 24, winTransom - 16, '#ececec')
+        addBox('north window exhaust housing border', winBaseX + 4, winY+8, winSill + (winH - winTransom) + 8, winBayW - 12, 24, 4, '#1a1a1a')
+        addBox('north window exhaust housing border top', winBaseX + 4, winY+8, winSill + winH - 18, winBayW - 12, 24, 4, '#1a1a1a')
+        // stainless circular face
+        addBox('exhaust fan metal face left-top', winBaseX + winBayW/2 - 155, winY+18, winSill + (winH - winTransom/2) - 155, 300, 10, 300, makeMat('#e8eaec',1,{metalness:.78, roughness:.22}))
+        // outer ring to pop against white glass
+        const ringMat = makeMat('#111111',1,{metalness:.12, roughness:.55})
+        addBox('exhaust fan outer ring top', winBaseX + winBayW/2 - 155, winY+22, winSill + (winH - winTransom/2) + 140, 310, 6, 8, ringMat)
+        addBox('exhaust fan outer ring bottom', winBaseX + winBayW/2 - 155, winY+22, winSill + (winH - winTransom/2) - 150, 310, 6, 8, ringMat)
+        addBox('exhaust fan outer ring left', winBaseX + winBayW/2 - 157, winY+22, winSill + (winH - winTransom/2) - 148, 8, 6, 306, ringMat)
+        addBox('exhaust fan outer ring right', winBaseX + winBayW/2 + 147, winY+22, winSill + (winH - winTransom/2) - 148, 8, 6, 306, ringMat)
+        addBox('exhaust fan hub left-top', winBaseX + winBayW/2 - 30, winY+24, winSill + (winH - winTransom/2) - 30, 60, 14, 60, makeMat('#1e1e1e',1,{metalness:.25, roughness:.4}))
+        addBox('exhaust fan hub highlight', winBaseX + winBayW/2 - 10, winY+26, winSill + (winH - winTransom/2) - 10, 20, 6, 20, makeMat('#f2f2f2',1,{metalness:.85, roughness:.18}))
+        // 4 blades — higher contrast brushed stainless
+        addBox('exhaust blade 1', winBaseX + winBayW/2 - 125, winY+24, winSill + (winH - winTransom/2) - 14, 250, 6, 28, makeMat('#c2c6ca',1,{metalness:.72, roughness:.28}))
+        addBox('exhaust blade 2', winBaseX + winBayW/2 - 14, winY+24, winSill + (winH - winTransom/2) - 125, 28, 6, 250, makeMat('#c2c6ca',1,{metalness:.72, roughness:.28}))
+        // diagonal safety guard bars (2 more) for real fan look
+        addBox('exhaust guard diag 1', winBaseX + winBayW/2 - 95, winY+24, winSill + (winH - winTransom/2) - 95, 190, 4, 4, makeMat('#2b2b2b',1,{metalness:.3, roughness:.6}))
+        addBox('exhaust guard diag 2', winBaseX + winBayW/2 - 95, winY+24, winSill + (winH - winTransom/2) + 88, 190, 4, 4, makeMat('#2b2b2b',1,{metalness:.3, roughness:.6}))
+        // small label plate
+        addBox('exhaust label 12 inch metal', winBaseX + winBayW/2 - 78, winY+8, winSill + (winH - winTransom) + 18, 156, 6, 22, makeMat('#111111',1,{roughness:.7}))
         // right-top fixed glass
         addBox('north window top pane right fixed', winBaseX + winBayW + 10, winY+10, winSill + (winH - winTransom) + 14, winBayW - 22, 10, winTransom - 22, surface.glass)
         // bottom 2 panes — both sliding (side opening as requested)
@@ -901,11 +933,24 @@ ${westRows}
           }
         })
       }
-      // uppers with split shutters and visible under-cabinet light
+      // uppers — split to show dish rack / purifier (west) and garage (east) without z-fighting
       addBox('east lower upper body',KITCHEN.width-320,0,1350,320,usableLen,500,surface.shutter)
-      if(westLen>0) addBox('west lower upper body after door clear zone',0,1220,1350,320,westLen,500,surface.shutter)
-      addBox('east top upper body',KITCHEN.width-550,0,1900,550,usableLen,800,surface.shutter)
-      if(westLen>0) addBox('west top upper body after door clear zone',0,1220,1900,450,westLen,800,surface.shutter)
+      {
+        const rack = west.find(x=>x.id==='sinkUpperDishRack')
+        if(rack && westLen>0){
+          const before = rack.y - 1220
+          const afterStart = rack.y + rack.w
+          const afterLen = (1220+westLen) - afterStart
+          if(before>0) addBox('west lower upper body before rack',0,1220,1350,320,before,500,surface.shutter)
+          if(afterLen>0) addBox('west lower upper body after rack',0,afterStart,1350,320,afterLen,500,surface.shutter)
+          // top upper split similarly — rack is below top upper (z1900), so keep top continuous
+          addBox('west top upper body after door clear zone',0,1220,1900,450,westLen,800,surface.shutter)
+        } else {
+          if(westLen>0) addBox('west lower upper body after door clear zone',0,1220,1350,320,westLen,500,surface.shutter)
+          if(westLen>0) addBox('west top upper body after door clear zone',0,1220,1900,450,westLen,800,surface.shutter)
+        }
+      }
+      addBox('east top upper body main',KITCHEN.width-550,0,1900,550,usableLen,800,surface.shutter)
       const addUpperFronts=(prefix,wall,depth,startY,len,z,h,mods)=>{
         moduleSegmentsFromNorth(mods,startY,startY+len).forEach((m,i)=>{
           const width=m.width
@@ -1024,21 +1069,49 @@ ${westRows}
       west.forEach(it=>{
         if(it.id==='shaft') addBox('west shaft',0,KITCHEN.shaft.y,0,KITCHEN.shaft.w,KITCHEN.shaft.l,KITCHEN.height,it.color)
         else if(it.id==='sink'){
-          // counter cutout visual: sink bowl inset
-          addBox('west sink bowl',0,it.y+60,620,380,it.w-120,180,'#c0c0c0')
-          addBox('west sink inner',20,it.y+70,625,340,it.w-140,160,'#e8e8e8')
-          // faucet
-          const faucet=new THREE.Mesh(new THREE.CylinderGeometry(s(8),s(8),s(120),16), new THREE.MeshStandardMaterial({color:'#d0d0d0', metalness:0.7, roughness:0.2}))
+          // — crisp stainless sink inset: bowl flush to counter with top rim + water —
+          const sinkBowlTop = 900 - 10
+          const sinkDepth = 165
+          const bowlZ = sinkBowlTop - sinkDepth
+          // outer bowl (stainless) + inner light, + rim lip at counter level for contrast
+          addBox('west sink bowl stainless',0,it.y+12,bowlZ,376,it.w-16, sinkDepth, makeMat('#d9dde0',1,{metalness:.72, roughness:.2}))
+          addBox('west sink bowl inner light',8,it.y+20,bowlZ+6,360,it.w-32, sinkDepth-10, makeMat('#eef1f3',1,{metalness:.12, roughness:.42}))
+          // water surface hint
+          addBox('west sink water',10,it.y+22,bowlZ+32,356,it.w-36,4, makeMat('#b8e4f5',.58,{metalness:.05, roughness:.08}))
+          // counter rim (4mm lip) to crisply frame sink against counter marble
+          addBox('west sink counter rim front',0,it.y+10,900-8,380,it.w-12,8,'#1a1a1a')
+          addBox('west sink counter rim back',0,it.y+it.w-28,900-8,380,12,8,'#4a443f')
+          addBox('west sink counter rim left',0,it.y+12,900-8,8,it.w-16,8,'#4a443f')
+          addBox('west sink counter rim right',368,it.y+12,900-8,8,it.w-16,8,'#4a443f')
+          // under-sink cabinet interior (light) — visible when front opens
+          addBox('west sink cabinet interior light',8,it.y+16,PLINTH_HEIGHT+36,368,it.w-32, 520, makeMat('#fff6ec',1,{roughness:.85}))
+          addBox('west sink cabinet interior shelf',20,it.y+24,PLINTH_HEIGHT+240,344,it.w-48,18, makeMat('#d8c2a8',1,{roughness:.5}))
+          // drain + overflow subtle
+          addBox('west sink drain',168,it.y+it.w/2-16,bowlZ+6,18,48,2, makeMat('#9aa0a6',1,{metalness:.6, roughness:.3}))
+          // tall faucet — more chrome, two handles
+          const faucetMat=new THREE.MeshStandardMaterial({color:0xd8dde0, metalness:0.82, roughness:0.18})
+          const faucet=new THREE.Mesh(new THREE.CylinderGeometry(s(9),s(9),s(155),18), faucetMat)
           faucet.name='west sink faucet'
           registerCutaway(faucet,['west'])
-          faucet.position.set(s(KITCHEN.width/2-(60)),s(920),s(it.y+80-KITCHEN.length/2))
+          faucet.position.set(s(KITCHEN.width/2-(46)),s(930),s(it.y+34-KITCHEN.length/2))
+          faucet.castShadow=true
           scene.add(faucet)
-          const spout=new THREE.Mesh(new THREE.TorusGeometry(s(30),s(6),8,16,Math.PI), new THREE.MeshStandardMaterial({color:'#d0d0d0', metalness:0.7, roughness:0.2}))
+          const spout=new THREE.Mesh(new THREE.TorusGeometry(s(34),s(7),10,20,Math.PI), faucetMat)
           spout.name='west sink faucet spout'
           registerCutaway(spout,['west'])
-          spout.position.set(s(KITCHEN.width/2-(60)),s(970),s(it.y+80-KITCHEN.length/2))
+          spout.position.set(s(KITCHEN.width/2-(46)),s(985),s(it.y+52-KITCHEN.length/2))
           spout.rotation.y=Math.PI/2
+          spout.castShadow=true
           scene.add(spout)
+          const handleL=new THREE.Mesh(new THREE.CylinderGeometry(s(11),s(11),s(14),16), faucetMat)
+          handleL.name='west sink faucet handle L'
+          registerCutaway(handleL,['west'])
+          handleL.position.set(s(KITCHEN.width/2-(88)),s(928),s(it.y+28-KITCHEN.length/2))
+          handleL.rotation.z=Math.PI/2
+          scene.add(handleL)
+          const handleR=handleL.clone(); handleR.name='west sink faucet handle R'; handleR.position.set(s(KITCHEN.width/2-(4)),s(928),s(it.y+28-KITCHEN.length/2)); registerCutaway(handleR,['west']); scene.add(handleR)
+          // sink task light
+          addPoint('west sink task glow', 190, it.y+it.w/2, 1280, 1.35, 760)
           addBox('west sink dark front',398,it.y+5,PLINTH_HEIGHT+12,18,it.w-10,900-PLINTH_HEIGHT-COUNTER_THICKNESS-24,surface.dark)
           addBox('west clean dishes glass cabinet',316,it.y+145,1360,18,it.w-220,420,surface.glass,.55)
           addBox('west clean dishes upper shelf',298,it.y+170,1490,24,it.w-270,10,surface.counter)
@@ -1054,13 +1127,46 @@ ${westRows}
           })
         }
         else if(it.id==='waterpurifier'){
-          const baseZ=it.z ?? 900
-          addBox('west purifier cabinet body',0,it.y,baseZ,it.d,it.w,it.h||550,surface.shutter)
-          addBox('west purifier cabinet front',it.d-18,it.y+8,baseZ+16,18,it.w-16,(it.h||550)-32,'#d6eaf8')
+          const baseZ=it.z ?? 1350
+          addBox('west purifier cabinet body',0,it.y,baseZ,it.d,it.w,it.h||400,surface.shutter)
+          addBox('west purifier cabinet front',it.d-18,it.y+8,baseZ+16,18,it.w-16,(it.h||400)-32,'#d6eaf8')
           addBox('west purifier body inside',38,it.y+76,baseZ+72,it.d-96,it.w-152,230,'#f4fbff')
-          addBox('west purifier filter one',82,it.y+135,baseZ+104,44,95,150,surface.glass,.62)
-          addBox('west purifier filter two',146,it.y+135,baseZ+104,44,95,150,surface.glass,.62)
-          addBox('west purifier service pipe to sink',it.d-26,it.y-4,baseZ+170,18,22,12,surface.metal)
+          addBox('west purifier filter one',82,it.y+135,baseZ+104,44,95,120,surface.glass,.62)
+          addBox('west purifier filter two',146,it.y+135,baseZ+104,44,95,120,surface.glass,.62)
+          addBox('west purifier service pipe to sink',it.d-26,it.y-4,baseZ+60,18,22,12,surface.metal)
+        } else if(it.id==='sinkUpperDishRack'){
+          // overhead dish rack — lighter interior so open view is crisp
+          const rackZ=it.z ?? 1350
+          addBox('west sink upper dish rack interior',6,it.y+10,rackZ+18,308,it.w-20,it.h-36, makeMat('#fff8ee',1,{roughness:.82}))
+          addBox('west sink upper dish rack interior light',12,it.y+24,rackZ+180,300,it.w-48,10, makeMat('#ffe8c8',1,{emissive:'#ff9f2f',emissiveIntensity:1.2}))
+          addBox('west sink upper dish rack body',0,it.y,rackZ,it.d,it.w,it.h,surface.shutter)
+          addBox('west dish rack front glass',it.d-18,it.y+8,rackZ+16,18,it.w-16,it.h-32,surface.glass,.45)
+          addBox('west dish rack lower shelf',20,it.y+18,rackZ+220,it.d-40,it.w-36,10,surface.metal)
+          addBox('west dish rack upper shelf',20,it.y+18,rackZ+420,it.d-40,it.w-36,10,surface.metal)
+          // plates for family 6
+          ;[0,1,2,3,4,5].forEach((n)=>{
+            const plate=new THREE.Mesh(new THREE.CylinderGeometry(s(42),s(42),s(5),32), makeMat('#f7f2ea',1,{roughness:.42}))
+            plate.name=`dish rack plate ${n+1} family6`
+            registerCutaway(plate,['west'])
+            plate.position.set(s(KITCHEN.width/2-305),s(rackZ+240),s(it.y+80+n*80-KITCHEN.length/2))
+            plate.rotation.z=Math.PI/2
+            plate.castShadow=true
+            scene.add(plate)
+            const katori=new THREE.Mesh(new THREE.CylinderGeometry(s(28),s(22),s(22),20), makeMat('#e8e0d0',1,{roughness:.5}))
+            katori.name=`dish rack katori ${n+1}`
+            registerCutaway(katori,['west'])
+            katori.position.set(s(KITCHEN.width/2-285),s(rackZ+460),s(it.y+80+n*80-KITCHEN.length/2))
+            katori.castShadow=true
+            scene.add(katori)
+          })
+          // glasses
+          ;[0,1,2].forEach((n)=>{
+            const glass=new THREE.Mesh(new THREE.CylinderGeometry(s(18),s(16),s(48),16), makeMat('#d6eaf8',.65,{roughness:.15}))
+            glass.name=`dish rack glass ${n+1}`
+            registerCutaway(glass,['west'])
+            glass.position.set(s(KITCHEN.width/2-260),s(rackZ+260),s(it.y+380+n*90-KITCHEN.length/2))
+            scene.add(glass)
+          })
         }
         else if(it.id==='microwave'){
           addBox(`west ${it.id}`,0,it.y,1040,it.d,it.w,it.h||350,surface.blackGlass)
@@ -1114,9 +1220,85 @@ ${westRows}
         eastCutawayObjects.forEach(obj=>{obj.visible=!hideEast})
         westCutawayObjects.forEach(obj=>{obj.visible=!hideWest})
       }
+      // --- Click to open cabinets ---
+      const raycaster=new THREE.Raycaster()
+      const mouse=new THREE.Vector2()
+      let hovered=null
+      const getOffsetForCabinet=(mesh)=>{
+        const n=mesh.name
+        // east cabinets open toward west (-x), west cabinets toward east (+x), upper fronts slide outward
+        if(n.startsWith('west')) return new THREE.Vector3(s(38),0,0)
+        if(n.startsWith('east')) return new THREE.Vector3(s(-38),0,0)
+        return new THREE.Vector3(s(38),0,0)
+      }
+      const setHover=(mesh, isHover)=>{
+        if(!mesh) return
+        if(isHover){
+          mesh.material.emissive = new THREE.Color('#c05a2b')
+          mesh.material.emissiveIntensity = 0.22
+          renderer.domElement.style.cursor='pointer'
+        } else {
+          mesh.material.emissive = new THREE.Color('#000000')
+          mesh.material.emissiveIntensity = 0
+          renderer.domElement.style.cursor='grab'
+        }
+      }
+      const onPointerMove=(e)=>{
+        const rect=renderer.domElement.getBoundingClientRect()
+        mouse.x=((e.clientX-rect.left)/rect.width)*2-1
+        mouse.y=-((e.clientY-rect.top)/rect.height)*2+1
+        raycaster.setFromCamera(mouse,camera)
+        const hits=raycaster.intersectObjects(clickableCabinets,false)
+        const hit=hits[0]?.object
+        if(hit!==hovered){
+          if(hovered) setHover(hovered,false)
+          hovered=hit||null
+          if(hovered) setHover(hovered,true)
+        }
+      }
+      const onClick=(e)=>{
+        const rect=renderer.domElement.getBoundingClientRect()
+        mouse.x=((e.clientX-rect.left)/rect.width)*2-1
+        mouse.y=-((e.clientY-rect.top)/rect.height)*2+1
+        raycaster.setFromCamera(mouse,camera)
+        const hits=raycaster.intersectObjects(clickableCabinets,false)
+        const hit=hits[0]?.object
+        if(!hit) return
+        e.stopPropagation()
+        // disable controls briefly to avoid drag conflict
+        controls.enabled=false
+        const wasOpened=hit.userData.opened
+        const targetPos=wasOpened? hit.userData.originalPosition.clone() : hit.userData.originalPosition.clone().add(getOffsetForCabinet(hit))
+        const startPos=hit.position.clone()
+        const startTime=performance.now()
+        const dur=380
+        const startOpacity=hit.material.opacity ?? 1
+        const targetOpacity=wasOpened?1:0.18
+        hit.userData.opened=!wasOpened
+        if(!wasOpened){ hit.material.transparent=true }
+        const animateOpen=(now)=>{
+          const t=Math.min(1,(now-startTime)/dur)
+          const ease=t<0.5? 2*t*t : -1+(4-2*t)*t
+          hit.position.lerpVectors(startPos, targetPos, ease)
+          hit.material.opacity = startOpacity + (targetOpacity-startOpacity)*ease
+          if(t<1) requestAnimationFrame(animateOpen)
+          else {
+            hit.material.transparent = targetOpacity<1
+            hit.material.needsUpdate=true
+            controls.enabled=true
+            // toast
+            const label=hit.name.replace('west ','').replace('east ','')
+            window.dispatchEvent(new CustomEvent('cabinet-toggle',{detail:{name:label, opened:hit.userData.opened}}))
+          }
+        }
+        requestAnimationFrame(animateOpen)
+      }
+      renderer.domElement.addEventListener('pointermove', onPointerMove)
+      renderer.domElement.addEventListener('click', onClick)
       const resize=()=>{
         const width=mount.clientWidth||1000
-        const height=Math.max(520,Math.min(720,Math.round(width*.56)))
+        const height=Math.max(620,Math.min(860,Math.round(width*.62)))
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2))
         renderer.setSize(width,height,false)
         camera.aspect=width/height
         camera.updateProjectionMatrix()
@@ -1124,12 +1306,12 @@ ${westRows}
       const observer=new ResizeObserver(resize)
       observer.observe(mount)
       resize()
-      threeViewRef.current={renderer,scene,camera,controls,updateCutawayVisibility}
+      threeViewRef.current={renderer,scene,camera,controls,updateCutawayVisibility,clickableCabinets}
       updateCutawayVisibility()
       let frameId=0
       const animate=()=>{controls.update(); updateCutawayVisibility(); renderer.render(scene,camera); frameId=requestAnimationFrame(animate)}
       animate()
-      return ()=>{cancelAnimationFrame(frameId); observer.disconnect(); controls.dispose(); envTexture.dispose(); pmremGenerator.dispose(); renderer.dispose(); mount.removeChild(renderer.domElement); if(threeViewRef.current?.renderer===renderer)threeViewRef.current=null}
+      return ()=>{cancelAnimationFrame(frameId); observer.disconnect(); controls.dispose(); envTexture.dispose(); pmremGenerator.dispose(); renderer.domElement.removeEventListener('pointermove', onPointerMove); renderer.domElement.removeEventListener('click', onClick); renderer.dispose(); mount.removeChild(renderer.domElement); if(threeViewRef.current?.renderer===renderer)threeViewRef.current=null}
     },[east,west,materials,eastModules,westModules])
     const setPreset=(preset)=>{
       const cam=threeViewRef.current?.camera
@@ -1141,7 +1323,9 @@ ${westRows}
         westWall:{pos:[360,155,20], target:[40,95,30]},
         north:{pos:[0,160,360], target:[0,95,20]},
         south:{pos:[0,150,-360], target:[0,95,25]},
-        walkthrough:{pos:[0,145,-360], target:[0,92,25]}
+        walkthrough:{pos:[0,145,-360], target:[0,92,25]},
+        sink:{pos:[210,148,86], target:[38,88,82]},
+        exhaust:{pos:[12,165,420], target:[8,145,238]},
       }
       const p=presets[preset]
       if(!p) return
@@ -1149,6 +1333,12 @@ ${westRows}
       ctrl.target.set(p.target[0],p.target[1],p.target[2])
       ctrl.update()
     }
+    const [toast,setToast]=useState(null)
+    useEffect(()=>{
+      const h=(e)=>{ setToast(`${e.detail.opened?'Opened':'Closed'} ${e.detail.name}`); setTimeout(()=>setToast(null),1800)}
+      window.addEventListener('cabinet-toggle',h)
+      return ()=>window.removeEventListener('cabinet-toggle',h)
+    },[])
     return <div style={{background:'#fff',borderRadius:14,padding:14}}><div style={{display:'flex',alignItems:'center',justifyContent:'space-between',gap:8,marginBottom:10,flexWrap:'wrap'}}><h3 style={{margin:0}}>3D Render - current Rule #9 layout</h3><div style={{display:'flex',gap:6,flexWrap:'wrap'}}>
       <button onClick={()=>setPreset('top')} style={{padding:'6px 10px',background:'#fff',border:'1px solid #111',borderRadius:8,fontWeight:700}}>Top</button>
       <button onClick={()=>setPreset('eastWall')} style={{padding:'6px 10px',background:'#fff',border:'1px solid #111',borderRadius:8,fontWeight:700}}>East wall</button>
@@ -1156,12 +1346,86 @@ ${westRows}
       <button onClick={()=>setPreset('north')} style={{padding:'6px 10px',background:'#fff',border:'1px solid #111',borderRadius:8,fontWeight:700}}>North view</button>
       <button onClick={()=>setPreset('south')} style={{padding:'6px 10px',background:'#fff',border:'1px solid #111',borderRadius:8,fontWeight:700}}>South view</button>
       <button onClick={()=>setPreset('walkthrough')} style={{padding:'6px 10px',background:'#111',color:'#fff',border:'none',borderRadius:8,fontWeight:800}}>Walkthrough</button>
+      <button onClick={()=>setPreset('sink')} style={{padding:'6px 10px',background:'#fff',border:'1px solid #0ea5e9',borderRadius:8,fontWeight:800,color:'#0c4a6e'}}>Sink clear</button>
+      <button onClick={()=>setPreset('exhaust')} style={{padding:'6px 10px',background:'#fff',border:'1px solid #0ea5e9',borderRadius:8,fontWeight:800,color:'#0c4a6e'}}>Exhaust 12″</button>
       <button onClick={export3DScreenshot} style={{padding:'8px 12px',background:'#111',color:'#fff',border:'none',borderRadius:10,fontWeight:800}}>3D Screenshot</button>
+      <button onClick={()=>{
+        const view3d=threeViewRef.current; if(!view3d) return;
+        // high-res capture — 2× for crisp text on sink/fan/cabinet insides (#002)
+        const ren=view3d.renderer, cam=view3d.camera
+        const prevSize=new THREE.Vector2(); ren.getSize(prevSize)
+        const hiW=Math.round(prevSize.x*2), hiH=Math.round(prevSize.y*2)
+        ren.setSize(hiW, hiH, false)
+        cam.aspect=hiW/hiH; cam.updateProjectionMatrix()
+        view3d.renderer.render(view3d.scene, view3d.camera);
+        const dataUrl=view3d.renderer.domElement.toDataURL('image/png')
+        // restore
+        ren.setSize(prevSize.x, prevSize.y, false)
+        cam.aspect=prevSize.x/prevSize.y; cam.updateProjectionMatrix()
+        view3d.renderer.render(view3d.scene, view3d.camera);
+        const nextNum=diagnostics.length? Math.max(...diagnostics.map(d=>d.number))+1 : 1;
+        const pad=n=>String(n).padStart(3,'0');
+        const tgt=view3d.controls.target;
+        const viewSettings={
+          cameraPosition:{x:cam.position.x,y:cam.position.y,z:cam.position.z},
+          cameraTarget:{x:tgt.x,y:tgt.y,z:tgt.z},
+          cameraFov:cam.fov, cameraAspect:cam.aspect, cameraNear:cam.near, cameraFar:cam.far,
+          viewport:{innerWidth:window.innerWidth, innerHeight:window.innerHeight, devicePixelRatio:window.devicePixelRatio||1, canvasWidth:ren.domElement.width, canvasHeight:ren.domElement.height, canvasStyleWidth:ren.domElement.clientWidth, canvasStyleHeight:ren.domElement.clientHeight},
+          rendererSize:{width:ren.domElement.width, height:ren.domElement.height, hiRes:true},
+          hide3DObstructions, east: [...east], west: [...west], validation: validationRows, timestamp:new Date().toISOString(),
+          openedCabinets: (view3d.clickableCabinets||[]).filter(m=>m.userData.opened).map(m=>m.name)
+        };
+        const entry={number:nextNum, id:`diagnostic-${pad(nextNum)}`, timestamp:viewSettings.timestamp, imageDataUrl:dataUrl, viewSettings, note:''};
+        const next=[...diagnostics, entry]; localStorage.setItem('kitchen-diagnostics', JSON.stringify(next)); setDiagnostics(next);
+        // download to Diagnostic folder (Downloads/diagnostic-###.png + .json)
+        const a=document.createElement('a'); a.href=dataUrl; a.download=`diagnostic-${pad(nextNum)}.png`; a.click();
+        setTimeout(()=>{
+          const b=document.createElement('a'); b.href=URL.createObjectURL(new Blob([JSON.stringify(entry,null,2)],{type:'application/json'})); b.download=`diagnostic-${pad(nextNum)}.json`; b.click();
+        }, 400);
+      }} style={{padding:'8px 12px',background:'#c05a2b',color:'#fff',border:'none',borderRadius:10,fontWeight:800}}>Diagnostic Screenshot</button>
       <label style={{display:'inline-flex',alignItems:'center',gap:6,padding:'6px 10px',background:hide3DObstructions?'#e6f4f1':'#fff',border:'1px solid #2f6f6d',borderRadius:8,fontWeight:800,fontSize:13}}>
         <input type="checkbox" checked={hide3DObstructions} onChange={e=>setHide3DObstructions(e.target.checked)}/>
         Hide blocking walls/ceiling
       </label>
-    </div></div><div ref={mountRef} style={{width:'100%',minHeight:520,border:'1px solid #ddd4c8',background:'#f7f3ed'}}/><div style={{fontSize:13,color:'#61584f',marginTop:10}}>Drag to rotate, scroll to zoom. Presets move camera. Check "Hide blocking walls/ceiling" to use live cutaway mode: walls and ceiling stay hidden, and the near-side cabinet run is hidden as you rotate.</div></div>
+    </div></div><div ref={mountRef} style={{width:'100%',minHeight:520,border:'1px solid #ddd4c8',background:'#f7f3ed',cursor:'grab'}}/>
+      {toast && <div style={{position:'absolute',left:'50%',top:66,transform:'translateX(-50%)',background:'#111',color:'#fff',padding:'8px 14px',borderRadius:8,fontWeight:700,fontSize:12,boxShadow:'0 6px 18px rgba(0,0,0,.18)',zIndex:2}}>{toast}</div>}
+      <div style={{fontSize:13,color:'#61584f',marginTop:10}}><b>Click a cabinet</b> in 3D to open/close — front slides and fades to show inside (garage, dish rack, upper cabinets, base cabinets). Hover glows orange. Works in cutaway or normal.</div>
+      <div style={{fontSize:13,color:'#61584f',marginTop:4}}>Drag to rotate, scroll to zoom. Presets move camera. Check "Hide blocking walls/ceiling" to use live cutaway mode.</div>
+      {diagnostics.length>0 && <div style={{marginTop:14,border:'1px solid #ddd4c8',borderRadius:10,background:'#fbfaf8',padding:12}}>
+        <div style={{fontSize:11,color:'#61584f',marginBottom:8,background:'#fff',border:'1px solid #ddd4c8',borderRadius:6,padding:'6px 8px'}}>Agnostic PNG + formation JSON — saved as <b>diagnostic-###.png/.json</b> to your Downloads. Also copy them to <b>C:\source\Github\kitchen\diagnostic\</b> (or <b>react-configurator/diagnostic/</b>) where code is — I have full rights to read that folder to see unit + formation.</div>
+        <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',flexWrap:'wrap',gap:8}}><div style={{fontWeight:800,fontSize:13}}>Diagnostic Folder — {diagnostics.length} saved (numbered) — also in <span style={{fontFamily:'IBM Plex Mono, monospace',fontSize:10}}>diagnostic/</span> where code is</div><div style={{display:'flex',gap:6}}><button onClick={()=>{
+          const blob=new Blob([JSON.stringify(diagnostics,null,2)],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='diagnostic-folder.json'; a.click();
+        }} style={{padding:'6px 10px',background:'#fff',border:'1px solid #111',borderRadius:8,fontWeight:700,fontSize:11}}>Export All JSON</button><button onClick={()=>{
+          if(!confirm('Clear all diagnostics?'))return; localStorage.removeItem('kitchen-diagnostics'); setDiagnostics([]);
+        }} style={{padding:'6px 10px',background:'#fee2e2',border:'1px solid #fecaca',borderRadius:8,fontWeight:700,fontSize:11}}>Clear All</button></div></div>
+        <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill, minmax(220px, 1fr))',gap:10,marginTop:10}}>
+          {diagnostics.map(d=>(
+            <div key={d.id} style={{background:'#fff',border:'1px solid #ddd4c8',borderRadius:8,overflow:'hidden'}}>
+              <div style={{position:'relative'}}><img src={d.imageDataUrl} alt={d.id} style={{width:'100%',height:140,objectFit:'cover',display:'block'}}/><div style={{position:'absolute',top:6,left:6,background:'#111',color:'#fff',padding:'3px 7px',borderRadius:6,fontSize:11,fontWeight:800}}>#{String(d.number).padStart(3,'0')}</div></div>
+              <div style={{padding:8}}>
+                <div style={{fontSize:11,color:'#61584f',fontFamily:'IBM Plex Mono, monospace'}}>{new Date(d.timestamp).toLocaleString()}</div>
+                <div style={{fontSize:11,color:'#1a1a18',marginTop:4,lineHeight:1.4}}>Cam pos ({d.viewSettings.cameraPosition.x.toFixed(1)}, {d.viewSettings.cameraPosition.y.toFixed(1)}, {d.viewSettings.cameraPosition.z.toFixed(1)}) → target ({d.viewSettings.cameraTarget.x.toFixed(1)}, {d.viewSettings.cameraTarget.y.toFixed(1)}, {d.viewSettings.cameraTarget.z.toFixed(1)}) · FOV {d.viewSettings.cameraFov?.toFixed(0)} · Viewport {d.viewSettings.viewport.canvasStyleWidth}×{d.viewSettings.viewport.canvasStyleHeight} @ DPR {d.viewSettings.viewport.devicePixelRatio.toFixed(1)} · HideWalls:{d.viewSettings.hide3DObstructions?'yes':'no'}</div>
+                <div style={{fontSize:11,color:'#1a1a18',marginTop:4}}>Opened: {(d.viewSettings.openedCabinets||[]).join(', ')||'none'}</div>
+                <textarea value={d.note} onChange={e=>{ const next=diagnostics.map(x=>x.id===d.id?{...x,note:e.target.value}:x); localStorage.setItem('kitchen-diagnostics', JSON.stringify(next)); setDiagnostics(next);}} placeholder="Describe what is wrong here... (unit, issue)" style={{width:'100%',marginTop:6,padding:'6px 8px',border:'1px solid #ddd4c8',borderRadius:6,fontSize:11,minHeight:44,resize:'vertical',fontFamily:'IBM Plex Sans, sans-serif'}}/>
+                <div style={{display:'flex',gap:6,marginTop:6}}><button onClick={()=>{
+                  const cam=threeViewRef.current?.camera, ctrl=threeViewRef.current?.controls; if(!cam||!ctrl) return;
+                  cam.position.set(d.viewSettings.cameraPosition.x,d.viewSettings.cameraPosition.y,d.viewSettings.cameraPosition.z);
+                  ctrl.target.set(d.viewSettings.cameraTarget.x,d.viewSettings.cameraTarget.y,d.viewSettings.cameraTarget.z);
+                  cam.fov=d.viewSettings.cameraFov; cam.updateProjectionMatrix();
+                  setHide3DObstructions(!!d.viewSettings.hide3DObstructions); ctrl.update();
+                }} style={{flex:1,padding:'6px 8px',background:'#111',color:'#fff',border:'none',borderRadius:6,fontWeight:700,fontSize:11}}>Restore View</button><button onClick={()=>{
+                  const a=document.createElement('a'); a.href=d.imageDataUrl; a.download=`${d.id}.png`; a.click();
+                  setTimeout(()=>{ const b=document.createElement('a'); b.href=URL.createObjectURL(new Blob([JSON.stringify(d,null,2)],{type:'application/json'})); b.download=`${d.id}.json`; b.click(); },250);
+                }} style={{padding:'6px 8px',background:'#fff',border:'1px solid #111',borderRadius:6,fontWeight:700,fontSize:11}}>Download</button><button onClick={()=>{
+                  const next=diagnostics.filter(x=>x.id!==d.id); localStorage.setItem('kitchen-diagnostics', JSON.stringify(next)); setDiagnostics(next);
+                }} style={{padding:'6px 8px',background:'#fee2e2',border:'1px solid #fecaca',borderRadius:6,fontWeight:700,fontSize:11}}>Delete</button></div>
+              </div>
+            </div>
+          ))}
+        </div>
+        <div style={{fontSize:11,color:'#61584f',marginTop:8}}>Refer me by number: <b>#{String(diagnostics[diagnostics.length-1].number).padStart(3,'0')}</b> — I will open its image + view settings to see the unit.</div>
+      </div>}
+      </div>
   }
   const WallElevation=({items,isEast})=>{
     const frame={x:72,y:52,w:1060,h:560}

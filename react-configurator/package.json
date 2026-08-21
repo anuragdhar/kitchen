@@ -4,7 +4,9 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "visual:qa": "node scripts/visual-qa.cjs"
+    "visual:qa": "node scripts/visual-qa.cjs",
+    "test:bolt": "node scripts/validate-3d-bolt.mjs",
+    "test": "npm run test:bolt"
   },
   "dependencies": {
     "jspdf": "^4.2.1",
@@ -15,6 +17,6 @@
   },
   "devDependencies": {
     "playwright": "^1.62.1",
-    "vite": "^8.2.2"
+    "vite": "^5.4.12"
   }
 }
