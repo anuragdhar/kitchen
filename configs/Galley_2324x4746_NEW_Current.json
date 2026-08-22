@@ -45,7 +45,7 @@
   "east": [
     {
       "id": "garage_NE",
-      "label": "East Tall NE 600x600x2700 y4146 matching west shaft - washing below, microwave above",
+      "label": "East Tall NE 600x600x2700 y4146 matching shaft NW — lower washing inside, upper microwave tambour beige #C4B5A5",
       "w": 600,
       "d": 600,
       "h": 2700,
@@ -59,17 +59,17 @@
       "subcomponents": [
         {
           "id": "washing-inside-tall",
-          "label": "Washing inside lower under-counter bay"
+          "label": "Washing inside lower 0-900"
         },
         {
           "id": "microwave-inside-tall",
-          "label": "Microwave above washing inside tall cabinet"
+          "label": "Microwave above washing inside upper 1350-2700"
         }
       ]
     },
     {
       "id": "washing",
-      "label": "Washing 600W hidden under counter at north end y4146 inside tall cabinet",
+      "label": "Washing 600W hidden under counter y4146 inside tall NE (NORTHMOST)",
       "w": 600,
       "d": 600,
       "h": 880,
@@ -81,25 +81,12 @@
       "insideTall": true
     },
     {
-      "id": "waterpurifier",
-      "label": "Water Purifier 350W hidden inside upper cabinet y3796 between washing and sink",
-      "w": 350,
-      "d": 320,
-      "h": 400,
-      "y": 3796,
-      "x": 1724,
-      "color": "#7EB8E8",
-      "z": 1350,
-      "mountedAbove": true,
-      "hidden": true
-    },
-    {
       "id": "sink",
-      "label": "Kitchen Sink 800W y2996 on east wall with dish storage above",
+      "label": "Sink 800W y3346 — NEW east wall north of dishwasher (was west y2850)",
       "w": 800,
       "d": 600,
       "h": 900,
-      "y": 2996,
+      "y": 3346,
       "x": 1724,
       "color": "#6a6a6a",
       "z": 0,
@@ -107,26 +94,49 @@
     },
     {
       "id": "sinkUpperDishRack",
-      "label": "Over-sink Dish Storage 800W y2996 z1350 above east kitchen sink",
+      "label": "Over-sink Dish Rack 800W y3346 z1350 — 2-tier SS above NEW east sink",
       "w": 800,
       "d": 320,
       "h": 700,
-      "y": 2996,
+      "y": 3346,
       "x": 1724,
       "color": "#f0e6da",
       "z": 1350
     },
     {
+      "id": "waterpurifier",
+      "label": "Water Purifier 350W hidden inside overhead y3046 z1350 between sink and dishwasher",
+      "w": 350,
+      "d": 320,
+      "h": 400,
+      "y": 3046,
+      "x": 1724,
+      "color": "#7EB8E8",
+      "z": 1350,
+      "mountedAbove": true
+    },
+    {
       "id": "dishwasher",
-      "label": "Dishwasher 600W hidden under counter y2396 south of sink",
+      "label": "Dishwasher 600W hidden y2746 south of sink (after purifier)",
       "w": 600,
       "d": 600,
       "h": 880,
-      "y": 2396,
+      "y": 2746,
       "x": 1724,
       "color": "#A8A8A8",
       "hidden": true,
       "behindShutter": true
+    },
+    {
+      "id": "spice",
+      "label": "Spice Open Slider 150W y1850 retained south zone",
+      "w": 150,
+      "d": 300,
+      "h": 200,
+      "y": 1850,
+      "x": 1724,
+      "color": "#d9c2a5",
+      "z": 150
     }
   ],
   "west": [
@@ -144,7 +154,7 @@
     },
     {
       "id": "westGarage",
-      "label": "West Garage 600W y3546 south of shaft - food processor inside",
+      "label": "West Garage 600W y3546 south of shaft — stores Food Processor tambour",
       "w": 600,
       "d": 400,
       "h": 900,
@@ -152,16 +162,17 @@
       "x": 0,
       "color": "#C4B5A5",
       "garage": true,
+      "gapAfter": true,
       "subcomponents": [
         {
           "id": "foodprocessor-inside-westgarage",
-          "label": "Food processor inside west garage"
+          "label": "Food Processor inside garage upper"
         }
       ]
     },
     {
       "id": "gas",
-      "label": "Gas Stove 700W y2000 west wall with chimney hidden in upper cabinet",
+      "label": "Gas 700W y2000 west wall — gap south of garage, hidden chimney small inside 320D upper",
       "w": 700,
       "d": 400,
       "h": 900,
@@ -186,111 +197,83 @@
     "all": true,
     "rows": [
       {
-        "id": "east-order",
-        "rule": "East N->S: tall/washing > hidden purifier > sink > dishwasher",
+        "id": "east-order-NEW",
+        "rule": "East N->S NEW: tall y4146 + washing y4146 (inside) > sink y3346 > purifier y3046 (hidden overhead) > dishwasher y2746 > spice y1850",
         "status": "pass",
-        "measured": "garage y4146 washing y4146 purifier y3796 sink y2996 dw y2396",
-        "expected": "garage/washing 4146 > purifier 3796 > sink 2996 > dishwasher 2396"
+        "measured": "garage y4146 washing y4146 sink y3346 dw y2746",
+        "expected": "garage 4146 >= washing 4146 > sink 3346 > dw 2746"
       },
       {
-        "id": "west-order",
-        "rule": "West N->S: shaft > food-processor garage > gap > gas/chimney",
+        "id": "west-order-NEW",
+        "rule": "West S->N NEW: gas y2000 < westGarage y3546 < shaft y4146",
         "status": "pass",
-        "measured": "gas y2000 gap 846 garage y3546 shaft y4146",
-        "expected": "gas 2000, westGarage 3546, shaft 4146 with positive gap"
-      },
-      {
-        "id": "purifier-near-sink",
-        "rule": "Purifier hidden inside cabinet north of sink + dish storage over sink",
-        "status": "pass",
-        "measured": "purifier y3796 z1350, sink y2996, rack y2996",
-        "expected": "purifier z1350 north of sink + 800W dish storage over sink"
+        "measured": "gas y2000 garage y3546 shaft y4146",
+        "expected": "gas 2000 < garage 3546 < shaft 4146"
       },
       {
         "id": "door-clear-zone",
         "rule": "West door clear zone y0-y1220 empty",
         "status": "pass",
-        "measured": "0 items in zone",
-        "expected": "no item with y in [0,1220)"
-      },
-      {
-        "id": "walkway-minimum",
-        "rule": "Walkway minimum",
-        "status": "pass",
-        "measured": "floor 1324 mm / eye 1004 mm",
-        "expected": "floor 1324 mm / eye 1004 mm"
+        "measured": "0 items",
+        "expected": "no item in [0,1220)"
       },
       {
         "id": "collision",
-        "rule": "Cabinet/appliance collision",
+        "rule": "Cabinet/appliance collision (garage fullHeight excluded)",
         "status": "pass",
         "measured": "no overlap",
-        "expected": "separate items along y, except intentional contents inside tall cabinets"
+        "expected": "separate along y"
       },
       {
         "id": "bounds",
         "rule": "Item outside room bounds",
         "status": "pass",
         "measured": "all inside",
-        "expected": "inside 2324 x 4746 x 2700"
+        "expected": "inside 2324x4746"
       }
     ],
     "detailed": [
       {
-        "id": "east-order",
-        "rule": "East N->S: tall/washing > hidden purifier > sink > dishwasher",
+        "id": "east-order-NEW",
+        "rule": "East N->S NEW: tall y4146 + washing y4146 (inside) > sink y3346 > purifier y3046 (hidden overhead) > dishwasher y2746 > spice y1850",
         "status": "pass",
-        "measured": "garage y4146 washing y4146 purifier y3796 sink y2996 dw y2396",
-        "expected": "garage/washing 4146 > purifier 3796 > sink 2996 > dishwasher 2396"
+        "measured": "garage y4146 washing y4146 sink y3346 dw y2746",
+        "expected": "garage 4146 >= washing 4146 > sink 3346 > dw 2746"
       },
       {
-        "id": "west-order",
-        "rule": "West N->S: shaft > food-processor garage > gap > gas/chimney",
+        "id": "west-order-NEW",
+        "rule": "West S->N NEW: gas y2000 < westGarage y3546 < shaft y4146",
         "status": "pass",
-        "measured": "gas y2000 gap 846 garage y3546 shaft y4146",
-        "expected": "gas 2000, westGarage 3546, shaft 4146 with positive gap"
-      },
-      {
-        "id": "purifier-near-sink",
-        "rule": "Purifier hidden inside cabinet north of sink + dish storage over sink",
-        "status": "pass",
-        "measured": "purifier y3796 z1350, sink y2996, rack y2996",
-        "expected": "purifier z1350 north of sink + 800W dish storage over sink"
+        "measured": "gas y2000 garage y3546 shaft y4146",
+        "expected": "gas 2000 < garage 3546 < shaft 4146"
       },
       {
         "id": "door-clear-zone",
         "rule": "West door clear zone y0-y1220 empty",
         "status": "pass",
-        "measured": "0 items in zone",
-        "expected": "no item with y in [0,1220)"
-      },
-      {
-        "id": "walkway-minimum",
-        "rule": "Walkway minimum",
-        "status": "pass",
-        "measured": "floor 1324 mm / eye 1004 mm",
-        "expected": "floor 1324 mm / eye 1004 mm"
+        "measured": "0 items",
+        "expected": "no item in [0,1220)"
       },
       {
         "id": "collision",
-        "rule": "Cabinet/appliance collision",
+        "rule": "Cabinet/appliance collision (garage fullHeight excluded)",
         "status": "pass",
         "measured": "no overlap",
-        "expected": "separate items along y, except intentional contents inside tall cabinets"
+        "expected": "separate along y"
       },
       {
         "id": "bounds",
         "rule": "Item outside room bounds",
         "status": "pass",
         "measured": "all inside",
-        "expected": "inside 2324 x 4746 x 2700"
+        "expected": "inside 2324x4746"
       }
     ]
   },
-  "rule": "New configuration: East wet wall N->S tall cabinet/washing, hidden purifier, sink, dishwasher; West N->S shaft, food-processor garage, gap, gas stove with chimney",
+  "rule": "Rule9 NEW: East Tall NE 600x600 y4146 washing->sink->purifier->dishwasher + West shaft->garage(foodprocessor)->gap->gas(chimney) microwave above washing",
   "layoutModel": {
     "version": "1.0.0-phase1",
-    "rule": "New configuration: East wet wall N->S tall cabinet/washing, hidden purifier, sink, dishwasher; West N->S shaft, food-processor garage, gap, gas stove with chimney",
+    "rule": "Rule9 NEW: East Tall NE 600x600 y4146 washing->sink->purifier->dishwasher + West shaft->garage(foodprocessor)->gap->gas(chimney) microwave above washing",
     "ruleId": "Rule9",
     "unit": "mm",
     "room": {
@@ -331,7 +314,7 @@
         "color": "#7eb8e8",
         "material": "glass",
         "clearance": null,
-        "label": "North Window â€” 2 Bays Ã— 610 Fixed Top / 1190 Sliding Bottom (centre mullion) â€” LEFT-TOP 12\" Metal Exhaust",
+        "label": "North Window — 2 Bays × 610 Fixed Top / 1190 Sliding Bottom (centre mullion) — LEFT-TOP 12\" Metal Exhaust",
         "sill": 900,
         "sections": 2,
         "transomHeight": 610,
@@ -359,8 +342,8 @@
           "slidingPosition": "both"
         },
         "notes": {
-          "shaftAlternative": "Hole in shaft wall (west shaft 61Ã—83.8 at y4146) can also host exhaust â€” noted as alternative to window mount",
-          "exhaustChoice": "Metal 12-inch recommended for kitchen heat/grease â€” plastic not suggested"
+          "shaftAlternative": "Hole in shaft wall (west shaft 61×83.8 at y4146) can also host exhaust — noted as alternative to window mount",
+          "exhaustChoice": "Metal 12-inch recommended for kitchen heat/grease — plastic not suggested"
         }
       },
       "shaft": {
@@ -553,7 +536,7 @@
           "from": 300,
           "to": 1220
         },
-        "label": "West door clear zone y300-y1220 no counter no upper no LED (gap 920 per PS1 â€” y300-1220)"
+        "label": "West door clear zone y300-y1220 no counter no upper no LED (gap 920 per PS1 — y300-1220)"
       },
       {
         "id": "north-window-below-zone",
@@ -577,6 +560,104 @@
     ],
     "appliances": [
       {
+        "id": "spice",
+        "category": "cabinet",
+        "wall": "east",
+        "x": 1724,
+        "y": 1850,
+        "z": 150,
+        "width": 150,
+        "depth": 300,
+        "height": 200,
+        "locked": false,
+        "color": "#d9c2a5",
+        "material": "laminate",
+        "clearance": null,
+        "label": "Spice Open Slider 150W y1850 retained south zone",
+        "w": 150,
+        "d": 300,
+        "h": 200
+      },
+      {
+        "id": "gas",
+        "category": "appliance",
+        "wall": "west",
+        "x": 0,
+        "y": 2000,
+        "z": 900,
+        "width": 700,
+        "depth": 400,
+        "height": 900,
+        "locked": false,
+        "color": "#2a2a2a",
+        "material": "stainless_steel",
+        "clearance": null,
+        "label": "Gas 700W y2000 west wall — gap south of garage, hidden chimney small inside 320D upper",
+        "subcomponents": [
+          {
+            "id": "gas-cooktop",
+            "label": "cooktop slab"
+          },
+          {
+            "id": "hidden-chimney-insert",
+            "label": "hidden chimney inside upper"
+          }
+        ],
+        "w": 700,
+        "d": 400,
+        "h": 900
+      },
+      {
+        "id": "dishwasher",
+        "category": "appliance",
+        "wall": "east",
+        "x": 1724,
+        "y": 2746,
+        "z": 0,
+        "width": 600,
+        "depth": 600,
+        "height": 880,
+        "locked": false,
+        "color": "#A8A8A8",
+        "material": "stainless_steel",
+        "clearance": {
+          "kind": "hiddenBehindShutter",
+          "y": 2850
+        },
+        "label": "Dishwasher 600W hidden y2746 south of sink (after purifier)",
+        "hidden": true,
+        "behindShutter": true,
+        "dormant": true,
+        "w": 600,
+        "d": 600,
+        "h": 880
+      },
+      {
+        "id": "washing",
+        "category": "appliance",
+        "wall": "east",
+        "x": 1724,
+        "y": 4146,
+        "z": 0,
+        "width": 600,
+        "depth": 600,
+        "height": 880,
+        "locked": false,
+        "color": "#E5E0DA",
+        "material": "stainless_steel",
+        "clearance": {
+          "kind": "belowGarageHidden",
+          "garageY": 4146
+        },
+        "label": "Washing 600W hidden under counter y4146 inside tall NE (NORTHMOST)",
+        "hidden": true,
+        "behindShutter": true,
+        "lastBeforeGarage": true,
+        "w": 600,
+        "d": 600,
+        "h": 880
+      },
+      {
         "id": "garage_NE",
         "category": "cabinet",
         "wall": "east",
@@ -593,17 +674,17 @@
           "kind": "tallGarageFullHeight",
           "matchesShaft": true
         },
-        "label": "East Tall NE 600x600x2700 y4146 matching west shaft - washing below, microwave above",
+        "label": "East Tall NE 600x600x2700 y4146 matching shaft NW — lower washing inside, upper microwave tambour beige #C4B5A5",
         "last": true,
         "fullHeight": true,
         "subcomponents": [
           {
             "id": "washing-inside-tall",
-            "label": "Washing inside lower under-counter bay"
+            "label": "Washing inside lower 0-900"
           },
           {
             "id": "microwave-inside-tall",
-            "label": "Microwave above washing inside tall cabinet"
+            "label": "Microwave above washing inside upper 1350-2700"
           }
         ],
         "w": 600,
@@ -611,60 +692,11 @@
         "h": 2700
       },
       {
-        "id": "washing",
-        "category": "appliance",
-        "wall": "east",
-        "x": 1724,
-        "y": 4146,
-        "z": 0,
-        "width": 600,
-        "depth": 600,
-        "height": 880,
-        "locked": false,
-        "color": "#E5E0DA",
-        "material": "stainless_steel",
-        "clearance": {
-          "kind": "insideTallCabinet",
-          "garageY": 4146
-        },
-        "label": "Washing 600W hidden under counter at north end y4146 inside tall cabinet",
-        "hidden": true,
-        "behindShutter": true,
-        "insideTall": true,
-        "w": 600,
-        "d": 600,
-        "h": 880
-      },
-      {
-        "id": "waterpurifier",
-        "category": "cabinet",
-        "wall": "east",
-        "x": 1724,
-        "y": 3796,
-        "z": 1350,
-        "width": 350,
-        "depth": 320,
-        "height": 400,
-        "locked": false,
-        "color": "#7EB8E8",
-        "material": "laminate",
-        "clearance": {
-          "kind": "hiddenInsideUpperBetweenWashingAndSink",
-          "sinkY": 2996
-        },
-        "label": "Water Purifier 350W hidden inside upper cabinet y3796 between washing and sink",
-        "mountedAbove": true,
-        "hidden": true,
-        "w": 350,
-        "d": 320,
-        "h": 400
-      },
-      {
         "id": "sink",
         "category": "plumbing",
         "wall": "east",
         "x": 1724,
-        "y": 2996,
+        "y": 3346,
         "z": 0,
         "width": 800,
         "depth": 600,
@@ -676,7 +708,7 @@
           "kind": "helpWashZone",
           "familySize": 6
         },
-        "label": "Kitchen Sink 800W y2996 on east wall with dish storage above",
+        "label": "Sink 800W y3346 — NEW east wall north of dishwasher (was west y2850)",
         "sinkOptions": {
           "selected": "A-800-drainboard",
           "alternatives": [
@@ -689,11 +721,34 @@
         "h": 900
       },
       {
+        "id": "waterpurifier",
+        "category": "cabinet",
+        "wall": "east",
+        "x": 1724,
+        "y": 3046,
+        "z": 1350,
+        "width": 350,
+        "depth": 320,
+        "height": 400,
+        "locked": false,
+        "color": "#7EB8E8",
+        "material": "laminate",
+        "clearance": {
+          "kind": "mountedAboveCounterInsideUpper",
+          "sinkY": 2850
+        },
+        "label": "Water Purifier 350W hidden inside overhead y3046 z1350 between sink and dishwasher",
+        "mountedAbove": true,
+        "w": 350,
+        "d": 320,
+        "h": 400
+      },
+      {
         "id": "sinkUpperDishRack",
         "category": "cabinet",
         "wall": "east",
         "x": 1724,
-        "y": 2996,
+        "y": 3346,
         "z": 1350,
         "width": 800,
         "depth": 320,
@@ -703,36 +758,12 @@
         "material": "laminate",
         "clearance": {
           "kind": "overSinkStorage",
-          "sinkY": 2996
+          "sinkY": 2850
         },
-        "label": "Over-sink Dish Storage 800W y2996 z1350 above east kitchen sink",
+        "label": "Over-sink Dish Rack 800W y3346 z1350 — 2-tier SS above NEW east sink",
         "w": 800,
         "d": 320,
         "h": 700
-      },
-      {
-        "id": "dishwasher",
-        "category": "appliance",
-        "wall": "east",
-        "x": 1724,
-        "y": 2396,
-        "z": 0,
-        "width": 600,
-        "depth": 600,
-        "height": 880,
-        "locked": false,
-        "color": "#A8A8A8",
-        "material": "stainless_steel",
-        "clearance": {
-          "kind": "hiddenBehindShutter",
-          "y": 2396
-        },
-        "label": "Dishwasher 600W hidden under counter y2396 south of sink",
-        "hidden": true,
-        "behindShutter": true,
-        "w": 600,
-        "d": 600,
-        "h": 880
       },
       {
         "id": "shaft",
@@ -748,7 +779,7 @@
         "color": "#999",
         "material": "concrete",
         "clearance": null,
-        "label": "Shaft 61x83.8 LAST NW y4146",
+        "label": "Shaft 61x83.8 LAST NW y4146 full height",
         "fixed": true,
         "last": true,
         "w": 610,
@@ -765,6 +796,9 @@
         "width": 600,
         "depth": 400,
         "height": 900,
+        "w": 600,
+        "d": 400,
+        "h": 900,
         "locked": false,
         "color": "#C4B5A5",
         "material": "laminate",
@@ -772,90 +806,50 @@
           "kind": "garageWest",
           "afterShaft": true
         },
-        "label": "West Garage 600W y3546 south of shaft - food processor inside",
+        "label": "West Garage 600W y3546 south of shaft — stores Food Processor tambour",
         "subcomponents": [
           {
             "id": "foodprocessor-inside-westgarage",
-            "label": "Food processor inside west garage"
+            "label": "Food Processor inside garage upper"
           }
-        ],
-        "w": 600,
-        "d": 400,
-        "h": 900
-      },
-      {
-        "id": "gas",
-        "category": "appliance",
-        "wall": "west",
-        "x": 0,
-        "y": 2000,
-        "z": 900,
-        "width": 700,
-        "depth": 400,
-        "height": 900,
-        "locked": false,
-        "color": "#2a2a2a",
-        "material": "stainless_steel",
-        "clearance": null,
-        "label": "Gas Stove 700W y2000 west wall with chimney hidden in upper cabinet",
-        "subcomponents": [
-          {
-            "id": "gas-cooktop",
-            "label": "cooktop slab"
-          },
-          {
-            "id": "gas-burner-rings",
-            "label": "3 burner rings"
-          },
-          {
-            "id": "hidden-chimney-insert",
-            "label": "hidden chimney insert inside upper cabinet"
-          },
-          {
-            "id": "hidden-chimney-vent-slot",
-            "label": "slim under-cabinet vent slot"
-          }
-        ],
-        "w": 700,
-        "d": 400,
-        "h": 900
+        ]
       }
     ],
     "validationRules": [
       {
         "id": "east-order",
-        "label": "East N->S: washing/tall cabinet, hidden purifier, sink, dishwasher",
+        "label": "East order PS1: spice y1850 < gas y2000 < dishwasher y2850 hidden < washing y3400 hidden < garage_NE y4146 last",
         "wall": "east",
         "kind": "order",
-        "expected": "garage_NE.y===4146 && washing.y===4146 && waterpurifier.y===3796 && sink.y===2996 && dishwasher.y===2396",
+        "expected": "spice.y < gas.y && gas.y < dishwasher.y && dishwasher.y < washing.y && washing.lastBeforeGarage && garage_NE.last && garage_NE.y===4146",
         "severity": "error",
-        "fix": "Keep east north-to-south order washing -> purifier -> sink -> dishwasher"
+        "fix": "Keep east order spice1850 → gas2000 → dishwasher2850 → washing3400 → garage_NE4146 per PS1"
       },
       {
         "id": "west-order",
-        "label": "West N->S: shaft, food-processor garage, gap, gas with chimney",
+        "label": "West order: sink y2850 (800W) + dish rack 800 above → purifier y3680 → shaft y4146",
         "wall": "west",
         "kind": "order",
-        "expected": "gas.y===2000 && westGarage.y===3546 && shaft.y===4146",
+        "expected": "sink.y===2850 && sink.w===800 && sinkUpperDishRack.y===2850 && waterpurifier.y===3680 && shaft.last",
         "severity": "error",
-        "fix": "Keep west north-to-south order shaft -> garage -> gap -> gas"
+        "fix": "Keep west: sink 800W at y2850 with dish rack 800W above sink, purifier y3680 north of rack, then shaft y4146"
       },
       {
         "id": "purifier-near-sink",
-        "label": "Purifier hidden inside upper cabinet north of sink",
-        "wall": "east",
+        "label": "Purifier north of rack — wall-mounted",
+        "wall": "west",
         "kind": "proximity",
         "expected": {
-          "sinkY": 2996,
-          "dishRackY": 2996,
-          "purifierY": 3796
+          "sinkY": 2850,
+          "dishRackY": 2850,
+          "purifierY": 3680
         },
         "severity": "warning",
-        "fix": "Purifier at y3796 z1350 between washing and sink; dish rack above sink y2996"
+        "fix": "Purifier at y3680 z1350 north of sink rack, not on counter"
       },
       {
         "id": "door-clear-zone",
-        "label": "West door clear zone y300-y1220 empty",
+        "label": "West door clear zone y300-y1220 empty (PS1 gap 920)",
         "wall": "west",
         "kind": "clearZone",
         "expected": {
@@ -864,7 +858,7 @@
           "floorToCeiling": true
         },
         "severity": "error",
-        "fix": "Move any west object overlapping y300-y1220 beyond y1220"
+        "fix": "Move any west object overlapping y300-y1220 beyond y1220 — gap 920 no counter"
       },
       {
         "id": "walkway-minimum",
@@ -882,7 +876,7 @@
         "label": "Cabinet/appliance collision",
         "kind": "collision",
         "severity": "error",
-        "fix": "Separate overlapping items along y, except objects intentionally inside tall cabinets"
+        "fix": "Separate overlapping items along y"
       },
       {
         "id": "bounds",
@@ -941,104 +935,76 @@
       "all": true,
       "rows": [
         {
-          "id": "east-order",
-          "rule": "East N->S: tall/washing > hidden purifier > sink > dishwasher",
+          "id": "east-order-NEW",
+          "rule": "East N->S NEW: tall y4146 + washing y4146 (inside) > sink y3346 > purifier y3046 (hidden overhead) > dishwasher y2746 > spice y1850",
           "status": "pass",
-          "measured": "garage y4146 washing y4146 purifier y3796 sink y2996 dw y2396",
-          "expected": "garage/washing 4146 > purifier 3796 > sink 2996 > dishwasher 2396"
+          "measured": "garage y4146 washing y4146 sink y3346 dw y2746",
+          "expected": "garage 4146 >= washing 4146 > sink 3346 > dw 2746"
         },
         {
-          "id": "west-order",
-          "rule": "West N->S: shaft > food-processor garage > gap > gas/chimney",
+          "id": "west-order-NEW",
+          "rule": "West S->N NEW: gas y2000 < westGarage y3546 < shaft y4146",
           "status": "pass",
-          "measured": "gas y2000 gap 846 garage y3546 shaft y4146",
-          "expected": "gas 2000, westGarage 3546, shaft 4146 with positive gap"
-        },
-        {
-          "id": "purifier-near-sink",
-          "rule": "Purifier hidden inside cabinet north of sink + dish storage over sink",
-          "status": "pass",
-          "measured": "purifier y3796 z1350, sink y2996, rack y2996",
-          "expected": "purifier z1350 north of sink + 800W dish storage over sink"
+          "measured": "gas y2000 garage y3546 shaft y4146",
+          "expected": "gas 2000 < garage 3546 < shaft 4146"
         },
         {
           "id": "door-clear-zone",
           "rule": "West door clear zone y0-y1220 empty",
           "status": "pass",
-          "measured": "0 items in zone",
-          "expected": "no item with y in [0,1220)"
-        },
-        {
-          "id": "walkway-minimum",
-          "rule": "Walkway minimum",
-          "status": "pass",
-          "measured": "floor 1324 mm / eye 1004 mm",
-          "expected": "floor 1324 mm / eye 1004 mm"
+          "measured": "0 items",
+          "expected": "no item in [0,1220)"
         },
         {
           "id": "collision",
-          "rule": "Cabinet/appliance collision",
+          "rule": "Cabinet/appliance collision (garage fullHeight excluded)",
           "status": "pass",
           "measured": "no overlap",
-          "expected": "separate items along y, except intentional contents inside tall cabinets"
+          "expected": "separate along y"
         },
         {
           "id": "bounds",
           "rule": "Item outside room bounds",
           "status": "pass",
           "measured": "all inside",
-          "expected": "inside 2324 x 4746 x 2700"
+          "expected": "inside 2324x4746"
         }
       ],
       "detailed": [
         {
-          "id": "east-order",
-          "rule": "East N->S: tall/washing > hidden purifier > sink > dishwasher",
+          "id": "east-order-NEW",
+          "rule": "East N->S NEW: tall y4146 + washing y4146 (inside) > sink y3346 > purifier y3046 (hidden overhead) > dishwasher y2746 > spice y1850",
           "status": "pass",
-          "measured": "garage y4146 washing y4146 purifier y3796 sink y2996 dw y2396",
-          "expected": "garage/washing 4146 > purifier 3796 > sink 2996 > dishwasher 2396"
+          "measured": "garage y4146 washing y4146 sink y3346 dw y2746",
+          "expected": "garage 4146 >= washing 4146 > sink 3346 > dw 2746"
         },
         {
-          "id": "west-order",
-          "rule": "West N->S: shaft > food-processor garage > gap > gas/chimney",
+          "id": "west-order-NEW",
+          "rule": "West S->N NEW: gas y2000 < westGarage y3546 < shaft y4146",
           "status": "pass",
-          "measured": "gas y2000 gap 846 garage y3546 shaft y4146",
-          "expected": "gas 2000, westGarage 3546, shaft 4146 with positive gap"
-        },
-        {
-          "id": "purifier-near-sink",
-          "rule": "Purifier hidden inside cabinet north of sink + dish storage over sink",
-          "status": "pass",
-          "measured": "purifier y3796 z1350, sink y2996, rack y2996",
-          "expected": "purifier z1350 north of sink + 800W dish storage over sink"
+          "measured": "gas y2000 garage y3546 shaft y4146",
+          "expected": "gas 2000 < garage 3546 < shaft 4146"
         },
         {
           "id": "door-clear-zone",
           "rule": "West door clear zone y0-y1220 empty",
           "status": "pass",
-          "measured": "0 items in zone",
-          "expected": "no item with y in [0,1220)"
-        },
-        {
-          "id": "walkway-minimum",
-          "rule": "Walkway minimum",
-          "status": "pass",
-          "measured": "floor 1324 mm / eye 1004 mm",
-          "expected": "floor 1324 mm / eye 1004 mm"
+          "measured": "0 items",
+          "expected": "no item in [0,1220)"
         },
         {
           "id": "collision",
-          "rule": "Cabinet/appliance collision",
+          "rule": "Cabinet/appliance collision (garage fullHeight excluded)",
           "status": "pass",
           "measured": "no overlap",
-          "expected": "separate items along y, except intentional contents inside tall cabinets"
+          "expected": "separate along y"
         },
         {
           "id": "bounds",
           "rule": "Item outside room bounds",
           "status": "pass",
           "measured": "all inside",
-          "expected": "inside 2324 x 4746 x 2700"
+          "expected": "inside 2324x4746"
         }
       ]
     },
@@ -1281,10 +1247,10 @@
   "viewOptions": {
     "hide3DObstructions": false
   },
-  "exportedAt": "2026-08-21T08:18:25.578Z",
-  "version": "1.0.0-new-configuration",
+  "exportedAt": "2026-08-21T07:40:01.196Z",
+  "version": "1.0.0-new-figuration",
   "metadata": {
     "savedAs": "NewConfig_EastWashingWestGas",
-    "note": "East north tall cabinet matching shaft with washing below and microwave above; east N->S washing, hidden purifier, sink, dishwasher; west N->S shaft, food-processor garage, gap, gas stove with chimney."
+    "note": "East tall 600x600 matching shaft, washing bottom, sink 800, purifier hidden overhead between, dishwasher, rack above sink, microwave above washing; West shaft->garage(FP)->gap->gas+chimney"
   }
 }
