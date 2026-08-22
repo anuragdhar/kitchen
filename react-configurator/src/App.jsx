@@ -64,6 +64,7 @@ export default function App(){
   const [selectedId,setSelectedId]=useState(null)
   const [measureMode,setMeasureMode]=useState(false)
   const [measurePoints,setMeasurePoints]=useState([]) // [{x,y} mm]
+  const [interactionMode,setInteractionMode]=useState('cabinet') // 'cabinet' | 'dimension' | 'measure' | 'transparent'
   const [materials,setMaterials]=useState({...DEFAULT_MATERIALS})
   const [eastModules,setEastModules]=useState(()=>autoFillModules(eastRunLength))
   const [westModules,setWestModules]=useState(()=>autoFillModules(westRunLength))
@@ -71,6 +72,10 @@ export default function App(){
   const [bomNote,setBomNote]=useState('')
   const threeViewRef=useRef(null)
   const hide3DObstructionsRef=useRef(true)
+  const interactionModeRef=useRef('cabinet')
+  const measurePointsRef=useRef([])
+  const selectedItemRef=useRef(null)
+  const unitRef=useRef('mm')
   const activeViewRef=useRef(null)
   const eastSvgRef=useRef(null)
   const westSvgRef=useRef(null)
@@ -159,6 +164,11 @@ export default function App(){
     hide3DObstructionsRef.current=hide3DObstructions
     threeViewRef.current?.updateCutawayVisibility?.()
   },[hide3DObstructions])
+  useEffect(()=>{ measurePointsRef.current=measurePoints },[measurePoints])
+  useEffect(()=>{ selectedItemRef.current=selectedItem },[selectedItem])
+  useEffect(()=>{ unitRef.current=unit },[unit])
+  useEffect(()=>{ interactionModeRef.current=interactionMode; if(interactionMode==='measure') setMeasureMode(true); else setMeasureMode(false); if(interactionMode!=='measure') setMeasurePoints([]); threeViewRef.current?.updateCursor?.(); },[interactionMode])
+  useEffect(()=>{ if(measureMode) setInteractionMode('measure'); },[measureMode])
 
   const buildLayoutModel=()=>{
     const byId={}
@@ -227,7 +237,9 @@ export default function App(){
     set3DHideObstructions:(value)=>setHide3DObstructions(!!value)
   }},[east,west,grid,materials,eastModules,westModules,validationRows,vSimple,hide3DObstructions])
 
-  const onDown=(e,wall,id)=>{if(e.button!==0) return; const it=[...east,...west].find(x=>x.id===id); setSelectedId(id); if(measureMode){ const cx = (it.x||0)+(it.d||400)/2, cy = it.y + (it.w||600)/2; setMeasurePoints(prev=> prev.length>=2 ? [{x:cx,y:cy}] : [...prev,{x:cx,y:cy}]); if(it?.fixed) return; } else { if(it?.fixed) return; } setDrag({wall,id,startY:e.clientY,startItemY:it.y})}
+  const onDown=(e,wall,id)=>{if(e.button!==0) return; const it=[...east,...west].find(x=>x.id===id); if(interactionMode==='dimension'){ setSelectedId(id); return; } if(interactionMode==='measure'){ setSelectedId(id); const cx = (it.x||0)+(it.d||400)/2, cy = it.y + (it.w||600)/2; setMeasurePoints(prev=> prev.length>=2 ? [{x:cx,y:cy}] : [...prev,{x:cx,y:cy}]); return; } if(interactionMode==='transparent'){ setSelectedId(id); // transparent preview - no drag, just selection with transparent hint
+    return; } // cabinet mode: allow drag
+    setSelectedId(id); if(it?.fixed) return; setDrag({wall,id,startY:e.clientY,startItemY:it.y})}
   const onMove=(e)=>{if(!drag)return; const dy=(e.clientY-drag.startY)/scale; const raw=drag.startItemY+dy; const snapped=snapVal(raw); const cur=[...east,...west].find(x=>x.id===drag.id); const wAlong=cur?.w ?? 600; const ny=Math.max(0,Math.min(KITCHEN.length-wAlong,snapped)); if(drag.wall==='east')setEast(p=>p.map(it=>it.id===drag.id?{...it,y:ny}:it)); else setWest(p=>p.map(it=>it.id===drag.id&&!it.fixed?{...it,y:ny}:it))}
   const onUp=()=>setDrag(null)
   const downloadText=(filename,text,type='text/plain')=>{const blob=new Blob([text],{type}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=filename; a.click(); URL.revokeObjectURL(url)}
@@ -703,6 +715,17 @@ ${westRows}
       renderer.domElement.style.height='auto'
       renderer.domElement.style.display='block'
       mount.appendChild(renderer.domElement)
+      // overlay for 3D dimension + measurement labels
+      mount.style.position='relative'
+      const overlay=document.createElement('div')
+      overlay.style.cssText='position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:2'
+      mount.appendChild(overlay)
+      const dimLabel=document.createElement('div')
+      dimLabel.style.cssText='position:absolute;transform:translate(-50%,-120%);background:#0c4a6e;color:#fff;padding:7px 10px;border-radius:10px;font:800 11px Inter,sans-serif;white-space:nowrap;box-shadow:0 6px 18px rgba(0,0,0,.18);border:1px solid #fff;display:none;pointer-events:none'
+      overlay.appendChild(dimLabel)
+      const measureLabel=document.createElement('div')
+      measureLabel.style.cssText='position:absolute;transform:translate(-50%,-50%);background:#fef3c7;color:#92400e;padding:6px 10px;border-radius:10px;font:900 12px Inter,sans-serif;white-space:nowrap;border:2px solid #d97706;box-shadow:0 4px 12px rgba(0,0,0,.12);display:none;pointer-events:none'
+      overlay.appendChild(measureLabel)
       const pmremGenerator=new THREE.PMREMGenerator(renderer)
       const envTexture=pmremGenerator.fromScene(new RoomEnvironment(),.04).texture
       scene.environment=envTexture
@@ -711,6 +734,25 @@ ${westRows}
       controls.enableDamping=true
       controls.target.set(0,92,25)
       const s=(n)=>n/10
+      // 3D measurement visuals (line + endpoints)
+      const measureGroup=new THREE.Group()
+      measureGroup.name='measureGroup'
+      measureGroup.userData.ignoreMeasureRaycast=true
+      scene.add(measureGroup)
+      const measureLineGeom=new THREE.BufferGeometry()
+      const measureLineMat=new THREE.LineDashedMaterial({color:0xd97706, linewidth:2, scale:1, dashSize:s(28), gapSize:s(14), transparent:true, opacity:0.98})
+      const measureLine=new THREE.Line(measureLineGeom, measureLineMat)
+      measureLine.userData.ignoreMeasureRaycast=true
+      measureLine.frustumCulled=false
+      measureGroup.add(measureLine)
+      const epGeo=new THREE.SphereGeometry(s(16),16,16)
+      const epMat=new THREE.MeshStandardMaterial({color:0xd97706, emissive:0xd97706, emissiveIntensity:0.18, roughness:0.4})
+      const epMesh1=new THREE.Mesh(epGeo, epMat)
+      const epMesh2=new THREE.Mesh(epGeo, epMat)
+      epMesh1.userData.ignoreMeasureRaycast=true
+      epMesh2.userData.ignoreMeasureRaycast=true
+      epMesh1.visible=false; epMesh2.visible=false
+      measureGroup.add(epMesh1); measureGroup.add(epMesh2)
 
       const textureFromCanvas=(paint)=>{
         const canvas=document.createElement('canvas')
@@ -1308,41 +1350,191 @@ ${westRows}
         if(n.startsWith('east')) return new THREE.Vector3(s(-38),0,0)
         return new THREE.Vector3(s(38),0,0)
       }
+      const getCursorForMode=(mode, isHover)=>{
+        if(mode==='measure') return 'crosshair'
+        if(mode==='transparent') return isHover?'cell':'grab'
+        if(mode==='dimension') return 'pointer'
+        return isHover?'pointer':'grab' // cabinet
+      }
       const setHover=(mesh, isHover)=>{
         if(!mesh) return
+        const mode=interactionModeRef.current
         if(isHover){
-          mesh.material.emissive = new THREE.Color('#c05a2b')
+          mesh.material.emissive = new THREE.Color(mode==='transparent'?'#7c3aed':mode==='measure'?'#d97706':'#c05a2b')
           mesh.material.emissiveIntensity = 0.22
-          renderer.domElement.style.cursor='pointer'
+          renderer.domElement.style.cursor=getCursorForMode(mode,true)
         } else {
           mesh.material.emissive = new THREE.Color('#000000')
           mesh.material.emissiveIntensity = 0
-          renderer.domElement.style.cursor='grab'
+          renderer.domElement.style.cursor=getCursorForMode(mode,false)
         }
       }
-      const onPointerMove=(e)=>{
+      const getItemIdFromMeshName=(name)=>{
+        const n=(name||'').toLowerCase()
+        for(const it of [...east,...west]) if(n.includes(it.id.toLowerCase())) return it.id
+        if(n.includes('west appliance garage')||n.includes('west garage')||n.includes('westgarage')) return 'westGarage'
+        if(n.includes('trash')) return 'trashCan'
+        if(n.includes('sink')&&n.toLowerCase().includes('east')) return 'sink'
+        if(n.includes('east tall')||n.includes('garage_ne')) return 'garage_NE'
+        if(n.includes('dish rack')) return 'dishRack'
+        return null
+      }
+      const clampMeasurePoint=(pt)=>({
+        x:Math.max(0,Math.min(KITCHEN.width,pt.x)),
+        y:Math.max(0,Math.min(KITCHEN.length,pt.y))
+      })
+      const collectSceneMeshes=()=>{
+        const meshes=[]
+        scene.traverse(o=>{
+          if(o.isMesh && o.visible && !o.userData?.ignoreMeasureRaycast) meshes.push(o)
+        })
+        return meshes
+      }
+      const worldPointToPlan=(point)=>clampMeasurePoint({
+        x:KITCHEN.width/2 - point.x*10,
+        y:KITCHEN.length/2 + point.z*10
+      })
+      let measureDragActive=false
+      let measureDragStart=null
+      let measurePreviewPt=null
+      const getMeasurePointAtEvent=(e)=>{
         const rect=renderer.domElement.getBoundingClientRect()
         mouse.x=((e.clientX-rect.left)/rect.width)*2-1
         mouse.y=-((e.clientY-rect.top)/rect.height)*2+1
         raycaster.setFromCamera(mouse,camera)
-        const hits=raycaster.intersectObjects(clickableCabinets,false)
+        const hits=raycaster.intersectObjects(collectSceneMeshes(),false)
+        if(hits.length){
+          const hit=hits[0]
+          if(hit.point) return worldPointToPlan(hit.point)
+        }
+        // fallback: intersect floor plane y=0
+        const plane=new THREE.Plane(new THREE.Vector3(0,1,0), 0)
+        const inter=new THREE.Vector3()
+        if(raycaster.ray.intersectPlane(plane, inter)) return worldPointToPlan(inter)
+        return null
+      }
+      const onPointerMove=(e)=>{
+        const mode=interactionModeRef.current
+        // drag preview for measure
+        if(mode==='measure' && measureDragActive && measureDragStart){
+          const pt=getMeasurePointAtEvent(e)
+          if(pt){
+            measurePreviewPt=pt
+            setMeasurePoints([measureDragStart, pt])
+          }
+          return
+        }
+        const rect=renderer.domElement.getBoundingClientRect()
+        mouse.x=((e.clientX-rect.left)/rect.width)*2-1
+        mouse.y=-((e.clientY-rect.top)/rect.height)*2+1
+        raycaster.setFromCamera(mouse,camera)
+        let targets=[]
+        if(mode==='cabinet') targets=clickableCabinets
+        else targets=collectSceneMeshes()
+        const hits=raycaster.intersectObjects(targets,false)
         const hit=hits[0]?.object
         if(hit!==hovered){
           if(hovered) setHover(hovered,false)
           hovered=hit||null
           if(hovered) setHover(hovered,true)
         }
+        if(!hovered) renderer.domElement.style.cursor=getCursorForMode(mode,false)
+      }
+      const onPointerDown=(e)=>{
+        if(e.button!==0) return
+        const mode=interactionModeRef.current
+        if(mode!=='measure') return
+        const pt=getMeasurePointAtEvent(e)
+        if(!pt) return
+        e.preventDefault(); e.stopPropagation()
+        // if already 2 points, start new measurement
+        const cur=measurePointsRef.current
+        if(cur.length>=2){
+          measureDragStart=pt
+          measureDragActive=true
+          measurePreviewPt=pt
+          setMeasurePoints([pt])
+        } else {
+          measureDragStart=pt
+          measureDragActive=true
+          measurePreviewPt=pt
+          // if 0 points, start new; if 1 point, keep start and will drag to second
+          if(cur.length===0) setMeasurePoints([pt])
+          else {
+            // cur has 1 point, drag from that point
+            measureDragStart=cur[0]
+            setMeasurePoints([cur[0], pt])
+          }
+        }
+        controls.enabled=false
+        renderer.domElement.setPointerCapture?.(e.pointerId)
+      }
+      const onPointerUp=(e)=>{
+        if(e.button!==0) return
+        if(!measureDragActive) return
+        measureDragActive=false
+        controls.enabled=true
+        try{ renderer.domElement.releasePointerCapture?.(e.pointerId)}catch{}
+        // finalize: if we have 1 point and preview, keep 2 points
+        // if we dragged zero distance, treat as click
+        if(measurePreviewPt && measureDragStart){
+          const dx=measurePreviewPt.x-measureDragStart.x
+          const dy=measurePreviewPt.y-measureDragStart.y
+          if(Math.hypot(dx,dy)<8){
+            // click without drag: set single point (click logic will handle second click)
+            setMeasurePoints(prev=> prev.length>=2 ? [measureDragStart] : prev)
+          }
+        }
+        measurePreviewPt=null
       }
       const onClick=(e)=>{
+        if(e.button!==undefined && e.button!==0) return
+        // if measure drag just finished, ignore click
+        if(measureDragActive) return
+        const mode=interactionModeRef.current
         const rect=renderer.domElement.getBoundingClientRect()
         mouse.x=((e.clientX-rect.left)/rect.width)*2-1
         mouse.y=-((e.clientY-rect.top)/rect.height)*2+1
         raycaster.setFromCamera(mouse,camera)
+        if(mode==='transparent'){
+          const hits=raycaster.intersectObjects(collectSceneMeshes(),false)
+          const hit=hits[0]?.object; if(!hit) return
+          e.stopPropagation()
+          hit.material.transparent=true; hit.material.opacity= hit.material.opacity===0.25 ? 1 : 0.25; hit.material.needsUpdate=true
+          const id=getItemIdFromMeshName(hit.name)||getItemIdFromMeshName(hit.userData?.openKey)
+          if(id) setSelectedId(id)
+          return
+        }
+        if(mode==='dimension'){
+          const hits=raycaster.intersectObjects(collectSceneMeshes(),false)
+          if(!hits.length){ setSelectedId(null); return }
+          const hit=hits[0].object
+          const id=getItemIdFromMeshName(hit.name)||getItemIdFromMeshName(hit.userData?.openKey)
+          if(id) setSelectedId(id); else setSelectedId(null)
+          return
+        }
+        if(mode==='measure'){
+          // click fallback for measure (when not dragging)
+          // if drag already handled, this is a plain click to set point
+          const pt=getMeasurePointAtEvent(e)
+          if(!pt) return
+          const cur=measurePointsRef.current
+          if(cur.length===0) setMeasurePoints([pt])
+          else if(cur.length===1){
+            // second click without drag: set second point
+            const dx=pt.x-cur[0].x, dy=pt.y-cur[0].y
+            if(Math.hypot(dx,dy)<2) return
+            setMeasurePoints([cur[0], pt])
+          } else {
+            setMeasurePoints([pt])
+          }
+          return
+        }
+        // cabinet mode: animate open
         const hits=raycaster.intersectObjects(clickableCabinets,false)
         const hit=hits[0]?.object
         if(!hit) return
         e.stopPropagation()
-        // disable controls briefly to avoid drag conflict
         controls.enabled=false
         const wasOpened=hit.userData.opened
         const targetPos=wasOpened? hit.userData.originalPosition.clone() : hit.userData.originalPosition.clone().add(getOffsetForCabinet(hit))
@@ -1363,7 +1555,6 @@ ${westRows}
             hit.material.transparent = targetOpacity<1
             hit.material.needsUpdate=true
             controls.enabled=true
-            // toast
             const label=hit.name.replace('west ','').replace('east ','')
             window.dispatchEvent(new CustomEvent('cabinet-toggle',{detail:{name:label, opened:hit.userData.opened}}))
           }
@@ -1371,6 +1562,8 @@ ${westRows}
         requestAnimationFrame(animateOpen)
       }
       renderer.domElement.addEventListener('pointermove', onPointerMove)
+      renderer.domElement.addEventListener('pointerdown', onPointerDown)
+      renderer.domElement.addEventListener('pointerup', onPointerUp)
       renderer.domElement.addEventListener('click', onClick)
       const resize=()=>{
         const width=mount.clientWidth||1000
@@ -1383,12 +1576,97 @@ ${westRows}
       const observer=new ResizeObserver(resize)
       observer.observe(mount)
       resize()
-      threeViewRef.current={renderer,scene,camera,controls,updateCutawayVisibility,clickableCabinets}
-      updateCutawayVisibility()
+      const updateCursor=()=>{ renderer.domElement.style.cursor=getCursorForMode(interactionModeRef.current,false) }
+      threeViewRef.current={renderer,scene,camera,controls,updateCutawayVisibility,updateCursor,clickableCabinets}
+      updateCutawayVisibility(); updateCursor()
       let frameId=0
-      const animate=()=>{controls.update(); updateCutawayVisibility(); renderer.render(scene,camera); frameId=requestAnimationFrame(animate)}
+      const updateMeasureAndDimOverlays=()=>{
+        // 3D measurement line
+        const pts=measurePointsRef.current||[]
+        if(pts.length===2){
+          const p0=pts[0], p1=pts[1]
+          const toV=(pt)=> new THREE.Vector3(s(KITCHEN.width/2 - pt.x), s(28), s(pt.y - KITCHEN.length/2))
+          const v0=toV(p0), v1=toV(p1)
+          const pos=[v0.x,v0.y,v0.z, v1.x,v1.y,v1.z]
+          measureLineGeom.setAttribute('position', new THREE.Float32BufferAttribute(pos,3))
+          measureLineGeom.computeBoundingSphere()
+          measureLine.computeLineDistances()
+          measureLine.visible=true
+          epMesh1.position.copy(v0); epMesh1.visible=true
+          epMesh2.position.copy(v1); epMesh2.visible=true
+          measureGroup.visible=true
+          // label at midpoint projected
+          const mid=new THREE.Vector3().addVectors(v0,v1).multiplyScalar(0.5)
+          mid.project(camera)
+          if(mid.z<1 && mid.z>-1){
+            const x=(mid.x*.5+.5)*mount.clientWidth
+            const y=(-mid.y*.5+.5)*mount.clientHeight
+            const dist=Math.hypot(p1.x-p0.x, p1.y-p0.y)
+            const unit=unitRef.current
+            const fmt=(v)=> unit==='mm'? `${Math.round(v)} mm` : `${(v/25.4).toFixed(1)}"`
+            measureLabel.textContent=`${fmt(dist)}`
+            measureLabel.style.left=x+'px'; measureLabel.style.top=y+'px'; measureLabel.style.display='block'
+          } else measureLabel.style.display='none'
+        } else if(pts.length===1 && measureDragActive && measurePreviewPt){
+          const p0=pts[0], p1=measurePreviewPt
+          const toV=(pt)=> new THREE.Vector3(s(KITCHEN.width/2 - pt.x), s(28), s(pt.y - KITCHEN.length/2))
+          const v0=toV(p0), v1=toV(p1)
+          measureLineGeom.setAttribute('position', new THREE.Float32BufferAttribute([v0.x,v0.y,v0.z, v1.x,v1.y,v1.z],3))
+          measureLineGeom.computeBoundingSphere()
+          measureLine.computeLineDistances()
+          measureLine.visible=true
+          epMesh1.position.copy(v0); epMesh1.visible=true
+          epMesh2.position.copy(v1); epMesh2.visible=true
+          measureGroup.visible=true
+          const mid=new THREE.Vector3().addVectors(v0,v1).multiplyScalar(0.5)
+          mid.project(camera)
+          if(mid.z<1){
+            const x=(mid.x*.5+.5)*mount.clientWidth
+            const y=(-mid.y*.5+.5)*mount.clientHeight
+            const dist=Math.hypot(p1.x-p0.x, p1.y-p0.y)
+            const unit=unitRef.current
+            const fmt=(v)=> unit==='mm'? `${Math.round(v)} mm` : `${(v/25.4).toFixed(1)}"`
+            measureLabel.textContent=`${fmt(dist)} (dragging)`
+            measureLabel.style.left=x+'px'; measureLabel.style.top=y+'px'; measureLabel.style.display='block'
+          } else measureLabel.style.display='none'
+        } else {
+          measureLine.visible=false; epMesh1.visible=false; epMesh2.visible=false; measureLabel.style.display='none'
+          if(pts.length===1){
+            const p0=pts[0]
+            const v0=new THREE.Vector3(s(KITCHEN.width/2 - p0.x), s(28), s(p0.y - KITCHEN.length/2))
+            epMesh1.position.copy(v0); epMesh1.visible=true
+            measureGroup.visible=true
+          } else if(pts.length===0) measureGroup.visible=true
+        }
+        // dimension label near selected item
+        const sel=selectedItemRef.current
+        if(sel){
+          const cx=s(KITCHEN.width/2 - (sel.x + sel.d/2))
+          const cz=s(sel.y + sel.w/2 - KITCHEN.length/2)
+          const cy=s((sel.z??0) + (sel.h||900) + 90)
+          const pos=new THREE.Vector3(cx, cy, cz)
+          pos.project(camera)
+          if(pos.z<1 && pos.z>-1){
+            const x=(pos.x*.5+.5)*mount.clientWidth
+            const y=(-pos.y*.5+.5)*mount.clientHeight
+            if(x>=0 && x<=mount.clientWidth && y>=0 && y<=mount.clientHeight){
+              const unit=unitRef.current
+              const fmt=(v)=> unit==='mm'? `${Math.round(v)} mm` : `${(v/25.4).toFixed(1)}"`
+              dimLabel.textContent=`${sel.id}: ${fmt(sel.w)} × ${fmt(sel.d)} × ${fmt(sel.h||900)}`
+              dimLabel.style.left=x+'px'; dimLabel.style.top=y+'px'; dimLabel.style.display='block'
+            } else dimLabel.style.display='none'
+          } else dimLabel.style.display='none'
+        } else dimLabel.style.display='none'
+      }
+      const animate=()=>{
+        controls.update()
+        updateCutawayVisibility()
+        updateMeasureAndDimOverlays()
+        renderer.render(scene,camera)
+        frameId=requestAnimationFrame(animate)
+      }
       animate()
-      return ()=>{cancelAnimationFrame(frameId); observer.disconnect(); controls.dispose(); envTexture.dispose(); pmremGenerator.dispose(); renderer.domElement.removeEventListener('pointermove', onPointerMove); renderer.domElement.removeEventListener('click', onClick); renderer.dispose(); mount.removeChild(renderer.domElement); if(threeViewRef.current?.renderer===renderer)threeViewRef.current=null}
+      return ()=>{cancelAnimationFrame(frameId); observer.disconnect(); controls.dispose(); envTexture.dispose(); pmremGenerator.dispose(); renderer.domElement.removeEventListener('pointermove', onPointerMove); renderer.domElement.removeEventListener('pointerdown', onPointerDown); renderer.domElement.removeEventListener('pointerup', onPointerUp); renderer.domElement.removeEventListener('click', onClick); try{mount.removeChild(overlay)}catch{}; renderer.dispose(); mount.removeChild(renderer.domElement); if(threeViewRef.current?.renderer===renderer)threeViewRef.current=null}
     },[east,west,materials,eastModules,westModules])
     const setPreset=(preset)=>{
       const cam=threeViewRef.current?.camera
@@ -1914,11 +2192,27 @@ ${westRows}
         <button onClick={()=>setUnit('mm')} style={{padding:'6px 10px',background:unit==='mm'?'#0c4a6e':'#fff',color:unit==='mm'?'#fff':'#0c4a6e',border:'1px solid #0c4a6e',borderRadius:8,fontWeight:800}}>mm</button>
         <button onClick={()=>setUnit('inch')} style={{padding:'6px 10px',background:unit==='inch'?'#0c4a6e':'#fff',color:unit==='inch'?'#fff':'#0c4a6e',border:'1px solid #0c4a6e',borderRadius:8,fontWeight:800}}>inch</button>
       </span>
-      <span style={{display:'inline-flex',gap:6,alignItems:'center',padding:'6px 10px',background:measureMode?'#fef3c7':'#fff',border:'2px solid #d97706',borderRadius:10,fontWeight:800}}>
-        <button onClick={()=>{setMeasureMode(m=>!m); setMeasurePoints([])}} style={{padding:'6px 10px',background:measureMode?'#d97706':'#fff',color:measureMode?'#fff':'#d97706',border:'1px solid #d97706',borderRadius:8,fontWeight:800}}>{measureMode?'Measuring… (click 2 points)':'Measure'}</button>
-        {measurePoints.length>0 && <button onClick={()=>setMeasurePoints([])} style={{padding:'6px 10px',background:'#fff',color:'#111',border:'1px solid #111',borderRadius:8,fontWeight:800}}>Clear</button>}
-        {measureDistance!=null && <span style={{fontSize:12}}>{fmt(Math.round(measureDistance))} {measurePoints.length===2 && <span>({fmtPair(measurePoints[1].x-measurePoints[0].x, measurePoints[1].y-measurePoints[0].y)})</span>}</span>}
+      <span style={{display:'inline-flex',gap:6,alignItems:'center',padding:'6px 10px',background:'#fff',border:'2px solid #111',borderRadius:10,fontWeight:800}}>
+        Mode:
+        <button onClick={()=>{setInteractionMode('cabinet'); setMeasureMode(false); setMeasurePoints([])}} style={{padding:'6px 10px',background:interactionMode==='cabinet'?'#111':'#fff',color:interactionMode==='cabinet'?'#fff':'#111',border:'1px solid #111',borderRadius:8,fontWeight:800}}><span style={{fontSize:16}}>🚪</span> Cabinet</button>
+        <button onClick={()=>{setInteractionMode('transparent'); setMeasureMode(false);}} style={{padding:'6px 10px',background:interactionMode==='transparent'?'#7c3aed':'#fff',color:interactionMode==='transparent'?'#fff':'#7c3aed',border:'1px solid #7c3aed',borderRadius:8,fontWeight:800}}><span style={{fontSize:16}}>👁️</span> Transparent</button>
+        <button onClick={()=>{setInteractionMode('dimension'); setMeasureMode(false);}} style={{padding:'6px 10px',background:interactionMode==='dimension'?'#0c4a6e':'#fff',color:interactionMode==='dimension'?'#fff':'#0c4a6e',border:'1px solid #0c4a6e',borderRadius:8,fontWeight:800}}><span style={{fontSize:16}}>📐</span> Dimension</button>
+        <button onClick={()=>{setInteractionMode('measure'); setMeasureMode(true); setMeasurePoints([])}} style={{padding:'6px 10px',background:interactionMode==='measure'?'#d97706':'#fff',color:interactionMode==='measure'?'#fff':'#d97706',border:'1px solid #d97706',borderRadius:8,fontWeight:800}}><span style={{fontSize:16}}>📏</span> Measure</button>
       </span>
+      {measureDistance!=null && interactionMode==='measure' && <span style={{display:'inline-flex',gap:6,alignItems:'center',padding:'6px 10px',background:'#fef3c7',border:'2px solid #d97706',borderRadius:10,fontWeight:800,fontSize:12}}>{fmt(Math.round(measureDistance))} <span>({fmtPair(measurePoints[1].x-measurePoints[0].x, measurePoints[1].y-measurePoints[0].y)})</span> <button onClick={()=>setMeasurePoints([])} style={{padding:'4px 8px',background:'#fff',color:'#111',border:'1px solid #111',borderRadius:8,fontWeight:800}}>Clear</button></span>}
+      </div>
+    </div>
+    {/* Active mode indicator */}
+    <div style={{background:interactionMode==='cabinet'?'#111':interactionMode==='transparent'?'#ede9fe':interactionMode==='dimension'?'#e0f2fe':'#fef3c7',color:interactionMode==='cabinet'?'#fff':interactionMode==='transparent'?'#5b21b6':interactionMode==='dimension'?'#0c4a6e':'#92400e',border:`2px solid ${interactionMode==='cabinet'?'#111':interactionMode==='transparent'?'#7c3aed':interactionMode==='dimension'?'#0c4a6e':'#d97706'}`,borderRadius:10,padding:'10px 14px',marginBottom:14,display:'flex',justifyContent:'space-between',alignItems:'center',flexWrap:'wrap',gap:10}}>
+      <div style={{display:'flex',alignItems:'center',gap:10,fontWeight:900,fontSize:14}}>
+        <span style={{fontSize:22}}>{interactionMode==='cabinet'?'🚪':interactionMode==='transparent'?'👁️':interactionMode==='dimension'?'📐':'📏'}</span>
+        <span>Active: {interactionMode==='cabinet'?'Cabinet Open Mode':interactionMode==='transparent'?'Transparent Mode':interactionMode==='dimension'?'Dimension Mode':'Measure Mode'}</span>
+        <span style={{fontSize:18}}>{interactionMode==='cabinet'?'👆':interactionMode==='transparent'?'👁️':interactionMode==='dimension'?'📐':'✛'}</span>
+        <span style={{fontWeight:700,fontSize:13,opacity:0.9}}>{interactionMode==='cabinet'?'— click cabinet to open/close':interactionMode==='transparent'?'— click cabinet to make transparent':interactionMode==='dimension'?'— click any item to see W×D×H':`— left-click 2 points to measure (right-click ignored)${measurePoints.length===1?' • point 1 set':measurePoints.length===2?' • done':''}`}</span>
+      </div>
+      <div style={{display:'flex',alignItems:'center',gap:8,fontSize:12,fontWeight:800}}>
+        <span style={{background:'#fff',color:'#111',padding:'4px 8px',borderRadius:6,border:'1px solid #111'}}>Cursor: {interactionMode==='cabinet'?'👆 pointer':interactionMode==='transparent'?'👁️ eye':interactionMode==='dimension'?'📐 pointer':'✛ crosshair'}</span>
+        <span style={{opacity:0.8}}>Unit: {unit} • Hide walls: {hide3DObstructions?'ON':'OFF'}</span>
       </div>
     </div>
 
@@ -1933,10 +2227,14 @@ ${westRows}
     {view==='three'&&<div ref={activeViewRef} style={{marginBottom:14,scrollMarginTop:12}}><div style={{background:'#fff',border:'1px solid #e5e0d5',borderRadius:10,padding:'10px 14px',marginBottom:10,display:'flex',justifyContent:'space-between',alignItems:'center',flexWrap:'wrap',gap:10}}>
       <div style={{fontWeight:900,fontSize:14}}>Dimension — click any item in 3D, Top plan or Wall view to see its size here ({unit})</div>
       <div style={{fontSize:12,color:'#61584f'}}>{selectedItem ? `${selectedItem.id}: W ${fmt(selectedItem.w)} × D ${fmt(selectedItem.d)} × H ${fmt(selectedItem.h||900)}` : 'No selection'}</div>
-      <div style={{display:'flex',gap:6}}><button onClick={()=>setMeasureMode(m=>!m)} style={{padding:'6px 10px',background:measureMode?'#d97706':'#fff',color:measureMode?'#fff':'#111',border:'1px solid #d97706',borderRadius:8,fontWeight:800}}>Dimension</button><button onClick={()=>setSelectedId(null)} style={{padding:'6px 10px',background:'#fff',border:'1px solid #111',borderRadius:8,fontWeight:700}}>Clear</button></div>
+      <div style={{display:'flex',gap:6,flexWrap:'wrap'}}>
+        <button onClick={()=>{setInteractionMode('dimension'); setMeasureMode(false); setMeasurePoints([])}} style={{padding:'6px 10px',background:interactionMode==='dimension'?'#0c4a6e':'#fff',color:interactionMode==='dimension'?'#fff':'#0c4a6e',border:'1px solid #0c4a6e',borderRadius:8,fontWeight:800}}>Dimension</button>
+        <button onClick={()=>{setInteractionMode('measure'); setMeasureMode(true); setMeasurePoints([])}} style={{padding:'6px 10px',background:interactionMode==='measure'?'#d97706':'#fff',color:interactionMode==='measure'?'#fff':'#d97706',border:'1px solid #d97706',borderRadius:8,fontWeight:800}}>Measure</button>
+        <button onClick={()=>{setSelectedId(null); setMeasurePoints([])}} style={{padding:'6px 10px',background:'#fff',border:'1px solid #111',borderRadius:8,fontWeight:700}}>Clear</button>
+      </div>
     </div><ThreeDRender/></div>}
     {view==='top'&&(<div ref={activeViewRef} style={{background:'#fff',borderRadius:14,padding:14,scrollMarginTop:12}}>
-      <svg width="900" height={planSvgHeight} viewBox={viewBoxTop} preserveAspectRatio="xMidYMid meet" onClick={(e)=>{if(!measureMode) return; const rect=e.currentTarget.getBoundingClientRect(); const vbW=KITCHEN.width+pad*2, vbH=KITCHEN.length+pad*2; const sx=(e.clientX-rect.left)/rect.width*vbW - pad; const sy=(e.clientY-rect.top)/rect.height*vbH - pad; const ky=KITCHEN.length - sy; if(sx<-pad||sx>KITCHEN.width+pad||ky<-pad||ky>KITCHEN.length+pad) return; setMeasurePoints(prev=> prev.length>=2 ? [{x:sx,y:ky}] : [...prev,{x:sx,y:ky}])}} style={{background:'#FFFEFB',border:'1px solid #e5e0d5',borderRadius:10,width:'100%',maxWidth:900,height:'auto',display:'block',margin:'0 auto',cursor:measureMode?'crosshair':'default'}}>
+      <svg width="900" height={planSvgHeight} viewBox={viewBoxTop} preserveAspectRatio="xMidYMid meet" onClick={(e)=>{if(interactionMode!=='measure') return; const rect=e.currentTarget.getBoundingClientRect(); const vbW=KITCHEN.width+pad*2, vbH=KITCHEN.length+pad*2; const sx=(e.clientX-rect.left)/rect.width*vbW - pad; const sy=(e.clientY-rect.top)/rect.height*vbH - pad; const ky=KITCHEN.length - sy; if(sx<-pad||sx>KITCHEN.width+pad||ky<-pad||ky>KITCHEN.length+pad) return; setMeasurePoints(prev=> prev.length>=2 ? [{x:sx,y:ky}] : [...prev,{x:sx,y:ky}])}} style={{background:'#FFFEFB',border:'1px solid #e5e0d5',borderRadius:10,width:'100%',maxWidth:900,height:'auto',display:'block',margin:'0 auto',cursor:interactionMode==='measure'?'crosshair':interactionMode==='dimension'?'pointer':interactionMode==='transparent'?'cell':interactionMode==='cabinet'?'pointer':'default'}}>
         <rect x={-pad} y={-pad} width={KITCHEN.width+pad*2} height={KITCHEN.length+pad*2} fill="#f6f2ec"/>
         <rect x="0" y="0" width="2324" height="4746" fill={materials.wall||'#FFFEFB'} stroke="#111" strokeWidth="10"/>
         {(grid===50||grid===100)&&(<g>
