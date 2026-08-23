@@ -21,10 +21,10 @@
       "bottomSlidingCount": 2
     },
     "shaft": {
-      "w": 610,
+      "w": 609,
       "l": 838,
       "x": 0,
-      "y": 4146
+      "y": 3908
     },
     "northClear": 0,
     "windowBelow": {
@@ -34,8 +34,8 @@
     },
     "westGap": {
       "from": 300,
-      "to": 1220,
-      "w": 920
+      "to": 910,
+      "w": 610
     },
     "walkway": {
       "floor": 1324,
@@ -132,11 +132,11 @@
   "west": [
     {
       "id": "shaft",
-      "label": "Shaft 61x83.8 LAST NW y4146 full height",
-      "w": 610,
+      "label": "Shaft 838x609 attached north y3908 W609 L838 full height",
+      "w": 609,
       "d": 838,
       "h": 2700,
-      "y": 4146,
+      "y": 3908,
       "x": 0,
       "color": "#999",
       "fixed": true,
@@ -148,7 +148,7 @@
       "w": 600,
       "d": 400,
       "h": 900,
-      "y": 3546,
+      "y": 3308,
       "x": 0,
       "color": "#C4B5A5",
       "garage": true,
@@ -196,7 +196,7 @@
         "id": "west-order",
         "rule": "West N->S: shaft > food-processor garage > gap > gas/chimney",
         "status": "pass",
-        "measured": "gas y2000 gap 846 garage y3546 shaft y4146",
+        "measured": "gas y2000 gap 846 garage y3546 shaft y3908",
         "expected": "gas 2000, westGarage 3546, shaft 4146 with positive gap"
       },
       {
@@ -208,10 +208,10 @@
       },
       {
         "id": "door-clear-zone",
-        "rule": "West door clear zone y0-y1220 empty",
+        "rule": "West door clear zone y0-y910 empty (2ft)",
         "status": "pass",
         "measured": "0 items in zone",
-        "expected": "no item with y in [0,1220)"
+        "expected": "no item with y in [0,910)"
       },
       {
         "id": "walkway-minimum",
@@ -247,7 +247,7 @@
         "id": "west-order",
         "rule": "West N->S: shaft > food-processor garage > gap > gas/chimney",
         "status": "pass",
-        "measured": "gas y2000 gap 846 garage y3546 shaft y4146",
+        "measured": "gas y2000 gap 846 garage y3546 shaft y3908",
         "expected": "gas 2000, westGarage 3546, shaft 4146 with positive gap"
       },
       {
@@ -259,10 +259,10 @@
       },
       {
         "id": "door-clear-zone",
-        "rule": "West door clear zone y0-y1220 empty",
+        "rule": "West door clear zone y0-y910 empty (2ft)",
         "status": "pass",
         "measured": "0 items in zone",
-        "expected": "no item with y in [0,1220)"
+        "expected": "no item with y in [0,910)"
       },
       {
         "id": "walkway-minimum",
@@ -331,7 +331,7 @@
         "color": "#7eb8e8",
         "material": "glass",
         "clearance": null,
-        "label": "North Window â€” 2 Bays Ã— 610 Fixed Top / 1190 Sliding Bottom (centre mullion) â€” LEFT-TOP 12\" Metal Exhaust",
+        "label": "North Window \u00e2\u20ac\u201d 2 Bays \u00c3\u2014 610 Fixed Top / 1190 Sliding Bottom (centre mullion) \u00e2\u20ac\u201d LEFT-TOP 12\" Metal Exhaust",
         "sill": 900,
         "sections": 2,
         "transomHeight": 610,
@@ -359,8 +359,8 @@
           "slidingPosition": "both"
         },
         "notes": {
-          "shaftAlternative": "Hole in shaft wall (west shaft 61Ã—83.8 at y4146) can also host exhaust â€” noted as alternative to window mount",
-          "exhaustChoice": "Metal 12-inch recommended for kitchen heat/grease â€” plastic not suggested"
+          "shaftAlternative": "Hole in shaft wall (west shaft 61\u00c3\u201483.8 at y4146) can also host exhaust \u00e2\u20ac\u201d noted as alternative to window mount",
+          "exhaustChoice": "Metal 12-inch recommended for kitchen heat/grease \u00e2\u20ac\u201d plastic not suggested"
         }
       },
       "shaft": {
@@ -553,7 +553,7 @@
           "from": 300,
           "to": 1220
         },
-        "label": "West door clear zone y300-y1220 no counter no upper no LED (gap 920 per PS1 â€” y300-1220)"
+        "label": "West door clear zone y300-y1220 no counter no upper no LED (gap 920 per PS1 \u00e2\u20ac\u201d y300-1220)"
       },
       {
         "id": "north-window-below-zone",

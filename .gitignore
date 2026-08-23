@@ -7,3 +7,5 @@ react-configurator/tmp-*/
 react-configurator/tmp-*.png
 freecad/*.FCBak
 __pycache__/
+tmp/
+react-configurator/public/textures/wood008/

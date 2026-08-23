@@ -21,10 +21,10 @@
       "bottomSlidingCount": 2
     },
     "shaft": {
-      "w": 610,
+      "w": 609,
       "l": 838,
       "x": 0,
-      "y": 4146
+      "y": 3908
     },
     "northClear": 0,
     "windowBelow": {
@@ -34,8 +34,8 @@
     },
     "westGap": {
       "from": 300,
-      "to": 1220,
-      "w": 920
+      "to": 910,
+      "w": 610
     },
     "walkway": {
       "floor": 1324,
@@ -45,7 +45,7 @@
   "east": [
     {
       "id": "garage_NE",
-      "label": "East Tall NE 600x600x2700 y4146 matching shaft NW — lower washing inside, upper microwave tambour beige #C4B5A5",
+      "label": "East Tall NE 600x600x2700 y4146 matching shaft NW \u2014 lower washing inside, upper microwave tambour beige #C4B5A5",
       "w": 600,
       "d": 600,
       "h": 2700,
@@ -82,7 +82,7 @@
     },
     {
       "id": "sink",
-      "label": "Sink 800W y3346 — NEW east wall north of dishwasher (was west y2850)",
+      "label": "Sink 800W y3346 \u2014 NEW east wall north of dishwasher (was west y2850)",
       "w": 800,
       "d": 600,
       "h": 900,
@@ -94,7 +94,7 @@
     },
     {
       "id": "sinkUpperDishRack",
-      "label": "Over-sink Dish Rack 800W y3346 z1350 — 2-tier SS above NEW east sink",
+      "label": "Over-sink Dish Rack 800W y3346 z1350 \u2014 2-tier SS above NEW east sink",
       "w": 800,
       "d": 320,
       "h": 700,
@@ -142,11 +142,11 @@
   "west": [
     {
       "id": "shaft",
-      "label": "Shaft 61x83.8 LAST NW y4146 full height",
-      "w": 610,
+      "label": "Shaft 838x609 attached north y3908 W609 L838 full height",
+      "w": 609,
       "d": 838,
       "h": 2700,
-      "y": 4146,
+      "y": 3908,
       "x": 0,
       "color": "#999",
       "fixed": true,
@@ -154,11 +154,11 @@
     },
     {
       "id": "westGarage",
-      "label": "West Garage 600W y3546 south of shaft — stores Food Processor tambour",
+      "label": "West Garage 600W y3546 south of shaft \u2014 stores Food Processor tambour",
       "w": 600,
       "d": 400,
       "h": 900,
-      "y": 3546,
+      "y": 3308,
       "x": 0,
       "color": "#C4B5A5",
       "garage": true,
@@ -172,7 +172,7 @@
     },
     {
       "id": "gas",
-      "label": "Gas 700W y2000 west wall — gap south of garage, hidden chimney small inside 320D upper",
+      "label": "Gas 700W y2000 west wall \u2014 gap south of garage, hidden chimney small inside 320D upper",
       "w": 700,
       "d": 400,
       "h": 900,
@@ -207,15 +207,15 @@
         "id": "west-order-NEW",
         "rule": "West S->N NEW: gas y2000 < westGarage y3546 < shaft y4146",
         "status": "pass",
-        "measured": "gas y2000 garage y3546 shaft y4146",
+        "measured": "gas y2000 garage y3546 shaft y3908",
         "expected": "gas 2000 < garage 3546 < shaft 4146"
       },
       {
         "id": "door-clear-zone",
-        "rule": "West door clear zone y0-y1220 empty",
+        "rule": "West door clear zone y0-y910 empty (2ft)",
         "status": "pass",
         "measured": "0 items",
-        "expected": "no item in [0,1220)"
+        "expected": "no item in [0,910)"
       },
       {
         "id": "collision",
@@ -244,15 +244,15 @@
         "id": "west-order-NEW",
         "rule": "West S->N NEW: gas y2000 < westGarage y3546 < shaft y4146",
         "status": "pass",
-        "measured": "gas y2000 garage y3546 shaft y4146",
+        "measured": "gas y2000 garage y3546 shaft y3908",
         "expected": "gas 2000 < garage 3546 < shaft 4146"
       },
       {
         "id": "door-clear-zone",
-        "rule": "West door clear zone y0-y1220 empty",
+        "rule": "West door clear zone y0-y910 empty (2ft)",
         "status": "pass",
         "measured": "0 items",
-        "expected": "no item in [0,1220)"
+        "expected": "no item in [0,910)"
       },
       {
         "id": "collision",
@@ -314,7 +314,7 @@
         "color": "#7eb8e8",
         "material": "glass",
         "clearance": null,
-        "label": "North Window — 2 Bays × 610 Fixed Top / 1190 Sliding Bottom (centre mullion) — LEFT-TOP 12\" Metal Exhaust",
+        "label": "North Window \u2014 2 Bays \u00d7 610 Fixed Top / 1190 Sliding Bottom (centre mullion) \u2014 LEFT-TOP 12\" Metal Exhaust",
         "sill": 900,
         "sections": 2,
         "transomHeight": 610,
@@ -342,8 +342,8 @@
           "slidingPosition": "both"
         },
         "notes": {
-          "shaftAlternative": "Hole in shaft wall (west shaft 61×83.8 at y4146) can also host exhaust — noted as alternative to window mount",
-          "exhaustChoice": "Metal 12-inch recommended for kitchen heat/grease — plastic not suggested"
+          "shaftAlternative": "Hole in shaft wall (west shaft 61\u00d783.8 at y4146) can also host exhaust \u2014 noted as alternative to window mount",
+          "exhaustChoice": "Metal 12-inch recommended for kitchen heat/grease \u2014 plastic not suggested"
         }
       },
       "shaft": {
@@ -536,7 +536,7 @@
           "from": 300,
           "to": 1220
         },
-        "label": "West door clear zone y300-y1220 no counter no upper no LED (gap 920 per PS1 — y300-1220)"
+        "label": "West door clear zone y300-y1220 no counter no upper no LED (gap 920 per PS1 \u2014 y300-1220)"
       },
       {
         "id": "north-window-below-zone",
@@ -592,7 +592,7 @@
         "color": "#2a2a2a",
         "material": "stainless_steel",
         "clearance": null,
-        "label": "Gas 700W y2000 west wall — gap south of garage, hidden chimney small inside 320D upper",
+        "label": "Gas 700W y2000 west wall \u2014 gap south of garage, hidden chimney small inside 320D upper",
         "subcomponents": [
           {
             "id": "gas-cooktop",
@@ -674,7 +674,7 @@
           "kind": "tallGarageFullHeight",
           "matchesShaft": true
         },
-        "label": "East Tall NE 600x600x2700 y4146 matching shaft NW — lower washing inside, upper microwave tambour beige #C4B5A5",
+        "label": "East Tall NE 600x600x2700 y4146 matching shaft NW \u2014 lower washing inside, upper microwave tambour beige #C4B5A5",
         "last": true,
         "fullHeight": true,
         "subcomponents": [
@@ -708,7 +708,7 @@
           "kind": "helpWashZone",
           "familySize": 6
         },
-        "label": "Sink 800W y3346 — NEW east wall north of dishwasher (was west y2850)",
+        "label": "Sink 800W y3346 \u2014 NEW east wall north of dishwasher (was west y2850)",
         "sinkOptions": {
           "selected": "A-800-drainboard",
           "alternatives": [
@@ -760,7 +760,7 @@
           "kind": "overSinkStorage",
           "sinkY": 2850
         },
-        "label": "Over-sink Dish Rack 800W y3346 z1350 — 2-tier SS above NEW east sink",
+        "label": "Over-sink Dish Rack 800W y3346 z1350 \u2014 2-tier SS above NEW east sink",
         "w": 800,
         "d": 320,
         "h": 700
@@ -806,7 +806,7 @@
           "kind": "garageWest",
           "afterShaft": true
         },
-        "label": "West Garage 600W y3546 south of shaft — stores Food Processor tambour",
+        "label": "West Garage 600W y3546 south of shaft \u2014 stores Food Processor tambour",
         "subcomponents": [
           {
             "id": "foodprocessor-inside-westgarage",
@@ -823,11 +823,11 @@
         "kind": "order",
         "expected": "spice.y < gas.y && gas.y < dishwasher.y && dishwasher.y < washing.y && washing.lastBeforeGarage && garage_NE.last && garage_NE.y===4146",
         "severity": "error",
-        "fix": "Keep east order spice1850 → gas2000 → dishwasher2850 → washing3400 → garage_NE4146 per PS1"
+        "fix": "Keep east order spice1850 \u2192 gas2000 \u2192 dishwasher2850 \u2192 washing3400 \u2192 garage_NE4146 per PS1"
       },
       {
         "id": "west-order",
-        "label": "West order: sink y2850 (800W) + dish rack 800 above → purifier y3680 → shaft y4146",
+        "label": "West order: sink y2850 (800W) + dish rack 800 above \u2192 purifier y3680 \u2192 shaft y4146",
         "wall": "west",
         "kind": "order",
         "expected": "sink.y===2850 && sink.w===800 && sinkUpperDishRack.y===2850 && waterpurifier.y===3680 && shaft.last",
@@ -836,7 +836,7 @@
       },
       {
         "id": "purifier-near-sink",
-        "label": "Purifier north of rack — wall-mounted",
+        "label": "Purifier north of rack \u2014 wall-mounted",
         "wall": "west",
         "kind": "proximity",
         "expected": {
@@ -858,7 +858,7 @@
           "floorToCeiling": true
         },
         "severity": "error",
-        "fix": "Move any west object overlapping y300-y1220 beyond y1220 — gap 920 no counter"
+        "fix": "Move any west object overlapping y300-y1220 beyond y1220 \u2014 gap 920 no counter"
       },
       {
         "id": "walkway-minimum",

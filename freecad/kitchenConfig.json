@@ -10,17 +10,17 @@
       "sill_mm": 900
     },
     "shaft": {
-      "w_mm": 610,
+      "w_mm": 609,
       "l_mm": 838
     },
     "northClear_mm": 300,
-    "westOpenGap_mm": 920,
+    "westOpenGap_mm": 610,
     "walkwayFloor_mm": 1324,
     "walkwayEye_mm": 1004
   },
   "rule9_locked": {
     "east_right_south_to_north": "Gas stove middle (y2000) -> Dishwasher north of gas (y2850) -> Washing Machine LAST near North window (y3800) - continuous shelves till north window wall no tall box going to roof, hidden chimney small covered, LED warm, 600D base",
-    "west_left_south_to_north": "920 open gap near South door (300-1220) no counter -> Microwave 500W (y1300) -> Food Processor 500W (y1900) -> Water Purifier near Sink (y3350) hidden under upper 320D with LED touching shaft side -> Sink almost touching shaft (y3550) -> Shaft 610x838 LAST at NW (y4146)"
+    "west_left_south_to_north": "610 open gap (2ft) near South door (300-910) no counter -> Microwave 500W (y1300) -> Food Processor 500W (y1900) -> Water Purifier near Sink (y3350) hidden under upper 320D with LED touching shaft side -> Sink almost touching shaft (y3550) -> Shaft 610x838 LAST at NW (y4146)"
   },
   "east_items": [
     {
@@ -108,11 +108,11 @@
     {
       "id": "shaft",
       "name": "Shaft 61x83.8 at NW LAST",
-      "w": 61,
+      "w": 60.9,
       "d": 83.8,
       "h": 270,
       "x": 30.5,
-      "y": 432.7,
+      "y": 390.8,
       "angle": 0
     }
   ],
