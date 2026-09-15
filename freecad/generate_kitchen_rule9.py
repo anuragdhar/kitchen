@@ -76,6 +76,7 @@ def normalize_config(raw):
             "h": float(item.get("height", item.get("h", 0))) / 10,
             "x": float(item.get("x", 0)) / 10,
             "y": float(item.get("y", 0)) / 10,
+            "z": float(item.get("z", 0)) / 10,
             "angle": 0,
         }
 
@@ -96,6 +97,9 @@ def normalize_config(raw):
             },
             "northClear_mm": raw.get("dimensions", {}).get("northClear", 300),
             "westOpenGap_mm": raw.get("dimensions", {}).get("westDoorClear", {}).get("to", 1220),
+            "westCounterDepth_mm": raw.get("dimensions", {}).get("westCounterDepth", 400),
+            "eastBacksplashSliderDepth_mm": raw.get("dimensions", {}).get("eastBacksplashSliderDepth", 102),
+            "westSliderDepth_mm": raw.get("dimensions", {}).get("westSliderDepth", 152),
             "walkwayFloor_mm": raw.get("dimensions", {}).get("walkwayWidth", 1324),
             "walkwayEye_mm": 1004,
         },
@@ -124,6 +128,7 @@ def write_2d_exports(k, east_items, west_items, validation):
     height = float(k["height_mm"])
     north_clear = float(k["northClear_mm"])
     west_clear = float(k.get("westOpenGap_mm", 1220))
+    west_depth = float(k.get("westCounterDepth_mm", 400))
     usable_len = length - north_clear
 
     def svg_y(y, depth):
@@ -135,8 +140,8 @@ def write_2d_exports(k, east_items, west_items, validation):
         '<rect x="-160" y="-160" width="2644" height="5066" fill="#f6f2ec"/>',
         f'<rect x="0" y="0" width="{width}" height="{length}" fill="#fffefb" stroke="#111" stroke-width="8"/>',
         f'<rect x="{width-600}" y="{svg_y(0, usable_len)}" width="600" height="{usable_len}" fill="#c8b39d" stroke="#111"/>',
-        f'<rect x="0" y="{svg_y(west_clear, usable_len-west_clear)}" width="400" height="{usable_len-west_clear}" fill="#c8b39d" stroke="#111"/>',
-        f'<rect x="0" y="{svg_y(0, west_clear)}" width="400" height="{west_clear}" fill="#fffaf3" stroke="#7b3f21" stroke-dasharray="24 14"/>',
+        f'<rect x="0" y="{svg_y(west_clear, usable_len-west_clear)}" width="{west_depth}" height="{usable_len-west_clear}" fill="#c8b39d" stroke="#111"/>',
+        f'<rect x="0" y="{svg_y(0, west_clear)}" width="{west_depth}" height="{west_clear}" fill="#fffaf3" stroke="#7b3f21" stroke-dasharray="24 14"/>',
         f'<rect x="0" y="{svg_y(usable_len, north_clear)}" width="{width}" height="{north_clear}" fill="#eaf6fd" stroke="#2f8ac6" stroke-dasharray="24 14"/>',
         '<text x="1162" y="-70" font-family="Arial" font-size="70" font-weight="900" text-anchor="middle">NORTH (N)</text>',
         f'<text x="1162" y="{length+90}" font-family="Arial" font-size="70" font-weight="900" text-anchor="middle">SOUTH (S)</text>',
@@ -157,7 +162,7 @@ def write_2d_exports(k, east_items, west_items, validation):
         y = mm(item["y"])
         svg.append(f'<rect x="0" y="{svg_y(y, w)}" width="{d}" height="{w}" fill="#c0c0c0" stroke="#111"/>')
         svg.append(f'<text x="{d/2}" y="{svg_y(y, w)+w/2}" font-family="Arial" font-size="38" font-weight="800" text-anchor="middle">{item["id"]}</text>')
-    svg.append(f'<text x="20" y="{length+145}" font-family="Arial" font-size="42" font-weight="800">Scale 1:1 mm | 2324W x 4746L x 2700H | East 600D | West 400D | Door clear y0-y1220 | North clear 300</text>')
+    svg.append(f'<text x="20" y="{length+145}" font-family="Arial" font-size="42" font-weight="800">Scale 1:1 mm | {width:.0f}W x {length:.0f}L x {height:.0f}H | East 600D | West {west_depth:.0f}D | Door clear y0-y{west_clear:.0f} | North clear {north_clear:.0f}</text>')
     svg.append("</svg>")
     (EXPORT_DIR / "freecad-plan.svg").write_text("\n".join(svg), encoding="utf-8")
 
@@ -168,8 +173,8 @@ def write_2d_exports(k, east_items, west_items, validation):
         add_line(x, y, x+w, y, layer); add_line(x+w, y, x+w, y+h, layer); add_line(x+w, y+h, x, y+h, layer); add_line(x, y+h, x, y, layer)
     add_rect(0, 0, width, length, "ROOM")
     add_rect(width-600, 0, 600, usable_len, "East_600D_Base_Run")
-    add_rect(0, west_clear, 400, usable_len-west_clear, "West_400D_Counter_Run")
-    add_rect(0, 0, 400, west_clear, "West_Door_Clear_Zone_y0_y1220")
+    add_rect(0, west_clear, west_depth, usable_len-west_clear, f"West_{int(west_depth)}D_Counter_Run")
+    add_rect(0, 0, west_depth, west_clear, f"West_Door_Clear_Zone_y0_y{int(west_clear)}")
     dxf.extend(["0", "ENDSEC", "0", "EOF"])
     (EXPORT_DIR / "freecad-plan.dxf").write_text("\n".join(dxf), encoding="utf-8")
 
@@ -179,11 +184,11 @@ def write_2d_exports(k, east_items, west_items, validation):
 - East base run: 600D from y0 to y{usable_len:.0f}.
 - East lower upper: 320D, z1350-z1850.
 - East top upper: 550D, z1900-z2700.
-- West door clear zone: y0-y1220, floor to ceiling, no counter, upper cabinet, or LED.
-- West counter run: 400D from y1220 to y{usable_len:.0f}.
+- West door clear zone: y0-y{west_clear:.0f}, floor to ceiling, no counter, upper cabinet, or LED.
+- West counter run: {west_depth:.0f}D from y{west_clear:.0f} to y{usable_len:.0f}.
 - West lower upper: 320D, z1350-z1850 after door clear.
 - West top upper: 450D, z1900-z2700 after door clear.
-- North clear zone: 300 mm.
+- North clear zone: {north_clear:.0f} mm.
 - Validation: {validation["status"]}.
 """
     (EXPORT_DIR / "freecad-dimensions.md").write_text(summary, encoding="utf-8")
@@ -197,6 +202,8 @@ def main():
     height = float(k["height_mm"])
     north_clear = float(k["northClear_mm"])
     usable_len = length - north_clear
+    west_clear = float(k.get("westOpenGap_mm", 1220))
+    west_depth = float(k.get("westCounterDepth_mm", 400))
 
     doc = App.newDocument("Kitchen_Rule9_3D")
 
@@ -220,19 +227,19 @@ def main():
         0.35,
     )
 
-    # Base counters. West is clear from South 0 to y1220 because the door zone
+    # Base counters. West is clear from South 0 to west_clear because the door zone
     # must stay open from floor to ceiling.
     add_box(doc, "East_600D_Base_Run", width - 600, 0, 0, 600, usable_len, 900, "#c8b39d")
-    add_box(doc, "West_Door_Clear_Zone_y0_y1220", 0, 0, 0, 35, 1220, height, "#f5f1eb", 0.65)
-    add_box(doc, "West_400D_Counter_Run", 0, 1220, 0, 400, usable_len - 1220, 900, "#c8b39d")
+    add_box(doc, f"West_Door_Clear_Zone_y0_y{int(west_clear)}", 0, 0, 0, 35, west_clear, height, "#f5f1eb", 0.65)
+    add_box(doc, f"West_{int(west_depth)}D_Counter_Run", 0, west_clear, 0, west_depth, usable_len - west_clear, 900, "#c8b39d")
 
     # Upper cabinets and LED strips
     add_box(doc, "East_320D_Lower_Upper", width - 320, 0, 1350, 320, usable_len, 500, "#dac8b7")
-    add_box(doc, "West_320D_Lower_Upper", 0, 1220, 1350, 320, usable_len - 1220, 500, "#dac8b7")
+    add_box(doc, "West_320D_Lower_Upper", 0, west_clear, 1350, 320, usable_len - west_clear, 500, "#dac8b7")
     add_box(doc, "East_550D_Top_Upper", width - 550, 0, 1900, 550, usable_len, 800, "#bfa891")
-    add_box(doc, "West_450D_Top_Upper", 0, 1220, 1900, 450, usable_len - 1220, 800, "#bfa891")
+    add_box(doc, "West_450D_Top_Upper", 0, west_clear, 1900, 450, usable_len - west_clear, 800, "#bfa891")
     add_box(doc, "Warm_LED_East", width - 330, 0, 1330, 18, usable_len, 35, "#ffd38b")
-    add_box(doc, "Warm_LED_West", 312, 1220, 1330, 18, usable_len - 1220, 35, "#ffd38b")
+    add_box(doc, "Warm_LED_West", 312, west_clear, 1330, 18, usable_len - west_clear, 35, "#ffd38b")
 
     palette = {
         "gas": "#2a2a2a",
@@ -244,6 +251,10 @@ def main():
         "waterpurifier": "#7eb8e8",
         "sink": "#222222",
         "shaft": "#999999",
+        "microwave": "#1a1a1a",
+        "applianceGarage": "#c4b5a5",
+        "eastBacksplashSlider": "#d9c6af",
+        "westSixInchSlider": "#d9c6af",
     }
 
     for item in cfg["east_items"]:
@@ -259,7 +270,8 @@ def main():
             add_label(doc, "compact chimney", width - 900, y + item_w / 2, 1820)
         else:
             x = width - item_d
-            add_box(doc, f"East_{item['id']}", x, y, 0, item_d, item_w, item_h, palette[item["id"]])
+            z = mm(item.get("z", 0))
+            add_box(doc, f"East_{item['id']}", x, y, z, item_d, item_w, item_h, palette.get(item["id"], "#c0c0c0"))
             add_label(doc, item["id"], x - 260, y + item_w / 2, item_h + 80)
 
     for item in cfg["west_items"]:
@@ -273,7 +285,8 @@ def main():
         item_d = mm(item["d"])
         item_h = mm(item["h"])
         y = mm(item["y"])
-        add_box(doc, f"West_{item['id']}", 0, y, 900 if item["id"] in ("microwave", "foodprocessor") else 0, item_d, item_w, item_h, palette[item["id"]])
+        z = mm(item.get("z", 0))
+        add_box(doc, f"West_{item['id']}", 0, y, z, item_d, item_w, item_h, palette.get(item["id"], "#c0c0c0"))
         add_label(doc, item["id"], 470, y + item_w / 2, 1150)
 
     add_label(doc, "South door", width / 2, -280, 1800)
@@ -285,7 +298,7 @@ def main():
     validation = {
         "status": "pass",
         "objectCount": len(doc.Objects),
-        "westDoorClearZone": "preserved y0-y1220, no counter/upper/LED created in clear zone",
+        "westDoorClearZone": f"preserved y0-y{west_clear:.0f}, no counter/upper/LED created in clear zone",
         "northClearZone": f"cabinet runs stop at y{usable_len:.0f}",
         "gasChimney": "separate cooktop slab, burner marker, and compact chimney hood",
     }

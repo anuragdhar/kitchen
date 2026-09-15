@@ -69,10 +69,11 @@ Use this tool ownership model:
   - Coohom rebuild guide code exists but is hidden/paused in the active UI.
   - JSON layout export.
 - Current locked layout:
-  - Room: 2324 mm wide x 4746 mm long x 2700 mm high.
-  - East wall: 600D run from y0-y4746 with appliance garage y300-y1150 for microwave + food processor, 3-burner gas hob y2300, dishwasher y3546 directly adjacent to washing machine y4146, and washing machine at y4146 touching the north wall; old spice unit removed. Rendered views show covered-appliance markers, washing door opening left, dishwasher door opening down, and a hidden chimney vent only.
-  - West wall: y0-y1220 full-height clear door zone, then 400D run with real sink y3146, 400W x 350D x 550H purifier cabinet y3746, and shaft y4146.
+  - Room: 2324 mm wide x 3962 mm long x 2700 mm high.
+  - East wall: 600D run from y0-y3962. At the south beginning, microwave is open above the backsplash at y0 and the open counter-height appliance garage at y0 contains the food processor and pulls toward the gas. Gas cooktop is at y1200 with hidden chimney/vent. A 4 in / 102 mm backsplash slider storage runs above the counter along the east wall.
+  - West wall: y0-y610 full-height clear door zone, then 600D counter run. South-to-north order is open washing machine y610, sink y1210, open dishwasher y1972, 6 in / 152 mm slider storage y2572, and shaft y3124.
   - North: 1100W window plus 300 mm below-window reference only.
+  - Designer handoff: `docs/KITCHEN_DESIGN_HANDOFF.md`.
 
 ## Phase 1: React Shared Layout Model
 

@@ -1,8 +1,8 @@
 export const ROOM_WIDTH = 2324
 export const ROOM_LENGTH = 3962 // 13ft
 export const ROOM_HEIGHT = 2700
-export const WEST_CLEAR_FROM = 300
-export const WEST_CLEAR_TO = 910 // 2ft (reduced from 1220)
+export const WEST_CLEAR_FROM = 0
+export const WEST_CLEAR_TO = 610 // 2ft clear from the south door side
 export const NORTH_CLEAR = 0
 export const WINDOW_BELOW_DEPTH = 300
 export const SHAFT_X = 0
@@ -12,36 +12,40 @@ export const SHAFT_L = 838 // 838×609 N-S (north to south)
 export const EAST_BASE_DEPTH = 600
 export const EAST_LOWER_UPPER_DEPTH = 320
 export const EAST_TOP_UPPER_DEPTH = 550
-export const WEST_COUNTER_DEPTH = 610 // 24in (interpreting 7ft as length, depth kept 24in — see note)
+export const WEST_COUNTER_DEPTH = 600 // 24in nominal, equal to east for open wet appliances
 export const WEST_LOWER_UPPER_DEPTH = 320
 export const WEST_TOP_UPPER_DEPTH = 450
 
-export const KITCHEN = { width:ROOM_WIDTH, length:ROOM_LENGTH, height:ROOM_HEIGHT, door:{w:1100,x:612}, window:{w:1100,h:1800,sill:900,x:612, belowDepth:WINDOW_BELOW_DEPTH, transomHeight:610, sections:2, topFixed:true, bottomOperation:'sliding', bottomFixedCount:0, bottomSlidingCount:2}, shaft:{w:SHAFT_W,l:SHAFT_L,x:SHAFT_X,y:SHAFT_Y}, northClear:NORTH_CLEAR, windowBelow:{x:612,w:1100,depth:WINDOW_BELOW_DEPTH}, westGap:{from:WEST_CLEAR_FROM,to:WEST_CLEAR_TO,w:WEST_CLEAR_TO-WEST_CLEAR_FROM}, walkway:{floor:1124,eye:1004} }
+export const KITCHEN = { width:ROOM_WIDTH, length:ROOM_LENGTH, height:ROOM_HEIGHT, door:{w:1100,x:612}, window:{w:1100,h:1800,sill:900,x:612, belowDepth:WINDOW_BELOW_DEPTH, transomHeight:610, sections:2, topFixed:true, bottomOperation:'sliding', bottomFixedCount:0, bottomSlidingCount:2}, shaft:{w:SHAFT_W,l:SHAFT_L,x:SHAFT_X,y:SHAFT_Y}, northClear:NORTH_CLEAR, windowBelow:{x:612,w:1100,depth:WINDOW_BELOW_DEPTH}, westGap:{from:WEST_CLEAR_FROM,to:WEST_CLEAR_TO,w:WEST_CLEAR_TO-WEST_CLEAR_FROM}, westCounterDepth:WEST_COUNTER_DEPTH, eastBacksplashSliderDepth:102, westSliderDepth:152, walkway:{floor:1124,eye:1004} }
 
-// New configuration: east wet wall and west cooking wall.
-// East North->South: tall cabinet + washing, hidden water purifier, sink with dish storage above, dishwasher.
+// Current configuration: west wet wall and east cooking/appliance wall.
+// East South->North: open microwave, open appliance garage with food processor, gas cooktop, 4in backsplash slider storage.
 export const EAST_INIT = [
-  {id:'garage_NE', label:'East Tall NE 28in (711x600x2700) y3251 north - washing inside far north under cabinet', w:711, d:600, h:2700, y:3251, x:1724, color:'#C4B5A5', fullHeight:true, last:true, matchesShaft:true, visualSingularity:true, subcomponents:[{id:'washing-inside-tall-NE', label:'Washing far north under cabinet inside tall'}]},
-  {id:'washing', label:'Washing 600W far north under cabinet y3251 east', w:600, d:600, h:880, y:3251, x:1724, color:'#E5E0DA', hidden:true, behindShutter:true, insideTall:true, farNorth:true},
-  {id:'gas', label:'Gas Stove 700W y1500 east with kitchen chimney above', w:700, d:600, h:900, y:1500, x:1724, color:'#2a2a2a', subcomponents:[{id:'gas-cooktop-east', label:'cooktop slab east'}, {id:'kitchen-chimney-east', label:'kitchen chimney above gas'}]},
-  {id:'garage_SE', label:'East Tall SE 24in (610x600x2700) y0 south - symmetrical bottom to top', w:610, d:600, h:2700, y:0, x:1724, color:'#C4B5A5', fullHeight:true, first:true, matchesShaft:false, visualSingularity:true, subcomponents:[{id:'washing-inside-tall-SE', label:'Washing inside lower bay SE'}, {id:'microwave-inside-tall-SE', label:'Microwave above washing inside tall SE'}]},
+  {id:'microwave', label:'Open microwave above backsplash at east south beginning y0', w:600, d:400, h:350, y:0, x:1924, z:1360, color:'#1a1a1a', open:true, noCover:true, wallMounted:true},
+  {id:'applianceGarage', label:'Open appliance garage at counter height with food processor, pulls toward gas', w:850, d:600, h:450, y:0, x:1724, z:900, color:'#C4B5A5', open:true, noCover:true, pullToward:'gas', subcomponents:[{id:'foodprocessor-inside-applianceGarage', label:'Food processor inside open appliance garage'}]},
+  {id:'eastBacksplashSlider', label:'4in backsplash slider storage along east wall behind counter and stove', w:3962, d:102, h:450, y:0, x:2222, z:900, color:'#d9c6af', backsplashSlider:true, sliderDoor:true},
+  {id:'gas', label:'Gas Stove 700W y1200 east with hidden chimney above', w:700, d:600, h:900, y:1200, x:1724, color:'#2a2a2a', subcomponents:[{id:'gas-cooktop-east', label:'cooktop slab east'}, {id:'kitchen-chimney-east', label:'kitchen chimney above gas'}]},
+  {id:'garage_NE', label:'East north tall cabinet removed for current option', w:0, d:0, h:0, y:0, x:1724, color:'#C4B5A5', hidden:true},
+  {id:'garage_SE', label:'East south tall cabinet removed - replaced by open microwave and appliance garage', w:0, d:0, h:0, y:0, x:1724, color:'#C4B5A5', hidden:true},
   {id:'geyserEastTop', label:'Hot Water Geyser east top - kept for reference (now west)', w:200, d:200, h:300, y:2600, x:1724, color:'#c9d6e3', z:2100, wallMounted:true, topMounted:true, hidden:true}
 ]
 
 export const WEST_INIT = [
   {id:'shaft', label:'Shaft 838×609 609x838 y3124 NW inside kitchen (838×609 N-S)', w:609, d:838, h:2700, y:3124, x:0, color:'#999', fixed:true, last:true, inside:true},
-  {id:'waterpurifier', label:'Water Purifier 350W y2600 west after shaft', w:350, d:320, h:400, y:2600, x:0, color:'#7EB8E8', z:1350, mountedAbove:true, hidden:true},
-  {id:'sink', label:'Kitchen Sink 30 inch (762W x 457D) y1800 west with vast utensil storage above', w:762, d:457, h:900, y:1800, x:0, color:'#6a6a6a', z:0, sinkType:'single-bowl-drainboard-304-30x18'},
-  {id:'sinkUpperDishRack', label:'Vast Utensil Storage 762W y1800 z1350 above west sink', w:762, d:320, h:700, y:1800, x:0, color:'#f0e6da', z:1350},
-  {id:'trashCan', label:'Trash pull-out Saints frame below sink y2000 west', w:350, d:400, h:500, y:2000, x:70, color:'#2b2b2b', pullOut:true, underSink:true, saintsFrame:true, z:100},
-  {id:'dishwasher', label:'Dishwasher 600W y1100 west ground under cabinet after sink - below geyser', w:600, d:600, h:880, y:1100, x:0, color:'#A8A8A8', hidden:true, behindShutter:true, ground:true},
-  {id:'geyser', label:'Hot Water Geyser 400x400x550 on west top y1100 z2100 above dishwasher', w:400, d:400, h:550, y:1100, x:0, color:'#c9d6e3', z:2100, wallMounted:true, topMounted:true, aboveDishwasher:true},
+  {id:'washing', label:'Open washing machine first after door on west y610', w:600, d:600, h:880, y:610, x:0, color:'#E5E0DA', z:0, open:true, noCover:true, doorOpens:'left'},
+  {id:'sink', label:'Kitchen Sink 30 inch (762W x 457D) y1210 west after washing', w:762, d:457, h:900, y:1210, x:0, color:'#6a6a6a', z:0, sinkType:'single-bowl-drainboard-304-30x18'},
+  {id:'sinkUpperDishRack', label:'Vast Utensil Storage 762W y1210 z1350 above west sink', w:762, d:320, h:700, y:1210, x:0, color:'#f0e6da', z:1350},
+  {id:'dishwasher', label:'Open dishwasher 600W y1972 west after sink', w:600, d:600, h:880, y:1972, x:0, color:'#A8A8A8', z:0, open:true, noCover:true, ground:true, doorOpens:'down'},
+  {id:'westSixInchSlider', label:'6in slider storage from counter height between sink/dishwasher zone and shaft', w:552, d:152, h:450, y:2572, x:0, color:'#d9c6af', z:900, backsplashSlider:true, sliderDoor:true},
+  {id:'waterpurifier', label:'Water Purifier reference removed from active west run', w:0, d:0, h:0, y:0, x:0, color:'#7EB8E8', z:1350, mountedAbove:true, hidden:true},
+  {id:'trashCan', label:'Trash pull-out removed from active current option', w:0, d:0, h:0, y:0, x:70, color:'#2b2b2b', hidden:true},
+  {id:'geyser', label:'Hot Water Geyser reference hidden', w:0, d:0, h:0, y:0, x:0, color:'#c9d6e3', z:2100, wallMounted:true, topMounted:true, hidden:true},
   {id:'westGarage', label:'Appliance Garage west removed - now east', w:0, d:0, h:0, y:0, x:0, color:'#C4B5A5', hidden:true},
   {id:'gasWestRemoved', label:'Gas removed from west - now east', w:0, d:0, h:0, y:0, x:0, hidden:true},
-  {id:'powerPointWest1', label:'Power point west near gas (now east gas, keep west)', w:20, d:10, h:100, y:1650, x:0, color:'#111', z:1100, powerPoint:true, wallMounted:true},
-  {id:'powerPointWest2', label:'Extra power point west for charging y800', w:20, d:10, h:100, y:800, x:0, color:'#111', z:1100, powerPoint:true, extra:true, wallMounted:true},
-  {id:'powerPointEast1', label:'Power point east near gas', w:20, d:10, h:100, y:1650, x:1724, color:'#111', z:1100, powerPoint:true, wallMounted:true},
-  {id:'powerPointEast2', label:'Extra power point east for charging y2800', w:20, d:10, h:100, y:2800, x:1724, color:'#111', z:1100, powerPoint:true, extra:true, wallMounted:true}
+  {id:'powerPointWest1', label:'Power point west near gas (now east gas, keep west)', w:20, d:10, h:100, y:1650, x:0, color:'#111', z:1100, powerPoint:true, wallMounted:true, hidden:true},
+  {id:'powerPointWest2', label:'Extra power point west for charging y800', w:20, d:10, h:100, y:800, x:0, color:'#111', z:1100, powerPoint:true, extra:true, wallMounted:true, hidden:true},
+  {id:'powerPointEast1', label:'Power point east near gas', w:20, d:10, h:100, y:1650, x:1724, color:'#111', z:1100, powerPoint:true, wallMounted:true, hidden:true},
+  {id:'powerPointEast2', label:'Extra power point east for charging y2800', w:20, d:10, h:100, y:2800, x:1724, color:'#111', z:1100, powerPoint:true, extra:true, wallMounted:true, hidden:true}
 ]
 
 
@@ -71,11 +75,11 @@ export const CABINET_RUNS = [
   { id:'east-base-run', category:'cabinetRun', wall:'east', x:ROOM_WIDTH-EAST_BASE_DEPTH, y:0, z:0, width:3962, depth:EAST_BASE_DEPTH, height:900, locked:false, color:'#c8b39d', material:'laminate', clearance:null, label:'East 600D base run with continuous counter to north wall' },
   { id:'east-lower-upper', category:'cabinetRun', wall:'east', x:ROOM_WIDTH-EAST_LOWER_UPPER_DEPTH, y:0, z:1350, width:3962, depth:EAST_LOWER_UPPER_DEPTH, height:500, locked:false, color:'#dac8b7', material:'laminate', clearance:null, label:'East 320D lower upper cabinets to north wall' },
   { id:'east-top-upper', category:'cabinetRun', wall:'east', x:ROOM_WIDTH-EAST_TOP_UPPER_DEPTH, y:0, z:1850, width:3962, depth:EAST_TOP_UPPER_DEPTH, height:850, locked:false, color:'#bfa891', material:'laminate', clearance:null, label:'East 550D top upper cabinets to north wall no gap' },
-  { id:'west-counter-run', category:'cabinetRun', wall:'west', x:0, y:WEST_CLEAR_TO, z:0, width:2134, depth:WEST_COUNTER_DEPTH, height:900, // 7ft length as requested
-    locked:false, color:'#c8b39d', material:'laminate', clearance:{ kind:'doorClearZone', from:WEST_CLEAR_FROM, to:WEST_CLEAR_TO }, label:'West 600D counter after door clear zone - equal to east' },
+  { id:'west-counter-run', category:'cabinetRun', wall:'west', x:0, y:WEST_CLEAR_TO, z:0, width:ROOM_LENGTH-WEST_CLEAR_TO, depth:WEST_COUNTER_DEPTH, height:900,
+    locked:false, color:'#c8b39d', material:'laminate', clearance:{ kind:'doorClearZone', from:WEST_CLEAR_FROM, to:WEST_CLEAR_TO }, label:'West 600D counter after 610mm door clear zone' },
   { id:'west-lower-upper', category:'cabinetRun', wall:'west', x:0, y:WEST_CLEAR_TO, z:1350, width:3962-WEST_CLEAR_TO, depth:WEST_LOWER_UPPER_DEPTH, height:500, locked:false, color:'#dac8b7', material:'laminate', clearance:{ kind:'doorClearZone', from:WEST_CLEAR_FROM, to:WEST_CLEAR_TO }, label:'West 320D lower upper after door clear zone' },
   { id:'west-top-upper', category:'cabinetRun', wall:'west', x:0, y:WEST_CLEAR_TO, z:1850, width:3962-WEST_CLEAR_TO, depth:WEST_TOP_UPPER_DEPTH, height:850, locked:false, color:'#bfa891', material:'laminate', clearance:{ kind:'doorClearZone', from:WEST_CLEAR_FROM, to:WEST_CLEAR_TO }, label:'West 450D top upper after door clear zone no gap' },
-  { id:'west-door-clear-zone', category:'clearZone', wall:'west', x:0, y:WEST_CLEAR_FROM, z:0, width:WEST_CLEAR_TO-WEST_CLEAR_FROM, depth:WEST_COUNTER_DEPTH, height:ROOM_HEIGHT, locked:true, color:'#fffaf3', material:'void', clearance:{ kind:'fullHeight', from:WEST_CLEAR_FROM, to:WEST_CLEAR_TO }, label:'West door clear zone y300-y910 (2ft) no counter no upper no LED - west counter now 600D equal east' },
+  { id:'west-door-clear-zone', category:'clearZone', wall:'west', x:0, y:WEST_CLEAR_FROM, z:0, width:WEST_CLEAR_TO-WEST_CLEAR_FROM, depth:WEST_COUNTER_DEPTH, height:ROOM_HEIGHT, locked:true, color:'#fffaf3', material:'void', clearance:{ kind:'fullHeight', from:WEST_CLEAR_FROM, to:WEST_CLEAR_TO }, label:'West door clear zone y0-y610 (2ft) no counter no upper no LED' },
   { id:'north-window-below-zone', category:'referenceZone', wall:'north', x:612, y:ROOM_LENGTH-WINDOW_BELOW_DEPTH, z:0, width:1100, depth:WINDOW_BELOW_DEPTH, height:900, locked:true, color:'#eaf6fd', material:'void', clearance:{ kind:'windowBelow', depth:WINDOW_BELOW_DEPTH }, label:'Window-only below-sill reference zone' }
 ]
 
@@ -96,6 +100,34 @@ export const APPLIANCES = [
   { id:'powerPointWest2', category:'electrical', wall:'west', x:0, y:800, z:1100, width:20, depth:10, height:100, locked:false, color:'#111', material:'plastic', clearance:null, label:'Extra power point west y800' },
   { id:'powerPointEast1', category:'electrical', wall:'east', x:1724, y:1650, z:1100, width:20, depth:10, height:100, locked:false, color:'#111', material:'plastic', clearance:null, label:'Power point east y1650' },
   { id:'powerPointEast2', category:'electrical', wall:'east', x:1724, y:2800, z:1100, width:20, depth:10, height:100, locked:false, color:'#111', material:'plastic', clearance:null, label:'Extra power point east y2800' }
+]
+
+export const CURRENT_APPLIANCES = [
+  { id:'microwave', category:'appliance', wall:'east', x:1924, y:0, z:1360, width:600, depth:400, height:350, locked:false, color:'#1a1a1a', material:'black_glass', clearance:{ kind:'openAboveBacksplash' }, label:'Open microwave above backsplash at east south beginning y0', open:true, noCover:true, wallMounted:true },
+  { id:'applianceGarage', category:'cabinet', wall:'east', x:1724, y:0, z:900, width:850, depth:600, height:450, locked:false, color:'#C4B5A5', material:'laminate', clearance:{ kind:'counterHeightOpenGarage', pullToward:'gas' }, label:'Open appliance garage at counter height with food processor, pulls toward gas', open:true, noCover:true, pullToward:'gas' },
+  { id:'eastBacksplashSlider', category:'storage', wall:'east', x:ROOM_WIDTH-102, y:0, z:900, width:ROOM_LENGTH, depth:102, height:450, locked:true, color:'#d9c6af', material:'laminate', clearance:{ kind:'backsplashSlider', depth:102 }, label:'4in backsplash slider storage along east wall behind counter and stove', backsplashSlider:true, sliderDoor:true },
+  { id:'gas', category:'appliance', wall:'east', x:ROOM_WIDTH-EAST_BASE_DEPTH, y:1200, z:900, width:700, depth:600, height:900, locked:false, color:'#2a2a2a', material:'stainless_steel', clearance:null, label:'Gas Stove 700W y1200 east with hidden chimney' },
+  { id:'geyserEastTop', category:'appliance', wall:'east', x:ROOM_WIDTH-EAST_BASE_DEPTH, y:2600, z:2100, width:200, depth:200, height:300, locked:false, color:'#c9d6e3', material:'metal', clearance:null, label:'Geyser east top hidden', hidden:true },
+  { id:'shaft', category:'shaft', wall:'west', x:SHAFT_X, y:SHAFT_Y, z:0, width:SHAFT_W, depth:SHAFT_L, height:ROOM_HEIGHT, locked:true, color:'#999', material:'concrete', clearance:null, label:'Shaft 838x609 y3124 NW inside' },
+  { id:'washing', category:'appliance', wall:'west', x:0, y:610, z:0, width:600, depth:600, height:880, locked:false, color:'#E5E0DA', material:'stainless_steel', clearance:{ kind:'openAfterDoor' }, label:'Open washing machine first after door on west y610', open:true, noCover:true, doorOpens:'left' },
+  { id:'sink', category:'plumbing', wall:'west', x:0, y:1210, z:0, width:762, depth:457, height:900, locked:false, color:'#6a6a6a', material:'stainless_steel', clearance:{ kind:'betweenWashingAndDishwasher' }, label:'Kitchen Sink 30in y1210 west after washing' },
+  { id:'sinkUpperDishRack', category:'cabinet', wall:'west', x:0, y:1210, z:1350, width:762, depth:320, height:700, locked:false, color:'#f0e6da', material:'laminate', clearance:{ kind:'overSinkStorage', sinkY:1210 }, label:'Vast utensil storage y1210 west above sink' },
+  { id:'dishwasher', category:'appliance', wall:'west', x:0, y:1972, z:0, width:600, depth:600, height:880, locked:false, color:'#A8A8A8', material:'stainless_steel', clearance:{ kind:'openAfterSink' }, label:'Open dishwasher 600W y1972 west after sink', open:true, noCover:true, ground:true, doorOpens:'down' },
+  { id:'westSixInchSlider', category:'storage', wall:'west', x:0, y:2572, z:900, width:552, depth:152, height:450, locked:false, color:'#d9c6af', material:'laminate', clearance:{ kind:'sixInchSlider', depth:152 }, label:'6in slider storage from counter height between sink/dishwasher zone and shaft', backsplashSlider:true, sliderDoor:true },
+  { id:'powerPointWest1', category:'electrical', wall:'west', x:0, y:1650, z:1100, width:20, depth:10, height:100, locked:false, color:'#111', material:'plastic', clearance:null, label:'Power point west y1650' },
+  { id:'powerPointWest2', category:'electrical', wall:'west', x:0, y:800, z:1100, width:20, depth:10, height:100, locked:false, color:'#111', material:'plastic', clearance:null, label:'Extra charging west y800' },
+  { id:'powerPointEast1', category:'electrical', wall:'east', x:ROOM_WIDTH-EAST_BASE_DEPTH, y:1650, z:1100, width:20, depth:10, height:100, locked:false, color:'#111', material:'plastic', clearance:null, label:'Power point east y1650' },
+  { id:'powerPointEast2', category:'electrical', wall:'east', x:ROOM_WIDTH-EAST_BASE_DEPTH, y:2800, z:1100, width:20, depth:10, height:100, locked:false, color:'#111', material:'plastic', clearance:null, label:'Extra power point east y2800' }
+]
+
+export const CURRENT_VALIDATION_RULES = [
+  { id:'east-order', label:'East S->N: microwave and open appliance garage first, then gas', wall:'east', kind:'order', expected:'microwave.y===0 && applianceGarage.y===0 && gas.y===1200', severity:'error', fix:'Keep east beginning open microwave/garage at y0 and gas at y1200' },
+  { id:'west-order', label:'West S->N: washing, sink, dishwasher, 6in slider, shaft', wall:'west', kind:'order', expected:'washing.y===610 && sink.y===1210 && dishwasher.y===1972 && westSixInchSlider.y===2572 && shaft.y===3124', severity:'error', fix:'Keep west order washing -> sink -> dishwasher -> 6in slider -> shaft' },
+  { id:'door-clear-zone', label:'West door clear zone y0-y610 empty', wall:'west', kind:'clearZone', expected:{ from:WEST_CLEAR_FROM, to:WEST_CLEAR_TO, floorToCeiling:true }, severity:'error', fix:'Keep all west counters and appliances at y610 or north of it' },
+  { id:'slider-storage', label:'Backsplash slider storage depths', kind:'dimension', expected:{ eastDepth:102, westDepth:152 }, severity:'warning', fix:'Use 102mm east backsplash slider and 152mm west slider' },
+  { id:'walkway-minimum', label:'Walkway minimum', kind:'dimension', expected:{ floor:1124, eye:1004 }, severity:'warning', fix:'Do not widen base runs beyond 600D east and 600D west' },
+  { id:'collision', label:'Cabinet/appliance collision', kind:'collision', severity:'error', fix:'Separate overlapping appliances along y; backsplash sliders may overlap the backsplash zone only' },
+  { id:'bounds', label:'Item outside room bounds', kind:'bounds', expected:{ width:ROOM_WIDTH, length:ROOM_LENGTH, height:ROOM_HEIGHT }, severity:'error', fix:'Keep all items inside 2324x3962x2700' }
 ]
 
 
@@ -147,15 +179,15 @@ export const EXPORTS = {
 
 export const LAYOUT_MODEL = {
   version:'1.0.0-phase1',
-  rule:'New configuration: East wet wall N->S tall cabinet/washing, hidden purifier, sink, dishwasher; West N->S shaft, food-processor garage, gap, gas stove with chimney',
+  rule:'Current configuration: West S->N washing machine, sink, dishwasher, 6in slider, shaft; East S->N open microwave, open appliance garage with food processor, gas cooktop, 4in backsplash slider',
   ruleId:'Rule9',
   unit:'mm',
   room:ROOM,
   openings:OPENINGS,
   walls:WALLS,
   cabinetRuns:CABINET_RUNS,
-  appliances:APPLIANCES,
-  validationRules:VALIDATION_RULES,
+  appliances:CURRENT_APPLIANCES,
+  validationRules:CURRENT_VALIDATION_RULES,
   materials:MATERIALS,
   exports:EXPORTS,
   metadata:{
@@ -166,7 +198,9 @@ export const LAYOUT_MODEL = {
     westClearZone:{ from:WEST_CLEAR_FROM, to:WEST_CLEAR_TO },
     northClearZone:NORTH_CLEAR,
     windowBelowDepth:WINDOW_BELOW_DEPTH,
-    shaftPosition:{ x:SHAFT_X, y:SHAFT_Y, w:SHAFT_W, l:SHAFT_L }
+    shaftPosition:{ x:SHAFT_X, y:SHAFT_Y, w:SHAFT_W, l:SHAFT_L },
+    sliderStorage:{ eastDepth:102, westDepth:152 },
+    note:'West wall: washing y610, sink y1210, dishwasher y1972, 6in slider y2572, shaft y3124. East wall: open microwave y0, open appliance garage y0 with food processor, gas y1200, 4in backsplash slider.'
   }
 }
 
@@ -208,8 +242,3 @@ export function autoFillModules(totalLen){
   }
   return mods
 }
-
-
-
-
-

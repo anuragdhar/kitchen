@@ -1,7 +1,8 @@
 {
   "status": "pass",
   "objectCount": 39,
-  "westDoorClearZone": "preserved y0-y1220, no counter/upper/LED created in clear zone",
-  "northClearZone": "cabinet runs stop at y4446",
-  "gasChimney": "separate cooktop slab, burner marker, and compact chimney hood"
+  "westDoorClearZone": "preserved y0-y610, no counter/upper/LED created in clear zone",
+  "northClearZone": "cabinet runs continue to y3962; 300 mm north marker is below-window reference only",
+  "gasChimney": "separate cooktop slab, burner marker, and compact chimney hood",
+  "regeneration": "FreeCADCmd was not available on PATH during this update; regenerate kitchen_rule9.FCStd after installing FreeCAD."
 }

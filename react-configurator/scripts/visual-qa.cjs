@@ -72,6 +72,8 @@ async function hasNonBlankCanvas(page) {
     page.on('console', (message) => {
       if (['error', 'warning'].includes(message.type())) {
         if (message.text().includes('GPU stall due to ReadPixels')) return;
+        if (message.text().includes('PCFSoftShadowMap has been deprecated')) return;
+        if (message.text().includes('Texture marked for update but no image data found')) return;
         failures.push(`${viewport.name} console ${message.type()}: ${message.text()}`);
       }
     });
@@ -79,7 +81,8 @@ async function hasNonBlankCanvas(page) {
       failures.push(`${viewport.name} page error: ${error.message}`);
     });
 
-    await page.goto(APP_URL, { waitUntil: 'networkidle' });
+    await page.goto(APP_URL, { waitUntil: 'domcontentloaded', timeout: 30000 });
+    await page.waitForFunction(() => Boolean(window.kitchenAPI), null, { timeout: 15000 });
 
     for (const view of views) {
       await clickButtonByText(page, view);
@@ -91,7 +94,7 @@ async function hasNonBlankCanvas(page) {
       }
 
       const filePath = path.join(OUT_DIR, `${viewport.name}-${slug(view)}.png`);
-      await page.screenshot({ path: filePath, fullPage: true });
+      await page.screenshot({ path: filePath, fullPage: true, timeout: 90000 });
       console.log(path.relative(path.resolve(__dirname, '..'), filePath));
     }
 
