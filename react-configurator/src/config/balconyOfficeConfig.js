@@ -1,0 +1,70 @@
+// Balcony office dimensions captured from the owner. Millimetres are the working CAD units.
+export const BALCONY_OFFICE={
+  name:'Balcony home office',
+  location:'East side of the proposed study (existing Bedroom 2)',
+  orientation:{north:'plan up',east:'plan right',south:'plan down',west:'plan left'},
+  dimensions:{
+    widthMm:1200,
+    lengthMm:2623,
+    floorToCeilingMm:2642,
+    sourceLabels:{width:'3 ft 11 in',length:'8 ft 7 in',floorToCeiling:'8 ft 8 in'},
+  },
+  envelope:{
+    windowWalls:['south','west'],
+    lowerBrickParapetMm:991,
+    windowBandMm:1346,
+    upperBrickBandMm:305,
+    sourceLabels:{lowerBrickParapet:'3 ft 3 in',windowBand:'4 ft 5 in',upperBrickBand:'1 ft'},
+  },
+  access:{from:'study',side:'west'},
+  adjacentToilet:{studyDoor:'closed',activeDoor:'drawing-room side'},
+  cabinetry:{
+    northWall:{
+      upper:{startsAt:'ceiling',heightMm:864,depthMm:406,sourceLabels:{height:'34 in',depth:'16 in'}},
+      lower:{position:'from floor to underside of upper cabinet',heightMm:1778,widthMm:914,depthMm:305,sourceLabels:{height:'5 ft 10 in fitted (approximately 6 ft)',width:'3 ft',depth:'1 ft'}},
+      doors:{
+        upper:{type:'single lift-up flap',openDegrees:25},
+        lower:{
+          splitHeightMm:991,
+          splitAlignment:'tabletop level',
+          belowTabletop:{type:'full-width two-panel bypass sliding doors within 3-foot cabinet',cornerFillerMm:0,openState:'left panel shifted right',use:'files and office supplies',reason:'full-width sliding fronts need no swing clearance or corner filler'},
+          aboveTabletop:{type:'two-panel bypass sliding doors',openState:'left panel shifted right',reason:'avoids monitor collision'},
+        },
+      },
+    },
+  },
+  worktop:{
+    shape:'separate adjustable west workstation plus fixed south ledge',
+    depthMm:762,
+    depthsMm:{west:762,south:305},
+    heightMm:991,
+    sourceLabels:{depth:'30 in adjustable west / 1 ft fixed south',height:'west 29–47.6 in adjustable, 33 in seated preset; south 3 ft 3 in fixed'},
+    start:'after the north-wall cabinet with movement clearance',
+    secondLegWall:'south',
+    legs:{west:'1900 mm custom independent electric sit-stand top',south:'straight full-width fixed parapet-height ledge without an L return'},
+    westAdjustable:{frame:'FLEXISPOT electric sit-stand base',widthMm:1900,depthMm:762,topThicknessMm:25,minHeightMm:737,maxHeightMm:1209,defaultHeightMm:838,seatedPresetMm:838,parapetPresetMm:991,standingPresetMm:1041,capacityKg:70,noiseDbMax:50,supportedTopWidthMm:[1000,1600],supportedTopDepthMm:[500,800],frameSpanMm:1290,endOverhangMm:305,customBeyondRatedWidth:true,southClearanceMm:63,frameConcealment:'columns recessed behind rear cabinet with moving matching modesty shroud'},
+    southFixed:{widthMm:1200,depthMm:305,topThicknessMm:35,topHeightMm:991,frontModuleWidthsMm:[456,372,372]},
+    underCounterCabinet:{widthMm:1200,depthMm:305,heightMm:956,walls:['south'],continuous:false,floorMounted:true,fronts:{south:'three hinged cabinet doors, including an opening southwest-corner door',openDegrees:32},sourceLabels:{depth:'1 ft',height:'to underside of fixed south ledge'}},
+    rearCabinet:{wall:'west',widthMm:1900,depthMm:457,topHeightMm:680,toeClearanceMm:80,bayCount:3,nominalBayWidthMm:633,openBays:['north ventilated PC tower bay','south printer pull-out bay'],printerShelf:{widthMm:603,depthMm:432,thicknessMm:25},placement:'uniform 18-inch-deep fixed cabinet behind the adjustable desktop',reason:'leaves the owner-preferred 12 in open leg depth; deeper frame-leg pods intentionally removed'},
+    pending:[],
+  },
+  equipment:{
+    monitorStand:{type:'dual arm',placement:'west-side worktop, shifted 6 inches left/south from the north-end position',screensFace:'east toward person',shiftLeftMm:152.4},
+    monitors:[
+      {side:'right',make:'Lenovo',model:'D32qc-20 D-Series',diagonalInches:31.5,resolution:'2560 x 1440 QHD',physicalShape:'curved',shape:'flat',widthMm:709.7,depthWithStandMm:237,heightWithStandMm:527.2,vesaMm:'100 x 100',position:'north-most',renderNote:'shown as a simple straight monitor by owner request'},
+      {side:'left',make:'BenQ',model:'GW2490',diagonalInches:23.8,marketingSize:'24 inch',resolution:'1920 x 1080 FHD',refreshHz:100,shape:'flat',widthMm:540,depthWithStandMm:182,heightWithStandMm:408,headDepthMm:61,headWeightKg:3.54,vesaMm:'100 x 100',position:'immediately south of Lenovo display'},
+    ],
+    laptop:{widthMm:356,depthMm:229,sourceLabel:'14 x 9 in',position:'open on the left/south side of the west desktop'},
+    inventory:[
+      {id:'desk-frame',category:'Desk frame',make:'FLEXISPOT',model:'Electric sit-stand frame',dimensions:'1290 mm maximum frame span; 737-1209 mm working height range',location:'beneath the west adjustable desktop',status:'modelled'},
+      {id:'desktop',category:'Desktop',make:'Custom',model:'West adjustable top',dimensions:'1900 W x 762 D x 25 T mm',location:'west wall workstation',status:'modelled; exceeds frame maker stated 1600 mm top limit'},
+      {id:'monitor-lenovo',category:'Monitor',make:'Lenovo',model:'D32qc-20 D-Series curved QHD',dimensions:'31.5 in diagonal; 709.7 W x 527.2 H x 237 D mm with stand; VESA 100 x 100 mm',location:'right / north position on dual arm',status:'modelled'},
+      {id:'monitor-benq',category:'Monitor',make:'BenQ',model:'GW2490 FHD IPS 100 Hz',dimensions:'23.8 in panel; 540 W x 408 H x 182 D mm with stand; VESA 100 x 100 mm',location:'left / south position on dual arm',status:'modelled'},
+      {id:'monitor-arm',category:'Monitor arm',make:'Not specified',model:'Dual monitor stand',dimensions:'for Lenovo 31.5 in + BenQ 23.8 in displays',location:'west desktop near its north end',status:'modelled; verify per-arm size and weight rating'},
+      {id:'pc-tower',category:'PC tower',make:'Ant Esports',model:'711 Air Mesh ARGB E-ATX Mid Tower',dimensions:'410 D x 216 W x 489 H mm',location:'proposed ventilated north bay in rear cabinet, rotated sideways',status:'proposed position modelled'},
+      {id:'printer',category:'Printer',make:'HP',model:'DeskJet Ink Advantage 4645 / B4L10B',dimensions:'446 W x 332 D x 189 H mm',location:'proposed south bay on full-extension pull-out shelf',status:'proposed position modelled'},
+      {id:'laptop',category:'Laptop',make:'Not specified',model:'14 x 9 inch laptop',dimensions:'356 W x 229 D mm footprint',location:'open on the left / south side of the west desktop',status:'modelled with display open'},
+    ],
+  },
+  referenceFigure:{heightMm:1702,sourceLabel:'5 ft 7 in',defaultVisible:true,model:'Khronos RiggedFigure',faces:'west toward monitors'},
+}

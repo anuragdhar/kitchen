@@ -9,6 +9,7 @@
     "test": "npm run test:bolt"
   },
   "dependencies": {
+    "dxf-viewer": "^1.0.48",
     "jspdf": "^4.2.1",
     "jszip": "^3.10.1",
     "react": "^18",
