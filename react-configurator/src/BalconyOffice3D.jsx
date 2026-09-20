@@ -33,6 +33,12 @@ export default function BalconyOffice3D(){
   const [screenshotStatus,setScreenshotStatus]=useState('idle')
   const [showDirections,setShowDirections]=useState(true)
   const [selectedCarpentryItem,setSelectedCarpentryItem]=useState(null)
+  const [allCabinetsOpen,setAllCabinetsOpen]=useState(true)
+  const [showSouthWall,setShowSouthWall]=useState(true)
+  const [showWestWall,setShowWestWall]=useState(true)
+  const [showElectrical,setShowElectrical]=useState(false)
+  const [showAiPrompt,setShowAiPrompt]=useState(false)
+  const [promptCopyStatus,setPromptCopyStatus]=useState('idle')
 
   useEffect(()=>{
     const mount=mountRef.current
@@ -67,6 +73,23 @@ export default function BalconyOffice3D(){
     const room=new THREE.Group()
     scene.add(room)
     const itemObjects={}
+    const electricalOverlays=[]
+    const addElectricalMarker=(parent,label,x,y,z,color='#dc2626')=>{
+      const marker=new THREE.Group()
+      marker.position.set(x,y,z)
+      const pin=new THREE.Mesh(new THREE.SphereGeometry(.028,18,12),new THREE.MeshBasicMaterial({color,depthTest:false,transparent:true,opacity:.96}))
+      pin.renderOrder=1200;marker.add(pin)
+      const canvas=document.createElement('canvas');canvas.width=512;canvas.height=128
+      const context=canvas.getContext('2d')
+      context.fillStyle='rgba(255,255,255,.96)';context.beginPath();context.roundRect(4,4,504,120,24);context.fill()
+      context.lineWidth=10;context.strokeStyle=color;context.stroke()
+      context.fillStyle='#172033';context.font='800 38px Arial';context.textAlign='center';context.textBaseline='middle';context.fillText(label,256,65)
+      const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.SRGBColorSpace
+      const tag=new THREE.Sprite(new THREE.SpriteMaterial({map:texture,transparent:true,depthTest:false}))
+      tag.position.set(0,.095,0);tag.scale.set(.34,.085,1);tag.renderOrder=1201;marker.add(tag)
+      marker.visible=showElectrical;parent.add(marker);electricalOverlays.push({marker,texture})
+      return marker
+    }
     const directionTextures=[]
     const directionGroup=new THREE.Group()
     const addDirectionMarker=(label,x,z,primary=false)=>{
@@ -154,15 +177,21 @@ export default function BalconyOffice3D(){
     // North wall with the cabinet in front of it.
     addBox({w:W,h:H,d:.08,x:W/2,y:H/2,z:-.04,color:'#f4f1eb'})
 
-    // South/front wall: wood-clad parapet, window band, and top wood-clad band.
-    addBox({w:W,h:parapet,d:.08,x:W/2,y:parapet/2,z:L+.04,color:'#ffffff',map:woodTexture,roughness:.58})
-    addBox({w:W,h:windowH,d:.025,x:W/2,y:parapet+windowH/2,z:L,color:'#bdeaff',customMaterial:glassMaterial})
-    addBox({w:W,h:topBand,d:.08,x:W/2,y:H-topBand/2,z:L+.04,color:'#ffffff',map:woodTexture,roughness:.58})
+    // South/front wall: grouped so it can be removed temporarily for inspection.
+    const southWallGroup=new THREE.Group()
+    southWallGroup.add(addBox({w:W,h:parapet,d:.08,x:W/2,y:parapet/2,z:L+.04,color:'#ffffff',map:woodTexture,roughness:.58}))
+    southWallGroup.add(addBox({w:W,h:windowH,d:.025,x:W/2,y:parapet+windowH/2,z:L,color:'#bdeaff',customMaterial:glassMaterial}))
+    southWallGroup.add(addBox({w:W,h:topBand,d:.08,x:W/2,y:H-topBand/2,z:L+.04,color:'#ffffff',map:woodTexture,roughness:.58}))
+    southWallGroup.visible=showSouthWall
+    room.add(southWallGroup)
 
-    // West wall is on the left in the cabinet-facing view.
-    addBox({w:.08,h:parapet,d:L,x:-.04,y:parapet/2,z:L/2,color:'#ffffff',map:woodTexture,roughness:.58})
-    addBox({w:.025,h:windowH,d:L,x:0,y:parapet+windowH/2,z:L/2,color:'#bdeaff',customMaterial:glassMaterial})
-    addBox({w:.08,h:topBand,d:L,x:-.04,y:H-topBand/2,z:L/2,color:'#ffffff',map:woodTexture,roughness:.58})
+    // West wall is on the left in the cabinet-facing view and can also be hidden.
+    const westWallGroup=new THREE.Group()
+    westWallGroup.add(addBox({w:.08,h:parapet,d:L,x:-.04,y:parapet/2,z:L/2,color:'#ffffff',map:woodTexture,roughness:.58}))
+    westWallGroup.add(addBox({w:.025,h:windowH,d:L,x:0,y:parapet+windowH/2,z:L/2,color:'#bdeaff',customMaterial:glassMaterial}))
+    westWallGroup.add(addBox({w:.08,h:topBand,d:L,x:-.04,y:H-topBand/2,z:L/2,color:'#ffffff',map:woodTexture,roughness:.58}))
+    westWallGroup.visible=showWestWall
+    room.add(westWallGroup)
 
     // A low east-side threshold indicates access from the study without blocking the view.
     addBox({w:.06,h:.08,d:L,x:W+.03,y:.04,z:L/2,color:'#8b8177'})
@@ -174,8 +203,37 @@ export default function BalconyOffice3D(){
     const upperH=mm(cabinet.upper.heightMm)
     const upperD=mm(cabinet.upper.depthMm)
     const cabinetX=W-cabinetW/2
-    const lowerCabinetMesh=addBox({w:cabinetW,h:lowerH,d:lowerD,x:cabinetX,y:lowerH/2,z:lowerD/2,color:'#ffffff',map:woodTexture,roughness:.54})
-    tagCarpentry(lowerCabinetMesh,{name:'North lower cabinet',widthMm:cabinet.lower.widthMm,heightMm:cabinet.lower.heightMm,depthMm:cabinet.lower.depthMm,note:'Two-panel bypass sliders above and below the tabletop line'})
+    const splitY=mm(office.cabinetry.northWall.doors.lower.splitHeightMm)
+    const lowerCabinetGroup=new THREE.Group()
+    lowerCabinetGroup.position.set(cabinetX,0,0)
+    const lowerCarcassMaterial=makeMaterial('#ffffff',.54,woodTexture)
+    const addLowerPart=(w,h,d,x,y,z)=>{
+      const mesh=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),lowerCarcassMaterial)
+      mesh.position.set(x,y,z);mesh.castShadow=true;mesh.receiveShadow=true;lowerCabinetGroup.add(mesh);return mesh
+    }
+    addLowerPart(cabinetW,.025,lowerD,0,.0125,lowerD/2)
+    addLowerPart(cabinetW,.025,lowerD,0,lowerH-.0125,lowerD/2)
+    addLowerPart(cabinetW-.05,lowerH-.05,.022,0,lowerH/2,.011)
+    addLowerPart(.025,lowerH,lowerD,-cabinetW/2+.0125,lowerH/2,lowerD/2)
+    addLowerPart(.025,lowerH,lowerD,cabinetW/2-.0125,lowerH/2,lowerD/2)
+    addLowerPart(cabinetW-.025,.022,lowerD-.025,0,splitY,lowerD/2)
+    for(const shelfY of [splitY/3,splitY*2/3,splitY+(lowerH-splitY)/2]) addLowerPart(cabinetW-.05,.018,lowerD-.035,0,shelfY,lowerD/2)
+    for(const dividerXLocal of [-cabinetW/6,cabinetW/6]) addLowerPart(.018,lowerH-.05,lowerD-.04,dividerXLocal,lowerH/2,lowerD/2)
+    const bookMaterialColors=['#854d3f','#315a72','#b8893f','#5d526f','#486b58']
+    const shelfBases=[.025,splitY/3+.009,splitY*2/3+.009,splitY+.011,splitY+(lowerH-splitY)/2+.009]
+    for(let row=0;row<shelfBases.length;row++){
+      for(let column=0;column<3;column++){
+        for(let book=0;book<4;book++){
+          const bookH=.235+(book%3)*.008
+          const bookMesh=new THREE.Mesh(new THREE.BoxGeometry(.035,bookH,.18),makeMaterial(bookMaterialColors[(row+column+book)%bookMaterialColors.length],.68))
+          bookMesh.position.set(-cabinetW/2+.075+column*(cabinetW/3)+book*.041,shelfBases[row]+bookH/2,lowerD-.105)
+          bookMesh.rotation.z=(book===3?.035:0)
+          lowerCabinetGroup.add(bookMesh)
+        }
+      }
+    }
+    room.add(lowerCabinetGroup)
+    tagCarpentry(lowerCabinetGroup,{name:'North lower book cabinet',widthMm:cabinet.lower.widthMm,heightMm:cabinet.lower.heightMm,depthMm:cabinet.lower.depthMm,note:'Three divided book columns; three adjustable tiers below tabletop and two above for 10-inch books'})
     const upperCabinetGroup=new THREE.Group()
     upperCabinetGroup.position.set(cabinetX,H-upperH/2,upperD/2)
     const upperCarcassMaterial=makeMaterial('#ffffff',.52,woodTexture)
@@ -189,51 +247,54 @@ export default function BalconyOffice3D(){
     addUpperPart(.025,upperH,upperD,-cabinetW/2+.0125,0,0)
     addUpperPart(.025,upperH,upperD,cabinetW/2-.0125,0,0)
     const heaterBayW=mm(cabinet.upper.heaterBayWidthMm)
-    const dividerX=cabinetW/2-heaterBayW
+    const dividerX=-cabinetW/2+heaterBayW
     addUpperPart(.025,upperH-.05,upperD-.03,dividerX,0,0)
     room.add(upperCabinetGroup)
-    tagCarpentry(upperCabinetGroup,{name:'North upper service cabinet',widthMm:cabinet.lower.widthMm,heightMm:cabinet.upper.heightMm,depthMm:cabinet.upper.depthMm,note:'Ventilated heater bay at east and isolated router bay immediately west'})
+    tagCarpentry(upperCabinetGroup,{name:'North upper service cabinet',widthMm:cabinet.lower.widthMm,heightMm:cabinet.upper.heightMm,depthMm:cabinet.upper.depthMm,note:'Ventilated northwest heater bay and isolated northeast router bay'})
 
     const doorMaterial=makeMaterial('#ffffff',.47,woodTexture)
 
-    // Tall lower cabinet: drawers below the tabletop datum and sliding doors above it.
+    // Tall lower cabinet: book grid behind bypass sliders above and below the tabletop datum.
     const halfDoor=cabinetW/2-.008
-    const splitY=mm(office.cabinetry.northWall.doors.lower.splitHeightMm)
     const sliderH=lowerH-splitY-.025
-    addBox({w:cabinetW-.035,h:sliderH-.025,d:.012,x:cabinetX,y:splitY+.0125+sliderH/2,z:lowerD+.002,color:'#34312e',roughness:.72})
     addBox({w:cabinetW-.012,h:.025,d:lowerD,x:cabinetX,y:splitY,z:lowerD/2,color:'#72583e',roughness:.55})
     addBox({w:cabinetW-.025,h:.014,d:.035,x:cabinetX,y:splitY+.021,z:lowerD+.027,color:'#20262c',roughness:.34,metalness:.25})
     addBox({w:cabinetW-.025,h:.014,d:.035,x:cabinetX,y:lowerH-.012,z:lowerD+.027,color:'#20262c',roughness:.34,metalness:.25})
     const rightSlider=new THREE.Mesh(new THREE.BoxGeometry(halfDoor,sliderH,.018),doorMaterial)
-    rightSlider.position.set(cabinetX+cabinetW/4,splitY+.0125+sliderH/2,lowerD+.012)
+    const rightSliderX=cabinetX+cabinetW/4
+    const leftSliderClosedX=cabinetX-cabinetW/4
+    rightSlider.position.set(rightSliderX,splitY+.0125+sliderH/2,lowerD+.012)
     rightSlider.castShadow=true
     room.add(rightSlider)
     tagCarpentry(rightSlider,{name:'North upper right sliding panel',widthMm:Math.round(halfDoor*1000),heightMm:Math.round(sliderH*1000),depthMm:18,note:'Bypass sliding front'})
     const leftSlider=new THREE.Mesh(new THREE.BoxGeometry(halfDoor,sliderH,.018),doorMaterial)
-    leftSlider.position.set(cabinetX+.035,splitY+.0125+sliderH/2,lowerD+.034)
+    leftSlider.position.set(leftSliderClosedX,splitY+.0125+sliderH/2,lowerD+.034)
     leftSlider.castShadow=true
     room.add(leftSlider)
     tagCarpentry(leftSlider,{name:'North upper left sliding panel',widthMm:Math.round(halfDoor*1000),heightMm:Math.round(sliderH*1000),depthMm:18,note:'Bypass sliding front, shown shifted open'})
-    addBox({w:.022,h:.18,d:.032,x:cabinetX+.035+halfDoor/2-.045,y:splitY+sliderH*.52,z:lowerD+.052,color:'#20262c',roughness:.34,metalness:.25})
+    const upperSliderHandle=new THREE.Mesh(new THREE.BoxGeometry(.022,.18,.032),makeMaterial('#20262c',.34,null,.25))
+    upperSliderHandle.position.set(halfDoor/2-.045,0,.018);leftSlider.add(upperSliderHandle)
     const northFiller=mm(office.cabinetry.northWall.doors.lower.belowTabletop.cornerFillerMm)
     const lowerSliderW=(cabinetW-northFiller)/2-.008
     const lowerSliderH=splitY-.065
     const lowerRunCenter=cabinetX+northFiller/2
-    addBox({w:cabinetW-northFiller-.035,h:lowerSliderH-.02,d:.012,x:lowerRunCenter,y:.0325+lowerSliderH/2,z:lowerD+.002,color:'#34312e',roughness:.72})
     addBox({w:cabinetW-northFiller-.025,h:.014,d:.035,x:lowerRunCenter,y:.026,z:lowerD+.027,color:'#20262c',roughness:.34,metalness:.25})
     addBox({w:cabinetW-northFiller-.025,h:.014,d:.035,x:lowerRunCenter,y:splitY-.026,z:lowerD+.027,color:'#20262c',roughness:.34,metalness:.25})
     if(northFiller>0) addBox({w:northFiller,h:splitY-.045,d:.025,x:cabinetX-cabinetW/2+northFiller/2,y:splitY/2,z:lowerD+.02,color:'#b9966d',roughness:.58})
     const lowerRightSlider=new THREE.Mesh(new THREE.BoxGeometry(lowerSliderW,lowerSliderH,.018),doorMaterial)
-    lowerRightSlider.position.set(lowerRunCenter+(cabinetW-northFiller)/4,.0325+lowerSliderH/2,lowerD+.012)
+    const lowerRightSliderX=lowerRunCenter+(cabinetW-northFiller)/4
+    const lowerLeftSliderClosedX=lowerRunCenter-(cabinetW-northFiller)/4
+    lowerRightSlider.position.set(lowerRightSliderX,.0325+lowerSliderH/2,lowerD+.012)
     lowerRightSlider.castShadow=true
     room.add(lowerRightSlider)
     tagCarpentry(lowerRightSlider,{name:'North lower right sliding panel',widthMm:Math.round(lowerSliderW*1000),heightMm:Math.round(lowerSliderH*1000),depthMm:18,note:'Bypass sliding front'})
     const lowerLeftSlider=new THREE.Mesh(new THREE.BoxGeometry(lowerSliderW,lowerSliderH,.018),doorMaterial)
-    lowerLeftSlider.position.set(lowerRunCenter+.035,.0325+lowerSliderH/2,lowerD+.034)
+    lowerLeftSlider.position.set(lowerLeftSliderClosedX,.0325+lowerSliderH/2,lowerD+.034)
     lowerLeftSlider.castShadow=true
     room.add(lowerLeftSlider)
     tagCarpentry(lowerLeftSlider,{name:'North lower left sliding panel',widthMm:Math.round(lowerSliderW*1000),heightMm:Math.round(lowerSliderH*1000),depthMm:18,note:'Bypass sliding front, shown shifted open'})
-    addBox({w:.022,h:.18,d:.032,x:lowerRunCenter+.035+lowerSliderW/2-.045,y:.0325+lowerSliderH*.52,z:lowerD+.052,color:'#20262c',roughness:.34,metalness:.25})
+    const lowerSliderHandle=new THREE.Mesh(new THREE.BoxGeometry(.022,.18,.032),makeMaterial('#20262c',.34,null,.25))
+    lowerSliderHandle.position.set(lowerSliderW/2-.045,0,.018);lowerLeftSlider.add(lowerSliderHandle)
 
     // Upper cabinet: one top-hinged lift-up flap.
     const liftGroup=new THREE.Group()
@@ -243,13 +304,14 @@ export default function BalconyOffice3D(){
     liftPanel.castShadow=true
     liftGroup.add(liftPanel)
     tagCarpentry(liftPanel,{name:'North upper lift-up flap',widthMm:Math.round((cabinetW-.016)*1000),heightMm:Math.round((upperH-.026)*1000),depthMm:18,note:'Top-hinged flap shown open 25 degrees'})
-    liftGroup.rotation.x=THREE.MathUtils.degToRad(-25)
+    liftGroup.rotation.x=0
     room.add(liftGroup)
 
-    // Existing water heater concealed in the east service bay, isolated from the router bay.
+    // Existing water heater concealed in the northwest service bay, isolated from the northeast router bay.
     const upperBottomY=H-upperH
     const heaterGroup=new THREE.Group()
-    const heaterX=W-heaterBayW/2
+    const westUpperEdge=cabinetX-cabinetW/2
+    const heaterX=westUpperEdge+heaterBayW/2
     const heaterH=.5
     const heaterRadius=.18
     const heaterY=H-.31
@@ -270,21 +332,40 @@ export default function BalconyOffice3D(){
     room.add(heaterGroup)
     itemObjects['water-heater']=heaterGroup
 
-    // Router shelf in the bay immediately west of the heater, with an internal socket on the back panel.
-    const westUpperEdge=cabinetX-cabinetW/2
+    // Router shelf in the northeast bay, with an internal socket on the back panel.
     const routerBayW=cabinetW-heaterBayW
-    const routerX=westUpperEdge+routerBayW/2
-    const routerShelfY=upperBottomY+.22
+    const routerX=W-routerBayW/2
+    const routerShelfY=upperBottomY+mm(cabinet.upper.routerShelfHeightAboveBayBottomMm)
     const routerShelf=new THREE.Mesh(new THREE.BoxGeometry(routerBayW-.05,.022,upperD-.055),upperCarcassMaterial)
     routerShelf.position.set(routerX,routerShelfY,upperD/2);routerShelf.castShadow=true;room.add(routerShelf)
     tagCarpentry(routerShelf,{name:'Ventilated router shelf',widthMm:Math.round((routerBayW-.05)*1000),heightMm:22,depthMm:Math.round((upperD-.055)*1000),note:'Separate from the water heater by a solid full-height divider'})
+    const routerStorage=cabinet.upper.routerUnderShelfStorage
+    const routerStorageH=routerShelfY-upperBottomY-.047
+    const routerStorageD=upperD-mm(routerStorage.rearCableChaseMm)-.035
+    const routerStorageCenterZ=mm(routerStorage.rearCableChaseMm)+routerStorageD/2
+    for(let shelf=0;shelf<routerStorage.shelfCenterHeightsMm.length;shelf++){
+      const shelfMesh=new THREE.Mesh(
+        new THREE.BoxGeometry(routerBayW-.05,mm(routerStorage.shelfThicknessMm),routerStorageD),
+        upperCarcassMaterial
+      )
+      shelfMesh.position.set(routerX,upperBottomY+.025+mm(routerStorage.shelfCenterHeightsMm[shelf]),routerStorageCenterZ)
+      shelfMesh.castShadow=true;shelfMesh.receiveShadow=true;room.add(shelfMesh)
+      tagCarpentry(shelfMesh,{name:`Router under-shelf book shelf ${shelf+1}`,widthMm:Math.round((routerBayW-.05)*1000),heightMm:routerStorage.shelfThicknessMm,depthMm:Math.round(routerStorageD*1000),note:`Adjustable horizontal shelf; lower two tiers retain ${routerStorage.minimumBookClearanceMm} mm book clearance and ${routerStorage.rearCableChaseMm} mm clear rear cable chase`})
+    }
     const routerGroup=new THREE.Group()
     const routerBody=new THREE.Mesh(new THREE.BoxGeometry(.24,.05,.18),new THREE.MeshStandardMaterial({color:'#f5f5f4',roughness:.4}))
     routerBody.position.set(routerX,routerShelfY+.036,upperD-.12);routerBody.castShadow=true;routerGroup.add(routerBody)
-    for(const offset of [-.09,0,.09]){
-      const antenna=new THREE.Mesh(new THREE.CylinderGeometry(.005,.005,.13,10),new THREE.MeshStandardMaterial({color:'#24272b',roughness:.5}))
-      antenna.position.set(routerX+offset,routerShelfY+.115,upperD-.17);antenna.rotation.z=offset===0?0:Math.sign(offset)*.18;routerGroup.add(antenna)
+    const antennaMaterial=new THREE.MeshStandardMaterial({color:'#24272b',roughness:.5})
+    const antennaSlotGroup=new THREE.Group()
+    const routerAntennaSpec=cabinet.upper.routerAntennaPassThrough
+    for(const offset of [-.06,0,.06]){
+      const slot=new THREE.Mesh(new THREE.BoxGeometry(.006,mm(routerAntennaSpec.slotHeightMm),mm(routerAntennaSpec.slotWidthMm)),new THREE.MeshStandardMaterial({color:'#25282c',roughness:.44}))
+      slot.position.set(W+.015,routerShelfY+.08,upperD-.12+offset);antennaSlotGroup.add(slot)
+      const antenna=new THREE.Mesh(new THREE.CylinderGeometry(.005,.005,.26,10),antennaMaterial)
+      antenna.rotation.z=Math.PI/2;antenna.position.set(W+.01,routerShelfY+.08,upperD-.12+offset);routerGroup.add(antenna)
     }
+    room.add(antennaSlotGroup)
+    tagCarpentry(antennaSlotGroup,{name:'Router antenna pass-throughs',widthMm:routerAntennaSpec.slotWidthMm,heightMm:routerAntennaSpec.slotHeightMm,depthMm:25,note:'Three rubber-lined slots in the northeast side panel; verify spacing against the selected router'})
     const socketPlate=new THREE.Mesh(new THREE.BoxGeometry(.12,.08,.012),new THREE.MeshStandardMaterial({color:'#fafafa',roughness:.45}))
     socketPlate.position.set(routerX,routerShelfY+.13,.028);routerGroup.add(socketPlate)
     room.add(routerGroup)
@@ -312,17 +393,33 @@ export default function BalconyOffice3D(){
     itemObjects.desktop=desktopMesh
     tagCarpentry(desktopMesh,{name:'Adjustable west tabletop',widthMm:adjustable.widthMm,heightMm:adjustable.topThicknessMm,depthMm:adjustable.depthMm,note:'Custom top running from the north cabinet to the south wall'})
 
+    // Resolve the monitor position before building the cabinet so its clamp can have a true open shaft.
+    const monitorShift=mm(office.equipment.monitorStand.shiftLeftMm)
+    const northStart=lowerD+.035+monitorShift
+    const rightMonitor=office.equipment.monitors.find(monitor=>monitor.side==='right')
+    const leftMonitor=office.equipment.monitors.find(monitor=>monitor.side==='left')
+    const rightDiag=rightMonitor.diagonalInches*.0254
+    const rightW=rightDiag*(16/Math.sqrt(337))
+    const rightH=rightDiag*(9/Math.sqrt(337))
+    const rightCenterZ=northStart+rightW/2
+    const leftDiag=leftMonitor.diagonalInches*.0254
+    const leftW=leftDiag*(16/Math.sqrt(337))
+    const leftH=leftDiag*(9/Math.sqrt(337))
+    const leftCenterZ=northStart+rightW+.045+leftW/2
+    const standZ=(rightCenterZ+leftCenterZ)/2
+
     // FLEXISPOT-style electric frame: fixed feet with telescoping columns and a moving crossbar.
     const frameMaterial=makeMaterial('#252b31',.38)
     const frameHalfSpan=mm(adjustable.frameSpanMm)/2
-    const frameLegZ=[deskCenterZ-frameHalfSpan,deskCenterZ+frameHalfSpan]
+    const frameCenterZ=deskCenterZ+mm(adjustable.frameOffsetSouthMm)
+    const frameLegZ=[frameCenterZ-frameHalfSpan,frameCenterZ+frameHalfSpan]
     const frameLegX=mm(office.worktop.rearCabinet.depthMm)*.62
     const frameColumns=[]
     const frameGroup=new THREE.Group()
     room.add(frameGroup)
     itemObjects['desk-frame']=frameGroup
     for(const z of frameLegZ){
-      const foot=new THREE.Mesh(new THREE.BoxGeometry(.56,.045,.075),frameMaterial)
+      const foot=new THREE.Mesh(new THREE.BoxGeometry(mm(adjustable.footDepthMm),.045,.075),frameMaterial)
       foot.position.set(frameLegX,.0225,z)
       foot.castShadow=true
       frameGroup.add(foot)
@@ -331,7 +428,7 @@ export default function BalconyOffice3D(){
       frameGroup.add(column)
       frameColumns.push({mesh:column,z})
     }
-    addMovingBox({w:.085,h:.075,d:mm(adjustable.frameSpanMm),x:frameLegX,y:-.105,z:deskCenterZ,color:'#252b31',roughness:.38})
+    addMovingBox({w:.085,h:.075,d:mm(adjustable.frameSpanMm),x:frameLegX,y:-.105,z:frameCenterZ,color:'#252b31',roughness:.38})
 
     // A low fixed rear cabinet preserves storage without occupying the moving desk structure.
     const rear=office.worktop.rearCabinet
@@ -340,41 +437,102 @@ export default function BalconyOffice3D(){
     const rearTop=mm(rear.topHeightMm)
     const toe=mm(rear.toeClearanceMm)
     const rearBodyH=rearTop-toe
-    const rearCenterZ=deskStartZ+rearLength/2
-    const rearCabinetMesh=addBox({w:rearD,h:rearBodyH,d:rearLength,x:rearD/2,y:toe+rearBodyH/2,z:rearCenterZ,color:'#ffffff',map:woodTexture,roughness:.56})
-    tagCarpentry(rearCabinetMesh,{name:'West lower cabinet run',widthMm:rear.widthMm,heightMm:rear.topHeightMm,depthMm:rear.depthMm,note:'One-foot-deep cabinet with east-facing access'})
     const rearModules=3
     const moduleD=rearLength/rearModules
-    const southBayCenterZ=deskStartZ+moduleD*2.5
+    const centerBayCenterZ=deskStartZ+moduleD*1.5
+    const rearCabinetGroup=new THREE.Group()
+    rearCabinetGroup.position.set(0,toe,deskStartZ)
+    const rearCarcassMaterial=makeMaterial('#ffffff',.56,woodTexture)
+    const addRearPart=(w,h,d,x,y,z)=>{
+      const mesh=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),rearCarcassMaterial)
+      mesh.position.set(x,y,z);mesh.castShadow=true;mesh.receiveShadow=true;rearCabinetGroup.add(mesh);return mesh
+    }
+    const clampSlotD=mm(office.equipment.monitorStand.clampClearanceDepthMm)
+    const clampSlotStart=moduleD+.02
+    const clampSlotEnd=moduleD*2-.02
+    const legPocketW=mm(rear.northLegPocketWidthMm)
+    const legPocketCenter=frameLegZ[0]-deskStartZ
+    const legPocketStart=legPocketCenter-legPocketW/2
+    const legPocketEnd=legPocketCenter+legPocketW/2
+    const southLegSlotW=mm(rear.legRemovalSlotWidthMm)
+    const southLegSlotCenter=frameLegZ[1]-deskStartZ
+    const southLegSlotStart=southLegSlotCenter-southLegSlotW/2
+    const southLegSlotEnd=southLegSlotCenter+southLegSlotW/2
+    const serviceOpeningStart=Math.min(clampSlotStart,legPocketStart)
+    const serviceOpeningEnd=Math.max(clampSlotEnd,legPocketEnd)
+    // The centre bay has a continuous upper rear chase, allowing the monitor clamp to move south.
+    const clampBackLowerH=Math.max(.1,rearBodyH-mm(office.equipment.monitorStand.clampDropMm))
+    addRearPart(.02,rearBodyH,clampSlotStart,.01,rearBodyH/2,clampSlotStart/2)
+    addRearPart(.02,rearBodyH,rearLength-clampSlotEnd,.01,rearBodyH/2,clampSlotEnd+(rearLength-clampSlotEnd)/2)
+    addRearPart(.02,clampBackLowerH,clampSlotEnd-clampSlotStart,.01,clampBackLowerH/2,(clampSlotStart+clampSlotEnd)/2)
+    addRearPart(rearD,.025,legPocketStart,rearD/2,.0125,legPocketStart/2)
+    addRearPart(rearD,.025,southLegSlotStart-legPocketEnd,rearD/2,.0125,legPocketEnd+(southLegSlotStart-legPocketEnd)/2)
+    addRearPart(rearD,.025,rearLength-southLegSlotEnd,rearD/2,.0125,southLegSlotEnd+(rearLength-southLegSlotEnd)/2)
+    addRearPart(rearD,.025,serviceOpeningStart,rearD/2,rearBodyH-.0125,serviceOpeningStart/2)
+    addRearPart(rearD,.025,southLegSlotStart-serviceOpeningEnd,rearD/2,rearBodyH-.0125,serviceOpeningEnd+(southLegSlotStart-serviceOpeningEnd)/2)
+    addRearPart(rearD,.025,rearLength-southLegSlotEnd,rearD/2,rearBodyH-.0125,southLegSlotEnd+(rearLength-southLegSlotEnd)/2)
+    // Keep the monitor-clamp chase tied at the front, but leave both desk-leg
+    // slots open for their full depth so the assembled frame can slide out.
+    addRearPart(.04,.025,clampSlotEnd-clampSlotStart,rearD-.02,rearBodyH-.0125,(clampSlotStart+clampSlotEnd)/2)
+    const clampChaseEdge=new THREE.Mesh(new THREE.BoxGeometry(.012,mm(office.equipment.monitorStand.clampDropMm),clampSlotEnd-clampSlotStart),makeMaterial('#31363c',.4,null,.2))
+    clampChaseEdge.position.set(clampSlotD,rearBodyH-mm(office.equipment.monitorStand.clampDropMm)/2,(clampSlotStart+clampSlotEnd)/2)
+    rearCabinetGroup.add(clampChaseEdge)
+    tagCarpentry(clampChaseEdge,{name:'Centre monitor-clamp travel channel',widthMm:rear.centerClampChaseWidthMm,heightMm:rear.centerClampChaseDropMm,depthMm:rear.centerClampChaseDepthMm,note:'Continuous upper rear clearance lets the monitor stand move south while the printer remains below'})
+    addRearPart(rearD,rearBodyH,.025,rearD/2,rearBodyH/2,.0125)
+    addRearPart(rearD,rearBodyH,.025,rearD/2,rearBodyH/2,rearLength-.0125)
+    for(const dividerZ of [moduleD,moduleD*2]) addRearPart(rearD,rearBodyH-.05,.018,rearD/2,rearBodyH/2,dividerZ)
+    addRearPart(rearD-.035,.022,moduleD-.05,rearD/2,rearBodyH*.5,moduleD*1.5)
+    room.add(rearCabinetGroup)
+    tagCarpentry(rearCabinetGroup,{name:'West lower cabinet run',widthMm:rear.widthMm,heightMm:rear.topHeightMm,depthMm:rear.depthMm,note:'Three bays with two full-depth desk-foot installation slots and a centre monitor-clamp channel'})
+    const westDoorGroups=[]
+    const bayNames=['north','centre','south']
     for(let i=0;i<rearModules;i++){
-      if(i===1){
-        const westFront=addBox({w:.018,h:rearBodyH-.035,d:moduleD-.018,x:rearD+.012,y:toe+rearBodyH/2,z:deskStartZ+i*moduleD+moduleD/2,color:'#ffffff',map:woodTexture,roughness:.47})
-        tagCarpentry(westFront,{name:'West cabinet centre front',widthMm:Math.round((moduleD-.018)*1000),heightMm:Math.round((rearBodyH-.035)*1000),depthMm:18,note:'East-facing cabinet front'})
-      }
+      const frontDepth=moduleD-.018
+      const hingeAtSouth=i%2===0
+      const westDoorGroup=new THREE.Group()
+      westDoorGroup.position.set(rearD+.012,toe+rearBodyH/2,deskStartZ+i*moduleD+(hingeAtSouth?.009:moduleD-.009))
+      const westFront=new THREE.Mesh(new THREE.BoxGeometry(.018,rearBodyH-.035,frontDepth),doorMaterial)
+      westFront.position.z=hingeAtSouth?frontDepth/2:-frontDepth/2;westFront.castShadow=true;westDoorGroup.add(westFront)
+      const westHandle=new THREE.Mesh(new THREE.BoxGeometry(.032,.16,.018),makeMaterial('#20262c',.34,null,.25))
+      westHandle.position.set(.018,0,hingeAtSouth?frontDepth-.055:-frontDepth+.055);westDoorGroup.add(westHandle)
+      room.add(westDoorGroup)
+      tagCarpentry(westDoorGroup,{name:`West cabinet ${bayNames[i]} door`,widthMm:Math.round(frontDepth*1000),heightMm:Math.round((rearBodyH-.035)*1000),depthMm:18,note:'East-facing hinged cabinet front'})
+      westDoorGroups.push({group:westDoorGroup,angle:THREE.MathUtils.degToRad(hingeAtSouth?62:-62)})
     }
     // Proposed equipment bays: tower at the north end, printer on a pull-out shelf at the south end.
     const towerGroup=new THREE.Group()
     const towerBody=new THREE.Mesh(new THREE.BoxGeometry(.216,.489,.410),new THREE.MeshStandardMaterial({color:'#171b20',roughness:.42,metalness:.18}))
-    towerBody.position.set(rearD/2,toe+.489/2,deskStartZ+moduleD/2)
+    const northStorageCenterZ=deskStartZ+Math.max(.22,(legPocketStart-.025)/2)
+    towerBody.position.set(rearD/2,toe+.489/2,northStorageCenterZ)
     towerBody.castShadow=true
     towerGroup.add(towerBody)
     const towerMesh=new THREE.Mesh(new THREE.BoxGeometry(.19,.43,.008),new THREE.MeshStandardMaterial({color:'#263744',emissive:'#14202a',emissiveIntensity:.35,roughness:.55}))
-    towerMesh.position.set(rearD/2,toe+.489/2,deskStartZ+moduleD/2-.209)
+    towerMesh.position.set(rearD/2,toe+.489/2,northStorageCenterZ-.209)
     towerGroup.add(towerMesh)
     room.add(towerGroup)
     itemObjects['pc-tower']=towerGroup
 
     const printerGroup=new THREE.Group()
     const printerShelf=new THREE.Mesh(new THREE.BoxGeometry(rearD-.025,.025,moduleD-.06),new THREE.MeshStandardMaterial({color:'#75563d',roughness:.5}))
-    printerShelf.position.set(rearD/2,toe+.035,southBayCenterZ)
+    printerShelf.position.set(rearD/2,toe+.035,centerBayCenterZ)
     printerShelf.castShadow=true
     printerGroup.add(printerShelf)
     const printerBody=new THREE.Mesh(new THREE.BoxGeometry(.332,.189,.446),new THREE.MeshStandardMaterial({color:'#e9edf0',roughness:.55}))
-    printerBody.position.set(rearD/2,toe+.142,southBayCenterZ)
+    printerBody.position.set(rearD/2,toe+.142,centerBayCenterZ)
     printerBody.castShadow=true
     printerGroup.add(printerBody)
     room.add(printerGroup)
     itemObjects.printer=printerGroup
+    // Toggleable 3D electrical overlay. Markers sit just in front of the
+    // cabinet faces so outlet locations remain legible from every preset.
+    addElectricalMarker(room,'E1 · HEATER',heaterX,H-.62,upperD+.055,'#ea580c')
+    addElectricalMarker(room,'E2 · ROUTER',routerX,routerShelfY+.13,upperD+.055,'#ea580c')
+    addElectricalMarker(room,'N1 · DESK FEED',rearD+.045,rearTop-.07,centerBayCenterZ+.20,'#2563eb')
+    addElectricalMarker(room,'N2 · PC / UPS',rearD+.045,toe+.29,deskStartZ+.20,'#2563eb')
+    addElectricalMarker(room,'N3 · PC SPARE',rearD+.045,toe+.29,deskStartZ+.42,'#2563eb')
+    addElectricalMarker(room,'N4 · PRINTER',rearD+.045,toe+.23,centerBayCenterZ,'#2563eb')
+    addElectricalMarker(room,'D1 · 2× CAT6',rearD+.045,rearTop-.18,centerBayCenterZ+.35,'#0f766e')
+    addElectricalMarker(movingDesk,'P1 · 8-WAY RAIL',deskDepth*.62,-.11,deskCenterZ+.22,'#16a34a')
     // West-facing dual-monitor workstation, packed toward the north end.
     const standMaterial=makeMaterial('#242a31',.35)
     const screenMaterial=new THREE.MeshStandardMaterial({color:'#163b56',emissive:'#0d2638',emissiveIntensity:.45,roughness:.18,metalness:.08})
@@ -408,22 +566,9 @@ export default function BalconyOffice3D(){
       return {monitorW,monitorH,group:monitorGroup}
     }
     // Shift the complete dual-monitor assembly 6 inches south/left from its earlier position.
-    const monitorShift=mm(office.equipment.monitorStand.shiftLeftMm)
-    const northStart=lowerD+.035+monitorShift
-    const rightMonitor=office.equipment.monitors.find(monitor=>monitor.side==='right')
-    const leftMonitor=office.equipment.monitors.find(monitor=>monitor.side==='left')
-    const rightDiag=rightMonitor.diagonalInches*.0254
-    const rightW=rightDiag*(16/Math.sqrt(337))
-    const rightH=rightDiag*(9/Math.sqrt(337))
-    const rightCenterZ=northStart+rightW/2
-    const leftDiag=leftMonitor.diagonalInches*.0254
-    const leftW=leftDiag*(16/Math.sqrt(337))
-    const leftH=leftDiag*(9/Math.sqrt(337))
-    const leftCenterZ=northStart+rightW+.045+leftW/2
     const screenBottom=.17
     addMonitor({monitor:rightMonitor,centerZ:rightCenterZ,centerY:screenBottom+rightH/2,id:'monitor-lenovo'})
     addMonitor({monitor:leftMonitor,centerZ:leftCenterZ,centerY:screenBottom+leftH/2,id:'monitor-benq'})
-    const standZ=(rightCenterZ+leftCenterZ)/2
     const armGroup=new THREE.Group()
     movingDesk.add(armGroup)
     itemObjects['monitor-arm']=armGroup
@@ -435,6 +580,15 @@ export default function BalconyOffice3D(){
     crossbar.position.set(.10,.38,standZ)
     crossbar.castShadow=true
     armGroup.add(crossbar)
+    const clampDrop=mm(office.equipment.monitorStand.clampDropMm)
+    const clampStem=new THREE.Mesh(new THREE.CylinderGeometry(.011,.011,clampDrop,14),standMaterial)
+    clampStem.position.set(.07,-worktopT-clampDrop/2,standZ)
+    clampStem.castShadow=true
+    armGroup.add(clampStem)
+    const clampPad=new THREE.Mesh(new THREE.CylinderGeometry(.033,.033,.012,18),standMaterial)
+    clampPad.rotation.z=Math.PI/2
+    clampPad.position.set(.07,-worktopT-clampDrop,standZ)
+    armGroup.add(clampPad)
 
     const laptopSpec=office.equipment.laptop
     const laptopW=mm(laptopSpec.widthMm)
@@ -526,6 +680,8 @@ export default function BalconyOffice3D(){
         mesh.position.set(frameLegX,.045+columnH/2,z)
       }
     }
+    let cabinetOpenTarget=0
+    const setCabinetsOpen=open=>{cabinetOpenTarget=open?1:0}
     const setQuality=enabled=>{
       renderer.setPixelRatio(Math.min(window.devicePixelRatio,enabled?2.5:1.25))
       renderer.shadowMap.enabled=enabled
@@ -568,8 +724,9 @@ export default function BalconyOffice3D(){
     }
     setCamera(preset)
     setDeskHeight(mm(adjustable.defaultHeightMm))
+    setCabinetsOpen(allCabinetsOpen)
     setQuality(highQuality)
-    sceneRef.current={setCamera,setDeskHeight,setQuality,focusItem,captureScreenshot,clearSelection,setHumanVisible:visible=>{human.visible=visible},setDirectionsVisible:visible=>{directionGroup.visible=visible}}
+    sceneRef.current={setCamera,setDeskHeight,setCabinetsOpen,setQuality,focusItem,captureScreenshot,clearSelection,setHumanVisible:visible=>{human.visible=visible},setDirectionsVisible:visible=>{directionGroup.visible=visible},setElectricalVisible:visible=>{electricalOverlays.forEach(({marker})=>{marker.visible=visible})},setSouthWallVisible:visible=>{southWallGroup.visible=visible},setWestWallVisible:visible=>{westWallGroup.visible=visible}}
 
     const raycaster=new THREE.Raycaster()
     const pointer=new THREE.Vector2()
@@ -607,7 +764,14 @@ export default function BalconyOffice3D(){
     observer.observe(mount)
     resize()
     let frame
-    const animate=()=>{frame=requestAnimationFrame(animate);controls.update();renderer.render(scene,camera)}
+    const animate=()=>{
+      frame=requestAnimationFrame(animate)
+      leftSlider.position.x=THREE.MathUtils.lerp(leftSlider.position.x,THREE.MathUtils.lerp(leftSliderClosedX,rightSliderX,cabinetOpenTarget),.12)
+      lowerLeftSlider.position.x=THREE.MathUtils.lerp(lowerLeftSlider.position.x,THREE.MathUtils.lerp(lowerLeftSliderClosedX,lowerRightSliderX,cabinetOpenTarget),.12)
+      liftGroup.rotation.x=THREE.MathUtils.lerp(liftGroup.rotation.x,THREE.MathUtils.degToRad(-58)*cabinetOpenTarget,.12)
+      for(const {group,angle} of westDoorGroups)group.rotation.y=THREE.MathUtils.lerp(group.rotation.y,angle*cabinetOpenTarget,.12)
+      controls.update();renderer.render(scene,camera)
+    }
     animate()
     return ()=>{
       cancelAnimationFrame(frame)
@@ -621,6 +785,7 @@ export default function BalconyOffice3D(){
       woodTexture.dispose()
       marbleTexture.dispose()
       directionTextures.forEach(texture=>texture.dispose())
+      electricalOverlays.forEach(({texture})=>texture.dispose())
       glassMaterial.dispose()
       environment.dispose()
       pmrem.dispose()
@@ -635,6 +800,10 @@ export default function BalconyOffice3D(){
   useEffect(()=>{sceneRef.current?.setDeskHeight(deskHeightIn*25.4/1000)},[deskHeightIn])
   useEffect(()=>{sceneRef.current?.setQuality(highQuality)},[highQuality])
   useEffect(()=>{sceneRef.current?.setDirectionsVisible(showDirections)},[showDirections])
+  useEffect(()=>{sceneRef.current?.setCabinetsOpen(allCabinetsOpen)},[allCabinetsOpen])
+  useEffect(()=>{sceneRef.current?.setSouthWallVisible(showSouthWall)},[showSouthWall])
+  useEffect(()=>{sceneRef.current?.setWestWallVisible(showWestWall)},[showWestWall])
+  useEffect(()=>{sceneRef.current?.setElectricalVisible(showElectrical)},[showElectrical])
   useEffect(()=>{
     const updateFullscreen=()=>setIsFullscreen(document.fullscreenElement===sectionRef.current)
     document.addEventListener('fullscreenchange',updateFullscreen)
@@ -712,14 +881,14 @@ export default function BalconyOffice3D(){
     const cabX=ex+elevW-cabW
     pdf.setFillColor(199,164,119);pdf.rect(cabX,baseY-north.lower.heightMm*elevScale,cabW,north.lower.heightMm*elevScale,'FD')
     pdf.setFillColor(154,116,76);pdf.rect(cabX,baseY-elevH,cabW,north.upper.heightMm*elevScale,'FD')
-    const serviceDividerX=cabX+cabW-north.upper.heaterBayWidthMm*elevScale
+    const serviceDividerX=cabX+north.upper.heaterBayWidthMm*elevScale
     pdf.line(serviceDividerX,baseY-elevH,serviceDividerX,baseY-elevH+north.upper.heightMm*elevScale)
     const splitY=baseY-north.doors.lower.splitHeightMm*elevScale
     pdf.line(cabX,splitY,cabX+cabW,splitY);pdf.line(cabX+cabW/2,baseY-north.lower.heightMm*elevScale,cabX+cabW/2,baseY)
     dim(ex,baseY+7,ex+elevW,baseY+7,formatDim(office.dimensions.widthMm),4)
     dim(ex-8,baseY-elevH,ex-8,baseY,formatDim(office.dimensions.floorToCeilingMm),4)
     dim(cabX,baseY-north.lower.heightMm*elevScale-5,cabX+cabW,baseY-north.lower.heightMm*elevScale-5,`Cabinet ${formatDim(north.lower.widthMm)}`,2)
-    note(`NORTH CABINET\nUpper: ${formatDim(north.upper.heightMm)} H x ${formatDim(north.upper.depthMm)} D; removable ventilated access.\nEast heater bay: ${formatDim(north.upper.heaterBayWidthMm)} W; verify tank, pipes, clearances and service access on site.\nAdjacent router bay: ${formatDim(north.upper.routerBayWidthMm)} W; internal socket, ventilated shelf and solid divider.\nLower: ${formatDim(north.lower.heightMm)} H x ${formatDim(north.lower.widthMm)} W x ${formatDim(north.lower.depthMm)} D.\nSplit at ${formatDim(north.doors.lower.splitHeightMm)} above floor.\nFull-width two-panel bypass sliders below and above.`,125,38,145)
+    note(`NORTH CABINET\nUpper: ${formatDim(north.upper.heightMm)} H x ${formatDim(north.upper.depthMm)} D; removable ventilated access.\nNorthwest heater bay: ${formatDim(north.upper.heaterBayWidthMm)} W; verify tank, pipes, clearances and service access on site.\nNortheast router bay: ${formatDim(north.upper.routerBayWidthMm)} W; raised shelf at ${formatDim(north.upper.routerShelfHeightAboveBayBottomMm)} above bay bottom; internal socket and solid divider.\nUnder-router storage: 2 horizontal shelves; 2 book-height tiers plus 1 shallow accessory tier; ${formatDim(north.upper.routerUnderShelfStorage.rearCableChaseMm)} rear cable chase.\nStraight antenna pass-through: 3 x ${formatDim(north.upper.routerAntennaPassThrough.slotWidthMm)} W x ${formatDim(north.upper.routerAntennaPassThrough.slotHeightMm)} H rubber-lined upper side slots.\nLower: ${formatDim(north.lower.heightMm)} H x ${formatDim(north.lower.widthMm)} W x ${formatDim(north.lower.depthMm)} D.\nBook grid: ${north.lower.bookStorage.columns} columns; ${north.lower.bookStorage.tiersBelowTabletop} tiers below and ${north.lower.bookStorage.tiersAboveTabletop} above tabletop split.\nFull-width two-panel bypass sliders below and above.`,125,38,145)
     note('All cabinet dimensions are nominal carcass dimensions. Carpenter to allow for shutters, tracks, edge bands, scribes, wall irregularity and installation tolerances.',125,82,145)
 
     pdf.addPage('a4','landscape')
@@ -741,16 +910,16 @@ export default function BalconyOffice3D(){
     pdf.setFillColor(220,198,165);pdf.rect(deskX,rearTop,rear.widthMm*westScale,rear.topHeightMm*westScale,'F')
     dim(wx,wBase+7,wx+westL,wBase+7,formatDim(office.dimensions.lengthMm),4)
     dim(wx-7,wBase-westH,wx-7,wBase,formatDim(office.dimensions.floorToCeilingMm),4)
-    note(`WEST WORKSTATION\nDesktop: ${formatDim(desk.widthMm)} W x ${formatDim(desk.depthMm)} D x ${formatDim(desk.topThicknessMm)} T.\nCurrent exported height: ${formatDim(deskHeightIn*25.4)}.\nAdjustment range: ${formatDim(desk.minHeightMm)} to ${formatDim(desk.maxHeightMm)}.\nFrame span: ${formatDim(desk.frameSpanMm)}.\nEnd overhang: ${formatDim(desk.endOverhangMm)} each.\nDesktop runs from the north cabinet to the south wall.\nWest cabinet: ${formatDim(rear.widthMm)} L x ${formatDim(rear.depthMm)} D x ${formatDim(rear.topHeightMm)} H; east-facing access.\nClear floor depth: ${formatDim(desk.depthMm-rear.depthMm)}.\nNo south-wall counter or cabinet.`,205,36,78)
+    note(`WEST WORKSTATION\nDesktop: ${formatDim(desk.widthMm)} W x ${formatDim(desk.depthMm)} D x ${formatDim(desk.topThicknessMm)} T.\nCurrent exported height: ${formatDim(deskHeightIn*25.4)}.\nAdjustment range: ${formatDim(desk.minHeightMm)} to ${formatDim(desk.maxHeightMm)}.\nFrame span: ${formatDim(desk.frameSpanMm)}; shifted ${formatDim(desk.frameOffsetSouthMm)} south.\nNorth/south end overhangs: ${formatDim(desk.northEndOverhangMm)} / ${formatDim(desk.southEndOverhangMm)}.\nDesk-foot through-slots: north ${formatDim(rear.northLegPocketWidthMm)} W; south ${formatDim(rear.legRemovalSlotWidthMm)} W; full ${formatDim(rear.depthMm)} depth.\nDesktop runs from the north cabinet to the south wall.\nCentre clamp channel: ${formatDim(rear.centerClampChaseWidthMm)} W x ${formatDim(rear.centerClampChaseDepthMm)} D; ${formatDim(rear.centerClampChaseDropMm)} drop.\nWest cabinet: ${formatDim(rear.widthMm)} L x ${formatDim(rear.depthMm)} D x ${formatDim(rear.topHeightMm)} H; east-facing access.\nClear floor depth: ${formatDim(desk.depthMm-rear.depthMm)}.\nNo south-wall counter or cabinet.`,205,36,78)
     note(`ENVELOPE\nBrick parapet: ${formatDim(office.envelope.lowerBrickParapetMm)}\nWindow band: ${formatDim(office.envelope.windowBandMm)}\nTop brick band: ${formatDim(office.envelope.upperBrickBandMm)}\nTotal: ${formatDim(office.dimensions.floorToCeilingMm)}`,205,99,78)
     note('Provide flexible cable loops and confirm that no fixed cabinet, cable or shutter enters the desk lifting path.',205,137,78)
 
     pdf.addPage('a4','landscape')
     title('Carpenter Fabrication Schedule')
     const cabinetRows=[
-      ['North upper cabinet','1',north.lower.widthMm,north.upper.heightMm,north.upper.depthMm,'Ventilated removable access; divided heater and router service bays'],
+      ['North upper cabinet','1',north.lower.widthMm,north.upper.heightMm,north.upper.depthMm,'Ventilated removable access; divided heater and router service bays; two horizontal shelves below router'],
       ['Water-heater bay','1',north.upper.heaterBayWidthMm,north.upper.heightMm,north.upper.depthMm,'Existing heater; drip tray; verify manufacturer clearance, plumbing and service access'],
-      ['Router shelf','1',north.upper.routerBayWidthMm-50,22,north.upper.depthMm-55,'Internal socket; ventilated; solid divider from heater bay'],
+      ['Router shelf','1',north.upper.routerBayWidthMm-50,22,north.upper.depthMm-55,'Raised shelf; internal socket; ventilated; solid divider; three straight antenna pass-throughs'],
       ['North lower cabinet','1',north.lower.widthMm,north.lower.heightMm,north.lower.depthMm,`Full-width bypass sliders above and below ${formatDim(north.doors.lower.splitHeightMm)} split; no filler`],
       ['West adjustable tabletop','1',desk.widthMm,desk.topThicknessMm,desk.depthMm,`Custom top; current height ${formatDim(desk.currentHeightMm)}; FLEXISPOT frame span ${formatDim(desk.frameSpanMm)}`],
       ['West lower cabinet run','1',rear.widthMm,rear.topHeightMm,rear.depthMm,`Uniform one-foot depth to south end; east-facing access; toe clearance ${formatDim(rear.toeClearanceMm)}`],
@@ -774,6 +943,14 @@ export default function BalconyOffice3D(){
     note('Dimensions are overall design dimensions, not a finished cut list. Carpenter must deduct material thicknesses, hardware clearances, edge bands, slider tracks, reveals and site scribes when producing individual panels.',14,pageH-15,pageW-28)
 
     pdf.addPage('a4','landscape')
+    title('Preliminary Electrical and Data Plan')
+    const electrical=office.electrical
+    note(`OUTLET COUNT\nExisting fixed outlets retained: ${electrical.totals.existingFixedOutlets} (water heater and router).\nNew fixed outlets: ${electrical.totals.newFixedOutlets}.\nMoving under-desk power rail: ${electrical.totals.movingDeskOutlets} outlets.\nDesigned connected equipment plugs: ${electrical.totals.simultaneousEquipmentPlugs}; spare equipment outlets: ${electrical.totals.spareEquipmentOutlets}.`,14,31,82)
+    note(`NEW FIXED POINTS\n1. Centre high service zone: 1 x 6/16 A earthed point feeding the moving desk rail.\n2. North PC/UPS bay: 2 x 6 A earthed points.\n3. Centre printer bay: 1 x 6 A earthed point.\n\nDESK RAIL LOADS\nTwo monitors, laptop charger, dock, combined phone/watch charger and sit-stand motor; two spare outlets.`,104,31,90)
+    note(`DATA AND ROUTING\n2 x Cat6 from router rear chase to desk dock: one active, one spare.\nKeep data separated from mains and cross only at right angles.\nUse a flexible service loop sized for the full desk travel and quick-disconnect plugs so the desk can slide out.`,205,31,78)
+    note(`SAFETY BASIS\nRetain the water heater on a dedicated circuit and verify its existing point and accessible double-pole isolation.\nAll socket outlets: three-pin, permanently earthed, BIS-certified to IS 1293:2019.\nDomestic installation: residual-current protection not exceeding ${electrical.protection.domesticRcdMaxMa} mA.\nLicensed electrician to verify actual load, circuit segregation, breaker and conductor sizing, polarity, insulation resistance, earthing and earth-fault loop impedance before energising. Keep outlets accessible and clear of heater plumbing and possible leaks.`,14,112,pageW-28)
+
+    pdf.addPage('a4','landscape')
     title('Equipment Inventory')
     pdf.setFont('helvetica','bold');pdf.setFontSize(8)
     pdf.text('Item',14,31);pdf.text('Make / model',52,31);pdf.text('Dimensions',139,31);pdf.text('Design status',216,31)
@@ -794,6 +971,17 @@ export default function BalconyOffice3D(){
   }
 
   const formatCarpentryDimension=value=>dimensionUnit==='ft-in'?feetInches(value):`${Math.round(value)} mm`
+  const aiRenderPrompt=`Create a photorealistic interior architectural 3D render of a narrow enclosed balcony home office in an Indian apartment. Room size: ${BALCONY_OFFICE.dimensions.widthMm} mm wide × ${BALCONY_OFFICE.dimensions.lengthMm} mm long × ${BALCONY_OFFICE.dimensions.floorToCeilingMm} mm high. Camera: eye-level wide-angle view from the study entrance, showing the full west workstation and north cabinet without fisheye distortion.
+
+West wall: a continuous ${BALCONY_OFFICE.worktop.westAdjustable.widthMm} × ${BALCONY_OFFICE.worktop.westAdjustable.depthMm} mm light-oak adjustable desktop, currently ${Math.round(deskHeightIn*25.4)} mm high, running to the south wall. Black dual-motor sit-stand frame, two monitors on one clamp-mounted arm, open laptop, clean keyboard and mouse, concealed eight-outlet power rail and organized cable spine. Below it is a ${BALCONY_OFFICE.worktop.rearCabinet.depthMm} mm deep light-oak cabinet run with three east-facing doors, a ventilated PC bay, centre printer pull-out and clear desk-leg installation slots.
+
+North wall: full-height cabinetry. Lower cabinet is ${BALCONY_OFFICE.cabinetry.northWall.lower.widthMm} mm wide × ${BALCONY_OFFICE.cabinetry.northWall.lower.depthMm} mm deep with organized book shelves and sliding fronts. Upper cabinet is ${BALCONY_OFFICE.cabinetry.northWall.upper.depthMm} mm deep: concealed water-heater service bay on the northwest, router shelf on the northeast with three straight antennas passing through the side, and two horizontal book shelves below the router. Use removable ventilated access panels.
+
+Architecture and finish: warm pale oak mica cabinetry with subtle grain, matte off-white walls, black metal frame and hardware, soft neutral floor, window bands along the south and west walls, natural daylight balanced with warm recessed ceiling lights. Keep the south wall free of cabinets. The result should look buildable, uncluttered and accurately scaled, with realistic joinery, shadows and reflections. No people, compass labels, measurement tags, UI elements, text, logos, floating furniture or extra cabinets.`
+  const copyAiPrompt=async()=>{
+    try{await navigator.clipboard.writeText(aiRenderPrompt);setPromptCopyStatus('copied');setTimeout(()=>setPromptCopyStatus('idle'),1800)}
+    catch{setPromptCopyStatus('error')}
+  }
 
   return <section ref={sectionRef} style={{background:'#fff',border:'1px solid #ded8ea',borderRadius:isFullscreen?0:22,overflow:'hidden',marginTop:isFullscreen?0:22,boxShadow:isFullscreen?'none':'0 14px 38px rgba(35,25,66,.1)'}}>
     <div style={{padding:'14px 16px',display:'flex',justifyContent:'space-between',alignItems:'center',gap:12,flexWrap:'wrap',borderBottom:'1px solid #e8e3ef'}}>
@@ -802,9 +990,14 @@ export default function BalconyOffice3D(){
         {[['overview','Overview'],['north','North cabinet'],['top','Top']].map(([key,label])=><button key={key} onClick={()=>setPreset(key)} style={{padding:'7px 10px',borderRadius:9,border:'1px solid #cfc6dc',background:preset===key?'#231942':'#fff',color:preset===key?'#fff':'#231942',fontWeight:800,cursor:'pointer'}}>{label}</button>)}
         <button onClick={()=>setHighQuality(value=>!value)} title="Toggle GPU-intensive lighting, reflections and shadows" style={{padding:'7px 10px',borderRadius:9,border:'1px solid #cfc6dc',background:highQuality?'#dcfce7':'#fff',color:'#231942',fontWeight:800,cursor:'pointer'}}>{highQuality?'High quality':'Performance'}</button>
         <button onClick={()=>setShowItems(value=>!value)} style={{padding:'7px 10px',borderRadius:9,border:'1px solid #cfc6dc',background:showItems?'#fef3c7':'#fff',color:'#231942',fontWeight:800,cursor:'pointer'}}>Items ({BALCONY_OFFICE.equipment.inventory.length})</button>
+        <button onClick={()=>setShowElectrical(value=>!value)} style={{padding:'7px 10px',borderRadius:9,border:'1px solid #cfc6dc',background:showElectrical?'#dbeafe':'#fff',color:'#231942',fontWeight:800,cursor:'pointer'}}>{showElectrical?'Hide electrical points':'Show electrical points'}</button>
+        <button onClick={()=>setAllCabinetsOpen(value=>!value)} style={{padding:'7px 10px',borderRadius:9,border:'1px solid #cfc6dc',background:allCabinetsOpen?'#ffedd5':'#fff',color:'#231942',fontWeight:800,cursor:'pointer'}}>{allCabinetsOpen?'Close all cabinets':'Open all cabinets'}</button>
+        <button onClick={()=>setShowSouthWall(value=>!value)} aria-pressed={!showSouthWall} style={{padding:'7px 10px',borderRadius:9,border:'1px solid #cfc6dc',background:showSouthWall?'#fff':'#fee2e2',color:'#231942',fontWeight:800,cursor:'pointer'}}>{showSouthWall?'Hide south wall':'Show south wall'}</button>
+        <button onClick={()=>setShowWestWall(value=>!value)} aria-pressed={!showWestWall} style={{padding:'7px 10px',borderRadius:9,border:'1px solid #cfc6dc',background:showWestWall?'#fff':'#fee2e2',color:'#231942',fontWeight:800,cursor:'pointer'}}>{showWestWall?'Hide west wall':'Show west wall'}</button>
         <button onClick={()=>setShowDirections(value=>!value)} style={{padding:'7px 10px',borderRadius:9,border:'1px solid #cfc6dc',background:showDirections?'#ede9fe':'#fff',color:'#231942',fontWeight:800,cursor:'pointer'}}>{showDirections?'Hide directions':'Show directions'}</button>
         <button onClick={()=>setShowHuman(value=>!value)} style={{padding:'7px 10px',borderRadius:9,border:'1px solid #cfc6dc',background:showHuman?'#e0f2fe':'#fff',color:'#231942',fontWeight:800,cursor:'pointer'}}>{showHuman?'Hide person':'Show person'}</button>
         <button onClick={copyScreenshot} disabled={screenshotStatus==='copying'} aria-live="polite" title="Copy the current 3D view as a PNG" style={{padding:'7px 10px',borderRadius:9,border:'1px solid #cfc6dc',background:screenshotStatus==='copied'?'#dcfce7':screenshotStatus==='error'?'#fee2e2':'#fff',color:'#231942',fontWeight:800,cursor:screenshotStatus==='copying'?'wait':'pointer'}}>{screenshotStatus==='copying'?'Copying…':screenshotStatus==='copied'?'Copied!':screenshotStatus==='error'?'Copy failed':'Copy screenshot'}</button>
+        <button onClick={()=>setShowAiPrompt(true)} style={{padding:'7px 10px',borderRadius:9,border:'1px solid #7c3aed',background:'#f3e8ff',color:'#5b21b6',fontWeight:800,cursor:'pointer'}}>AI render prompt</button>
         <button onClick={exportCarpenterPdf} style={{padding:'7px 10px',borderRadius:9,border:'1px solid #6d28d9',background:'#6d28d9',color:'#fff',fontWeight:800,cursor:'pointer'}}>Carpenter PDF</button>
         <button onClick={toggleFullscreen} style={{padding:'7px 10px',borderRadius:9,border:'1px solid #cfc6dc',background:isFullscreen?'#e0f2fe':'#fff',color:'#231942',fontWeight:800,cursor:'pointer'}}>{isFullscreen?'Exit full screen':'Full screen'}</button>
       </div>
@@ -831,6 +1024,17 @@ export default function BalconyOffice3D(){
         <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',gap:8,marginBottom:8}}><b style={{color:'#231942'}}>Items and placement</b><button onClick={()=>setShowItems(false)} aria-label="Close items" style={{border:0,background:'transparent',fontSize:18,cursor:'pointer'}}>×</button></div>
         <div style={{display:'grid',gap:7}}>{BALCONY_OFFICE.equipment.inventory.map(item=><button key={item.id} onClick={()=>{setSelectedItem(item.id);sceneRef.current?.focusItem(item.id)}} style={{textAlign:'left',padding:'9px 10px',borderRadius:10,border:selectedItem===item.id?'2px solid #f97316':'1px solid #ddd5e6',background:selectedItem===item.id?'#fff7ed':'#fff',cursor:'pointer',color:'#231942'}}><b style={{display:'block',fontSize:12}}>{item.category}: {item.make} {item.model}</b><span style={{display:'block',fontSize:11,color:'#6f657d',marginTop:3}}>{item.location}</span></button>)}</div>
       </aside>}
+      {showElectrical&&<aside aria-label="Electrical points legend" style={{position:'absolute',zIndex:7,right:12,top:12,width:'min(310px,calc(100% - 24px))',background:'rgba(255,255,255,.96)',border:'2px solid #2563eb',borderRadius:14,padding:12,boxShadow:'0 12px 30px rgba(20,15,35,.22)',color:'#231942',fontSize:11,lineHeight:1.45}}>
+        <div style={{display:'flex',justifyContent:'space-between',gap:8}}><b style={{fontSize:14}}>3D electrical points</b><button onClick={()=>setShowElectrical(false)} aria-label="Hide electrical points" style={{border:0,background:'transparent',fontSize:18,cursor:'pointer'}}>×</button></div>
+        <div style={{marginTop:7}}><b style={{color:'#ea580c'}}>E1–E2</b> existing heater and router · <b style={{color:'#2563eb'}}>N1–N4</b> new fixed power · <b style={{color:'#16a34a'}}>P1</b> moving desk rail · <b style={{color:'#0f766e'}}>D1</b> two Cat6 runs</div>
+      </aside>}
+      {showAiPrompt&&<div role="presentation" onClick={()=>setShowAiPrompt(false)} style={{position:'fixed',zIndex:10000,inset:0,display:'grid',placeItems:'center',padding:20,background:'rgba(23,15,42,.72)',backdropFilter:'blur(4px)'}}>
+        <aside role="dialog" aria-modal="true" aria-label="AI render prompt" onClick={event=>event.stopPropagation()} style={{width:'min(820px,calc(100vw - 32px))',maxHeight:'calc(100vh - 40px)',display:'flex',flexDirection:'column',background:'#fff',border:'3px solid #7c3aed',borderRadius:18,padding:'18px 20px',boxShadow:'0 28px 80px rgba(0,0,0,.42)',color:'#231942'}}>
+          <div style={{display:'flex',justifyContent:'space-between',gap:14,alignItems:'start'}}><div><b style={{fontSize:23}}>AI prompt for a 3D render</b><div style={{fontSize:12,color:'#6f657d',marginTop:4}}>Generated from the current balcony-office dimensions and desk height.</div></div><button onClick={()=>setShowAiPrompt(false)} aria-label="Close AI render prompt" style={{border:'1px solid #ddd5e6',borderRadius:10,background:'#faf8fc',width:38,height:38,fontSize:24,lineHeight:1,cursor:'pointer'}}>×</button></div>
+          <textarea readOnly value={aiRenderPrompt} aria-label="Generated AI render prompt" style={{marginTop:14,width:'100%',minHeight:360,maxHeight:'55vh',resize:'vertical',padding:14,borderRadius:12,border:'1px solid #cfc6dc',background:'#faf8fc',color:'#231942',font:'13px/1.55 ui-monospace,SFMono-Regular,Consolas,monospace',boxSizing:'border-box'}}/>
+          <div style={{display:'flex',justifyContent:'flex-end',gap:9,marginTop:12}}><button onClick={()=>setShowAiPrompt(false)} style={{padding:'9px 14px',borderRadius:10,border:'1px solid #cfc6dc',background:'#fff',color:'#231942',fontWeight:800,cursor:'pointer'}}>Close</button><button onClick={copyAiPrompt} aria-live="polite" style={{padding:'9px 15px',borderRadius:10,border:'1px solid #7c3aed',background:promptCopyStatus==='copied'?'#dcfce7':'#7c3aed',color:promptCopyStatus==='copied'?'#166534':'#fff',fontWeight:900,cursor:'pointer'}}>{promptCopyStatus==='copied'?'Copied!':promptCopyStatus==='error'?'Copy failed':'Copy prompt'}</button></div>
+        </aside>
+      </div>}
       {showDirections&&<div aria-label="Compass directions" style={{position:'absolute',zIndex:4,right:12,bottom:12,display:'grid',gridTemplateColumns:'repeat(3,28px)',gridTemplateRows:'repeat(3,24px)',placeItems:'center',padding:'7px 9px',borderRadius:10,background:'rgba(255,255,255,.9)',border:'1px solid rgba(35,25,66,.3)',boxShadow:'0 5px 16px rgba(20,15,35,.16)',color:'#231942',fontSize:10,fontWeight:900}}>
         {['NW','N','NE','W','•','E','SW','S','SE'].map(direction=><span key={direction}>{direction}</span>)}
       </div>}
