@@ -3,7 +3,7 @@ import * as THREE from 'three'
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js'
 import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader.js'
 import {RoomEnvironment} from 'three/examples/jsm/environments/RoomEnvironment.js'
-import {BALCONY_OFFICE} from './config/balconyOfficeConfig.js'
+import {BALCONY_OFFICE,BALCONY_DESK_HEIGHT_KEY} from './config/balconyOfficeConfig.js'
 
 const mm=value=>value/1000
 const feetInches=valueMm=>{
@@ -24,7 +24,12 @@ export default function BalconyOffice3D(){
   const [preset,setPreset]=useState('overview')
   const [showHuman,setShowHuman]=useState(BALCONY_OFFICE.referenceFigure.defaultVisible)
   const [personAssetStatus,setPersonAssetStatus]=useState('loading')
-  const [deskHeightIn,setDeskHeightIn]=useState(Math.round(BALCONY_OFFICE.worktop.westAdjustable.defaultHeightMm/25.4))
+  const [deskHeightIn,setDeskHeightIn]=useState(()=>{
+    const saved=Number(localStorage.getItem(BALCONY_DESK_HEIGHT_KEY))
+    return Number.isFinite(saved)&&saved>=BALCONY_OFFICE.worktop.westAdjustable.minHeightMm&&saved<=BALCONY_OFFICE.worktop.westAdjustable.maxHeightMm
+      ? saved/25.4 : Math.round(BALCONY_OFFICE.worktop.westAdjustable.defaultHeightMm/25.4)
+  })
+  useEffect(()=>{localStorage.setItem(BALCONY_DESK_HEIGHT_KEY,String(Math.round(deskHeightIn*25.4)))},[deskHeightIn])
   const [isFullscreen,setIsFullscreen]=useState(false)
   const [dimensionUnit,setDimensionUnit]=useState('ft-in')
   const [showItems,setShowItems]=useState(false)
@@ -221,19 +226,20 @@ export default function BalconyOffice3D(){
     for(const dividerXLocal of [-cabinetW/6,cabinetW/6]) addLowerPart(.018,lowerH-.05,lowerD-.04,dividerXLocal,lowerH/2,lowerD/2)
     const bookMaterialColors=['#854d3f','#315a72','#b8893f','#5d526f','#486b58']
     const shelfBases=[.025,splitY/3+.009,splitY*2/3+.009,splitY+.011,splitY+(lowerH-splitY)/2+.009]
+    const displayedBookDepth=Math.min(.18,lowerD-.05)
     for(let row=0;row<shelfBases.length;row++){
       for(let column=0;column<3;column++){
         for(let book=0;book<4;book++){
           const bookH=.235+(book%3)*.008
-          const bookMesh=new THREE.Mesh(new THREE.BoxGeometry(.035,bookH,.18),makeMaterial(bookMaterialColors[(row+column+book)%bookMaterialColors.length],.68))
-          bookMesh.position.set(-cabinetW/2+.075+column*(cabinetW/3)+book*.041,shelfBases[row]+bookH/2,lowerD-.105)
+          const bookMesh=new THREE.Mesh(new THREE.BoxGeometry(.035,bookH,displayedBookDepth),makeMaterial(bookMaterialColors[(row+column+book)%bookMaterialColors.length],.68))
+          bookMesh.position.set(-cabinetW/2+.075+column*(cabinetW/3)+book*.041,shelfBases[row]+bookH/2,lowerD-.025-displayedBookDepth/2)
           bookMesh.rotation.z=(book===3?.035:0)
           lowerCabinetGroup.add(bookMesh)
         }
       }
     }
     room.add(lowerCabinetGroup)
-    tagCarpentry(lowerCabinetGroup,{name:'North lower book cabinet',widthMm:cabinet.lower.widthMm,heightMm:cabinet.lower.heightMm,depthMm:cabinet.lower.depthMm,note:'Three divided book columns; three adjustable tiers below tabletop and two above for 10-inch books'})
+    tagCarpentry(lowerCabinetGroup,{name:'North lower book cabinet',widthMm:cabinet.lower.widthMm,heightMm:cabinet.lower.heightMm,depthMm:cabinet.lower.depthMm,note:'Five-inch shallow carcass; three divided columns and adjustable tiers for slim books or files'})
     const upperCabinetGroup=new THREE.Group()
     upperCabinetGroup.position.set(cabinetX,H-upperH/2,upperD/2)
     const upperCarcassMaterial=makeMaterial('#ffffff',.52,woodTexture)
@@ -376,7 +382,7 @@ export default function BalconyOffice3D(){
     const deskDepth=mm(adjustable.depthMm)
     const deskLength=mm(adjustable.widthMm)
     const worktopT=mm(adjustable.topThicknessMm)
-    const deskStartZ=lowerD+.05
+    const deskStartZ=L-deskLength
     const deskCenterZ=deskStartZ+deskLength/2
     const movingDesk=new THREE.Group()
     movingDesk.position.y=mm(adjustable.defaultHeightMm)
@@ -391,11 +397,11 @@ export default function BalconyOffice3D(){
     }
     const desktopMesh=addMovingBox({w:deskDepth,h:worktopT,d:deskLength,x:deskDepth/2,y:-worktopT/2,z:deskCenterZ,color:'#ffffff',map:woodTexture,roughness:.42})
     itemObjects.desktop=desktopMesh
-    tagCarpentry(desktopMesh,{name:'Adjustable west tabletop',widthMm:adjustable.widthMm,heightMm:adjustable.topThicknessMm,depthMm:adjustable.depthMm,note:'Custom top running from the north cabinet to the south wall'})
+    tagCarpentry(desktopMesh,{name:'Adjustable west tabletop',widthMm:adjustable.widthMm,heightMm:adjustable.topThicknessMm,depthMm:adjustable.depthMm,note:'Custom top anchored at the south wall, clear of the shallower north cabinet'})
 
     // Resolve the monitor position before building the cabinet so its clamp can have a true open shaft.
     const monitorShift=mm(office.equipment.monitorStand.shiftLeftMm)
-    const northStart=lowerD+.035+monitorShift
+    const northStart=deskStartZ-.015+monitorShift
     const rightMonitor=office.equipment.monitors.find(monitor=>monitor.side==='right')
     const leftMonitor=office.equipment.monitors.find(monitor=>monitor.side==='left')
     const rightDiag=rightMonitor.diagonalInches*.0254
@@ -857,8 +863,10 @@ export default function BalconyOffice3D(){
     const north=office.cabinetry.northWall
     const northW=north.lower.widthMm*planScale
     pdf.setFillColor(205,174,135);pdf.rect(ox+roomW-northW,oy,northW,north.upper.depthMm*planScale,'FD')
+    pdf.setFillColor(154,116,76);pdf.rect(ox+roomW-northW,oy,northW,north.lower.depthMm*planScale,'FD')
     const desk=office.worktop.westAdjustable
-    const deskStart=north.lower.depthMm+50
+    const deskStart=office.dimensions.lengthMm-desk.widthMm
+    const northCabinetToDeskGap=deskStart-north.lower.depthMm
     pdf.setFillColor(112,78,54);pdf.rect(ox,oy+deskStart*planScale,desk.depthMm*planScale,desk.widthMm*planScale,'FD')
     const rear=office.worktop.rearCabinet
     pdf.setFillColor(220,198,165);pdf.rect(ox,oy+deskStart*planScale,rear.depthMm*planScale,rear.widthMm*planScale,'FD')
@@ -866,7 +874,7 @@ export default function BalconyOffice3D(){
     dim(ox-8,oy,ox-8,oy+roomL,formatDim(office.dimensions.lengthMm),4)
     dim(ox,oy+deskStart*planScale-4,ox+desk.depthMm*planScale,oy+deskStart*planScale-4,`Desk depth ${formatDim(desk.depthMm)}`,2)
     dim(ox+desk.depthMm*planScale+5,oy+deskStart*planScale,ox+desk.depthMm*planScale+5,oy+(deskStart+desk.widthMm)*planScale,`Desk width ${formatDim(desk.widthMm)}`,3)
-    note('Plan legend',125,34);note(`Brown: adjustable west desktop\nTan: fixed west-side cabinet\nNorth cabinet: ${formatDim(north.lower.widthMm)} wide\nDesktop continues to south wall\nSouth wall: no counter or cabinet\nWest cabinet: ${formatDim(rear.depthMm)} deep x ${formatDim(rear.widthMm)} long\nEast-facing access\nOpen floor depth: ${formatDim(desk.depthMm-rear.depthMm)}`,125,40,70)
+    note('Plan legend',125,34);note(`Brown: adjustable west desktop\nTan: fixed west-side cabinet\nNorth cabinet: ${formatDim(north.lower.widthMm)} wide; lower ${formatDim(north.lower.depthMm)} deep\nGap from lower cabinet to desk: ${formatDim(northCabinetToDeskGap)}\nDesktop continues to south wall\nSouth wall: no counter or cabinet\nWest cabinet: ${formatDim(rear.depthMm)} deep x ${formatDim(rear.widthMm)} long\nEast-facing access\nOpen floor depth: ${formatDim(desk.depthMm-rear.depthMm)}`,125,40,70)
     note(`Important: the ${formatDim(desk.widthMm)} custom desktop exceeds the FLEXISPOT stated ${formatDim(desk.supportedTopWidthMm[1])} supported-top limit. Confirm stiffness, fixing pattern, load distribution and warranty with the frame supplier before fabrication.`,125,78,120)
     note('Site verification: carpenter must verify room, wall squareness, window/parapet, power points and all clearances before cutting.',125,101,120)
 
@@ -889,7 +897,7 @@ export default function BalconyOffice3D(){
     dim(ex-8,baseY-elevH,ex-8,baseY,formatDim(office.dimensions.floorToCeilingMm),4)
     dim(cabX,baseY-north.lower.heightMm*elevScale-5,cabX+cabW,baseY-north.lower.heightMm*elevScale-5,`Cabinet ${formatDim(north.lower.widthMm)}`,2)
     note(`NORTH CABINET\nUpper: ${formatDim(north.upper.heightMm)} H x ${formatDim(north.upper.depthMm)} D; removable ventilated access.\nNorthwest heater bay: ${formatDim(north.upper.heaterBayWidthMm)} W; verify tank, pipes, clearances and service access on site.\nNortheast router bay: ${formatDim(north.upper.routerBayWidthMm)} W; raised shelf at ${formatDim(north.upper.routerShelfHeightAboveBayBottomMm)} above bay bottom; internal socket and solid divider.\nUnder-router storage: 2 horizontal shelves; 2 book-height tiers plus 1 shallow accessory tier; ${formatDim(north.upper.routerUnderShelfStorage.rearCableChaseMm)} rear cable chase.\nStraight antenna pass-through: 3 x ${formatDim(north.upper.routerAntennaPassThrough.slotWidthMm)} W x ${formatDim(north.upper.routerAntennaPassThrough.slotHeightMm)} H rubber-lined upper side slots.\nLower: ${formatDim(north.lower.heightMm)} H x ${formatDim(north.lower.widthMm)} W x ${formatDim(north.lower.depthMm)} D.\nBook grid: ${north.lower.bookStorage.columns} columns; ${north.lower.bookStorage.tiersBelowTabletop} tiers below and ${north.lower.bookStorage.tiersAboveTabletop} above tabletop split.\nFull-width two-panel bypass sliders below and above.`,125,38,145)
-    note('All cabinet dimensions are nominal carcass dimensions. Carpenter to allow for shutters, tracks, edge bands, scribes, wall irregularity and installation tolerances.',125,82,145)
+    note('All cabinet dimensions are nominal carcass dimensions. The five-inch lower cabinet needs wall anchoring; verify actual book depth. Allow for shutters, tracks, edge bands, scribes, wall irregularity and installation tolerances.',125,82,145)
 
     pdf.addPage('a4','landscape')
     title('West Elevation - Adjustable Desk and Window')
@@ -910,7 +918,7 @@ export default function BalconyOffice3D(){
     pdf.setFillColor(220,198,165);pdf.rect(deskX,rearTop,rear.widthMm*westScale,rear.topHeightMm*westScale,'F')
     dim(wx,wBase+7,wx+westL,wBase+7,formatDim(office.dimensions.lengthMm),4)
     dim(wx-7,wBase-westH,wx-7,wBase,formatDim(office.dimensions.floorToCeilingMm),4)
-    note(`WEST WORKSTATION\nDesktop: ${formatDim(desk.widthMm)} W x ${formatDim(desk.depthMm)} D x ${formatDim(desk.topThicknessMm)} T.\nCurrent exported height: ${formatDim(deskHeightIn*25.4)}.\nAdjustment range: ${formatDim(desk.minHeightMm)} to ${formatDim(desk.maxHeightMm)}.\nFrame span: ${formatDim(desk.frameSpanMm)}; shifted ${formatDim(desk.frameOffsetSouthMm)} south.\nNorth/south end overhangs: ${formatDim(desk.northEndOverhangMm)} / ${formatDim(desk.southEndOverhangMm)}.\nDesk-foot through-slots: north ${formatDim(rear.northLegPocketWidthMm)} W; south ${formatDim(rear.legRemovalSlotWidthMm)} W; full ${formatDim(rear.depthMm)} depth.\nDesktop runs from the north cabinet to the south wall.\nCentre clamp channel: ${formatDim(rear.centerClampChaseWidthMm)} W x ${formatDim(rear.centerClampChaseDepthMm)} D; ${formatDim(rear.centerClampChaseDropMm)} drop.\nWest cabinet: ${formatDim(rear.widthMm)} L x ${formatDim(rear.depthMm)} D x ${formatDim(rear.topHeightMm)} H; east-facing access.\nClear floor depth: ${formatDim(desk.depthMm-rear.depthMm)}.\nNo south-wall counter or cabinet.`,205,36,78)
+    note(`WEST WORKSTATION\nDesktop: ${formatDim(desk.widthMm)} W x ${formatDim(desk.depthMm)} D x ${formatDim(desk.topThicknessMm)} T.\nCurrent exported height: ${formatDim(deskHeightIn*25.4)}.\nAdjustment range: ${formatDim(desk.minHeightMm)} to ${formatDim(desk.maxHeightMm)}.\nFrame span: ${formatDim(desk.frameSpanMm)}; shifted ${formatDim(desk.frameOffsetSouthMm)} south.\nNorth/south end overhangs: ${formatDim(desk.northEndOverhangMm)} / ${formatDim(desk.southEndOverhangMm)}.\nDesk-foot through-slots: north ${formatDim(rear.northLegPocketWidthMm)} W; south ${formatDim(rear.legRemovalSlotWidthMm)} W; full ${formatDim(rear.depthMm)} depth.\nDesktop remains at the south wall, leaving ${formatDim(northCabinetToDeskGap)} from the five-inch north lower cabinet.\nCentre clamp channel: ${formatDim(rear.centerClampChaseWidthMm)} W x ${formatDim(rear.centerClampChaseDepthMm)} D; ${formatDim(rear.centerClampChaseDropMm)} drop.\nWest cabinet: ${formatDim(rear.widthMm)} L x ${formatDim(rear.depthMm)} D x ${formatDim(rear.topHeightMm)} H; east-facing access.\nClear floor depth: ${formatDim(desk.depthMm-rear.depthMm)}.\nNo south-wall counter or cabinet.`,205,36,78)
     note(`ENVELOPE\nBrick parapet: ${formatDim(office.envelope.lowerBrickParapetMm)}\nWindow band: ${formatDim(office.envelope.windowBandMm)}\nTop brick band: ${formatDim(office.envelope.upperBrickBandMm)}\nTotal: ${formatDim(office.dimensions.floorToCeilingMm)}`,205,99,78)
     note('Provide flexible cable loops and confirm that no fixed cabinet, cable or shutter enters the desk lifting path.',205,137,78)
 
@@ -1014,7 +1022,7 @@ Architecture and finish: warm pale oak mica cabinetry with subtle grain, matte o
       </label>
     </div>
     <div style={{position:'relative'}}>
-      <div ref={mountRef} style={{height:isFullscreen?'calc(100vh - 116px)':'min(68vh,650px)',minHeight:430,width:'100%'}}/>
+      <div ref={mountRef} style={{height:isFullscreen?'calc(100vh - 116px)':'clamp(620px,82vh,1100px)',width:'100%'}}/>
       {selectedCarpentryItem&&<aside aria-live="polite" style={{position:'absolute',zIndex:6,left:12,top:12,width:'min(300px,calc(100% - 24px))',background:'rgba(255,255,255,.96)',border:'2px solid #6d28d9',borderRadius:13,padding:'11px 12px',boxShadow:'0 12px 30px rgba(20,15,35,.22)',color:'#231942'}}>
         <div style={{display:'flex',justifyContent:'space-between',alignItems:'start',gap:8}}><b style={{fontSize:14}}>{selectedCarpentryItem.name}</b><button onClick={()=>{setSelectedCarpentryItem(null);sceneRef.current?.clearSelection()}} aria-label="Close dimensions" style={{border:0,background:'transparent',fontSize:18,lineHeight:1,cursor:'pointer',color:'#231942'}}>×</button></div>
         <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:6,marginTop:9}}>{[['W',selectedCarpentryItem.widthMm],['H / T',selectedCarpentryItem.heightMm],['D',selectedCarpentryItem.depthMm]].map(([label,value])=><div key={label} style={{padding:'7px 5px',borderRadius:8,background:'#f3e8ff',textAlign:'center'}}><span style={{display:'block',fontSize:9,fontWeight:900,color:'#6d28d9'}}>{label}</span><b style={{display:'block',fontSize:11,marginTop:2}}>{formatCarpentryDimension(value)}</b></div>)}</div>

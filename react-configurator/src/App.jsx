@@ -1,5 +1,5 @@
 import React,{useState,useEffect,useRef,useMemo} from 'react'
-import {KITCHEN,EAST_INIT,WEST_INIT, LAYOUT_MODEL, MODULE_WIDTHS, MODULE_DEFS, PLINTH_HEIGHT, COUNTER_THICKNESS, BACKSPLASH_HEIGHT, autoFillModules} from './config/kitchenConfig.js'
+import {KITCHEN,EAST_INIT,WEST_INIT,KITCHEN_AUTOSAVE_KEY, LAYOUT_MODEL, MODULE_WIDTHS, MODULE_DEFS, PLINTH_HEIGHT, COUNTER_THICKNESS, BACKSPLASH_HEIGHT, autoFillModules} from './config/kitchenConfig.js'
 import { DEFAULT_MATERIALS, VIEW_STYLE, HEIGHT_GUIDES, RENDER_CONFIG } from './config/renderConfig.js'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
@@ -7,7 +7,7 @@ import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment
 import JSZip from 'jszip'
 import { createPbrMaterial } from './render/materialFactory.js'
 
-const LS_KEY='kitchen-autosave-v4-west-wet-east-open-garage'
+const LS_KEY=KITCHEN_AUTOSAVE_KEY
 const VERSION_KEYS={ current:'kitchen_version_Rule9', A:'kitchen_version_OptionA', B:'kitchen_version_OptionB' }
 
 const isActiveLayoutItem=(it)=>it && !it.hidden && it.id!=='westGarage' && (it.w??0)>0 && (it.d??0)>0
@@ -69,6 +69,7 @@ export default function App(){
   const [importWarning,setImportWarning]=useState('')
   const [bomNote,setBomNote]=useState('')
   const threeViewRef=useRef(null)
+  const kitchenHydratedRef=useRef(false)
   const hide3DObstructionsRef=useRef(true)
   const interactionModeRef=useRef('cabinet')
   const measurePointsRef=useRef([])
@@ -194,6 +195,7 @@ export default function App(){
 
   // autosave
   useEffect(()=>{
+    if(!kitchenHydratedRef.current)return
     try{
       const payload={east,west,grid,materials,eastModules,westModules,hide3DObstructions}
       localStorage.setItem(LS_KEY, JSON.stringify(payload))
@@ -213,6 +215,7 @@ export default function App(){
         if(p.westModules) setWestModules(p.westModules.reduce((sum,m)=>sum+(m.width||0),0)===3226?autoFillModules(westRunLength):p.westModules)
       }
     }catch{}
+    kitchenHydratedRef.current=true
   },[])
 
   useEffect(()=>{window.kitchenAPI={

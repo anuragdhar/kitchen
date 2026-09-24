@@ -1,22 +1,33 @@
-import React,{useState} from 'react'
+import React,{useEffect,useState} from 'react'
 import KitchenConfigurator from './App.jsx'
 import DxfWorkspace from './DxfWorkspace.jsx'
 import BalconyOffice3D from './BalconyOffice3D.jsx'
 import StudyRoom3D from './StudyRoom3D.jsx'
+import EmptyRoomGallery from './EmptyRoomGallery.jsx'
+import EntryGallery3D from './EntryGallery3D.jsx'
+import WholeHome3D from './WholeHome3D.jsx'
 import {BALCONY_OFFICE} from './config/balconyOfficeConfig.js'
 import {STUDY_ROOM} from './config/studyRoomConfig.js'
+import {EMPTY_ROOM_SHELLS} from './config/roomShellConfig.js'
 import floorPlanImage from '../../Interior/home a 501 floor - unmodified.png'
 
 const rooms={
   kitchen:{name:'Kitchen',eyebrow:'Detailed design available',description:'Open the existing galley kitchen planner, elevations, 3D view, materials, validation and exports.',color:'#b45309'},
   study:{name:'Study',eyebrow:'Ready to design together',description:'A new room workspace for layout, storage, lighting, desk placement and finishes.',color:'#2563eb'},
   balcony:{name:'Balcony office',eyebrow:'Active design area',description:'Turn the narrow east balcony into a focused, comfortable home office.',color:'#7c3aed'},
+  shells:{name:'Other rooms in 3D',eyebrow:'Whole-home 3D',description:'Explore the room shells, furnished spaces, and Bedroom 1 balcony extension.',color:'#0e7490'},
+  whole3d:{name:'Whole home 3D',eyebrow:'Complete home',description:'Orbit around the full floor plan with rooms, openings, and balcony extensions in one view.',color:'#0f766e'},
+  bedroom1:{name:'Bedroom 1',color:'#7e22ce',shellKey:'bedroom1',hotspotOnly:true},
+  bedroom3:{name:'Bedroom 3',color:'#c2410c',shellKey:'bedroom3',hotspotOnly:true},
+  lobby:{name:'Lobby / Dining',color:'#0369a1',shellKey:'lobby',hotspotOnly:true},
+  drawing:{name:'Drawing Room',color:'#3f6212',shellKey:'drawing',hotspotOnly:true},
+  entry:{name:'Main entry',eyebrow:'Northwest arrival',description:'Follow the seven-foot gallery past the shoe area, through the main door and right into the home.',color:'#9a3412'},
   dxf:{name:'DXF workspace',eyebrow:'Floor-plan tools',description:'View the included architectural DXF, inspect layers, load another file and prepare controlled drawing edits.',color:'#0f766e'},
 }
 
 const buttonStyle={border:0,borderRadius:999,padding:'10px 16px',fontWeight:800,cursor:'pointer'}
 
-function HomeHeader({section,onHome}){
+function HomeHeader({section,onHome,onOpen3D}){
   return <header style={{position:'sticky',top:0,zIndex:50,background:'rgba(252,250,247,.94)',backdropFilter:'blur(14px)',borderBottom:'1px solid #e7e0d7'}}>
     <div style={{maxWidth:1920,margin:'0 auto',minHeight:68,padding:'0 clamp(18px,3vw,48px)',display:'flex',alignItems:'center',justifyContent:'space-between',gap:16}}>
       <button onClick={onHome} style={{...buttonStyle,background:'transparent',padding:'8px 0',fontSize:18,color:'#241f1a',display:'flex',alignItems:'center',gap:10}} aria-label="Return to whole home plan">
@@ -25,6 +36,7 @@ function HomeHeader({section,onHome}){
       </button>
       <div style={{display:'flex',alignItems:'center',gap:10}}>
         <span style={{fontSize:13,color:'#6f665e'}}>{section==='home'?'Whole home':rooms[section]?.name}</span>
+        {section!=='whole3d'&&<button onClick={onOpen3D} style={{...buttonStyle,background:'#0f766e',color:'#fff'}}>Whole home 3D</button>}
         {section!=='home'&&<button onClick={onHome} style={{...buttonStyle,background:'#eee8e1',color:'#241f1a'}}>← Floor plan</button>}
       </div>
     </div>
@@ -38,20 +50,44 @@ function RoomHotspot({room,style,onOpen}){
   </button>
 }
 
+const planHotspots=[
+  ['kitchen',{left:'15.5%',top:'57.4%',width:'16.5%',height:'19.5%'}],
+  ['bedroom3',{left:'5.6%',top:'22.4%',width:'25.3%',height:'22.2%'}],
+  ['study',{left:'31.8%',top:'22.2%',width:'21.4%',height:'28.7%'}],
+  ['balcony',{left:'52.8%',top:'20.7%',width:'10.8%',height:'16.2%'}],
+  ['lobby',{left:'31.2%',top:'45%',width:'30.7%',height:'21.8%'}],
+  ['drawing',{left:'62%',top:'44.9%',width:'21.1%',height:'36.8%'}],
+  ['bedroom1',{left:'40.7%',top:'70.2%',width:'21.1%',height:'19.3%'}],
+  ['entry',{left:'62%',top:'82%',width:'22%',height:'12%'}],
+]
+
+function MiniFloorNavigator({section,onOpen}){
+  return <aside className="mini-floor-navigator" aria-label="Room navigation floor plan" style={{position:'fixed',left:14,top:84,width:238,zIndex:45,background:'rgba(255,255,255,.97)',border:'1px solid #d8d0c7',borderRadius:17,padding:10,boxShadow:'0 15px 40px rgba(39,31,24,.18)',display:'none'}}>
+    <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',gap:8,margin:'1px 2px 8px'}}><div><b style={{fontSize:13,color:'#241f1a'}}>Jump to a room</b><div style={{fontSize:10,color:'#756b62',marginTop:2}}>Click the plan</div></div><div aria-label="Plan compass: south up, north down, east left, west right" style={{width:40,height:40,border:'1.5px solid #241f1a',borderRadius:'50%',position:'relative',fontSize:8,fontWeight:900,color:'#241f1a'}}><span style={{position:'absolute',top:1,left:'50%',transform:'translateX(-50%)'}}>S</span><span style={{position:'absolute',bottom:1,left:'50%',transform:'translateX(-50%)',color:'#b91c1c'}}>N</span><span style={{position:'absolute',left:3,top:'50%',transform:'translateY(-50%)'}}>E</span><span style={{position:'absolute',right:3,top:'50%',transform:'translateY(-50%)'}}>W</span><span style={{position:'absolute',left:'50%',top:8,width:1,height:24,background:'#241f1a'}}/><span style={{position:'absolute',left:8,top:'50%',width:24,height:1,background:'#241f1a'}}/></div></div>
+    <div style={{position:'relative',overflow:'hidden',borderRadius:10,border:'1px solid #e5ded6',background:'#fff'}}>
+      <img src={floorPlanImage} alt="Miniature A501 home floor plan" style={{display:'block',width:'100%',height:'auto'}}/>
+      {planHotspots.map(([key,style])=>{const active=section===key;const info=rooms[key];return <button key={key} onClick={()=>onOpen(key)} aria-label={`Open ${info.name}`} title={info.name} style={{position:'absolute',...style,border:`${active?3:1.5}px solid ${info.color}`,background:active?`${info.color}70`:`${info.color}25`,borderRadius:4,cursor:'pointer',padding:0,boxShadow:active?`0 0 0 2px #fff, 0 0 0 4px ${info.color}`:'none'}}/>})}
+    </div>
+    <button onClick={()=>onOpen('whole3d')} style={{...buttonStyle,width:'100%',marginTop:9,background:section==='whole3d'?'#134e4a':'#0f766e',color:'#fff'}}>Whole home 3D ↗</button>
+    <div style={{fontSize:9,color:'#756b62',lineHeight:1.35,marginTop:7}}>S ↑ · N ↓ · E ← · W →</div>
+    <style>{`@media(min-width:1500px){.mini-floor-navigator{display:block!important}}`}</style>
+  </aside>
+}
+
 function WholeHome({onOpen}){
   return <main style={{minHeight:'calc(100vh - 68px)',background:'linear-gradient(135deg,#f6f0e8 0%,#fcfaf7 46%,#eef3f5 100%)',padding:'clamp(24px,3vw,48px) clamp(18px,3vw,48px)'}}>
     <div style={{maxWidth:1920,margin:'0 auto'}}>
       <div style={{maxWidth:1080,marginBottom:'clamp(22px,2vw,34px)'}}>
         <div style={{fontSize:12,fontWeight:900,letterSpacing:'.16em',textTransform:'uppercase',color:'#9a5b1d'}}>A501 home</div>
-        <h1 style={{fontSize:'clamp(32px,5vw,62px)',lineHeight:1.02,letterSpacing:'-.04em',margin:'10px 0 14px',color:'#241f1a'}}>Design your home, one room at a time.</h1>
-        <p style={{fontSize:'clamp(16px,2vw,20px)',lineHeight:1.55,color:'#655c54',margin:0}}>Start from the complete floor plan. Choose a highlighted room to open its dedicated design workspace.</p>
+        <h1 style={{fontSize:'clamp(32px,5vw,62px)',lineHeight:1.02,letterSpacing:'-.04em',margin:'10px 0 14px',color:'#241f1a'}}>See your whole home, then explore each room.</h1>
+        <p style={{fontSize:'clamp(16px,2vw,20px)',lineHeight:1.55,color:'#655c54',margin:0}}>Open the whole-home 3D view or choose a highlighted room for its dedicated design workspace.</p>
       </div>
 
       <div style={{display:'grid',gridTemplateColumns:'minmax(0,2fr) minmax(360px,.9fr)',gap:'clamp(20px,2vw,34px)',alignItems:'start'}} className="home-plan-grid">
         <section style={{background:'#fff',border:'1px solid #e5ded6',borderRadius:24,padding:'clamp(10px,2vw,20px)',boxShadow:'0 22px 60px rgba(52,41,30,.1)'}}>
           <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',gap:10,margin:'0 4px 14px'}}>
-            <div><b style={{fontSize:18}}>Whole-home floor plan</b><div style={{fontSize:12,color:'#756b62',marginTop:3}}>Click Kitchen or Study</div></div>
-            <span style={{fontSize:12,fontWeight:800,color:'#756b62',background:'#f4f0eb',padding:'7px 10px',borderRadius:999}}>2 rooms + DXF tools</span>
+            <div><b style={{fontSize:18}}>Whole-home floor plan</b><div style={{fontSize:12,color:'#756b62',marginTop:3}}>Click any highlighted room to open its 3D workspace</div></div>
+            <button onClick={()=>onOpen('whole3d')} style={{...buttonStyle,background:'#0f766e',color:'#fff',whiteSpace:'nowrap'}}>Whole home 3D ↗</button>
           </div>
           <div style={{position:'relative',width:'100%',margin:'0 auto',overflow:'hidden',borderRadius:16,background:'#fff'}}>
             <img src={floorPlanImage} alt="A501 whole home architectural floor plan" style={{display:'block',width:'100%',height:'auto'}}/>
@@ -65,22 +101,25 @@ function WholeHome({onOpen}){
               <span style={{position:'absolute',left:'50%',bottom:'14%',transform:'translateX(-50%)',width:0,height:0,borderLeft:'5px solid transparent',borderRight:'5px solid transparent',borderTop:'11px solid #b91c1c'}}/>
             </div>
             <RoomHotspot room="kitchen" onOpen={onOpen} style={{left:'15.5%',top:'57.4%',width:'16.5%',height:'19.5%'}}/>
+            <RoomHotspot room="bedroom3" onOpen={onOpen} style={{left:'5.6%',top:'22.4%',width:'25.3%',height:'22.2%'}}/>
             <RoomHotspot room="study" onOpen={onOpen} style={{left:'31.8%',top:'22.2%',width:'21.4%',height:'28.7%'}}/>
             <RoomHotspot room="balcony" onOpen={onOpen} style={{left:'52.8%',top:'20.7%',width:'10.8%',height:'16.2%'}}/>
+            <RoomHotspot room="lobby" onOpen={onOpen} style={{left:'31.2%',top:'45%',width:'30.7%',height:'21.8%'}}/>
+            <RoomHotspot room="drawing" onOpen={onOpen} style={{left:'62%',top:'44.9%',width:'21.1%',height:'36.8%'}}/>
+            <RoomHotspot room="bedroom1" onOpen={onOpen} style={{left:'40.7%',top:'70.2%',width:'21.1%',height:'19.3%'}}/>
+            <RoomHotspot room="entry" onOpen={onOpen} style={{left:'62%',top:'82%',width:'22%',height:'12%'}}/>
           </div>
         </section>
 
         <aside className="home-room-grid" style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(250px,1fr))',gap:14}}>
-          {Object.entries(rooms).map(([key,room])=><button key={key} onClick={()=>onOpen(key)} style={{textAlign:'left',padding:'clamp(16px,1.5vw,22px)',minHeight:190,borderRadius:20,border:'1px solid #e1d9d0',background:'#fff',cursor:'pointer',boxShadow:'0 10px 30px rgba(52,41,30,.07)',display:'flex',flexDirection:'column'}}>
+          {Object.entries(rooms).filter(([,room])=>!room.hotspotOnly).map(([key,room])=><button key={key} onClick={()=>onOpen(key)} style={{textAlign:'left',padding:'clamp(16px,1.5vw,22px)',minHeight:190,borderRadius:20,border:'1px solid #e1d9d0',background:'#fff',cursor:'pointer',boxShadow:'0 10px 30px rgba(52,41,30,.07)',display:'flex',flexDirection:'column'}}>
             <span style={{display:'inline-block',width:11,height:11,borderRadius:99,background:room.color,marginRight:8}}/>
             <span style={{fontSize:12,fontWeight:900,letterSpacing:'.08em',textTransform:'uppercase',color:room.color}}>{room.eyebrow}</span>
             <div style={{fontSize:26,fontWeight:900,color:'#241f1a',margin:'10px 0 6px'}}>{room.name}</div>
             <div style={{fontSize:14,lineHeight:1.5,color:'#6f665e'}}>{room.description}</div>
             <div style={{marginTop:'auto',paddingTop:16,fontWeight:900,color:'#241f1a'}}>Open workspace →</div>
           </button>)}
-          <div style={{gridColumn:'1 / -1',padding:18,borderRadius:18,border:'1px dashed #bcb1a5',color:'#6f665e',background:'rgba(255,255,255,.55)',fontSize:13,lineHeight:1.5}}>
-            More sections—balconies, bedrooms, living and dining—can be activated later without changing the room-workspace structure.
-          </div>
+          <div style={{gridColumn:'1 / -1',padding:18,borderRadius:18,border:'1px dashed #bcb1a5',color:'#6f665e',background:'rgba(255,255,255,.55)',fontSize:13,lineHeight:1.5}}>Use the whole-home view for orientation, then open a room for its current design details.</div>
         </aside>
       </div>
     </div>
@@ -93,25 +132,39 @@ function WholeHome({onOpen}){
 }
 
 function StudyWorkspace(){
-  const topics=['Room purpose','Desk and seating','Storage','Lighting','Electrical points','Materials and mood']
-  return <main style={{minHeight:'calc(100vh - 68px)',background:'#eef3f6',padding:'clamp(24px,5vw,64px) clamp(14px,4vw,40px)'}}>
-    <div style={{maxWidth:1100,margin:'0 auto'}}>
-      <div style={{display:'inline-flex',alignItems:'center',gap:8,background:'#dbeafe',color:'#1d4ed8',padding:'7px 11px',borderRadius:999,fontSize:12,fontWeight:900}}>NEW ROOM WORKSPACE</div>
-      <h1 style={{fontSize:'clamp(38px,7vw,76px)',letterSpacing:'-.05em',margin:'14px 0 8px',color:'#172033'}}>Study</h1>
-      <p style={{fontSize:19,lineHeight:1.55,maxWidth:760,color:'#566174'}}>The floor-plan shell is now modelled at {STUDY_ROOM.dimensions.widthMm} × {STUDY_ROOM.dimensions.lengthMm} mm, with its lobby entry, terrace opening, balcony-office connection and closed former toilet doorway.</p>
+  return <main style={{minHeight:'calc(100vh - 68px)',background:'#eef3f6',padding:'12px clamp(14px,2vw,28px) 28px'}}>
+    <div style={{maxWidth:1900,margin:'0 auto'}}>
+      <div style={{display:'flex',alignItems:'baseline',gap:14,flexWrap:'wrap',margin:'0 0 8px'}}><h1 style={{fontSize:'clamp(28px,3vw,42px)',letterSpacing:'-.035em',margin:0,color:'#172033'}}>Study</h1><span style={{fontSize:13,color:'#64748b'}}>{STUDY_ROOM.dimensions.widthMm.toLocaleString()} × {STUDY_ROOM.dimensions.lengthMm.toLocaleString()} mm · detailed room model</span></div>
       <StudyRoom3D/>
-      <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(220px,1fr))',gap:14,marginTop:32}}>
-        {topics.map((topic,index)=><div key={topic} style={{background:'#fff',border:'1px solid #dbe3e9',borderRadius:18,padding:20,minHeight:112}}>
-          <div style={{fontSize:11,fontWeight:900,color:'#2563eb'}}>0{index+1}</div>
-          <div style={{fontSize:17,fontWeight:900,color:'#172033',marginTop:12}}>{topic}</div>
-          <div style={{fontSize:13,color:'#768191',marginTop:5}}>To define with you</div>
-        </div>)}
-      </div>
-      <div style={{marginTop:28,padding:24,borderRadius:22,background:'#172033',color:'#fff'}}>
-        <div style={{fontSize:12,fontWeight:900,letterSpacing:'.1em',color:'#93c5fd'}}>FIRST DESIGN QUESTION</div>
-        <div style={{fontSize:'clamp(20px,3vw,30px)',fontWeight:800,marginTop:8}}>How do you want to use the study day to day?</div>
-        <div style={{color:'#b9c4d3',marginTop:8}}>For example: focused work, reading, video calls, two-person use, hobbies, or guest accommodation.</div>
-      </div>
+    </div>
+  </main>
+}
+
+function EmptyShellWorkspace({initialRoomKey=null}){
+  const singleRoom=initialRoomKey?EMPTY_ROOM_SHELLS[initialRoomKey]:null
+  return <main style={{minHeight:'calc(100vh - 68px)',background:'linear-gradient(145deg,#edf7f8,#f8fafc)',padding:'12px clamp(14px,2vw,28px) 28px'}}>
+    <div style={{maxWidth:1900,margin:'0 auto'}}>
+      <div style={{display:'flex',alignItems:'baseline',gap:14,flexWrap:'wrap',margin:'0 0 8px'}}><h1 style={{fontSize:'clamp(28px,3vw,42px)',letterSpacing:'-.035em',margin:0,color:'#172033'}}>{singleRoom?singleRoom.name:'Other rooms in 3D'}</h1><span style={{fontSize:13,color:'#64748b'}}>{singleRoom?`${singleRoom.widthMm.toLocaleString()} × ${singleRoom.lengthMm.toLocaleString()} mm · ${initialRoomKey==='bedroom1'?'balcony extension concept':initialRoomKey==='lobby'||initialRoomKey==='drawing'?'furnished concept':'empty shell'}`:'Select a room'}</span></div>
+      <EmptyRoomGallery initialRoomKey={initialRoomKey||'bedroom1'} showSelector={!singleRoom}/>
+    </div>
+  </main>
+}
+
+function WholeHome3DWorkspace({onOpenRoom}){
+  return <main className="whole-home-3d-workspace" style={{minHeight:'calc(100vh - 68px)',background:'linear-gradient(145deg,#edf7f8,#f8fafc)',padding:'12px clamp(14px,2vw,28px) 28px'}}>
+    <div style={{maxWidth:1900,margin:'0 auto'}}>
+      <div style={{display:'flex',alignItems:'baseline',gap:14,flexWrap:'wrap',margin:'0 0 8px'}}><h1 style={{fontSize:'clamp(28px,3vw,42px)',letterSpacing:'-.035em',margin:0,color:'#172033'}}>Whole home 3D</h1><span style={{fontSize:13,color:'#64748b'}}>A501 floor-plan overview</span></div>
+      <WholeHome3D onOpenRoom={onOpenRoom}/>
+    </div>
+    <style>{`@media(min-width:1500px){.whole-home-3d-workspace{padding-left:280px!important}}`}</style>
+  </main>
+}
+
+function EntryWorkspace(){
+  return <main style={{minHeight:'calc(100vh - 68px)',background:'linear-gradient(145deg,#f7f1e9,#eef3f6)',padding:'12px clamp(14px,2vw,28px) 28px'}}>
+    <div style={{maxWidth:1900,margin:'0 auto'}}>
+      <div style={{display:'flex',alignItems:'baseline',gap:14,flexWrap:'wrap',margin:'0 0 8px'}}><h1 style={{fontSize:'clamp(28px,3vw,42px)',letterSpacing:'-.035em',margin:0,color:'#241f1a'}}>Main entry</h1><span style={{fontSize:13,color:'#6f665e'}}>Northwest approach and right turn into the home</span></div>
+      <EntryGallery3D/>
     </div>
   </main>
 }
@@ -123,14 +176,11 @@ function BalconyWorkspace(){
     ['Vertical storage','Wall-mounted shelves and closed overhead storage use height without consuming floor area.'],
     ['Comfort layer','Glare control, ventilation, task lighting and acoustic treatment make the narrow space usable for long sessions.'],
   ]
-  return <main style={{minHeight:'calc(100vh - 68px)',background:'linear-gradient(145deg,#f5f3ff,#f7fee7)',padding:'clamp(24px,5vw,64px) clamp(14px,4vw,40px)'}}>
-    <div style={{maxWidth:1100,margin:'0 auto'}}>
-      <div style={{fontSize:12,fontWeight:900,letterSpacing:'.12em',color:'#7c3aed'}}>STUDY-ADJACENT SPACE</div>
-      <h1 style={{fontSize:'clamp(36px,7vw,72px)',letterSpacing:'-.05em',margin:'10px 0 8px',color:'#231942'}}>Balcony home office</h1>
-      <p style={{fontSize:19,lineHeight:1.55,maxWidth:780,color:'#5f5870'}}>The active design area is the narrow east-side balcony, approximately 1200 × 2623 mm. The immediate goal is a dedicated one-person office—not a redesign of the whole study.</p>
-
+  return <main style={{minHeight:'calc(100vh - 68px)',background:'linear-gradient(145deg,#f5f3ff,#f7fee7)',padding:'12px clamp(14px,2vw,28px) 28px'}}>
+    <div style={{maxWidth:1900,margin:'0 auto'}}>
+      <div style={{display:'flex',alignItems:'baseline',gap:14,flexWrap:'wrap',margin:'0 0 8px'}}><h1 style={{fontSize:'clamp(28px,3vw,42px)',letterSpacing:'-.035em',margin:0,color:'#231942'}}>Balcony home office</h1><span style={{fontSize:13,color:'#6b6477'}}>1,200 × 2,623 mm · detailed workspace</span></div>
       <BalconyOffice3D/>
-
+      <details style={{marginTop:16,background:'rgba(255,255,255,.72)',border:'1px solid #ded8ea',borderRadius:16,padding:'12px 16px'}}><summary style={{cursor:'pointer',fontWeight:900,color:'#231942'}}>Design notes and equipment schedule</summary>
       <div style={{display:'grid',gridTemplateColumns:'minmax(240px,.7fr) minmax(0,1.3fr)',gap:18,marginTop:30}} className="balcony-design-grid">
         <section style={{background:'#231942',color:'#fff',borderRadius:22,padding:24,minHeight:340,position:'relative',overflow:'hidden'}}>
           <div style={{position:'absolute',inset:20,border:'2px solid rgba(255,255,255,.32)',borderRadius:12}}/>
@@ -160,6 +210,7 @@ function BalconyWorkspace(){
         <div style={{padding:18,borderRadius:16,background:'#fff',border:'1px solid #ded8ea',color:'#5f5870',fontSize:14}}><b style={{color:'#231942'}}>Equipment inventory:</b><ul style={{margin:'8px 0 0',paddingLeft:20}}>{office.equipment.inventory.map((item,index)=><li key={`${item.category}-${index}`} style={{marginBottom:5}}><b>{item.category}:</b> {item.make} {item.model} — {item.dimensions} <span style={{color:'#7c7288'}}>({item.status})</span></li>)}</ul></div>
         <div style={{padding:18,borderRadius:16,background:'#fff',border:'1px solid #ded8ea',color:'#5f5870',fontSize:14}}><b style={{color:'#231942'}}>Floor-plan note:</b> close the former toilet-to-study doorway. The toilet keeps a single entrance from the drawing-room side. After the balcony enclosure and desk orientation are confirmed, the edited DXF copy can show the exact workstation, storage, lighting and electrical points.</div>
       </div>
+      </details>
     </div>
     <style>{`@media(max-width:780px){.balcony-design-grid{grid-template-columns:1fr!important}}`}</style>
   </main>
@@ -167,12 +218,18 @@ function BalconyWorkspace(){
 
 export default function HomeApp(){
   const [section,setSection]=useState('home')
+  useEffect(()=>{window.scrollTo({top:0,left:0,behavior:'auto'})},[section])
   return <>
-    <HomeHeader section={section} onHome={()=>setSection('home')}/>
+    <HomeHeader section={section} onHome={()=>setSection('home')} onOpen3D={()=>setSection('whole3d')}/>
+    {section!=='home'&&section!=='dxf'&&<MiniFloorNavigator section={section} onOpen={setSection}/>}
     {section==='home'&&<WholeHome onOpen={setSection}/>} 
     {section==='kitchen'&&<KitchenConfigurator/>}
     {section==='study'&&<StudyWorkspace/>}
     {section==='balcony'&&<BalconyWorkspace/>}
+    {section==='shells'&&<EmptyShellWorkspace/>}
+    {section==='whole3d'&&<WholeHome3DWorkspace onOpenRoom={setSection}/>}
+    {rooms[section]?.shellKey&&<EmptyShellWorkspace key={section} initialRoomKey={rooms[section].shellKey}/>}
+    {section==='entry'&&<EntryWorkspace/>}
     {section==='dxf'&&<DxfWorkspace/>}
   </>
 }

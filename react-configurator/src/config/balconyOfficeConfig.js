@@ -1,4 +1,5 @@
 // Balcony office dimensions captured from the owner. Millimetres are the working CAD units.
+export const BALCONY_DESK_HEIGHT_KEY='balcony-office-desk-height-mm'
 export const BALCONY_OFFICE={
   name:'Balcony home office',
   location:'East side of the proposed study (existing Bedroom 2)',
@@ -21,7 +22,7 @@ export const BALCONY_OFFICE={
   cabinetry:{
     northWall:{
       upper:{startsAt:'ceiling',heightMm:864,depthMm:406,heaterBayWidthMm:500,routerBayWidthMm:414,routerShelfHeightAboveBayBottomMm:750,routerTopServiceClearanceMm:40,routerUnderShelfStorage:{tiers:3,shelfCount:2,shelfCenterHeightsMm:[288,585],bookTiers:2,topAccessoryTier:true,rearCableChaseMm:75,shelfThicknessMm:18,minimumBookClearanceMm:279,adjustable:true},routerAntennaPassThrough:{count:3,slotWidthMm:14,slotHeightMm:20,edge:'high northeast side panel',lining:'rubber edge grommet',orientation:'straight horizontal antennas with adjustable projection'},sourceLabels:{height:'34 in',depth:'16 in'},serviceLayout:'northwest water-heater bay with removable ventilated access; separate northeast router shelf at maximum practical height with internal socket, solid divider, three straight antenna pass-throughs, two book-height tiers and one shallow accessory tier below'},
-      lower:{position:'from floor to underside of upper cabinet',heightMm:1778,widthMm:914,depthMm:305,bookStorage:{typicalBookHeightMm:254,minimumClearHeightMm:279,columns:3,tiersBelowTabletop:3,tiersAboveTabletop:2,shelves:'adjustable on pin holes',verticalDividers:'two full-height dividers creating three book columns'},sourceLabels:{height:'5 ft 10 in fitted (approximately 6 ft)',width:'3 ft',depth:'1 ft'}},
+      lower:{position:'from floor to underside of upper cabinet',heightMm:1778,widthMm:914,depthMm:127,bookStorage:{typicalBookHeightMm:254,minimumClearHeightMm:279,columns:3,tiersBelowTabletop:3,tiersAboveTabletop:2,shelves:'adjustable on pin holes',verticalDividers:'two full-height dividers creating three book columns'},sourceLabels:{height:'5 ft 10 in fitted (approximately 6 ft)',width:'3 ft',depth:'5 in'}},
       doors:{
         upper:{type:'single lift-up flap',openDegrees:25},
         lower:{
@@ -44,7 +45,7 @@ export const BALCONY_OFFICE={
     westAdjustable:{frame:'FLEXISPOT electric sit-stand base',widthMm:2268,depthMm:762,topThicknessMm:25,minHeightMm:737,maxHeightMm:1209,defaultHeightMm:838,seatedPresetMm:838,parapetPresetMm:991,standingPresetMm:1041,capacityKg:70,noiseDbMax:50,supportedTopWidthMm:[1000,1600],supportedTopDepthMm:[500,800],frameSpanMm:1290,frameOffsetSouthMm:152,footDepthMm:229,northEndOverhangMm:641,southEndOverhangMm:337,customBeyondRatedWidth:true,southClearanceMm:0,frameConcealment:'both feet align with full-depth cabinet through-slots so the complete desk can slide out and back in'},
     southFixed:{present:false,reason:'removed so the adjustable west tabletop can continue to the south wall'},
     underCounterCabinet:{present:false,walls:[],reason:'south wall remains fully open'},
-    rearCabinet:{wall:'west',widthMm:2268,depthMm:305,topHeightMm:680,toeClearanceMm:80,bayCount:3,nominalBayWidthMm:756,northLegPocketWidthMm:229,legRemovalSlotWidthMm:120,centerClampChaseWidthMm:716,centerClampChaseDepthMm:152,centerClampChaseDropMm:140,openBays:['north ventilated PC tower bay with recessed desk-foot through-slot','centre printer pull-out bay below continuous rear monitor-clamp chase','south general-storage bay with desk-foot through-slot'],printerShelf:{widthMm:726,depthMm:280,thicknessMm:25},placement:'uniform 12-inch-deep cabinet from the north cabinet to the south end',access:'east-facing fronts toward the seated user; opening the north and south doors exposes aligned full-depth desk-foot slots',reason:'keeps storage while allowing the complete sit-stand desk to slide out for installation or service'},
+    rearCabinet:{wall:'west',widthMm:2268,depthMm:305,topHeightMm:680,toeClearanceMm:80,bayCount:3,nominalBayWidthMm:756,northLegPocketWidthMm:229,legRemovalSlotWidthMm:120,centerClampChaseWidthMm:716,centerClampChaseDepthMm:152,centerClampChaseDropMm:140,openBays:['north ventilated PC tower bay with recessed desk-foot through-slot','centre printer pull-out bay below continuous rear monitor-clamp chase','south general-storage bay with desk-foot through-slot'],printerShelf:{widthMm:726,depthMm:280,thicknessMm:25},placement:'uniform 12-inch-deep cabinet aligned with the west desktop from its north edge to the south wall',access:'east-facing fronts toward the seated user; opening the north and south doors exposes aligned full-depth desk-foot slots',reason:'keeps storage while allowing the complete sit-stand desk to slide out for installation or service'},
     pending:[],
   },
   equipment:{

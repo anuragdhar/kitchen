@@ -1,4 +1,5 @@
 export const ROOM_WIDTH = 2324
+export const KITCHEN_AUTOSAVE_KEY = 'kitchen-autosave-v4-west-wet-east-open-garage'
 export const ROOM_LENGTH = 3962 // 13ft
 export const ROOM_HEIGHT = 2700
 export const WEST_CLEAR_FROM = 0
