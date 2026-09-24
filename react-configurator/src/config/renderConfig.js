@@ -39,15 +39,15 @@ export const RENDER_CONFIG={
     fov:42,
     near:1,
     far:2000,
-    orbitTarget:[0,92,25],
-    initialPosition:[0,145,-360],
+    orbitTarget:[20,92,25],
+    initialPosition:[220,210,-500],
     presets:{
       top:{pos:[0,720,0.1],target:[0,0,0]},
       eastWall:{pos:[-330,170,80],target:[-62,96,70]},
       westWall:{pos:[330,170,80],target:[58,96,72]},
       north:{pos:[0,165,430],target:[0,110,185]},
-      south:{pos:[0,150,-360],target:[0,95,25]},
-      walkthrough:{pos:[0,145,-360],target:[0,92,25]},
+      south:{pos:[220,210,-500],target:[20,95,25]},
+      walkthrough:{pos:[220,210,-500],target:[20,92,25]},
       sink:{pos:[210,148,86],target:[38,88,82]},
       exhaust:{pos:[12,165,420],target:[8,145,238]}
     }

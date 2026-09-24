@@ -3,14 +3,21 @@ import * as THREE from 'three'
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js'
 import {RoomEnvironment} from 'three/examples/jsm/environments/RoomEnvironment.js'
 import {EMPTY_ROOM_SHELLS} from './config/roomShellConfig.js'
+import {createSeatedPoojaPerson} from './SeatedPoojaPerson.js'
+import {createPoojaPlatform} from './PoojaPlatform.js'
+import {createPoojaDoorAndInterior} from './PoojaDoorAndInterior.js'
+import WallSelectionPanel from './WallSelectionPanel.jsx'
 
 const mm=value=>value/1000
 
-export default function EmptyRoomGallery({initialRoomKey='bedroom1',showSelector=true}){
+export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView='overview',showSelector=true}){
   const [roomKey,setRoomKey]=useState(initialRoomKey)
-  const [view,setView]=useState('overview')
-  const [showSouthWall,setShowSouthWall]=useState(initialRoomKey==='lobby'||initialRoomKey==='drawing')
-  const [showFurniture,setShowFurniture]=useState(initialRoomKey==='drawing'||initialRoomKey==='lobby')
+  const [view,setView]=useState(initialView)
+  const [showSouthWall,setShowSouthWall]=useState(initialRoomKey==='lobby'||initialRoomKey==='drawing'||initialRoomKey==='bedroom1')
+  const [showFurniture,setShowFurniture]=useState(initialView!=='pooja'&&(initialRoomKey==='bedroom1'||initialRoomKey==='drawing'||initialRoomKey==='lobby'))
+  const [poojaDoorsOpen,setPoojaDoorsOpen]=useState(true)
+  const [wallSelection,setWallSelection]=useState(null)
+  const [wallNote,setWallNote]=useState('')
   const mountRef=useRef(null)
   const sceneRef=useRef(null)
   const room=EMPTY_ROOM_SHELLS[roomKey]
@@ -38,6 +45,8 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',showSelector
     const darkFrameMaterial=new THREE.MeshStandardMaterial({color:'#171a1e',metalness:.55,roughness:.28})
     const handleMaterial=new THREE.MeshStandardMaterial({color:'#b89a5c',metalness:.75,roughness:.25})
     const glassMaterial=new THREE.MeshStandardMaterial({color:'#b8e3ef',transparent:true,opacity:.42,roughness:.08,metalness:.15,side:THREE.DoubleSide,depthWrite:false})
+    const markedWallMaterial=new THREE.MeshStandardMaterial({color:'#f5ad34',roughness:.72,emissive:'#623600',emissiveIntensity:.15})
+    const wallMeshes=[]
     const addBox=(w,h,d,x,y,z,material=wallMaterial,parent=shell)=>{const mesh=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),material);mesh.position.set(x,y,z);mesh.castShadow=true;mesh.receiveShadow=true;parent.add(mesh);return mesh}
     addBox(W,.055,L,W/2,-.028,L/2,floorMaterial)
     const T=.1
@@ -48,11 +57,13 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',showSelector
       const parent=wallParent(side),height=top-bottom,center=(from+to)/2
       if(side==='north'||side==='south'){
         const z=side==='north'?0:L
-        addBox(to-from,height,T,center,(bottom+top)/2,z,wallMaterial,parent)
+        const mesh=addBox(to-from,height,T,center,(bottom+top)/2,z,wallMaterial,parent)
+        mesh.userData={wallSide:side};wallMeshes.push(mesh)
         if(bottom===0) addBox(to-from,.085,.035,center,.05,side==='north'?.055:L-.055,trimMaterial,parent)
       }else{
         const x=side==='west'?0:W
-        addBox(T,height,to-from,x,(bottom+top)/2,center,wallMaterial,parent)
+        const mesh=addBox(T,height,to-from,x,(bottom+top)/2,center,wallMaterial,parent)
+        mesh.userData={wallSide:side};wallMeshes.push(mesh)
         if(bottom===0) addBox(.035,.085,to-from,side==='west'?.055:W-.055,.05,center,trimMaterial,parent)
       }
     }
@@ -60,6 +71,8 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',showSelector
       const result=[]
       const passage=room.wallOpenings?.[side]
       if(passage) result.push({kind:'passage',from:mm(passage.fromMm),to:mm(passage.toMm),bottom:0,top:H})
+      const recess=room.furniture?.northEastRecessWardrobe
+      if(side==='north'&&recess) result.push({kind:'passage',from:W-mm(recess.fromEastMm+recess.widthMm),to:W-mm(recess.fromEastMm),bottom:0,top:H})
       for(const door of room.doors||[]) if(door.wall===side) result.push({kind:'door',from:mm(door.fromMm),to:mm(door.fromMm+door.widthMm),bottom:0,top:mm(door.heightMm)})
       for(const window of room.windows||[]) if(window.wall===side) result.push({kind:'window',from:mm(window.fromMm),to:mm(window.fromMm+window.widthMm),bottom:mm(window.bottomMm),top:mm(window.topMm),frameStyle:window.frameStyle,mullionFractions:window.mullionFractions})
       return result.sort((a,b)=>a.from-b.from)
@@ -95,6 +108,21 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',showSelector
       }
       addWallSpan(side,cursor,length)
     }
+    const northEastWardrobe=room.furniture?.northEastRecessWardrobe
+    if(northEastWardrobe){
+      const width=mm(northEastWardrobe.widthMm),depth=mm(northEastWardrobe.depthMm),height=mm(northEastWardrobe.heightMm)
+      const start=W-mm(northEastWardrobe.fromEastMm)-width
+      const body=new THREE.MeshStandardMaterial({color:'#c9b9a3',roughness:.72})
+      const door=new THREE.MeshStandardMaterial({color:'#eee8df',roughness:.58})
+      const pull=new THREE.MeshStandardMaterial({color:'#464b4b',metalness:.58,roughness:.34})
+      addBox(width,height,depth,start+width/2,height/2,-depth/2,body)
+      for(let i=0;i<northEastWardrobe.doorCount;i++){
+        const panelWidth=width/northEastWardrobe.doorCount
+        const center=start+(i+.5)*panelWidth
+        addBox(panelWidth-.018,height-.08,.035,center,height/2,.025,door)
+        addBox(.018,.32,.025,center+(i===0?panelWidth*.32:-panelWidth*.32),1.16,.06,pull)
+      }
+    }
     for(const beam of room.hangingBeams||[]){
       const from=mm(beam.fromMm),to=mm(beam.toMm),drop=mm(beam.dropMm),width=mm(beam.widthMm)
       if(beam.wall==='east'||beam.wall==='west') addBox(width,drop,to-from,beam.wall==='east'?W:0,H-drop/2,(from+to)/2)
@@ -115,35 +143,51 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',showSelector
       addBox(depth-.08,H-rail-.08,.018,W+depth/2,(H+rail)/2,0,balconyGlass)
       for(const x of [W+.035,W+depth/2,W+depth-.035]) addBox(.05,H-rail,.04,x,(H+rail)/2,0,aluminium)
       for(const y of [rail+.015,H-.035]) addBox(depth,.04,.045,W+depth/2,y,0,aluminium)
-      addBox(depth,H,.10,W+depth/2,H/2,length)
+      const wardrobe=balcony.poojaWallWardrobe
+      if(wardrobe){
+        const cabinetWidth=mm(wardrobe.widthMm),cabinetDepth=mm(wardrobe.depthMm),cabinetHeight=mm(wardrobe.heightMm)
+        const cabinetZ=length-mm(wardrobe.northShiftMm||0),frontZ=cabinetZ+.018
+        const body=new THREE.MeshStandardMaterial({color:'#a78059',roughness:.7})
+        const doors=new THREE.MeshStandardMaterial({color:'#dce6dd',roughness:.55})
+        const pulls=new THREE.MeshStandardMaterial({color:'#384f49',metalness:.45,roughness:.38})
+        addBox(cabinetWidth,cabinetHeight,cabinetDepth,W+cabinetWidth/2,cabinetHeight/2,cabinetZ+cabinetDepth/2,body)
+        for(let i=0;i<wardrobe.doorCount;i++){
+          const x=W+cabinetWidth*(i+.5)/wardrobe.doorCount
+          const front=addBox(cabinetWidth/wardrobe.doorCount-.018,cabinetHeight-.11,.03,x,(cabinetHeight+.04)/2,frontZ,doors)
+          front.userData={wallSide:'south',balconyPoojaWall:true};wallMeshes.push(front)
+          addBox(.018,.31,.022,x+(i===0?cabinetWidth*.17:-cabinetWidth*.17),1.15,frontZ-.027,pulls)
+        }
+      }else{
+        const poojaSideWall=addBox(depth,H,.10,W+depth/2,H/2,length)
+        poojaSideWall.userData={wallSide:'south',balconyPoojaWall:true};wallMeshes.push(poojaSideWall)
+      }
     }
+    let poojaDoors=null
     if(room.poojaAlcove){
       const alcove=room.poojaAlcove,from=mm(alcove.fromMm),width=mm(alcove.widthMm),depth=mm(alcove.depthMm),center=from+width/2
       const oak=new THREE.MeshStandardMaterial({color:'#a98259',roughness:.68})
       const stone=new THREE.MeshStandardMaterial({color:'#f2e9d9',roughness:.8})
       const brass=new THREE.MeshStandardMaterial({color:'#b99955',metalness:.68,roughness:.28})
-      const frostedGlass=new THREE.MeshStandardMaterial({color:'#e8ddd0',transparent:true,opacity:.32,roughness:.35,side:THREE.DoubleSide,depthWrite:false})
       // Recess the prayer niche one metre into the balcony, beyond the former window line.
       addBox(width,.055,depth,center,-.028,-depth/2,stone)
       addBox(width,H,.09,center,H/2,-depth,stone)
-      for(const x of [from,from+width]){
-        addBox(.07,1.05,depth,x,.525,-depth/2,oak)
-        addBox(.018,H-1.05,depth,x,(H+1.05)/2,-depth/2,frostedGlass)
-        addBox(.055,H,.055,x,H/2,0,oak)
-      }
+      for(const x of [from,from+width])addBox(.07,H,depth,x,H/2,-depth/2,stone)
       addBox(width,.06,.09,center,H-.03,0,oak)
       addBox(width,.025,.12,center,.012,0,stone)
-      // One sliding screen is parked over the left half, leaving a clear entrance.
-      addBox(width/2-.035,H-.14,.018,from+width/4,H/2,.015,frostedGlass)
-      addBox(.022,.23,.04,center-.10,1.05,.04,brass)
-      addBox(.97,.38,.34,center,.27,-depth+.21,oak)
-      addBox(1.03,.035,.43,center,.48,-depth+.22,stone)
-      addBox(.96,1.22,.027,center,1.38,-depth+.07,oak)
-      addBox(.88,.04,.28,center,.99,-depth+.25,stone)
-      for(const x of [center-.36,center+.36]) addBox(.018,1.12,.032,x,1.45,-depth+.095,brass)
-      const arch=new THREE.Mesh(new THREE.TorusGeometry(.33,.018,8,40,Math.PI),brass)
-      arch.position.set(center,1.60,-depth+.10);shell.add(arch)
-      const altarLight=new THREE.PointLight('#ffe6b4',1.2,2.2);altarLight.position.set(center,2.32,-depth+.42);scene.add(altarLight)
+      if(alcove.altarVisible!==false){
+        addBox(.97,.38,.34,center,.27,-depth+.21,oak)
+        addBox(1.03,.035,.43,center,.48,-depth+.22,stone)
+        addBox(.96,1.22,.027,center,1.38,-depth+.07,oak)
+        addBox(.88,.04,.28,center,.99,-depth+.25,stone)
+        for(const x of [center-.36,center+.36]) addBox(.018,1.12,.032,x,1.45,-depth+.095,brass)
+        const arch=new THREE.Mesh(new THREE.TorusGeometry(.33,.018,8,40,Math.PI),brass)
+        arch.position.set(center,1.60,-depth+.10);shell.add(arch)
+        const altarLight=new THREE.PointLight('#ffe6b4',1.2,2.2);altarLight.position.set(center,2.32,-depth+.42);scene.add(altarLight)
+      }
+      shell.add(createPoojaPlatform(alcove))
+      shell.add(createSeatedPoojaPerson(alcove))
+      poojaDoors=createPoojaDoorAndInterior(alcove,room.heightMm)
+      shell.add(poojaDoors)
     }
     const furniture=new THREE.Group();shell.add(furniture)
     if(roomKey==='drawing'){
@@ -170,6 +214,58 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',showSelector
       addBox(seatW,.39,seatD,seatX,.195,seatZ,wood,furniture)
       addBox(seatW-.03,.06,seatD-.02,seatX,.42,seatZ,cushion,furniture)
       for(const x of [seatX-.67,seatX,seatX+.67]) addBox(.48,.04,.16,x,.47,seatZ+.125,upholstery,furniture)
+    }else if(roomKey==='bedroom1'&&room.furniture?.bed){
+      const bed=room.furniture.bed
+      const bedWest=mm(bed.fromWestMm),bedSouth=L-mm(bed.fromSouthMm),bedLength=mm(bed.lengthMm),bedWidth=mm(bed.widthMm)
+      const bedCenterX=bedWest+bedLength/2,bedCenterZ=bedSouth-bedWidth/2
+      const bedFrame=new THREE.MeshStandardMaterial({color:'#806047',roughness:.68})
+      const bedUpholstery=new THREE.MeshStandardMaterial({color:'#efe8dc',roughness:.94})
+      const bedCover=new THREE.MeshStandardMaterial({color:'#b7c7bd',roughness:.96})
+      const pillowMaterial=new THREE.MeshStandardMaterial({color:'#fbf8f1',roughness:.98})
+      const headboardMaterial=new THREE.MeshStandardMaterial({color:'#9a7656',roughness:.74})
+      const baseHeight=.25,mattressThickness=.19
+      // Bed head is at the east/south end; its 1829 mm length follows the south wall westward.
+      addBox(bedLength,baseHeight,bedWidth,bedCenterX,baseHeight/2,bedCenterZ,bedFrame,furniture)
+      addBox(bedLength-.035,mattressThickness,bedWidth-.035,bedCenterX,baseHeight+mattressThickness/2,bedCenterZ,bedUpholstery,furniture)
+      addBox(bedLength-.470,.065,bedWidth-.100,bedWest+(bedLength-.470)/2,baseHeight+mattressThickness+.025,bedCenterZ,bedCover,furniture)
+      addBox(.085,.92,bedWidth,bedWest+bedLength-.043,.71,bedCenterZ,headboardMaterial,furniture)
+      for(const offset of [-bedWidth*.23,bedWidth*.23]){
+        addBox(.38,.08,.61,bedWest+bedLength-.26,.25+ mattressThickness+.07,bedCenterZ+offset,pillowMaterial,furniture)
+      }
+      const wardrobe=room.furniture.wardrobe
+      if(wardrobe){
+        const depth=mm(wardrobe.depthMm),length=mm(wardrobe.lengthMm),height=mm(wardrobe.heightMm)
+        const start=mm(wardrobe.fromNorthMm),center=start+length/2,doors=wardrobe.doorCount||3
+        const body=new THREE.MeshStandardMaterial({color:'#d0c0aa',roughness:.76})
+        const front=new THREE.MeshStandardMaterial({color:'#e9e1d4',roughness:.66})
+        const handle=new THREE.MeshStandardMaterial({color:'#373b3c',metalness:.62,roughness:.31})
+        addBox(depth,height,length,depth/2,height/2,center,body,furniture)
+        for(let i=0;i<doors;i++){
+          const panelLength=length/doors-.012,z=start+(i+.5)*length/doors
+          addBox(.025,height-.14,panelLength,depth+.014,(height+.09)/2,z,front,furniture)
+          addBox(.018,.25,.018,depth+.034,1.15,z+panelLength*.35,handle,furniture)
+        }
+        addBox(depth+.035,.09,length,depth/2,.045,center,body,furniture)
+      }
+      const balconyFurniture=room.balconyExtension?.furniture
+      if(balconyFurniture){
+        const table=balconyFurniture.table,chair=balconyFurniture.chair
+        const tableX=W+mm(table.centerFromBedroomWallMm),tableZ=mm(table.centerFromNorthMm)
+        const chairX=W+mm(chair.centerFromBedroomWallMm),chairZ=mm(chair.centerFromNorthMm)
+        const tabletop=new THREE.MeshStandardMaterial({color:'#b28a60',roughness:.67})
+        const frame=new THREE.MeshStandardMaterial({color:'#353b3d',metalness:.58,roughness:.34})
+        const seat=new THREE.MeshStandardMaterial({color:'#d9cec1',roughness:.92})
+        const tw=mm(table.widthMm),td=mm(table.depthMm),th=mm(table.heightMm)
+        // The work surface runs north-south beside the east glazing.
+        addBox(td,.04,tw,tableX,th,tableZ,tabletop,furniture)
+        for(const dx of [-td/2+.055,td/2-.055])for(const dz of [-tw/2+.055,tw/2-.055])
+          addBox(.03,th-.04,.03,tableX+dx,(th-.04)/2,tableZ+dz,frame,furniture)
+        const cw=mm(chair.widthMm),cd=mm(chair.depthMm),seatH=mm(chair.seatHeightMm),backH=mm(chair.backHeightMm)
+        addBox(cd,.07,cw,chairX,seatH,chairZ,seat,furniture)
+        for(const dx of [-cd/2+.06,cd/2-.06])for(const dz of [-cw/2+.06,cw/2-.06])
+          addBox(.028,seatH-.04,.028,chairX+dx,(seatH-.04)/2,chairZ+dz,frame,furniture)
+        addBox(.05,backH-seatH,cw,chairX-cd/2+.03,(backH+seatH)/2,chairZ,seat,furniture)
+      }
     }else if(roomKey==='lobby'){
       const {diningTable,chairRowsZmm,chairOffsetXmm}=room.furniture
       const tableX=mm(diningTable.centerXmm),tableZ=mm(diningTable.centerZmm)
@@ -202,41 +298,74 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',showSelector
     const sun=new THREE.DirectionalLight('#fff4dc',1.65);sun.position.set(-2,6,4);sun.castShadow=true;scene.add(sun)
     controls.target.set(W/2,H*.38,L/2)
     const setCamera=key=>{
+      camera.fov=key==='poojaDoor'?54:46;camera.updateProjectionMatrix()
       if(key==='top'){camera.position.set((W+extensionDepth)/2,span*1.22,L/2-.01);camera.up.set(0,0,1);controls.target.set((W+extensionDepth)/2,0,L/2)}
-      else if(key==='pooja'&&room.poojaAlcove){const center=mm(room.poojaAlcove.fromMm+room.poojaAlcove.widthMm/2);camera.position.set(center-.75,1.82,2.85);camera.up.set(0,1,0);controls.target.set(center,1.28,-.55)}
+      else if(key==='poojaDoor'&&room.poojaAlcove){const center=mm(room.poojaAlcove.fromMm+room.poojaAlcove.widthMm/2);camera.position.set(center,1.42,3.10);camera.up.set(0,1,0);controls.target.set(center,1.20,0)}
+      else if(key==='pooja'&&room.poojaAlcove){const alcove=room.poojaAlcove,center=mm(alcove.fromMm+alcove.widthMm/2);camera.position.set(center+.55,1.48,2.55);camera.up.set(0,1,0);controls.target.set(mm(alcove.fromMm)+.30,.82,-.55)}
       else if(roomKey==='lobby'){camera.position.set(W+span*.36,H*2.5,L+span*.42);camera.up.set(0,1,0);controls.target.set(W/2,H*.30,L/2)}
       else if(roomKey==='bedroom1'){camera.position.set(W+extensionDepth+span*.42,H*2.25,-span*.45);camera.up.set(0,1,0);controls.target.set((W+extensionDepth)/2,H*.40,L/2)}
       else{camera.position.set(openWest?-span*.46:W+span*.46,H*2.05,-span*.42);camera.up.set(0,1,0);controls.target.set(W/2,H*.42,L/2)}
       camera.lookAt(controls.target);controls.update()
     }
-    setCamera('overview')
+    setCamera(initialView)
     const resize=()=>{const width=mount.clientWidth,height=mount.clientHeight;renderer.setSize(width,height,false);camera.aspect=width/height;camera.updateProjectionMatrix()}
     const observer=new ResizeObserver(resize);observer.observe(mount);resize()
+    const raycaster=new THREE.Raycaster(),pointer=new THREE.Vector2()
+    let pressedAt=null,markedMesh=null,markedMaterial=null
+    const clearMark=()=>{if(markedMesh)markedMesh.material=markedMaterial;markedMesh=null;markedMaterial=null;setWallSelection(null);setWallNote('')}
+    const onPointerDown=event=>{pressedAt={x:event.clientX,y:event.clientY}}
+    const onPointerUp=event=>{
+      if(!pressedAt||Math.hypot(event.clientX-pressedAt.x,event.clientY-pressedAt.y)>6){pressedAt=null;return}
+      pressedAt=null
+      const rect=renderer.domElement.getBoundingClientRect()
+      pointer.set((event.clientX-rect.left)/rect.width*2-1,-(event.clientY-rect.top)/rect.height*2+1)
+      raycaster.setFromCamera(pointer,camera)
+      const hit=raycaster.intersectObjects(wallMeshes.filter(mesh=>mesh.visible&&mesh.parent.visible),false)[0]
+      if(!hit)return
+      if(markedMesh)markedMesh.material=markedMaterial
+      markedMesh=hit.object;markedMaterial=markedMesh.material;markedMesh.material=markedWallMaterial
+      const side=markedMesh.userData.wallSide
+      if(markedMesh.userData.balconyPoojaWall){
+        const distance=Math.max(0,Math.round((hit.point.x-W)*1000/10)*10)
+        setWallSelection({label:`Bedroom 1 balcony — wall between balcony and Pooja Ghar, about ${distance.toLocaleString()} mm from the Bedroom 1 east wall, beside the balcony window`})
+      }else{
+        const distance=Math.round((side==='north'||side==='south'?hit.point.x:hit.point.z)*1000/10)*10
+        const reference=side==='north'||side==='south'?'west':'north'
+        setWallSelection({label:`${room.name} — ${side} wall, about ${distance.toLocaleString()} mm from the ${reference} corner`})
+      }
+      setWallNote('')
+    }
+    renderer.domElement.addEventListener('pointerdown',onPointerDown)
+    renderer.domElement.addEventListener('pointerup',onPointerUp)
     let raf=0;const render=()=>{controls.update();renderer.render(scene,camera);raf=requestAnimationFrame(render)};render()
-    sceneRef.current={setCamera,setSouthVisible:value=>{southWall.visible=value},setFurnitureVisible:value=>{furniture.visible=value}}
-    return()=>{cancelAnimationFrame(raf);observer.disconnect();controls.dispose();labelTextures.forEach(texture=>texture.dispose());shell.traverse(object=>{object.geometry?.dispose?.();if(Array.isArray(object.material))object.material.forEach(material=>material.dispose());else object.material?.dispose?.()});environment.dispose();pmrem.dispose();renderer.dispose();renderer.domElement.remove();sceneRef.current=null}
-  },[roomKey])
+    sceneRef.current={setCamera,setSouthVisible:value=>{southWall.visible=value},setFurnitureVisible:value=>{furniture.visible=value},setPoojaDoorsOpen:value=>{poojaDoors?.userData.setDoorsOpen(value)},clearMark}
+    return()=>{cancelAnimationFrame(raf);observer.disconnect();renderer.domElement.removeEventListener('pointerdown',onPointerDown);renderer.domElement.removeEventListener('pointerup',onPointerUp);controls.dispose();labelTextures.forEach(texture=>texture.dispose());shell.traverse(object=>{object.geometry?.dispose?.();if(Array.isArray(object.material))object.material.forEach(material=>material.dispose());else object.material?.dispose?.()});markedWallMaterial.dispose();environment.dispose();pmrem.dispose();renderer.dispose();renderer.domElement.remove();sceneRef.current=null}
+  },[roomKey,initialView])
 
   useEffect(()=>{sceneRef.current?.setCamera(view)},[view,roomKey])
   useEffect(()=>{sceneRef.current?.setSouthVisible(showSouthWall)},[showSouthWall,roomKey])
   useEffect(()=>{sceneRef.current?.setFurnitureVisible(showFurniture)},[showFurniture,roomKey])
+  useEffect(()=>{sceneRef.current?.setPoojaDoorsOpen(poojaDoorsOpen)},[poojaDoorsOpen,roomKey])
 
   return <>
     {showSelector&&<div style={{display:'flex',gap:8,flexWrap:'wrap',marginBottom:14}}>
-      {Object.entries(EMPTY_ROOM_SHELLS).map(([key,item])=><button key={key} onClick={()=>{setRoomKey(key);setView('overview');setShowSouthWall(key==='lobby'||key==='drawing');setShowFurniture(key==='drawing'||key==='lobby')}} style={{...buttonStyle(roomKey===key),padding:'9px 13px'}}>{item.name}</button>)}
+      {Object.entries(EMPTY_ROOM_SHELLS).map(([key,item])=><button key={key} onClick={()=>{setRoomKey(key);setView('overview');setShowSouthWall(key==='lobby'||key==='drawing'||key==='bedroom1');setShowFurniture(key==='bedroom1'||key==='drawing'||key==='lobby');setWallSelection(null);setWallNote('')}} style={{...buttonStyle(roomKey===key),padding:'9px 13px'}}>{item.name}</button>)}
     </div>}
     <section style={{background:'#fff',border:'1px solid #dbe3e9',borderRadius:22,overflow:'hidden',boxShadow:'0 16px 42px rgba(23,32,51,.1)'}}>
     <div style={{padding:'14px 16px',display:'flex',gap:10,alignItems:'center',justifyContent:'space-between',flexWrap:'wrap',borderBottom:'1px solid #e2e8f0'}}>
       <div><b style={{fontSize:18,color:'#172033'}}>{room.name}</b><div style={{fontSize:12,color:'#64748b',marginTop:3}}>{room.widthMm.toLocaleString()} × {room.lengthMm.toLocaleString()} mm · provisional {room.heightMm.toLocaleString()} mm ceiling datum</div></div>
       <div style={{display:'flex',gap:7,flexWrap:'wrap'}}>
-        <button onClick={()=>setView('overview')} style={buttonStyle(view==='overview')}>Overview</button>
-        <button onClick={()=>setView('top')} style={buttonStyle(view==='top')}>Top</button>
-        {room.poojaAlcove&&<button onClick={()=>setView('pooja')} style={buttonStyle(view==='pooja')}>Pooja view</button>}
+        <button onClick={()=>setView('overview')} aria-pressed={view==='overview'} style={buttonStyle(view==='overview')}>Overview</button>
+        <button onClick={()=>setView('top')} aria-pressed={view==='top'} style={buttonStyle(view==='top')}>Top</button>
+        {room.poojaAlcove&&<button onClick={()=>{setView('pooja');setPoojaDoorsOpen(true)}} aria-pressed={view==='pooja'} style={buttonStyle(view==='pooja')}>Pooja view</button>}
+        {room.poojaAlcove&&<button onClick={()=>{setView('poojaDoor');setPoojaDoorsOpen(false)}} aria-pressed={view==='poojaDoor'} style={buttonStyle(view==='poojaDoor')}>Door front</button>}
+        {room.poojaAlcove&&<button onClick={()=>setPoojaDoorsOpen(value=>!value)} style={buttonStyle(poojaDoorsOpen)}>{poojaDoorsOpen?'Close Pooja doors':'Open Pooja doors'}</button>}
         <button onClick={()=>setShowSouthWall(value=>!value)} style={buttonStyle(showSouthWall)}>{showSouthWall?'Hide south wall':'Show south wall'}</button>
-        {(roomKey==='drawing'||roomKey==='lobby')&&<button onClick={()=>setShowFurniture(value=>!value)} style={buttonStyle(showFurniture)}>{showFurniture?'Hide furniture':'Show furniture'}</button>}
+        {(roomKey==='bedroom1'||roomKey==='drawing'||roomKey==='lobby')&&<button onClick={()=>setShowFurniture(value=>!value)} style={buttonStyle(showFurniture)}>{showFurniture?'Hide furniture':'Show furniture'}</button>}
       </div>
     </div>
     <div ref={mountRef} style={{height:'clamp(620px,82vh,1100px)',width:'100%'}}/>
+    <WallSelectionPanel selection={wallSelection} note={wallNote} onNoteChange={setWallNote} onClear={()=>sceneRef.current?.clearMark()}/>
     </section>
   </>
 }

@@ -3,6 +3,7 @@ export const STUDY_ROOM={
   sourceRoom:'Existing Bed Room-2',
   dimensions:{widthMm:3239,lengthMm:4908,heightMm:2700,heightStatus:'provisional; verify on site'},
   orientation:{north:'toward lobby side in the current 3D view',east:'former toilet-door side',south:'double-height terrace side',west:'balcony-office side'},
+  southTerrace:{depthMm:2593,railingHeightMm:1050,style:'open metal railing on west, south, and east edges'},
   openings:{
     mainDoor:{wall:'east',widthMm:900,heightMm:2100,offsetFromNorthMm:0,label:'Main study entry from the northeast corner, extending south along the east wall'},
     terraceDoor:{wall:'south',widthMm:1000,heightMm:2200,offsetFromWestMm:2039,label:'Glazed opening at the southeast side to the double-height terrace'},

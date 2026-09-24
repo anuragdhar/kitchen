@@ -1,5 +1,5 @@
 import React,{useState,useEffect,useRef,useMemo} from 'react'
-import {KITCHEN,EAST_INIT,WEST_INIT,KITCHEN_AUTOSAVE_KEY, LAYOUT_MODEL, MODULE_WIDTHS, MODULE_DEFS, PLINTH_HEIGHT, COUNTER_THICKNESS, BACKSPLASH_HEIGHT, autoFillModules} from './config/kitchenConfig.js'
+import {KITCHEN,KITCHEN_REFRIGERATOR,EAST_INIT,WEST_INIT,AIRY_WEST_INIT,EAST_TOP_UPPER_DEPTH,WEST_TOP_UPPER_DEPTH,KITCHEN_AUTOSAVE_KEY, LAYOUT_MODEL, MODULE_WIDTHS, MODULE_DEFS, PLINTH_HEIGHT, COUNTER_THICKNESS, BACKSPLASH_HEIGHT, autoFillModules} from './config/kitchenConfig.js'
 import { DEFAULT_MATERIALS, VIEW_STYLE, HEIGHT_GUIDES, RENDER_CONFIG } from './config/renderConfig.js'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
@@ -8,7 +8,7 @@ import JSZip from 'jszip'
 import { createPbrMaterial } from './render/materialFactory.js'
 
 const LS_KEY=KITCHEN_AUTOSAVE_KEY
-const VERSION_KEYS={ current:'kitchen_version_Rule9', A:'kitchen_version_OptionA', B:'kitchen_version_OptionB' }
+const VERSION_KEYS={ current:'kitchen_version_Rule9', A:'kitchen_version_OptionA', B:'kitchen_version_OptionB', C:'kitchen_version_OptionC' }
 
 const isActiveLayoutItem=(it)=>it && !it.hidden && it.id!=='westGarage' && (it.w??0)>0 && (it.d??0)>0
 const isCabinetLikeItem=(it)=>isActiveLayoutItem(it) && !String(it.id||'').startsWith('powerPoint')
@@ -40,21 +40,21 @@ export default function App(){
   const migrateEastItems=(items=[])=>{
     const list=fixList(items,EAST_INIT).filter(it=>eastIds.includes(it.id))
     const current=byId(list)
-    const hasNewShape= current.applianceGarage?.y===0 && current.microwave?.y===0 && current.gas?.y===1200
+    const hasNewShape= current.applianceGarage?.y===0 && current.microwave?.y===0 && [1200,1350].includes(current.gas?.y)
     if(hasNewShape) return list.length? list : EAST_INIT
     return EAST_INIT
   }
   const migrateWestItems=(items=[])=>{
     const list=fixList(items,WEST_INIT).filter(it=>westIds.includes(it.id))
-    const current=byId(list)
-    const hasNewWest= current.washing?.y===610 && current.sink?.y===1210 && current.dishwasher?.y===1972
-    if(hasNewWest) return list.length? list : WEST_INIT
+    const ids=new Set(list.map(it=>it.id))
+    if(['washing','sink','dishwasher','shaft'].every(id=>ids.has(id)))
+      return list.map(it=>it.id==='shaft'?{...it,y:KITCHEN.shaft.y,w:KITCHEN.shaft.l,d:KITCHEN.shaft.w}:it)
     return WEST_INIT
   }
   const eastRunLength=KITCHEN.length
   const westRunLength=KITCHEN.length-KITCHEN.westGap.to
   const [east,setEast]=useState(()=>migrateEastItems(EAST_INIT)); const [west,setWest]=useState(()=>migrateWestItems(WEST_INIT))
-  const [view,setView]=useState('top'); const [drag,setDrag]=useState(null)
+  const [view,setView]=useState('three'); const [drag,setDrag]=useState(null)
   const [grid,setGrid]=useState(0)
   const [hide3DObstructions,setHide3DObstructions]=useState(true)
   const [unit,setUnit]=useState('mm')
@@ -64,6 +64,8 @@ export default function App(){
   const [interactionMode,setInteractionMode]=useState('cabinet') // 'cabinet' | 'dimension' | 'measure' | 'transparent'
   const [showHeightGuides,setShowHeightGuides]=useState(false)
   const [materials,setMaterials]=useState(()=>normalizeKitchenMaterials())
+  const [eastTopUpperDepth,setEastTopUpperDepth]=useState(EAST_TOP_UPPER_DEPTH)
+  const [westTopUpperDepth,setWestTopUpperDepth]=useState(WEST_TOP_UPPER_DEPTH)
   const [eastModules,setEastModules]=useState(()=>autoFillModules(eastRunLength))
   const [westModules,setWestModules]=useState(()=>autoFillModules(westRunLength))
   const [importWarning,setImportWarning]=useState('')
@@ -98,7 +100,7 @@ export default function App(){
   const snapVal=(v)=> grid ? Math.round(v/grid)*grid : v
   const fmt=(v)=> unit==='mm' ? `${Math.round(v)} mm` : `${(v/25.4).toFixed(1)}"` 
   const fmtPair=(a,b)=> `${fmt(a)} x ${fmt(b)}`
-  const planLabel=(id)=>({gas:'Gas 700 y1200 east + hidden chimney',microwave:'Open microwave y0 east above backsplash',applianceGarage:'Open appliance garage y0 with food processor',eastBacksplashSlider:'4in east backsplash slider storage',dishwasher:'Open dishwasher y1972 west',washing:'Open washing y610 west',geyser:'Geyser hidden',geyserEastTop:'Geyser east top hidden',sink:'Sink 30\" (762) x 18\" (457) y1210 west',waterpurifier:'Purifier removed from active run',sinkUpperDishRack:'Vast utensil storage y1210 above sink',shaft:'Shaft y3124 inside NW',westSixInchSlider:'6in west slider storage y2572',westGarage:'West garage hidden',trashCan:'Trash pull-out hidden',powerPointWest1:'Power point west y1650',powerPointWest2:'Extra charging west y800',powerPointEast1:'Power point east y1650',powerPointEast2:'Extra charging east y2800'}[id]||id)
+  const planLabel=(id)=>({gas:'Gas 700 east + hidden chimney',microwave:'Open microwave east above backsplash',applianceGarage:'Open appliance garage with food processor',eastBacksplashSlider:'4in east backsplash slider storage',dishwasher:'Open dishwasher west',washing:'Open washing machine west',geyser:'Geyser hidden',geyserEastTop:'Geyser hidden',sink:'Sink 30\" (762) x 18\" (457) west',waterpurifier:'Purifier removed from active run',sinkUpperDishRack:'Utensil storage above sink',shaft:'Shaft inside NW',westSixInchSlider:'6in west slider storage',westGarage:'West garage hidden',trashCan:'Trash pull-out hidden',powerPointWest1:'Power point west',powerPointWest2:'Extra power point west',powerPointEast1:'Power point east',powerPointEast2:'Extra power point east'}[id]||id)
   const selectedItem=[...activeEast,...activeWest].find(it=>it.id===selectedId) || null
   const measureDistance = measurePoints.length===2 ? Math.hypot(measurePoints[1].x-measurePoints[0].x, measurePoints[1].y-measurePoints[0].y) : null
   const moduleSegmentsFromNorth=(mods,startY=0,endY=KITCHEN.length)=>{
@@ -114,22 +116,31 @@ export default function App(){
   const selectView=(next)=>{
     setView(next)
   }
+  const refineEastCookingZone=()=>setEast(items=>items.map(item=>{
+    if(item.id==='applianceGarage') return {...item,w:600,d:500,h:420,x:KITCHEN.width-500,label:'Open 600 mm appliance garage below the microwave'}
+    if(item.id==='gas') return {...item,y:1350,label:'Gas cooktop 1350 mm from south, with hidden chimney above'}
+    return item
+  }))
 
   // detailed validation
   const buildValidationRows=()=>{
     const rows=[]
     const e=[...east].sort((a,b)=>a.y-b.y)
     const mw=e.find(x=>x.id==='microwave'), ag=e.find(x=>x.id==='applianceGarage'), gasE=e.find(x=>x.id==='gas'), eastSlider=e.find(x=>x.id==='eastBacksplashSlider')
-    const eastOrderPass=!!(mw&&ag&&gasE&&eastSlider&&mw.y===0&&ag.y===0&&gasE.y===1200&&eastSlider.d===102&&mw.open&&ag.open)
-    rows.push({id:'east-order', rule:'East S->N: open microwave + open appliance garage first, then gas', status:eastOrderPass?'pass':'fail', measured:`mw y${mw?.y??'?'} open:${!!mw?.open} garage y${ag?.y??'?'} open:${!!ag?.open} gas y${gasE?.y??'?'} slider ${eastSlider?.d??'?'}D`, expected:'microwave y0 open, applianceGarage y0 open, gas y1200, east slider depth 102mm', fix:'Keep east beginning open microwave/garage at y0, gas at y1200, 4in slider behind backsplash'})
+    const baselineEast=ag?.w===850&&ag?.d===600&&gasE?.y===1200
+    const refinedEast=ag?.w===600&&ag?.d===500&&ag?.h===420&&gasE?.y===1350
+    const eastOrderPass=!!(mw&&ag&&gasE&&eastSlider&&mw.y===0&&ag.y===0&&(baselineEast||refinedEast)&&eastSlider.d===102&&mw.open&&ag.open)
+    rows.push({id:'east-order', rule:'East microwave, appliance garage and hob match a saved layout', status:eastOrderPass?'pass':'fail', measured:`mw y${mw?.y??'?'} garage ${ag?.w??'?'}W × ${ag?.d??'?'}D at y${ag?.y??'?'} gas y${gasE?.y??'?'} clear ${gasE&&ag?gasE.y-(ag.y+ag.w):'?'} mm`, expected:'baseline or refined east arrangement', fix:'Restore the baseline or apply the refined east cooking zone'})
 
     const w=[...west].sort((a,b)=>a.y-b.y)
     const sh2=w.find(x=>x.id==='shaft'), wm2=w.find(x=>x.id==='washing'), sk2=w.find(x=>x.id==='sink'), dw2=w.find(x=>x.id==='dishwasher'), westSlider=w.find(x=>x.id==='westSixInchSlider')
-    const westOrderPass=!!(wm2&&sk2&&dw2&&westSlider&&sh2&&wm2.y===610&&sk2.y===1210&&dw2.y===1972&&westSlider.y===2572&&westSlider.d===152&&sh2.y===3124&&wm2.open&&dw2.open)
-    rows.push({id:'west-order', rule:'West S->N: washing -> sink -> dishwasher -> 6in slider -> shaft', status:westOrderPass?'pass':'fail', measured:`washing y${wm2?.y??'?'} sink y${sk2?.y??'?'} dw y${dw2?.y??'?'} slider y${westSlider?.y??'?'} ${westSlider?.d??'?'}D shaft y${sh2?.y??'?'}`, expected:'washing 610, sink 1210, dishwasher 1972, 6in slider 2572, shaft 3124', fix:'Keep west order washing, sink, dishwasher, 6in slider, shaft'})
+    const baselineOrder=wm2?.y===610&&sk2?.y===1210&&dw2?.y===1972&&westSlider?.y===2572
+    const airyOrder=wm2?.y===3308&&sk2?.y===2546&&dw2?.y===1946&&westSlider?.y===1200
+    const westOrderPass=!!(wm2&&sk2&&dw2&&westSlider&&sh2&&(baselineOrder||airyOrder)&&westSlider.d===152&&sh2.y===KITCHEN.shaft.y&&wm2.open&&dw2.open)
+    rows.push({id:'west-order', rule:'West wet appliances match a saved layout', status:westOrderPass?'pass':'fail', measured:`washing y${wm2?.y??'?'} sink y${sk2?.y??'?'} dw y${dw2?.y??'?'} slider y${westSlider?.y??'?'} ${westSlider?.d??'?'}D shaft y${sh2?.y??'?'}`, expected:'baseline or airy kitchen arrangement; shaft at north wall', fix:'Restore the baseline or apply the airy kitchen arrangement'})
 
     const rack2=w.find(x=>x.id==='sinkUpperDishRack')
-    rows.push({id:'sink-storage', rule:'Over-sink storage aligns with sink', status:(rack2 && rack2.y===sk2?.y && rack2.w===sk2?.w)?'pass':'fail', measured:`sink y${sk2?.y??'?'} rack y${rack2?.y??'?'} rack ${rack2?.w??'?'}W`, expected:'rack y1210 and 762W aligned to sink', fix:'Keep dish/utensil storage directly over west sink'})
+    rows.push({id:'sink-storage', rule:'Over-sink storage aligns with sink', status:(rack2 && rack2.y===sk2?.y && rack2.w===sk2?.w)?'pass':'fail', measured:`sink y${sk2?.y??'?'} rack y${rack2?.y??'?'} rack ${rack2?.w??'?'}W`, expected:'rack at the sink position, 762 mm wide', fix:'Keep dish/utensil storage directly over west sink'})
 
     const doorViolations= west.filter(it=> isCabinetLikeItem(it) && !it.fixed && it.y < KITCHEN.westGap.to && (it.y+it.w) > KITCHEN.westGap.from)
     const doorPass=doorViolations.length===0
@@ -189,7 +200,12 @@ export default function App(){
       if(!cur) return r
       return {...r, x:cur.x, y:cur.y, width:cur.w, depth:cur.d, height:cur.h, w:cur.w, d:cur.d, h:cur.h, color:cur.color, locked:!!cur.fixed||!!r.locked}
     })
-    return {...LAYOUT_MODEL, appliances, validation:{...vSimple, detailed:validationRows}, rule:LAYOUT_MODEL.rule, grid, materials, modules:{east:eastModules, west:westModules}}
+    const cabinetRuns=LAYOUT_MODEL.cabinetRuns.map(run=>{
+      if(run.id==='east-top-upper')return {...run,x:KITCHEN.width-eastTopUpperDepth,depth:eastTopUpperDepth,label:`East ${eastTopUpperDepth}D top upper cabinets to ceiling`}
+      if(run.id==='west-top-upper')return {...run,depth:westTopUpperDepth,label:`West ${westTopUpperDepth}D top upper cabinets to ceiling`}
+      return run
+    })
+    return {...LAYOUT_MODEL, cabinetRuns, appliances, validation:{...vSimple, detailed:validationRows}, rule:LAYOUT_MODEL.rule, grid, materials, modules:{east:eastModules, west:westModules}}
   }
   const getLayoutModel=()=>buildLayoutModel()
 
@@ -197,10 +213,10 @@ export default function App(){
   useEffect(()=>{
     if(!kitchenHydratedRef.current)return
     try{
-      const payload={east,west,grid,materials,eastModules,westModules,hide3DObstructions}
+      const payload={east,west,grid,materials,eastModules,westModules,eastTopUpperDepth,westTopUpperDepth,hide3DObstructions}
       localStorage.setItem(LS_KEY, JSON.stringify(payload))
     }catch{}
-  },[east,west,grid,materials,eastModules,westModules,hide3DObstructions])
+  },[east,west,grid,materials,eastModules,westModules,eastTopUpperDepth,westTopUpperDepth,hide3DObstructions])
   useEffect(()=>{
     try{
       const raw=localStorage.getItem(LS_KEY)
@@ -210,6 +226,8 @@ export default function App(){
         if(p.west && Array.isArray(p.west)) setWest(migrateWestItems(p.west))
         if(p.grid===50||p.grid===100||p.grid===0) setGrid(p.grid)
         if(p.materials) setMaterials(prev=>normalizeKitchenMaterials({...prev,...p.materials}))
+        if(p.eastTopUpperDepth===320||p.eastTopUpperDepth===550) setEastTopUpperDepth(p.eastTopUpperDepth)
+        if(p.westTopUpperDepth===320||p.westTopUpperDepth===450) setWestTopUpperDepth(p.westTopUpperDepth)
         if(typeof p.hide3DObstructions==='boolean') setHide3DObstructions(p.hide3DObstructions)
         if(p.eastModules) setEastModules(p.eastModules.reduce((sum,m)=>sum+(m.width||0),0)===4446?autoFillModules(eastRunLength):p.eastModules)
         if(p.westModules) setWestModules(p.westModules.reduce((sum,m)=>sum+(m.width||0),0)===3226?autoFillModules(westRunLength):p.westModules)
@@ -221,9 +239,9 @@ export default function App(){
   useEffect(()=>{window.kitchenAPI={
     moveItem:(wall,id,ycm)=>{const y=snapVal(ycm*10); if(wall==='east')setEast(p=>p.map(it=>it.id===id?{...it,y}:it)); else setWest(p=>p.map(it=>it.id===id&&!it.fixed?{...it,y}:it))},
     moveItemMM:(wall,id,yMM)=>{const y=snapVal(yMM); if(wall==='east')setEast(p=>p.map(it=>it.id===id?{...it,y}:it)); else setWest(p=>p.map(it=>it.id===id&&!it.fixed?{...it,y}:it))},
-    getLayout:()=>({kitchen:KITCHEN,east,west,validation:{...vSimple, detailed:validationRows}, rule:LAYOUT_MODEL.rule, layoutModel:getLayoutModel(), grid, walkway:{floor:walkwayFloor,eye:walkwayEye}, materials:renderMaterials, modules:{east:eastModules,west:westModules}, viewOptions:{hide3DObstructions}}), validate:()=>({ ...vSimple, detailed:validationRows, rows:validationRows }), reset:()=>{setEast(EAST_INIT);setWest(WEST_INIT); setEastModules(autoFillModules(eastRunLength)); setWestModules(autoFillModules(westRunLength)); setMaterials(normalizeKitchenMaterials()); setGrid(0); setHide3DObstructions(true); localStorage.removeItem(LS_KEY)}, getLayoutModel,
+    getLayout:()=>({kitchen:KITCHEN,east,west,eastTopUpperDepth,westTopUpperDepth,validation:{...vSimple, detailed:validationRows}, rule:LAYOUT_MODEL.rule, layoutModel:getLayoutModel(), grid, walkway:{floor:walkwayFloor,eye:walkwayEye}, materials:renderMaterials, modules:{east:eastModules,west:westModules}, viewOptions:{hide3DObstructions}}), validate:()=>({ ...vSimple, detailed:validationRows, rows:validationRows }), reset:()=>{setEast(EAST_INIT);setWest(WEST_INIT); setEastModules(autoFillModules(eastRunLength)); setWestModules(autoFillModules(westRunLength)); setMaterials(normalizeKitchenMaterials()); setEastTopUpperDepth(EAST_TOP_UPPER_DEPTH); setWestTopUpperDepth(WEST_TOP_UPPER_DEPTH); setGrid(0); setHide3DObstructions(true); localStorage.removeItem(LS_KEY)}, getLayoutModel,
     getGrid:()=>grid, setGrid:(g)=>setGrid(g===50||g===100?g:0), getWalkway:()=>({floor:walkwayFloor,eye:walkwayEye}),
-    getDimensions:()=>({roomWidth:KITCHEN.width,roomLength:KITCHEN.length,eastBaseDepth:600,westCounterDepth:KITCHEN.westCounterDepth||600,walkwayWidth:walkwayFloor,northClear:0,windowBelowDepth:KITCHEN.windowBelow?.depth||300,westDoorClear:{from:KITCHEN.westGap.from,to:KITCHEN.westGap.to},eastBacksplashSliderDepth:102,westSliderDepth:152}),
+    getDimensions:()=>({roomWidth:KITCHEN.width,roomLength:KITCHEN.length,eastBaseDepth:600,eastTopUpperDepth,westTopUpperDepth,westCounterDepth:KITCHEN.westCounterDepth||600,walkwayWidth:walkwayFloor,northClear:0,windowBelowDepth:KITCHEN.windowBelow?.depth||300,westDoorClear:{from:KITCHEN.westGap.from,to:KITCHEN.westGap.to},eastBacksplashSliderDepth:102,westSliderDepth:152}),
     getMaterials:()=>renderMaterials, setMaterial:(k,v)=>setMaterials(p=>normalizeKitchenMaterials({...p,[k]:v})),
     getModules:()=>({east:eastModules,west:westModules}), setModules:(wall,mods)=>{ if(wall==='east')setEastModules(mods); else setWestModules(mods)},
     getBOM:()=>buildBOM(),
@@ -249,7 +267,7 @@ export default function App(){
       }
     },
     set3DHideObstructions:(value)=>setHide3DObstructions(!!value)
-  }},[east,west,grid,materials,eastModules,westModules,validationRows,vSimple,hide3DObstructions])
+  }},[east,west,grid,materials,eastModules,westModules,eastTopUpperDepth,westTopUpperDepth,validationRows,vSimple,hide3DObstructions])
 
   const onDown=(e,wall,id)=>{if(e.button!==0) return; const it=[...east,...west].find(x=>x.id===id); if(interactionMode==='dimension'){ setSelectedId(id); return; } if(interactionMode==='measure'){ setSelectedId(id); const cx = (it.x||0)+(it.d||400)/2, cy = it.y + (it.w||600)/2; setMeasurePoints(prev=> prev.length>=2 ? [{x:cx,y:cy}] : [...prev,{x:cx,y:cy}]); return; } if(interactionMode==='transparent'){ setSelectedId(id); // transparent preview - no drag, just selection with transparent hint
     return; } // cabinet mode: allow drag
@@ -257,9 +275,9 @@ export default function App(){
   const onMove=(e)=>{if(!drag)return; const dy=(e.clientY-drag.startY)/scale; const raw=drag.startItemY+dy; const snapped=snapVal(raw); const cur=[...east,...west].find(x=>x.id===drag.id); const wAlong=cur?.w ?? 600; const ny=Math.max(0,Math.min(KITCHEN.length-wAlong,snapped)); if(drag.wall==='east')setEast(p=>p.map(it=>it.id===drag.id?{...it,y:ny}:it)); else setWest(p=>p.map(it=>it.id===drag.id&&!it.fixed?{...it,y:ny}:it))}
   const onUp=()=>setDrag(null)
   const downloadText=(filename,text,type='text/plain')=>{const blob=new Blob([text],{type}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=filename; a.click(); URL.revokeObjectURL(url)}
-  const buildProjectData=()=>{const layoutModel=getLayoutModel(); return {kitchen:KITCHEN,east,west,validation:{...vSimple,detailed:validationRows}, rule:LAYOUT_MODEL.rule, layoutModel, grid, dimensions:{roomWidth:KITCHEN.width,roomLength:KITCHEN.length,eastBaseDepth:600,westCounterDepth:KITCHEN.westCounterDepth||600,walkwayWidth:walkwayFloor,northClear:0,windowBelowDepth:KITCHEN.windowBelow?.depth||300,westDoorClear:{from:KITCHEN.westGap.from,to:KITCHEN.westGap.to},eastBacksplashSliderDepth:102,westSliderDepth:152}, materials, modules:{east:eastModules,west:westModules}, viewOptions:{hide3DObstructions}, exportedAt:new Date().toISOString()}}
+  const buildProjectData=()=>{const layoutModel=getLayoutModel(); return {kitchen:KITCHEN,east,west,eastTopUpperDepth,westTopUpperDepth,validation:{...vSimple,detailed:validationRows}, rule:LAYOUT_MODEL.rule, layoutModel, grid, dimensions:{roomWidth:KITCHEN.width,roomLength:KITCHEN.length,eastBaseDepth:600,eastTopUpperDepth,westTopUpperDepth,westCounterDepth:KITCHEN.westCounterDepth||600,walkwayWidth:walkwayFloor,northClear:0,windowBelowDepth:KITCHEN.windowBelow?.depth||300,westDoorClear:{from:KITCHEN.westGap.from,to:KITCHEN.westGap.to},eastBacksplashSliderDepth:102,westSliderDepth:152}, materials, modules:{east:eastModules,west:westModules}, viewOptions:{hide3DObstructions}, exportedAt:new Date().toISOString()}}
   const exportJSON=()=>{const data=buildProjectData(); const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='Galley_2324x4746_Rule9_Current.json'; a.click()}
-  const saveVersion=(key)=>{ try{ const data={kitchen:KITCHEN,east,west,grid,materials,eastModules,westModules, hide3DObstructions, validationRows, exportedAt:new Date().toISOString(), rule:LAYOUT_MODEL.rule}; localStorage.setItem(VERSION_KEYS[key], JSON.stringify(data)); setBomNote(`Saved ${key}`); setTimeout(()=>setBomNote(''),1500)}catch(e){ setImportWarning('Save failed: '+e.message)}}
+  const saveVersion=(key)=>{ try{ const data={kitchen:KITCHEN,east,west,eastTopUpperDepth,westTopUpperDepth,grid,materials,eastModules,westModules, hide3DObstructions, validationRows, exportedAt:new Date().toISOString(), rule:LAYOUT_MODEL.rule}; localStorage.setItem(VERSION_KEYS[key], JSON.stringify(data)); setBomNote(`Saved ${key}`); setTimeout(()=>setBomNote(''),1500)}catch(e){ setImportWarning('Save failed: '+e.message)}}
   const loadVersion=(key)=>{
     try{
       const raw=localStorage.getItem(VERSION_KEYS[key])
@@ -269,7 +287,11 @@ export default function App(){
       setBomNote(`Loaded ${key}`)
     }catch(e){ setImportWarning('Load version failed: '+e.message)}
   }
-  const resetRule9=()=>{ setEast(EAST_INIT); setWest(WEST_INIT); setEastModules(autoFillModules(eastRunLength)); setWestModules(autoFillModules(westRunLength)); setMaterials(normalizeKitchenMaterials()); setGrid(0); setHide3DObstructions(true); setImportWarning('');}
+  const resetRule9=()=>{ setEast(EAST_INIT); setWest(WEST_INIT); setEastModules(autoFillModules(eastRunLength)); setWestModules(autoFillModules(westRunLength)); setMaterials(normalizeKitchenMaterials()); setEastTopUpperDepth(EAST_TOP_UPPER_DEPTH); setWestTopUpperDepth(WEST_TOP_UPPER_DEPTH); setGrid(0); setHide3DObstructions(true); setImportWarning('');}
+  const applyAiryLayout=()=>{
+    setWest(AIRY_WEST_INIT.map(item=>({...item})))
+    setBomNote('Airy kitchen layout applied; the saved baseline is available in the toolbar.')
+  }
   const applyLoadedProject=(p, showWarn=true)=>{
     try{
       // validate room dimensions if present
@@ -283,6 +305,8 @@ export default function App(){
       if(newWest && newWest.length) setWest(migrateWestItems(newWest))
       if(p.grid===0||p.grid===50||p.grid===100) setGrid(p.grid)
       if(p.materials) setMaterials(prev=>normalizeKitchenMaterials({...prev,...p.materials}))
+      setEastTopUpperDepth(p.eastTopUpperDepth===320?320:EAST_TOP_UPPER_DEPTH)
+      setWestTopUpperDepth(p.westTopUpperDepth===320?320:WEST_TOP_UPPER_DEPTH)
       if(typeof p.hide3DObstructions==='boolean') setHide3DObstructions(p.hide3DObstructions)
       if(typeof p.viewOptions?.hide3DObstructions==='boolean') setHide3DObstructions(p.viewOptions.hide3DObstructions)
       if(p.modules?.east) setEastModules(p.modules.east.reduce((sum,m)=>sum+(m.width||0),0)===4446?autoFillModules(eastRunLength):p.modules.east)
@@ -334,7 +358,7 @@ export default function App(){
       rect((KITCHEN.width-KITCHEN.window.w)/2,0,KITCHEN.window.w,100,'#7eb8e8','#111'),
       label(KITCHEN.width/2,78,'NORTH WINDOW',72,'#114f78'),
       rect(KITCHEN.door.x,KITCHEN.length-100,KITCHEN.door.w,100,'#fffefb','#111'),
-      label(KITCHEN.width/2,KITCHEN.length-32,'SOUTH DOOR',72,'#7b3f21'),
+      label(KITCHEN.door.x+KITCHEN.door.w/2,KITCHEN.length-32,'SOUTH OPENING',72,'#7b3f21'),
       rect(KITCHEN.width-600,svgY(0,usableLen),600,usableLen,renderStyle.baseCabinet),
       label(KITCHEN.width-300,svgY(0,usableLen)+180,'EAST 600D RUN',70),
       rect(0,svgY(KITCHEN.westGap.to,usableLen-KITCHEN.westGap.to),600,usableLen-KITCHEN.westGap.to,renderStyle.baseCabinet),
@@ -477,17 +501,17 @@ Use the exported 2D plan as a background only. Rebuild the room, counters, cabin
 - Room width: ${KITCHEN.width} mm.
 - Room length: ${KITCHEN.length} mm.
 - Wall height: ${KITCHEN.height} mm.
-- South door: ${KITCHEN.door.w} mm wide, centered at x${KITCHEN.door.x} mm.
+- South opening to Lobby/Dining: ${KITCHEN.door.w} mm wide from the west corner; the remaining ${KITCHEN.southWallReturn.lengthMm} mm is wall.
 - North window: ${KITCHEN.window.w} mm wide, ${KITCHEN.window.h} mm high, sill ${KITCHEN.window.sill} mm.
 - North window below-sill reference: ${KITCHEN.windowBelow?.depth||300} mm deep only under the ${KITCHEN.window.w} mm window. East and West runs may continue to the north wall.
 
 ## Native Cabinet Runs
 
 - East wall: create a 600D base counter from South y0 to y${KITCHEN.length}.
-- East wall: create 320D lower upper cabinets and 550D top upper cabinets above the counter.
+- East wall: create 320D lower upper cabinets and ${eastTopUpperDepth}D top upper cabinets to the ceiling.
 - West wall: keep y0 to y${KITCHEN.westGap.to} completely clear for the door zone from floor to ceiling.
 - West wall: create a ${KITCHEN.westCounterDepth||600}D counter only from y${KITCHEN.westGap.to} to y${KITCHEN.length}.
-- West wall: create 320D lower upper cabinets and 450D top upper cabinets only after the door clear zone.
+- West wall: create 320D lower upper cabinets and ${westTopUpperDepth}D top upper cabinets only after the door clear zone.
 
 ## Placement Table
 
@@ -538,7 +562,7 @@ ${westRows}
       ...activeEast.map(it=>({...it,wall:'east'})),
       ...activeWest.map(it=>({...it,wall:'west'})),
     ].filter(isCabinetLikeItem).map(it=>({id:it.id,label:planLabel(it.id), wall:it.wall, y:it.y, w:it.w, d:it.d}))
-    return { baseCount, wallLowerCount, wallTopCount, shutterCount, drawerCount, handleCount, counterLenMm, counterLenM, backsplashAreaM2, appliances, eastModules, westModules, notes: [`Door clear zone y0-y${KITCHEN.westGap.to}`, 'Window-only 300 mm below-sill reference', `Shaft y${KITCHEN.shaft.y} NW`, 'East 4in backsplash slider storage', 'West 6in slider storage between dishwasher and shaft', 'Window north 1100W'] }
+    return { baseCount, wallLowerCount, wallTopCount, shutterCount, drawerCount, handleCount, counterLenMm, counterLenM, backsplashAreaM2, appliances, eastModules, westModules, notes: [`Door clear zone y0-y${KITCHEN.westGap.to}`, 'Window-only 300 mm below-sill reference', `Shaft y${KITCHEN.shaft.y} NW`, 'East 4in backsplash slider storage', 'West 6in slider storage', 'Window north 1100W'] }
   }
   const bom=useMemo(()=>buildBOM(),[activeEast,activeWest,eastModules,westModules])
   const buildBOMCsv=()=>{
@@ -547,7 +571,7 @@ ${westRows}
     rows.push(['Item','Quantity','Dimensions','Notes'])
     rows.push(['Base cabinets', b.baseCount, `${b.eastModules.map(m=>m.width).join('+')} / ${b.westModules.map(m=>m.width).join('+')}`, 'East 600D + West 600D'])
     rows.push(['Wall lower upper (320D)', b.wallLowerCount, '320D', 'Above counter'])
-    rows.push(['Wall top upper (550D/450D)', b.wallTopCount, '550D East / 450D West', 'Top'])
+    rows.push([`Wall top upper (${eastTopUpperDepth}D/${westTopUpperDepth}D)`, b.wallTopCount, `${eastTopUpperDepth}D East / ${westTopUpperDepth}D West`, 'Top'])
     rows.push(['Shutters', b.shutterCount, '', ''])
     rows.push(['Drawers', b.drawerCount, '', ''])
     rows.push(['Handles', b.handleCount, 'Handleless fronts', 'No exposed pull handles'])
@@ -564,7 +588,7 @@ ${westRows}
     md+=`* Countertop length: ${b.counterLenMm} mm (${b.counterLenM} m) x 600D/600D, thickness ${COUNTER_THICKNESS}mm\n`
     md+=`* Backsplash area: ${b.backsplashAreaM2} m2 (height ${BACKSPLASH_HEIGHT}mm)\n`
     md+=`* Base cabinets: ${b.baseCount} (East ${b.eastModules.length} + West ${b.westModules.length})\n`
-    md+=`* Wall lower (320D): ${b.wallLowerCount}\n* Wall top (550D/450D): ${b.wallTopCount}\n* Shutters: ${b.shutterCount}\n* Drawers: ${b.drawerCount}\n* Handles: ${b.handleCount} (handleless fronts)\n\n`
+    md+=`* Wall lower (320D): ${b.wallLowerCount}\n* Wall top (${eastTopUpperDepth}D/${westTopUpperDepth}D): ${b.wallTopCount}\n* Shutters: ${b.shutterCount}\n* Drawers: ${b.drawerCount}\n* Handles: ${b.handleCount} (handleless fronts)\n\n`
     md+=`## Cabinet Modules East (600D run ${eastRunLength}mm)\n| # | Width mm | Type |\n|---|---|---|\n`
     b.eastModules.forEach((m,i)=> md+=`| ${i+1} | ${m.width} | ${m.type} |\n`)
     md+=`\n## Cabinet Modules West (${KITCHEN.westCounterDepth||600}D run ${westRunLength}mm)\n| # | Width mm | Type |\n|---|---|---|\n`
@@ -636,7 +660,7 @@ ${westRows}
       zip.file('bom/kitchen-bom.md',buildBOMMarkdown())
       zip.file('pdf/kitchen-project-summary.pdf',pdfBytes)
       zip.file('validation/validation-results.json',JSON.stringify(validationRows,null,2))
-      zip.file('notes/export-package-notes.md',`# Kitchen Export Package\n\nRoom: ${KITCHEN.width} x ${KITCHEN.length} x ${KITCHEN.height} mm.\n\nValidation: ${vSimple.all?'PASS':'CHECK'} (${manifest.validation.passing}/${manifest.validation.total} rows passing).\n\nCurrent layout: West S->N washing, sink, dishwasher, 6in slider storage, shaft. East S->N open microwave, open appliance garage with food processor, gas, 4in backsplash slider storage.\n\nThis package is generated in-browser from the React shared layout model. FreeCAD and Blender outputs are generated by their repo scripts and are not embedded by the browser unless they are added as static assets later.\n`)
+      zip.file('notes/export-package-notes.md',`# Kitchen Export Package\n\nRoom: ${KITCHEN.width} x ${KITCHEN.length} x ${KITCHEN.height} mm.\n\nValidation: ${vSimple.all?'PASS':'CHECK'} (${manifest.validation.passing}/${manifest.validation.total} rows passing).\n\nWest appliances from south to north: ${[...west].filter(it=>['dishwasher','sink','washing','shaft'].includes(it.id)).sort((a,b)=>a.y-b.y).map(it=>`${it.id} y${it.y}`).join(', ')}. East cooking and appliance run unchanged.\n\nThis package is generated in-browser from the React shared layout model. FreeCAD and Blender outputs are generated by their repo scripts and are not embedded by the browser unless they are added as static assets later.\n`)
       const blob=await zip.generateAsync({type:'blob'})
       const url=URL.createObjectURL(blob)
       const a=document.createElement('a')
@@ -1150,6 +1174,15 @@ ${westRows}
       addBox('west wall',-45,0,0,45,KITCHEN.length,KITCHEN.height,makeLargePatternTileMat(KITCHEN.length,KITCHEN.height),.92)
       addBox('east wall',KITCHEN.width,0,0,45,KITCHEN.length,KITCHEN.height,makeLargePatternTileMat(KITCHEN.length,KITCHEN.height),.92)
       addBox('north wall',0,KITCHEN.length,0,KITCHEN.width,45,KITCHEN.height,makeLargePatternTileMat(KITCHEN.width,KITCHEN.height),.88)
+      addBox('south wall return',KITCHEN.southWallReturn.fromWestMm,-45,0,KITCHEN.southWallReturn.lengthMm,45,KITCHEN.height,makeLargePatternTileMat(KITCHEN.southWallReturn.lengthMm,KITCHEN.height),.88)
+      const fridge=KITCHEN_REFRIGERATOR
+      const fridgeSouthY=-fridge.southWallThicknessMm-fridge.widthMm
+      addBox('refrigerator exterior floor',fridge.fromKitchenWestMm,fridgeSouthY,-30,fridge.depthMm,fridge.widthMm,30,surface.floor)
+      addBox('LG refrigerator body',fridge.fromKitchenWestMm,fridgeSouthY,0,fridge.depthMm,fridge.widthMm,fridge.heightMm,makeMat('#a9adb1',1,{metalness:.68,roughness:.3}))
+      for(const side of [0,1]){
+        addBox(`LG refrigerator west door ${side+1}`,fridge.fromKitchenWestMm-22,fridgeSouthY+side*fridge.widthMm/2+5,13,22,fridge.widthMm/2-10,fridge.heightMm-26,makeMat('#c5c8ca',1,{metalness:.72,roughness:.24}))
+        addBox(`LG refrigerator handle ${side+1}`,fridge.fromKitchenWestMm-46,fridgeSouthY+fridge.widthMm/2+(side===0?-82:52),430,24,30,930,makeMat('#3a3e42',1,{metalness:.5,roughness:.35}))
+      }
       addBox('ceiling',0,0,KITCHEN.height,KITCHEN.width,KITCHEN.length,36,'#f4eadf')
       addBox('recessed ceiling center',310,620,KITCHEN.height-50,1700,3500,28,'#eadac8')
       // --- Proper 2-bay north window: centre mullion only - top 610 fixed x2 / bottom 1190 sliding x2 ---
@@ -1264,19 +1297,45 @@ ${westRows}
       const westStart=KITCHEN.westGap.to
       const westLen=usableLen-westStart
       const westCounterDepth=600
+      const wetItems=west.filter(it=>!it.hidden&&['washing','dishwasher','sink'].includes(it.id))
+      const openSpans=(start,end,blocked)=>{
+        const spans=[]
+        let cursor=start
+        for(const item of [...blocked].sort((a,b)=>a.y-b.y)){
+          const from=Math.max(start,item.y), to=Math.min(end,item.y+item.w)
+          if(to<=from)continue
+          if(from>cursor)spans.push({y:cursor,w:from-cursor})
+          cursor=Math.max(cursor,to)
+        }
+        if(cursor<end)spans.push({y:cursor,w:end-cursor})
+        return spans.filter(span=>span.w>0)
+      }
       if(westLen>0){
-        addBox('west counter carcass',0,westStart,PLINTH_HEIGHT,westCounterDepth,westLen,900-PLINTH_HEIGHT-COUNTER_THICKNESS,surface.cabinet)
-        addBox('west countertop',0,westStart,900-COUNTER_THICKNESS,westCounterDepth,westLen,COUNTER_THICKNESS,counterMat)
-        addBox('west plinth',0,westStart,0,westCounterDepth,westLen,PLINTH_HEIGHT,surface.plinth)
-        addBox('west toe shadow',0,westStart,PLINTH_HEIGHT-16,westCounterDepth,westLen,16,'#111111')
+        openSpans(westStart,usableLen,wetItems).forEach((span,i)=>{
+          addBox(`west counter carcass ${i}`,0,span.y,PLINTH_HEIGHT,westCounterDepth,span.w,900-PLINTH_HEIGHT-COUNTER_THICKNESS,surface.cabinet)
+          addBox(`west plinth ${i}`,0,span.y,0,westCounterDepth,span.w,PLINTH_HEIGHT,surface.plinth)
+          addBox(`west toe shadow ${i}`,0,span.y,PLINTH_HEIGHT-16,westCounterDepth,span.w,16,'#111111')
+        })
+        openSpans(westStart,usableLen,wetItems).forEach((span,i)=>
+          addBox(`west countertop ${i}`,0,span.y,900-COUNTER_THICKNESS,westCounterDepth,span.w,COUNTER_THICKNESS,counterMat)
+        )
+        const sinkSlot=wetItems.find(it=>it.id==='sink')
+        if(sinkSlot){
+          addBox('west sink counter front strip',380,sinkSlot.y,900-COUNTER_THICKNESS,westCounterDepth-380,sinkSlot.w,COUNTER_THICKNESS,counterMat)
+          addBox('west sink support south',0,sinkSlot.y,PLINTH_HEIGHT,westCounterDepth,18,900-PLINTH_HEIGHT-COUNTER_THICKNESS,surface.cabinet)
+          addBox('west sink support north',0,sinkSlot.y+sinkSlot.w-18,PLINTH_HEIGHT,westCounterDepth,18,900-PLINTH_HEIGHT-COUNTER_THICKNESS,surface.cabinet)
+        }
         moduleSegmentsFromNorth(westModules,westStart,usableLen).forEach((m)=>{
-          addBox(`west base front ${m.y}`,westCounterDepth-2,m.y+5,PLINTH_HEIGHT+12,18,m.width-10,900-PLINTH_HEIGHT-COUNTER_THICKNESS-24,surface.cabinet)
-          addBox(`west base right reveal ${m.y}`,westCounterDepth-4,m.y+4,PLINTH_HEIGHT+10,20,3,760,surface.dark)
-          if(m.drawers>1){
-            for(let dl=1; dl<m.drawers; dl++){
-              addBox(`west drawer reveal ${m.y}-${dl}`,westCounterDepth-4,m.y+10,PLINTH_HEIGHT+120+dl*170,22,m.width-20,8,surface.dark)
+          openSpans(m.y,m.y+m.width,wetItems).forEach((span,i)=>{
+            if(span.w<=10)return
+            addBox(`west base front ${m.y}-${i}`,westCounterDepth-2,span.y+5,PLINTH_HEIGHT+12,18,span.w-10,900-PLINTH_HEIGHT-COUNTER_THICKNESS-24,surface.cabinet)
+            addBox(`west base right reveal ${m.y}-${i}`,westCounterDepth-4,span.y+4,PLINTH_HEIGHT+10,20,3,760,surface.dark)
+            if(m.drawers>1){
+              for(let dl=1; dl<m.drawers; dl++){
+                addBox(`west drawer reveal ${m.y}-${i}-${dl}`,westCounterDepth-4,span.y+10,PLINTH_HEIGHT+120+dl*170,22,span.w-10,8,surface.dark)
+              }
             }
-          }
+          })
         })
       }
       // uppers - no gap between lower (1350-1850) and top (1850-2700) - LED strip at 1322
@@ -1289,13 +1348,13 @@ ${westRows}
           const afterLen = (westStart+westLen) - afterStart
           if(before>0) addBox('west lower upper body before rack',0,westStart,1350,320,before,500,surface.shutter)
           if(afterLen>0) addBox('west lower upper body after rack',0,afterStart,1350,320,afterLen,500,surface.shutter)
-          addBox('west top upper body after door clear zone',0,westStart,1850,450,westLen,850,surface.topCabinet)
+          addBox('west top upper body after door clear zone',0,westStart,1850,westTopUpperDepth,westLen,850,surface.topCabinet)
         } else {
           if(westLen>0) addBox('west lower upper body after door clear zone',0,westStart,1350,320,westLen,500,surface.shutter)
-          if(westLen>0) addBox('west top upper body after door clear zone',0,westStart,1850,450,westLen,850,surface.topCabinet)
+          if(westLen>0) addBox('west top upper body after door clear zone',0,westStart,1850,westTopUpperDepth,westLen,850,surface.topCabinet)
         }
       }
-      addBox('east top upper body main',KITCHEN.width-550,0,1850,550,usableLen,850,surface.topCabinet)
+      addBox('east top upper body main',KITCHEN.width-eastTopUpperDepth,0,1850,eastTopUpperDepth,usableLen,850,surface.topCabinet)
       const addUpperFronts=(prefix,wall,depth,startY,len,z,h,mods,frontMat)=>{
         moduleSegmentsFromNorth(mods,startY,startY+len).forEach((m,i)=>{
           const width=m.width
@@ -1305,10 +1364,10 @@ ${westRows}
         })
       }
       addUpperFronts('east lower','east',320,0,usableLen,1350,500,eastModules,surface.middleCabinet)
-      addUpperFronts('east top','east',550,0,usableLen,1850,850,eastModules,surface.topCabinet)
+      addUpperFronts('east top','east',eastTopUpperDepth,0,usableLen,1850,850,eastModules,surface.topCabinet)
       if(westLen>0){
         addUpperFronts('west lower','west',320,westStart,westLen,1350,500,westModules,surface.middleCabinet)
-        addUpperFronts('west top','west',450,westStart,westLen,1850,850,westModules,surface.topCabinet)
+        addUpperFronts('west top','west',westTopUpperDepth,westStart,westLen,1850,850,westModules,surface.topCabinet)
       }
       addBox('east 600x1200 patterned tile backsplash',KITCHEN.width-18,0,900,18,usableLen,600,makeLargePatternTileMat(usableLen,600))
       if(westLen>0) addBox('west 600x1200 patterned tile backsplash',0,westStart,900,18,westLen,600,makeLargePatternTileMat(westLen,600))
@@ -1349,7 +1408,8 @@ ${westRows}
         } else if(it.id==='microwave'){
           addBox('east open microwave black box',KITCHEN.width-it.d,it.y+40,it.z??1360,it.d,it.w-80,it.h||350,surface.blackGlass)
           addBox('east open microwave glass door',KITCHEN.width-it.d-18,it.y+62,(it.z??1360)+42,18,it.w-124,190,'#050505')
-          addBox('east microwave no cover shelf',KITCHEN.width-600,it.y,1320,600,it.w,38,surface.counter)
+          const shelfDepth=east.find(item=>item.id==='applianceGarage')?.d===500?500:600
+          addBox('east microwave independent support shelf',KITCHEN.width-shelfDepth,it.y,1320,shelfDepth,it.w,38,surface.counter)
           addBox('east microwave warm task light',KITCHEN.width-338,it.y+18,(it.z??1360)+it.h+24,20,it.w-36,12,surface.led)
         } else if(it.id==='eastBacksplashSlider'){
           const baseZ=it.z ?? 900
@@ -1359,9 +1419,14 @@ ${westRows}
           addBox('east 4in backsplash slider open panel',KITCHEN.width-it.d-42,it.y+280,baseZ+60,36,520,(it.h||450)-120,surface.glass,.35)
         } else if(it.id==='applianceGarage'){
           const baseZ=it.z ?? 900
-          addBox('east open appliance garage body',KITCHEN.width-it.d,it.y,baseZ,it.d,it.w,it.h||550,surface.cabinet)
-          addBox('east appliance garage open side frame',KITCHEN.width-it.d-18,it.y+12,baseZ+24,20,22,(it.h||550)-48,surface.shutter)
-          addBox('east appliance garage top shadow',KITCHEN.width-it.d-22,it.y+12,baseZ+(it.h||550)-70,24,it.w-24,18,surface.dark)
+          const garageH=it.h||450
+          if(it.w===850) addBox('east open appliance garage body',KITCHEN.width-it.d,it.y,baseZ,it.d,it.w,garageH,surface.cabinet)
+          else {
+            addBox('east appliance garage back',KITCHEN.width-20,it.y,baseZ,20,it.w,garageH,surface.cabinet)
+            addBox('east appliance garage south side',KITCHEN.width-it.d,it.y,baseZ,it.d,18,garageH,surface.cabinet)
+            addBox('east appliance garage north side',KITCHEN.width-it.d,it.y+it.w-18,baseZ,it.d,18,garageH,surface.cabinet)
+          }
+          addBox('east appliance garage top shadow',KITCHEN.width-it.d-22,it.y+12,baseZ+garageH-22,24,it.w-24,18,surface.dark)
           addBox('garage processor base stored',KITCHEN.width-it.d+72,it.y+145,baseZ+70,it.d-144,160,90,surface.metal)
           addBox('garage pull-out tray toward gas attached',KITCHEN.width-it.d-130,it.y+92,baseZ+28,130,it.w-184,26,surface.counter)
           addBox('garage tray left rail',KITCHEN.width-it.d-136,it.y+94,baseZ+56,142,18,18,surface.metal)
@@ -1372,7 +1437,7 @@ ${westRows}
           jar.position.set(s(KITCHEN.width/2-(KITCHEN.width-it.d/2)),s(baseZ+205),s(it.y+225-KITCHEN.length/2))
           jar.castShadow=true
           scene.add(jar)
-          addBox('garage warm internal light',KITCHEN.width-it.d+20,it.y+18,baseZ+(it.h||550)-36,20,it.w-36,12,surface.led)
+          addBox('garage warm internal light',KITCHEN.width-it.d+20,it.y+18,baseZ+garageH-36,20,it.w-36,12,surface.led)
         } else if(it.id==='gas'){
           // three-burner cooktop with grate bars and burner rings
           addBox('east gas cooktop glass slab',KITCHEN.width-595,it.y+40,900,560,it.w-80,10,surface.blackGlass)
@@ -2012,7 +2077,7 @@ ${westRows}
       }
       animate()
       return ()=>{cancelAnimationFrame(frameId); observer.disconnect(); controls.dispose(); envTexture.dispose(); pmremGenerator.dispose(); renderer.domElement.removeEventListener('pointermove', onPointerMove); renderer.domElement.removeEventListener('pointerdown', onPointerDown); renderer.domElement.removeEventListener('pointerup', onPointerUp); renderer.domElement.removeEventListener('click', onClick); try{mount.removeChild(overlay)}catch{}; renderer.dispose(); mount.removeChild(renderer.domElement); if(threeViewRef.current?.renderer===renderer)threeViewRef.current=null}
-    },[east,west,materials,eastModules,westModules])
+    },[east,west,materials,eastModules,westModules,eastTopUpperDepth,westTopUpperDepth])
     const setPreset=(preset)=>{
       const cam=threeViewRef.current?.camera
       const ctrl=threeViewRef.current?.controls
@@ -2451,7 +2516,7 @@ ${westRows}
       </defs>
       <rect x={frame.x} y={frame.y} width={frame.w} height={frame.h} fill="#faf6f1" stroke="#111" strokeWidth="2"/>
       <text x={frame.x} y="31" fontSize="22" fontWeight="900">{isNorth?'North Elevation (looking South)':'South Elevation (looking North)'}</text>
-      <text x={frame.x+frame.w} y="31" textAnchor="end" fontSize="13" fontWeight="700" fill="#61584f">{isNorth?'East (E) right / West (W) left - Window 1100W':'East (E) left / West (W) right - Door 1100W'}</text>
+      <text x={frame.x+frame.w} y="31" textAnchor="end" fontSize="13" fontWeight="700" fill="#61584f">{isNorth?'East (E) right / West (W) left - Window 1100W':`East (E) left / West (W) right - Opening ${KITCHEN.door.w}W`}</text>
       {/* wall baseline */}
       <line x1={frame.x} y1={yOf(0)} x2={frame.x+frame.w} y2={yOf(0)} stroke="#111" strokeWidth="4"/>
       {/* floor */}
@@ -2496,8 +2561,8 @@ ${westRows}
         </g>
       ):(
         <g>
-          <rect x={xOf(612)} y={yOf(2100)} width={wOf(1100)} height={hOf(2100)} fill="#fffaf3" stroke="#7b3f21" strokeWidth="2"/>
-          <text x={xOf(1162)} y={yOf(1050)} textAnchor="middle" fontSize="16" fontWeight="900" fill="#7b3f21">South door 1100W</text>
+          <rect x={xOf(KITCHEN.door.x)} y={yOf(2100)} width={wOf(KITCHEN.door.w)} height={hOf(2100)} fill="#fffaf3" stroke="#7b3f21" strokeWidth="2"/>
+          <text x={xOf(KITCHEN.door.x+KITCHEN.door.w/2)} y={yOf(1050)} textAnchor="middle" fontSize="13" fontWeight="900" fill="#7b3f21">South opening {KITCHEN.door.w}W</text>
           <rect x={xOf(0)} y={yOf(KITCHEN.westGap.to)} width={wOf(KITCHEN.westCounterDepth||600)} height={hOf(KITCHEN.westGap.to)} fill="#fffaf3" stroke="#7b3f21" strokeDasharray="10 8" opacity="0.7"/>
           <text x={xOf(260)} y={yOf(KITCHEN.westGap.to/2)} textAnchor="middle" fontSize="12" fontWeight="800" fill="#7b3f21">West door clear y0-y{KITCHEN.westGap.to}</text>
         </g>
@@ -2571,10 +2636,11 @@ ${westRows}
   // helpers for module editor
   const refillEast=()=> setEastModules(autoFillModules(eastRunLength))
   const refillWest=()=> setWestModules(autoFillModules(westRunLength))
+  const wetOrderSummary=[...west].filter(it=>['dishwasher','sink','washing','shaft'].includes(it.id)).sort((a,b)=>a.y-b.y).map(it=>`${it.id} y${it.y}`).join(', ')
 
   return (<div onMouseMove={onMove} onMouseUp={onUp} style={{fontFamily:'Inter,system-ui',background:'#f6f2ec',minHeight:'100vh',padding:'clamp(10px,2vw,16px)',overflowX:'hidden',boxSizing:'border-box'}}><div style={{maxWidth:1400,margin:'0 auto'}}>
     <h1 style={{fontSize:'clamp(24px,5vw,26px)',fontWeight:900,lineHeight:1.15}}>Galley {KITCHEN.width}x{KITCHEN.length} - Current Configuration - 6 Views - Windows Desktop</h1>
-    <div style={{fontSize:13,color:'#666',lineHeight:1.3}}>RIGHT EAST 600D: open microwave above backsplash at y0, open appliance garage at counter height with food processor y0, gas y1200, 4in backsplash slider storage along the counter | LEFT WEST 600D: door clear y0-y610, open washing y610, sink y1210, open dishwasher y1972, 6in slider storage y2572, shaft y3124 NW | Walkway 1124/1004 | Click any item to see WxDxH - Unit mm/inch + Measure above 3D</div>
+    <div style={{fontSize:13,color:'#666',lineHeight:1.3}}>RIGHT EAST 600D: open microwave, appliance garage and gas | LEFT WEST 600D: clear entry to y610, then {wetOrderSummary} | Walkway 1124/1004 | Click any item to see WxDxH - Unit mm/inch + Measure above 3D</div>
     {/* Stable top toolbar - prevents layout jump when switching views */}
     <div style={{position:'sticky',top:0,zIndex:30,background:'#f6f2ec',padding:'12px 0 12px 0',margin:'12px -16px 16px -16px',paddingLeft:16,paddingRight:16,borderBottom:'1px solid #e5e0d5',minHeight:88,boxSizing:'border-box'}}>
       <div style={{display:'flex',gap:8,flexWrap:'wrap',alignItems:'center',minHeight:72}}>
@@ -2585,6 +2651,11 @@ ${westRows}
       <button onClick={()=>selectView('north')} style={{padding:'10px 16px',background:view==='north'?'#C4B5A5':'#fff',color:view==='north'?'#111':'#111',border:'2px solid #C4B5A5',borderRadius:10,fontWeight:800}}>North Elevation</button>
       <button onClick={()=>selectView('south')} style={{padding:'10px 16px',background:view==='south'?'#C4B5A5':'#fff',color:view==='south'?'#111':'#111',border:'2px solid #C4B5A5',borderRadius:10,fontWeight:800}}>South Elevation</button>
       <button onClick={()=>selectView('three')} style={{padding:'10px 16px',background:view==='three'?'#2f6f6d':'#fff',color:view==='three'?'#fff':'#111',border:'2px solid #2f6f6d',borderRadius:10,fontWeight:800}}>Create 3D Render</button>
+      <button onClick={applyAiryLayout} style={{padding:'10px 16px',background:'#fff',color:'#0c4a6e',border:'2px solid #0c4a6e',borderRadius:10,fontWeight:800}}>Try airy layout</button>
+      <button onClick={()=>setEastTopUpperDepth(depth=>depth===320?EAST_TOP_UPPER_DEPTH:320)} style={{padding:'10px 16px',background:eastTopUpperDepth===320?'#e0f2fe':'#fff',color:'#075985',border:'2px solid #0284c7',borderRadius:10,fontWeight:800}}>East uppers: {eastTopUpperDepth} mm</button>
+      <button onClick={()=>setWestTopUpperDepth(depth=>depth===320?WEST_TOP_UPPER_DEPTH:320)} style={{padding:'10px 16px',background:westTopUpperDepth===320?'#e0f2fe':'#fff',color:'#075985',border:'2px solid #0284c7',borderRadius:10,fontWeight:800}}>West uppers: {westTopUpperDepth} mm</button>
+      <button onClick={refineEastCookingZone} style={{padding:'10px 16px',background:'#ecfdf5',color:'#065f46',border:'2px solid #059669',borderRadius:10,fontWeight:800}}>Refine garage + move hob north</button>
+      <button onClick={()=>loadVersion('current')} style={{padding:'10px 16px',background:'#e8f5ed',color:'#14532d',border:'2px solid #15803d',borderRadius:10,fontWeight:800}}>Restore saved kitchen baseline</button>
       <button onClick={()=>selectView('references')} style={{padding:'10px 16px',background:view==='references'?'#0c4a6e':'#fff',color:view==='references'?'#fff':'#0c4a6e',border:'2px solid #0c4a6e',borderRadius:10,fontWeight:800}}>Reference Links</button>
       <button onClick={()=>setShowHeightGuides(v=>!v)} style={{padding:'10px 16px',background:showHeightGuides?'#4f46e5':'#fff',color:showHeightGuides?'#fff':'#3730a3',border:'2px solid #4f46e5',borderRadius:10,fontWeight:800}}>Height Guide</button>
       <button onClick={export3DScreenshot} disabled={view!=='three'} style={{padding:'10px 16px',background:view==='three'?'#111':'#ddd',color:view==='three'?'#fff':'#777',border:'none',borderRadius:10,fontWeight:800}}>3D Screenshot</button>
@@ -2861,7 +2932,7 @@ ${westRows}
     </div>)}
     {view==='front'&&(<div ref={activeViewRef} style={{background:'#fff',borderRadius:14,padding:14,scrollMarginTop:12}}><svg width="1000" height="500" viewBox="0 0 800 500" style={{width:'100%'}}><polygon points="0,450 800,450 560,120 240,120" fill="#E8E0D5" stroke="#111"/><polygon points="0,0 800,0 560,80 240,80" fill="#f2ece3" stroke="#111"/><polygon points="0,0 0,450 240,120 240,80" fill={materials.wall||'#faf6f1'} stroke="#111"/><polygon points="800,0 800,450 560,120 560,80" fill={materials.wall||'#faf6f1'} stroke="#111"/><rect x="350" y="95" width="100" height="45" fill="#7EB8E8" stroke="#111"/><text x="400" y="92" textAnchor="middle" fontSize="12" fontWeight="700">N WINDOW</text><rect x="92" y="235" width="68" height="54" fill="#80b5de" stroke="#111"/><text x="126" y="229" textAnchor="middle" fontSize="10" fontWeight="700">PURIFIER</text><rect x="162" y="310" width="70" height="18" fill="#202020" stroke="#111"/><rect x="174" y="313" width="46" height="12" fill="#c9c9c9" stroke="#555"/><text x="197" y="304" textAnchor="middle" fontSize="10" fontWeight="700">SINK</text><rect x="568" y="236" width="86" height="70" fill="#8c7a65" stroke="#111"/><text x="611" y="230" textAnchor="middle" fontSize="10" fontWeight="700">GARAGE</text><rect x="590" y="252" width="42" height="18" fill="#1f1f1f"/><rect x="594" y="276" width="34" height="18" fill="#b9b9b9"/><rect x="640" y="240" width="80" height="20" fill="#2a2a2a"/><text x="680" y="235" textAnchor="middle" fontSize="10" fill="#fff">GAS y2300</text></svg></div>)}
     {view==='east'&&(<div ref={(node)=>{eastSvgRef.current=node; activeViewRef.current=node}} style={{background:'#fff',borderRadius:14,padding:14,scrollMarginTop:12}}><div style={{display:'flex',justifyContent:'space-between',alignItems:'center',flexWrap:'wrap',gap:10}}><h3 style={{margin:'0 0 10px 0'}}>East wall front render: open microwave, open appliance garage, gas and 4in backsplash slider</h3><div style={{display:'flex',gap:6}}><button onClick={()=>downloadSvgFromRef(eastSvgRef,'east-elevation.svg')} style={{padding:'6px 10px',background:'#fff',border:'1px solid #111',borderRadius:8,fontWeight:700}}>Export SVG</button><button onClick={()=>downloadPngFromRef(eastSvgRef,'east-elevation.png')} style={{padding:'6px 10px',background:'#111',color:'#fff',border:'none',borderRadius:8,fontWeight:700}}>Export PNG</button><button onClick={()=>downloadPdfFromRef(eastSvgRef,'east-elevation.pdf')} style={{padding:'6px 10px',background:'#fff',border:'1px solid #111',borderRadius:8,fontWeight:700}}>Export PDF</button></div></div><WallElevation items={activeEast} isEast={true}/></div>)}
-    {view==='west'&&(<div ref={(node)=>{westSvgRef.current=node; activeViewRef.current=node}} style={{background:'#fff',borderRadius:14,padding:14,scrollMarginTop:12}}><div style={{display:'flex',justifyContent:'space-between',alignItems:'center',flexWrap:'wrap',gap:10}}><h3 style={{margin:'0 0 10px 0'}}>West wall front render: 2ft clear zone, open washing, sink, open dishwasher, 6in slider and shaft</h3><div style={{display:'flex',gap:6}}><button onClick={()=>downloadSvgFromRef(westSvgRef,'west-elevation.svg')} style={{padding:'6px 10px',background:'#fff',border:'1px solid #111',borderRadius:8,fontWeight:700}}>Export SVG</button><button onClick={()=>downloadPngFromRef(westSvgRef,'west-elevation.png')} style={{padding:'6px 10px',background:'#111',color:'#fff',border:'none',borderRadius:8,fontWeight:700}}>Export PNG</button><button onClick={()=>downloadPdfFromRef(westSvgRef,'west-elevation.pdf')} style={{padding:'6px 10px',background:'#fff',border:'1px solid #111',borderRadius:8,fontWeight:700}}>Export PDF</button></div></div><WallElevation items={activeWest} isEast={false}/></div>)}
+    {view==='west'&&(<div ref={(node)=>{westSvgRef.current=node; activeViewRef.current=node}} style={{background:'#fff',borderRadius:14,padding:14,scrollMarginTop:12}}><div style={{display:'flex',justifyContent:'space-between',alignItems:'center',flexWrap:'wrap',gap:10}}><h3 style={{margin:'0 0 10px 0'}}>West wall front render: clear entry, wet appliances and northwest shaft</h3><div style={{display:'flex',gap:6}}><button onClick={()=>downloadSvgFromRef(westSvgRef,'west-elevation.svg')} style={{padding:'6px 10px',background:'#fff',border:'1px solid #111',borderRadius:8,fontWeight:700}}>Export SVG</button><button onClick={()=>downloadPngFromRef(westSvgRef,'west-elevation.png')} style={{padding:'6px 10px',background:'#111',color:'#fff',border:'none',borderRadius:8,fontWeight:700}}>Export PNG</button><button onClick={()=>downloadPdfFromRef(westSvgRef,'west-elevation.pdf')} style={{padding:'6px 10px',background:'#fff',border:'1px solid #111',borderRadius:8,fontWeight:700}}>Export PDF</button></div></div><WallElevation items={activeWest} isEast={false}/></div>)}
     {view==='north'&&(<div ref={(node)=>{northSvgRef.current=node; activeViewRef.current=node}} style={{background:'#fff',borderRadius:14,padding:14,scrollMarginTop:12}}><div style={{display:'flex',justifyContent:'space-between',alignItems:'center',flexWrap:'wrap',gap:10}}><h3 style={{margin:'0 0 10px 0'}}>North elevation (looking South)</h3><div style={{display:'flex',gap:6}}><button onClick={()=>downloadSvgFromRef(northSvgRef,'north-elevation.svg')} style={{padding:'6px 10px',background:'#fff',border:'1px solid #111',borderRadius:8,fontWeight:700}}>Export SVG</button><button onClick={()=>downloadPngFromRef(northSvgRef,'north-elevation.png')} style={{padding:'6px 10px',background:'#111',color:'#fff',border:'none',borderRadius:8,fontWeight:700}}>Export PNG</button><button onClick={()=>downloadPdfFromRef(northSvgRef,'north-elevation.pdf')} style={{padding:'6px 10px',background:'#fff',border:'1px solid #111',borderRadius:8,fontWeight:700}}>Export PDF</button></div></div><NorthSouthElevation isNorth={true}/><div style={{marginTop:8,fontSize:12,color:'#666'}}>Shows north window reference, below-window 300 mm area only, counter 900 mm, backsplash 600 mm, lower upper 1350-1850, top upper 1850-2700 no gap, ceiling 2700 mm.</div></div>)}
     {view==='south'&&(<div ref={(node)=>{southSvgRef.current=node; activeViewRef.current=node}} style={{background:'#fff',borderRadius:14,padding:14,scrollMarginTop:12}}><div style={{display:'flex',justifyContent:'space-between',alignItems:'center',flexWrap:'wrap',gap:10}}><h3 style={{margin:'0 0 10px 0'}}>South elevation (looking North)</h3><div style={{display:'flex',gap:6}}><button onClick={()=>downloadSvgFromRef(southSvgRef,'south-elevation.svg')} style={{padding:'6px 10px',background:'#fff',border:'1px solid #111',borderRadius:8,fontWeight:700}}>Export SVG</button><button onClick={()=>downloadPngFromRef(southSvgRef,'south-elevation.png')} style={{padding:'6px 10px',background:'#111',color:'#fff',border:'none',borderRadius:8,fontWeight:700}}>Export PNG</button><button onClick={()=>downloadPdfFromRef(southSvgRef,'south-elevation.pdf')} style={{padding:'6px 10px',background:'#fff',border:'1px solid #111',borderRadius:8,fontWeight:700}}>Export PDF</button></div></div><NorthSouthElevation isNorth={false}/><div style={{marginTop:8,fontSize:12,color:'#666'}}>Shows south door, west door clear zone, counter and upper zones, ceiling 2700 mm.</div></div>)}
     {view==='references'&&<ReferencesView/>}
@@ -2996,9 +3067,10 @@ ${westRows}
           <div style={{fontWeight:800,fontSize:12,marginBottom:6}}>Named versions (localStorage)</div>
           <div style={{display:'flex',gap:6,flexWrap:'wrap'}}>
             {[
-              ['current','New config current'],
-              ['A','Option A'],
-              ['B','Option B'],
+              ['current','Kitchen baseline'],
+              ['A','Airy layout (Option A)'],
+              ['B','Airy + both shallow uppers (Option B)'],
+              ['C','Airy + refined cooking zone (Option C)'],
             ].map(([key,label])=>(
               <div key={key} style={{border:'1px solid #ddd',borderRadius:10,padding:'8px 10px',minWidth:140}}>
                 <div style={{fontWeight:800,fontSize:12}}>{label}</div>
@@ -3014,6 +3086,6 @@ ${westRows}
       </div>
     </div>
 
-    <div style={{marginTop:14,padding:14,background:'#fff',borderRadius:10,fontFamily:'monospace',fontSize:13,overflowX:'auto',whiteSpace:'pre-wrap',overflowWrap:'anywhere'}}><b>AI API (Browser Console):</b><br/>window.kitchenAPI.moveItemMM('east','microwave',0) // open microwave above backsplash<br/>window.kitchenAPI.moveItemMM('east','applianceGarage',0) // open food-processor garage<br/>window.kitchenAPI.moveItemMM('east','gas',1200) // east gas cooktop<br/>window.kitchenAPI.moveItemMM('west','washing',610) // open west washing first after door<br/>window.kitchenAPI.moveItemMM('west','sink',1210) // west sink<br/>window.kitchenAPI.moveItemMM('west','dishwasher',1972) // open west dishwasher<br/>window.kitchenAPI.moveItemMM('west','westSixInchSlider',2572) // 6in slider before shaft<br/>window.kitchenAPI.getLayout()<br/>window.kitchenAPI.getLayoutModel()<br/>window.kitchenAPI.validate() // detailed rows<br/>window.kitchenAPI.getValidationRows()<br/>window.kitchenAPI.getMaterials()<br/>window.kitchenAPI.getModules()<br/>window.kitchenAPI.getBOM()<br/>window.kitchenAPI.getGrid() / window.kitchenAPI.setGrid(50) // 0|50|100<br/>window.kitchenAPI.getWalkway()<br/>window.kitchenAPI.getDimensions()</div>
+    <div style={{marginTop:14,padding:14,background:'#fff',borderRadius:10,fontFamily:'monospace',fontSize:13,overflowX:'auto',whiteSpace:'pre-wrap',overflowWrap:'anywhere'}}><b>AI API (Browser Console):</b><br/>window.kitchenAPI.moveItemMM('east','microwave',0) // open microwave above backsplash<br/>window.kitchenAPI.moveItemMM('east','applianceGarage',0) // open food-processor garage<br/>window.kitchenAPI.moveItemMM('east','gas',1350) // east gas cooktop in refined layout<br/>window.kitchenAPI.moveItemMM('west','washing',610) // open west washing first after door<br/>window.kitchenAPI.moveItemMM('west','sink',1210) // west sink<br/>window.kitchenAPI.moveItemMM('west','dishwasher',1972) // open west dishwasher<br/>window.kitchenAPI.moveItemMM('west','westSixInchSlider',2572) // 6in slider before shaft<br/>window.kitchenAPI.getLayout()<br/>window.kitchenAPI.getLayoutModel()<br/>window.kitchenAPI.validate() // detailed rows<br/>window.kitchenAPI.getValidationRows()<br/>window.kitchenAPI.getMaterials()<br/>window.kitchenAPI.getModules()<br/>window.kitchenAPI.getBOM()<br/>window.kitchenAPI.getGrid() / window.kitchenAPI.setGrid(50) // 0|50|100<br/>window.kitchenAPI.getWalkway()<br/>window.kitchenAPI.getDimensions()</div>
   </div></div>)
 }

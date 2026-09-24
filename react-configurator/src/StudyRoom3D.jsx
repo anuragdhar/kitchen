@@ -3,6 +3,7 @@ import * as THREE from 'three'
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js'
 import {RoomEnvironment} from 'three/examples/jsm/environments/RoomEnvironment.js'
 import {STUDY_ROOM} from './config/studyRoomConfig.js'
+import {createStudyTerrace} from './StudyTerrace.js'
 
 const mm=value=>value/1000
 
@@ -49,6 +50,7 @@ export default function StudyRoom3D(){
     const trimMaterial=new THREE.MeshStandardMaterial({color:'#f8fafc',roughness:.62})
     const addBox=(w,h,d,x,y,z,material=wallMaterial,parent=room)=>{const mesh=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),material);mesh.position.set(x,y,z);mesh.castShadow=true;mesh.receiveShadow=true;parent.add(mesh);return mesh}
     addBox(W,.05,L,W/2,-.025,L/2,floorMaterial)
+    room.add(createStudyTerrace(STUDY_ROOM))
     const wallT=.1
     const northGroup=new THREE.Group();room.add(northGroup)
     addBox(W,H,wallT,W/2,H/2,0,wallMaterial,northGroup)

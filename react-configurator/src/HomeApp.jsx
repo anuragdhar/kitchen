@@ -9,6 +9,7 @@ import WholeHome3D from './WholeHome3D.jsx'
 import {BALCONY_OFFICE} from './config/balconyOfficeConfig.js'
 import {STUDY_ROOM} from './config/studyRoomConfig.js'
 import {EMPTY_ROOM_SHELLS} from './config/roomShellConfig.js'
+import {KITCHEN} from './config/kitchenConfig.js'
 import floorPlanImage from '../../Interior/home a 501 floor - unmodified.png'
 
 const rooms={
@@ -20,6 +21,7 @@ const rooms={
   bedroom1:{name:'Bedroom 1',color:'#7e22ce',shellKey:'bedroom1',hotspotOnly:true},
   bedroom3:{name:'Bedroom 3',color:'#c2410c',shellKey:'bedroom3',hotspotOnly:true},
   lobby:{name:'Lobby / Dining',color:'#0369a1',shellKey:'lobby',hotspotOnly:true},
+  pooja:{name:'Pooja Ghar',color:'#a16207',shellKey:'lobby',initialView:'pooja',hotspotOnly:true},
   drawing:{name:'Drawing Room',color:'#3f6212',shellKey:'drawing',hotspotOnly:true},
   entry:{name:'Main entry',eyebrow:'Northwest arrival',description:'Follow the seven-foot gallery past the shoe area, through the main door and right into the home.',color:'#9a3412'},
   dxf:{name:'DXF workspace',eyebrow:'Floor-plan tools',description:'View the included architectural DXF, inspect layers, load another file and prepare controlled drawing edits.',color:'#0f766e'},
@@ -43,22 +45,25 @@ function HomeHeader({section,onHome,onOpen3D}){
   </header>
 }
 
-function RoomHotspot({room,style,onOpen}){
+function RoomHotspot({room,style,onOpen,label,badge}){
   const info=rooms[room]
-  return <button onClick={()=>onOpen(room)} aria-label={`Open ${info.name}`} style={{position:'absolute',...style,border:`3px solid ${info.color}`,background:`${info.color}28`,borderRadius:10,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',padding:4,transition:'transform .2s ease, background .2s ease',boxShadow:'0 4px 16px rgba(0,0,0,.12)'}}>
-    <span style={{background:info.color,color:'#fff',borderRadius:999,padding:'6px 10px',fontWeight:900,fontSize:'clamp(10px,1.6vw,14px)',boxShadow:'0 2px 8px rgba(0,0,0,.2)'}}>{info.name}</span>
+  return <button onClick={()=>onOpen(room)} aria-label={`Open ${label||info.name}`} title={label||info.name} style={{position:'absolute',...style,border:`3px solid ${info.color}`,background:`${info.color}28`,borderRadius:10,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',padding:4,transition:'transform .2s ease, background .2s ease',boxShadow:'0 4px 16px rgba(0,0,0,.12)'}}>
+    <span style={{background:info.color,color:'#fff',borderRadius:999,padding:'6px 10px',fontWeight:900,fontSize:'clamp(10px,1.6vw,14px)',boxShadow:'0 2px 8px rgba(0,0,0,.2)'}}>{badge||info.name}</span>
   </button>
 }
 
+const planRect=(x1,y1,x2,y2)=>({left:`${x1/8}%`,top:`${y1/8.75}%`,width:`${(x2-x1)/8}%`,height:`${(y2-y1)/8.75}%`})
 const planHotspots=[
-  ['kitchen',{left:'15.5%',top:'57.4%',width:'16.5%',height:'19.5%'}],
-  ['bedroom3',{left:'5.6%',top:'22.4%',width:'25.3%',height:'22.2%'}],
-  ['study',{left:'31.8%',top:'22.2%',width:'21.4%',height:'28.7%'}],
-  ['balcony',{left:'52.8%',top:'20.7%',width:'10.8%',height:'16.2%'}],
-  ['lobby',{left:'31.2%',top:'45%',width:'30.7%',height:'21.8%'}],
-  ['drawing',{left:'62%',top:'44.9%',width:'21.1%',height:'36.8%'}],
-  ['bedroom1',{left:'40.7%',top:'70.2%',width:'21.1%',height:'19.3%'}],
-  ['entry',{left:'62%',top:'82%',width:'22%',height:'12%'}],
+  ['kitchen',planRect(130,503,255,703)],
+  ['bedroom3',planRect(50,198,255,390)],
+  ['study',planRect(255,198,424,444)],
+  ['balcony',planRect(424,188,496,316)],
+  ['lobby',planRect(255,449,515,612)],
+  ['pooja',planRect(255,612,317,662),{badge:'Pooja'}],
+  ['drawing',planRect(515,449,688,715)],
+  ['bedroom1',planRect(339,612,515,794)],
+  ['bedroom1',planRect(273,672,339,794),{label:'Bedroom 1 balcony',badge:'B1'}],
+  ['entry',planRect(515,715,688,874)],
 ]
 
 function MiniFloorNavigator({section,onOpen}){
@@ -66,7 +71,7 @@ function MiniFloorNavigator({section,onOpen}){
     <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',gap:8,margin:'1px 2px 8px'}}><div><b style={{fontSize:13,color:'#241f1a'}}>Jump to a room</b><div style={{fontSize:10,color:'#756b62',marginTop:2}}>Click the plan</div></div><div aria-label="Plan compass: south up, north down, east left, west right" style={{width:40,height:40,border:'1.5px solid #241f1a',borderRadius:'50%',position:'relative',fontSize:8,fontWeight:900,color:'#241f1a'}}><span style={{position:'absolute',top:1,left:'50%',transform:'translateX(-50%)'}}>S</span><span style={{position:'absolute',bottom:1,left:'50%',transform:'translateX(-50%)',color:'#b91c1c'}}>N</span><span style={{position:'absolute',left:3,top:'50%',transform:'translateY(-50%)'}}>E</span><span style={{position:'absolute',right:3,top:'50%',transform:'translateY(-50%)'}}>W</span><span style={{position:'absolute',left:'50%',top:8,width:1,height:24,background:'#241f1a'}}/><span style={{position:'absolute',left:8,top:'50%',width:24,height:1,background:'#241f1a'}}/></div></div>
     <div style={{position:'relative',overflow:'hidden',borderRadius:10,border:'1px solid #e5ded6',background:'#fff'}}>
       <img src={floorPlanImage} alt="Miniature A501 home floor plan" style={{display:'block',width:'100%',height:'auto'}}/>
-      {planHotspots.map(([key,style])=>{const active=section===key;const info=rooms[key];return <button key={key} onClick={()=>onOpen(key)} aria-label={`Open ${info.name}`} title={info.name} style={{position:'absolute',...style,border:`${active?3:1.5}px solid ${info.color}`,background:active?`${info.color}70`:`${info.color}25`,borderRadius:4,cursor:'pointer',padding:0,boxShadow:active?`0 0 0 2px #fff, 0 0 0 4px ${info.color}`:'none'}}/>})}
+      {planHotspots.map(([key,style,options],index)=>{const active=section===key;const info=rooms[key];return <button key={`${key}-${index}`} onClick={()=>onOpen(key)} aria-label={`Open ${options?.label||info.name}`} title={options?.label||info.name} style={{position:'absolute',...style,border:`${active?3:1.5}px solid ${info.color}`,background:active?`${info.color}70`:`${info.color}25`,borderRadius:4,cursor:'pointer',padding:0,boxShadow:active?`0 0 0 2px #fff, 0 0 0 4px ${info.color}`:'none'}}/>})}
     </div>
     <button onClick={()=>onOpen('whole3d')} style={{...buttonStyle,width:'100%',marginTop:9,background:section==='whole3d'?'#134e4a':'#0f766e',color:'#fff'}}>Whole home 3D ↗</button>
     <div style={{fontSize:9,color:'#756b62',lineHeight:1.35,marginTop:7}}>S ↑ · N ↓ · E ← · W →</div>
@@ -100,14 +105,11 @@ function WholeHome({onOpen}){
               <span style={{position:'absolute',left:'20%',top:'50%',height:2,width:'60%',background:'#241f1a',transform:'translateY(-50%)'}}/>
               <span style={{position:'absolute',left:'50%',bottom:'14%',transform:'translateX(-50%)',width:0,height:0,borderLeft:'5px solid transparent',borderRight:'5px solid transparent',borderTop:'11px solid #b91c1c'}}/>
             </div>
-            <RoomHotspot room="kitchen" onOpen={onOpen} style={{left:'15.5%',top:'57.4%',width:'16.5%',height:'19.5%'}}/>
-            <RoomHotspot room="bedroom3" onOpen={onOpen} style={{left:'5.6%',top:'22.4%',width:'25.3%',height:'22.2%'}}/>
-            <RoomHotspot room="study" onOpen={onOpen} style={{left:'31.8%',top:'22.2%',width:'21.4%',height:'28.7%'}}/>
-            <RoomHotspot room="balcony" onOpen={onOpen} style={{left:'52.8%',top:'20.7%',width:'10.8%',height:'16.2%'}}/>
-            <RoomHotspot room="lobby" onOpen={onOpen} style={{left:'31.2%',top:'45%',width:'30.7%',height:'21.8%'}}/>
-            <RoomHotspot room="drawing" onOpen={onOpen} style={{left:'62%',top:'44.9%',width:'21.1%',height:'36.8%'}}/>
-            <RoomHotspot room="bedroom1" onOpen={onOpen} style={{left:'40.7%',top:'70.2%',width:'21.1%',height:'19.3%'}}/>
-            <RoomHotspot room="entry" onOpen={onOpen} style={{left:'62%',top:'82%',width:'22%',height:'12%'}}/>
+            {planHotspots.map(([room,style,options],index)=><RoomHotspot key={`${room}-${index}`} room={room} style={style} onOpen={onOpen} {...options}/>)}
+          </div>
+          <div style={{display:'flex',flexWrap:'wrap',gap:'6px 20px',padding:'12px 5px 0',fontSize:12,color:'#554a40'}}>
+            <span><b>Updated kitchen:</b> {KITCHEN.width.toLocaleString()} × {KITCHEN.length.toLocaleString()} mm</span>
+            <span><b>Bedroom 1:</b> {EMPTY_ROOM_SHELLS.bedroom1.widthMm.toLocaleString()} × {EMPTY_ROOM_SHELLS.bedroom1.lengthMm.toLocaleString()} mm plus {EMPTY_ROOM_SHELLS.bedroom1.balconyExtension.depthMm.toLocaleString()} × {EMPTY_ROOM_SHELLS.bedroom1.balconyExtension.lengthMm.toLocaleString()} mm enclosed balcony</span>
           </div>
         </section>
 
@@ -140,12 +142,13 @@ function StudyWorkspace(){
   </main>
 }
 
-function EmptyShellWorkspace({initialRoomKey=null}){
+function EmptyShellWorkspace({initialRoomKey=null,initialView='overview'}){
   const singleRoom=initialRoomKey?EMPTY_ROOM_SHELLS[initialRoomKey]:null
+  const pooja=initialView==='pooja'?singleRoom?.poojaAlcove:null
   return <main style={{minHeight:'calc(100vh - 68px)',background:'linear-gradient(145deg,#edf7f8,#f8fafc)',padding:'12px clamp(14px,2vw,28px) 28px'}}>
     <div style={{maxWidth:1900,margin:'0 auto'}}>
-      <div style={{display:'flex',alignItems:'baseline',gap:14,flexWrap:'wrap',margin:'0 0 8px'}}><h1 style={{fontSize:'clamp(28px,3vw,42px)',letterSpacing:'-.035em',margin:0,color:'#172033'}}>{singleRoom?singleRoom.name:'Other rooms in 3D'}</h1><span style={{fontSize:13,color:'#64748b'}}>{singleRoom?`${singleRoom.widthMm.toLocaleString()} × ${singleRoom.lengthMm.toLocaleString()} mm · ${initialRoomKey==='bedroom1'?'balcony extension concept':initialRoomKey==='lobby'||initialRoomKey==='drawing'?'furnished concept':'empty shell'}`:'Select a room'}</span></div>
-      <EmptyRoomGallery initialRoomKey={initialRoomKey||'bedroom1'} showSelector={!singleRoom}/>
+      <div style={{display:'flex',alignItems:'baseline',gap:14,flexWrap:'wrap',margin:'0 0 8px'}}><h1 style={{fontSize:'clamp(28px,3vw,42px)',letterSpacing:'-.035em',margin:0,color:'#172033'}}>{pooja?'Pooja Ghar':singleRoom?singleRoom.name:'Other rooms in 3D'}</h1><span style={{fontSize:13,color:'#64748b'}}>{pooja?`${pooja.widthMm.toLocaleString()} × ${pooja.depthMm.toLocaleString()} mm · ${pooja.platformHeightMm} mm raised platform · ${pooja.drawerDepthMm} mm deep drawer facing Lobby / Dining`:singleRoom?`${singleRoom.widthMm.toLocaleString()} × ${singleRoom.lengthMm.toLocaleString()} mm · ${initialRoomKey==='bedroom1'?'bed and west-wall wardrobe':initialRoomKey==='lobby'||initialRoomKey==='drawing'?'furnished concept':'empty shell'}`:'Select a room'}</span></div>
+      <EmptyRoomGallery initialRoomKey={initialRoomKey||'bedroom1'} initialView={initialView} showSelector={!singleRoom}/>
     </div>
   </main>
 }
@@ -228,7 +231,7 @@ export default function HomeApp(){
     {section==='balcony'&&<BalconyWorkspace/>}
     {section==='shells'&&<EmptyShellWorkspace/>}
     {section==='whole3d'&&<WholeHome3DWorkspace onOpenRoom={setSection}/>}
-    {rooms[section]?.shellKey&&<EmptyShellWorkspace key={section} initialRoomKey={rooms[section].shellKey}/>}
+    {rooms[section]?.shellKey&&<EmptyShellWorkspace key={section} initialRoomKey={rooms[section].shellKey} initialView={rooms[section].initialView||'overview'}/>}
     {section==='entry'&&<EntryWorkspace/>}
     {section==='dxf'&&<DxfWorkspace/>}
   </>

@@ -45,13 +45,22 @@ export default function EntryGallery3D(){
     // The northwest approach follows the 2134 mm entry run, then turns south into the home.
     addBox(approach,.065,passage,approach/2,-.033,passage/2,floorMaterial)
     addBox(1.1,.065,2.35,approach+.55,-.033,1.175,insideFloorMaterial)
-    addBox(approach,.16,.08,approach/2,.08,-.04,wallMaterial)
-    addBox(.08,1.1,passage,.04,.55,passage/2,wallMaterial)
-
-    // Shoe storage sits beside the approach, outside the 1000 mm clear walking strip.
-    addBox(1.72,.83,.42,.95,.415,passage+.24,shoeMaterial)
-    addBox(1.78,.05,.48,.95,.855,passage+.24,doorMaterial)
-    for(const x of [.38,.95,1.52]) addBox(.025,.69,.025,x,.425,passage+.455,frameMaterial)
+    addBox(approach,height,.08,approach/2,height/2,-.04,wallMaterial)
+    // The rack projects beyond the north end wall, with its doors facing the entry.
+    const rack=ENTRY.shoeRack,rackDepth=mm(rack.projectionMm),rackHeight=mm(rack.heightMm)
+    const rackWidth=mm(rack.widthMm)
+    const sideReturn=(passage-rackWidth)/2
+    addBox(.08,height,sideReturn,-.04,height/2,sideReturn/2,wallMaterial)
+    addBox(.08,height,sideReturn,-.04,height/2,passage-sideReturn/2,wallMaterial)
+    addBox(.08,height-rackHeight,rackWidth,-.04,(height+rackHeight)/2,passage/2,wallMaterial)
+    const rackX=-rackDepth/2,rackFrontX=0
+    addBox(rackDepth,rackHeight,rackWidth,rackX,rackHeight/2,passage/2,shoeMaterial)
+    for(let i=0;i<rack.doorCount;i++){
+      const panelWidth=rackWidth/rack.doorCount
+      const panelZ=passage/2-rackWidth/2+(i+.5)*panelWidth
+      addBox(.03,rackHeight-.06,panelWidth-.012,rackFrontX+.015,rackHeight/2,panelZ,doorMaterial)
+      addBox(.024,.3,.018,rackFrontX+.045,1.1,panelZ+(i===0?panelWidth*.33:-panelWidth*.33),metalMaterial)
+    }
 
     // Main entrance door at the inner end of the entry run.
     const doorLeft=(passage-doorWidth)/2,doorRight=doorLeft+doorWidth,doorHeight=2.2
@@ -63,7 +72,7 @@ export default function EntryGallery3D(){
     addBox(.075,.03,.075,.06,1.02,doorWidth-.2,metalMaterial,hinge)
     hinge.rotation.y=1.02
 
-    model.add(new THREE.ArrowHelper(new THREE.Vector3(1,0,0),new THREE.Vector3(.2,.09,passage/2),approach-.47,0x2563eb,.18,.11))
+    model.add(new THREE.ArrowHelper(new THREE.Vector3(1,0,0),new THREE.Vector3(rackFrontX+.12,.09,passage/2),approach-rackFrontX-.38,0x2563eb,.18,.11))
     model.add(new THREE.ArrowHelper(new THREE.Vector3(0,0,1),new THREE.Vector3(approach+.55,.09,.56),1.33,0x2563eb,.18,.11))
     const labelTextures=[]
     const addLabel=(label,x,y,z,width=1.1)=>{
@@ -74,13 +83,13 @@ export default function EntryGallery3D(){
     }
     addLabel('NORTHWEST ENTRY',.42,.18,.17,1.15)
     addLabel('MAIN DOOR',approach,2.48,passage/2,1.15)
-    addLabel('SHOE AREA',.95,1.02,passage+.24,.94)
+    addLabel('SHOE RACK',rackX,rackHeight+.18,passage/2,.94)
     addLabel('RIGHT TURN',approach+.55,.16,1.86,1.05)
     scene.add(new THREE.HemisphereLight('#ffffff','#78909c',1.15))
     const sun=new THREE.DirectionalLight('#fff3dc',1.7);sun.position.set(-2,7,4);sun.castShadow=true;scene.add(sun)
     const setCamera=key=>{
       if(key==='top'){camera.position.set(1.65,6,1.15);camera.up.set(0,0,1);controls.target.set(1.65,0,1.15)}
-      else{camera.position.set(4.55,5.45,-2.65);camera.up.set(0,1,0);controls.target.set(1.65,.45,1.05)}
+      else{camera.position.set(4.55,5.45,3.65);camera.up.set(0,1,0);controls.target.set(1.65,.45,1.05)}
       camera.lookAt(controls.target);controls.update()
     }
     setCamera('overview')
