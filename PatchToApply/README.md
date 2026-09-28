@@ -31,13 +31,15 @@ already tracked by Git must actually change under `react-configurator/src/`,
 `blender/`, or `configs/archviz/`. New files are allowed when a change to an
 existing source file connects them to the room. For example, adding a new React
 component without importing or rendering it from the active room will be
-rejected. Keep the room's dimensions, openings, stable IDs, and saved layout
+rejected. Adding comments to unrelated files does not connect a new scene to
+the room; make a real change to the active room implementation. Keep the room's
+dimensions, openings, stable IDs, and saved layout
 behavior unless the patch is deliberately changing them.
 
 The ZIP may also include `patch-*.js` files under a repository-relative folder.
 They run after the files are copied and are removed before commit. Prefer
-complete source files when possible. A script must not leave `.bak` or
-`.bak-realism` files in the checkout.
+complete source files when possible. A script must not leave `.bak`,
+`.bak-*`, or `.backup*` files in the checkout.
 
 Do not include `.git/`, `.github/`, `PatchToApply/`, `render-review/`, or
 `configs/render-worker-job.json`. The worker updates the job file itself for

@@ -100,6 +100,10 @@ def changed_paths(checkout):
     return [entry[3:] for entry in entries if entry]
 
 
+def is_backup_path(path):
+    return bool(re.search(r'\.(?:bak|backup)(?:[.-].*)?$', Path(path).name, re.I))
+
+
 def apply_patch(archive, source_repo, workspace, node, check_only=False):
     archive, source_repo, workspace = archive.resolve(), source_repo.resolve(), workspace.resolve()
     if archive.parent != (ROOT / 'PatchToApply').resolve() or archive.suffix.lower() != '.zip':
@@ -117,7 +121,7 @@ def apply_patch(archive, source_repo, workspace, node, check_only=False):
         changes = changed_paths(checkout)
         if any(path.startswith(('PatchToApply/', 'render-review/', '.github/')) or path == 'configs/render-worker-job.json' for path in changes):
             raise ValueError('Patch changed worker controls or review files')
-        if any(path.endswith(('.bak', '.bak-realism')) for path in changes):
+        if any(is_backup_path(path) for path in changes):
             raise ValueError('Patch left backup files in source; remove them from the ZIP script')
         tracked = [path for path in call(['git', 'diff', '--name-only', '-z'], checkout).split('\0') if path]
         if not tracked:
