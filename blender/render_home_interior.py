@@ -75,7 +75,7 @@ def main():
     scene.render.engine='CYCLES';device=setup_device(opt.device);width,samples=PRESETS[opt.quality];aspect=job.get('aspect',1.5)
     if not isinstance(aspect,(float,int)) or not math.isfinite(aspect) or not .2<=aspect<=5: raise ValueError('Invalid aspect')
     scene.render.resolution_x=width;scene.render.resolution_y=max(64,round(width/aspect));scene.render.resolution_percentage=100
-    scene.cycles.samples=samples;scene.cycles.use_denoising=True;scene.cycles.denoiser='OPENIMAGEDENOISE'
+    scene.cycles.samples=samples;scene.cycles.use_denoising=True
     scene.cycles.max_bounces=8;scene.cycles.diffuse_bounces=4;scene.cycles.glossy_bounces=4
     scene.cycles.seed=7;scene.render.threads_mode='FIXED';scene.render.threads=4
     for transform in ['AgX','Filmic','Standard']:
@@ -84,16 +84,21 @@ def main():
     scene.render.image_settings.file_format='PNG';scene.render.image_settings.color_mode='RGBA';scene.render.filepath=str(out/'render.png')
     warnings=[]
     try:
+        scene.cycles.denoiser='OPENIMAGEDENOISE'
+    except TypeError as error:
+        # Builds without any denoiser expose an empty dynamic enum.
+        if 'OPENIMAGEDENOISE' not in str(error) or 'not found' not in str(error): raise
+        scene.cycles.use_denoising=False
+        warnings.append('OpenImageDenoise is unavailable in this Blender build; output is not denoised.')
+    try:
         bpy.ops.render.render(write_still=True)
     except RuntimeError as error:
-        # Some Linux distribution builds omit OIDN entirely. Preserve denoising
-        # on normal builds; retry only this known capability failure, not others.
+        # Retry only this known optional-feature failure, not unrelated errors.
         if 'Build without OpenImageDenois' not in str(error): raise
         scene.cycles.use_denoising=False
         warnings.append('This Blender build lacks OpenImageDenoise; output is rendered without denoising.')
         print('WARNING:', warnings[-1])
         bpy.ops.render.render(write_still=True)
-    # Save the actual settings used by the successful render, including fallback.
     bpy.ops.wm.save_as_mainfile(filepath=str(out/'scene.blend'))
     report={'blenderVersion':bpy.app.version_string,'device':device,'engine':'CYCLES','quality':opt.quality,'samples':samples,'width':scene.render.resolution_x,'height':scene.render.resolution_y,'meshObjects':len(imported_meshes),'lights':sum(o.type=='LIGHT' for o in scene.objects),'seconds':round(time.time()-start,2),'sceneSha256':job['sceneSha256'],'room':job['room'],'status':'rendered','denoising':bool(scene.cycles.use_denoising),'warnings':warnings}
     (out/'render-report.json').write_text(json.dumps(report,indent=2)+'\n');print(json.dumps(report))
