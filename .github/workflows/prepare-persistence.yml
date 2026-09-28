@@ -17,9 +17,10 @@ jobs:
         run: |
           python .maintenance/patch-app.py
           python .maintenance/finalize.py
+          git restore .github/workflows/check.yml
           git diff --exit-code -- react-configurator/src/config react-configurator/package-lock.json Interior freecad blender
           git diff --check
-          git add react-configurator/src/App.jsx react-configurator/package.json .github/workflows/check.yml docs/ARCHITECTURE.md docs/CURRENT_STATE.md docs/TESTING.md
+          git add react-configurator/src/App.jsx react-configurator/package.json docs/ARCHITECTURE.md docs/CURRENT_STATE.md docs/TESTING.md
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git commit -m 'fix: wire atomic project persistence and regression checks'
