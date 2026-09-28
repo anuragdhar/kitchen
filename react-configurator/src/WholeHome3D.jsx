@@ -1,6 +1,5 @@
 import {registerInteriorScene} from './render/interiorScene.js'
 import {tagSurfaceMaterial} from './render/surfaceRoles.mjs'
-import {exportCoohomPackage} from './CoohomExport.js'
 import {createDrawingLobbyPartition} from './DrawingLobbyPartition.js'
 import {createStudyFurniture} from './StudyFurniture.js'
 import {createLobbyConcealedDoor} from './LobbyConcealedDoor.js'
@@ -69,7 +68,6 @@ const GLASS=[
 
 function LiveWholeHome3D({onOpenRoom}){
   const mountRef=useRef(null),sceneRef=useRef(null)
-  const [exportStatus,setExportStatus]=useState('')
   const [view,setView]=useState('perspective')
   const [showWalls,setShowWalls]=useState(true)
   const [showPoojaPerson,setShowPoojaPerson]=useState(true)
@@ -592,7 +590,7 @@ function LiveWholeHome3D({onOpenRoom}){
     const interiorRoomIds=['bedroom3','study','balcony','terrace','kitchen','lobby','drawing','bedroom1','bedroom1-balcony','entry']
     const interiorScene=registerInteriorScene({id:'whole-home',scene,camera,renderer,zones:ROOMS.map((r,index)=>({id:interiorRoomIds[index],min:[X(r.bounds[0]),0,Z(r.bounds[1])],max:[X(r.bounds[2]),HEIGHT,Z(r.bounds[3])]}))})
     let raf=0;const render=()=>{controls.update();renderer.render(scene,camera);raf=requestAnimationFrame(render)};render()
-    sceneRef.current={exportCoohom:()=>exportCoohomPackage({model,wallMeshes,rooms:ROOMS,scaleX:X_METRES_PER_PIXEL,scaleZ:Z_METRES_PER_PIXEL,kitchenSnapshot:Object.keys(savedKitchen).length?savedKitchen:null}),setStorageCoverOpen:value=>storeStorage.userData.setCoverOpen(value),setMirrorOpen:value=>vanity.userData.setMirrorOpen?.(value),setPartitionOpen:value=>partition.userData.setOpen?.(value),setCamera,setWallsVisible:visible=>{walls.visible=visible},setBoardOpen:value=>{ironingStorage.userData.setBoardOpen(value)},setPoojaPersonVisible:visible=>{seatedPerson.visible=visible},setPoojaDoorsOpen:value=>{poojaDoors.userData.setDoorsOpen(value)},clearMark}
+    sceneRef.current={setStorageCoverOpen:value=>storeStorage.userData.setCoverOpen(value),setMirrorOpen:value=>vanity.userData.setMirrorOpen?.(value),setPartitionOpen:value=>partition.userData.setOpen?.(value),setCamera,setWallsVisible:visible=>{walls.visible=visible},setBoardOpen:value=>{ironingStorage.userData.setBoardOpen(value)},setPoojaPersonVisible:visible=>{seatedPerson.visible=visible},setPoojaDoorsOpen:value=>{poojaDoors.userData.setDoorsOpen(value)},clearMark}
     return()=>{interiorScene.dispose();cancelAnimationFrame(raf);observer.disconnect();renderer.domElement.removeEventListener('pointerdown',onPointerDown);renderer.domElement.removeEventListener('pointerup',onPointerUp);controls.dispose();model.traverse(object=>{object.geometry?.dispose?.();object.material?.dispose?.()});markedWallMaterial.dispose();texture.dispose();environment.dispose();pmrem.dispose();renderer.dispose();renderer.domElement.remove();sceneRef.current=null}
   },[])
 
@@ -615,7 +613,6 @@ function LiveWholeHome3D({onOpenRoom}){
         <button onClick={()=>setShowWalls(value=>!value)} style={buttonStyle(showWalls)}>{showWalls?'Hide walls':'Show walls'}</button>
         <button onClick={()=>setShowPoojaPerson(value=>!value)} style={buttonStyle(showPoojaPerson)}>{showPoojaPerson?'Hide seated person':'Show seated person'}</button>
         <button onClick={()=>setShowIroningBoard(value=>!value)} style={buttonStyle(showIroningBoard)}>{showIroningBoard?'Stow ironing board':'Pull out ironing board'}</button>
-        <button disabled={exportStatus==='Exporting…'} onClick={async()=>{setExportStatus('Exporting…');try{await sceneRef.current.exportCoohom();setExportStatus('Export downloaded')}catch(error){setExportStatus('Export failed: '+error.message)}}} style={buttonStyle(false)}>Export for Coohom</button><span role="status">{exportStatus}</span>
         <button onClick={()=>setStorageCoverOpen(value=>!value)} style={buttonStyle(storageCoverOpen)}>{storageCoverOpen?'Close storage cover':'Open storage cover'}</button>
         <button onClick={()=>setMirrorOpen(value=>!value)} style={buttonStyle(mirrorOpen)}>{mirrorOpen?'Close vanity mirror':'Open vanity mirror'}</button>
         <button onClick={()=>setPartitionOpen(value=>!value)} style={buttonStyle(partitionOpen)}>{partitionOpen?'Close drawing partition':'Open drawing partition'}</button>
