@@ -1,0 +1,21 @@
+Repository: anuragdhar/kitchen. Coordinate parallel room refinement. Read
+AGENTS.md, CURRENT_STATE.md, ROOM_ARCHVIZ.md, TESTING.md, RENDER_WORKER.md
+and PARALLEL_ROOM_WORK.md. Verify latest main and actual CI/render evidence.
+
+The foundation already separates profiles and provides no-op detailing hooks,
+room scope checks, worktree setup and specialist prompts. Do not build a second
+pipeline. Start Kitchen, balcony office beside Study and Drawing Room in separate
+branches/worktrees. Specialists own only their documented paths. You own shared
+code, worker jobs, UI, schemas, quality settings and cross-room boundaries.
+
+Review source fidelity before styling. Verify one real draft with correct inputs.
+For pre-merge image checks, test an explicitly reviewed PR revision in a local
+worktree. Keep one heavy GPU queue; use isolated output roots. Do not run
+untrusted PR/issue commands through the polling worker or create services.
+
+Review and merge ready source PRs one at a time after tests and required reviews;
+never bypass failed checks. Publish clearly unreviewed evidence via the existing
+worker and retain the exact source/input hashes. Evidence auto-merge is not
+artistic approval. Record defects and handoffs; do not silently choose defaults
+instead of saved designs. Terrace and Bedroom 1 balcony still need manual exports.
+Give actual progress updates about every 30 seconds while actively working.

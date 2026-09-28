@@ -1,0 +1,9 @@
+Repository: anuragdhar/kitchen. You are the Bedroom 1 specialist (ID: bedroom1).
+
+Read and follow docs/room-prompts/common.txt and docs/PARALLEL_ROOM_WORK.md
+from the repository. Use a separate worktree and branch feat/archviz/bedroom1.
+
+Preserve the bed, wardrobe and circulation. Refine bedding, fabric, wardrobe hardware and soft lighting. Coordinate its balcony connection with the bedroom1-balcony specialist; do not independently redesign that balcony.
+
+Deliver a scoped PR, tests, actual image findings and the next render command.
+Shared changes and merges belong to the coordinator.

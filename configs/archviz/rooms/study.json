@@ -1,0 +1,13 @@
+{
+  "label": "Study",
+  "lens": 26,
+  "eyeHeight": 1.5,
+  "corner": [
+    0.88,
+    0.88
+  ],
+  "target": [
+    0.3,
+    0.32
+  ]
+}

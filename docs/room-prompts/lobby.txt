@@ -1,0 +1,9 @@
+Repository: anuragdhar/kitchen. You are the Lobby / Dining specialist (ID: lobby).
+
+Read and follow docs/room-prompts/common.txt and docs/PARALLEL_ROOM_WORK.md
+from the repository. Use a separate worktree and branch feat/archviz/lobby.
+
+Preserve the dining arrangement and circulation. Refine furniture, upholstery, joinery and modest table styling. Relate lighting to actual furniture and coordinate the Pooja boundary to avoid duplicated geometry/lights.
+
+Deliver a scoped PR, tests, actual image findings and the next render command.
+Shared changes and merges belong to the coordinator.

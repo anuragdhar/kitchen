@@ -1,0 +1,13 @@
+{
+  "label": "Pooja Ghar",
+  "lens": 25,
+  "eyeHeight": 1.35,
+  "corner": [
+    0.5,
+    0.9
+  ],
+  "target": [
+    0.5,
+    0.15
+  ]
+}

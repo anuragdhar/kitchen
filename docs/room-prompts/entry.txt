@@ -1,0 +1,9 @@
+Repository: anuragdhar/kitchen. You are the Main entry specialist (ID: entry).
+
+Read and follow docs/room-prompts/common.txt and docs/PARALLEL_ROOM_WORK.md
+from the repository. Use a separate worktree and branch feat/archviz/entry.
+
+Preserve arrival route, main door, shoe storage and clear passage. Refine door/frame materials, cabinet reveals, hardware and subtle lighting. Avoid unnecessary floor decor.
+
+Deliver a scoped PR, tests, actual image findings and the next render command.
+Shared changes and merges belong to the coordinator.

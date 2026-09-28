@@ -1,0 +1,14 @@
+{
+  "label": "Kitchen",
+  "lens": 24,
+  "eyeHeight": 1.55,
+  "corner": [
+    0.55,
+    0.08
+  ],
+  "target": [
+    0.5,
+    0.72
+  ],
+  "note": "Preserve both cabinet runs, appliances, shaft and openings from the editable kitchen."
+}

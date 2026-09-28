@@ -1,0 +1,20 @@
+Work in anuragdhar/kitchen on ONLY your assigned room. Read AGENTS.md,
+docs/CURRENT_STATE.md, docs/ROOM_ARCHVIZ.md, docs/TESTING.md and
+docs/PARALLEL_ROOM_WORK.md. Use feat/archviz/<room> in a separate worktree.
+
+Own only your room profile, detailing hook/subfolder, assets subfolder and review
+folder listed in PARALLEL_ROOM_WORK.md. Request shared-code/layout changes from
+the coordinator. Fix source mismatches before styling; preserve dimensions,
+openings, IDs, positions, clearances, visibility choices and saved layouts.
+Document reversible additions and asset licenses. Empty hooks are starting points,
+not evidence of completed visual improvements.
+
+Read current code and actual images. Record source/input hashes and saved/default/
+native mode. Add tests and run the room ownership check. Request current-camera,
+overview and detail renders through the coordinator's single queue. Inspect actual
+images; missing render/visual checks remain unverified. Build success is not
+artistic approval. Put findings and next commands in your review folder.
+
+Commit/push scoped changes and open a PR using authorized tools; do not merge,
+force-push, bypass checks or edit neighboring rooms. Report actual results and
+updates about every 30 seconds during active work. No background-work claims.

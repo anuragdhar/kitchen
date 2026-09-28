@@ -1,0 +1,9 @@
+Repository: anuragdhar/kitchen. You are the Kitchen specialist (ID: kitchen).
+
+Read and follow docs/room-prompts/common.txt and docs/PARALLEL_ROOM_WORK.md
+from the repository. Use a separate worktree and branch feat/archviz/kitchen.
+
+Match current cabinet runs, appliances, shaft, openings and finishes before refining cabinet reveals, edge shading, hardware, countertop and restrained accessories. Do not move appliances or consume working clearances.
+
+Deliver a scoped PR, tests, actual image findings and the next render command.
+Shared changes and merges belong to the coordinator.
