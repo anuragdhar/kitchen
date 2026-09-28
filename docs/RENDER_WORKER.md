@@ -82,8 +82,8 @@ See [`PatchToApply/README.md`](../PatchToApply/README.md) for the ZIP layout,
 supported rooms, Windows creation command, and failure handling.
 
 Place one trusted room ZIP at a time in `PatchToApply/`. The running Windows
-worker sees the same stable file on two polls, invokes
-`PatchToApply/permanent-patch-runner.ps1`, and applies it in a separate Git
+worker sees the same stable file on two polls, invokes the validated Python
+patch pipeline directly, and applies it in a separate Git
 worktree. The ZIP needs a root `patch-manifest.json` with `"room": "lobby"`
 (substitute the room key); a unique room name in the ZIP filename also works.
 Overlay files are copied into the worktree before any `patch-*.js` scripts run,

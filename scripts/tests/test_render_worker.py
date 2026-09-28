@@ -61,6 +61,21 @@ class WorkerContracts(unittest.TestCase):
             self.assertNotEqual(dependency_key(app,'v22.1.0'),key)
             self.assertNotEqual(dependency_key(app,'v22.2.0'),key)
 
+    def test_patch_worker_invokes_validated_pipeline_directly(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);inbox=root/'PatchToApply';inbox.mkdir()
+            archive=inbox/'lobby-update.zip';archive.write_bytes(b'zip fixture')
+            worker=self.make_worker(root);worker.repo=root/'source';worker.node='node'
+            stat=archive.stat();worker.patch_seen={archive.name:(stat.st_size,stat.st_mtime_ns)}
+            with patch('render_worker.ROOT',root),patch('render_worker.subprocess.run') as run,patch.object(worker,'fetch') as fetch:
+                run.return_value=SimpleNamespace(returncode=0,stdout='PATCH_APPLIED lobby',stderr='')
+                worker.process_patch()
+            command=run.call_args.args[0]
+            self.assertEqual(command[:2],[sys.executable,str(root/'scripts/patch_pipeline.py')])
+            self.assertNotIn('permanent-patch-runner.ps1',command)
+            self.assertIn(str(archive),command)
+            fetch.assert_called_once()
+
     def test_infrastructure_commit_reuses_last_render(self):
         with tempfile.TemporaryDirectory() as directory:
             root=Path(directory);run='20260928T120000Z-aaaaaaaaaaaa-12345678'

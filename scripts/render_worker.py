@@ -231,11 +231,11 @@ class Worker:
             current[archive.name]=signature
             # See the same complete file on two polls before opening it.
             if self.patch_seen.get(archive.name)!=signature: continue
-            powershell=shutil.which('powershell') or shutil.which('pwsh')
-            if not powershell: raise RuntimeError('PowerShell is required for PatchToApply')
-            command=[powershell,'-NoProfile','-NonInteractive','-ExecutionPolicy','Bypass','-File',str(patch_dir/'permanent-patch-runner.ps1'),
-                     '-ZipPath',str(archive),'-SourceRepo',str(self.repo),
-                     '-Workspace',str(self.home/'patches'),'-NodePath',str(self.node),'-PythonPath',sys.executable]
+            # Invoke the validated pipeline directly: a user-facing runner in the
+            # inbox can be replaced independently and must not control the worker.
+            command=[sys.executable,str(ROOT/'scripts/patch_pipeline.py'),
+                     '--zip',str(archive),'--source-repo',str(self.repo),
+                     '--workspace',str(self.home/'patches'),'--node',str(self.node)]
             print('WORKER_PATCH_START',archive.name,flush=True)
             result=subprocess.run(command,cwd=ROOT,capture_output=True,text=True,encoding='utf-8',errors='replace',timeout=self.args.timeout*60)
             print(self.clean((result.stdout+'\n'+result.stderr)[-4000:]),flush=True)
