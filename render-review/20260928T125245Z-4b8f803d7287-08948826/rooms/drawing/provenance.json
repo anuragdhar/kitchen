@@ -1,0 +1,39 @@
+{
+  "room": "drawing",
+  "job": "80729c7f1e654d61",
+  "sourceKind": "detailed-native-snapshot",
+  "sourceSha256": "31d3f5c32d7d39b064a881a496bd1976b317d3d0cf295b74b425068ba95a9930",
+  "generatorSha256": "87e4bfc0f26fd57d09dc4f2aef838c823070c47ee39109c1fe76ae3cc1d44702",
+  "contractSha256": "870053ff51994deb544a574e792ad4810a4ed07d81b9a9e51c80368d10ac274a",
+  "profileSha256": "4939c8e1a7b51cb811a531aa3818cfbaab4d08a6e24dc2f3a42837013bd01b7b",
+  "blender": "5.2.2 LTS",
+  "device": "HIP",
+  "quality": "draft",
+  "geometryAudit": {
+    "scope": "Native detailed snapshot; live editable geometry has not been compared."
+  },
+  "geometryUnchangedDuringRendering": true,
+  "limitations": [
+    "Generated camera composition and appearance need image review.",
+    "Photographic light sources are not surveyed fixture placements.",
+    "No existing interactive baked GLB or saved project was replaced."
+  ],
+  "images": [
+    {
+      "file": "rooms/drawing/authored-1.png",
+      "sha256": "550f8771c45b33fc8daaa8dce13ce7ce8d7a6898c3e02d7fa355fa07770526d8"
+    },
+    {
+      "file": "rooms/drawing/authored-2.png",
+      "sha256": "e0923166a4c05a8268517fefc9ec701e83c4b5202a1dc9d24f3ae38b4f3fc05f"
+    },
+    {
+      "file": "rooms/drawing/hero.png",
+      "sha256": "e96a3f383b2e1f1893ff15209c78b9fd61175f6572e751bede15db061d9f724d"
+    },
+    {
+      "file": "rooms/drawing/reverse.png",
+      "sha256": "6e7cdbb3ed7b46750be6c0930967a5a414ec316b6e115278c4f2eb772fe030f1"
+    }
+  ]
+}
