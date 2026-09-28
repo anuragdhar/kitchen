@@ -180,9 +180,22 @@ and after (a build is not sufficient per `AGENTS.md` "Completion"):
      giving these two functions their first direct unit coverage — room/
      opening/run/appliance rendering, filler-module dashed outlines, grid
      on/off, and that SVG and DXF agree on which wall uses which depth.
-   - BOM and project-zip builders (`buildBOM`, `buildBOMCsv`,
-     `buildBOMMarkdown`, `exportProjectPackage`) not moved yet — same
-     approach, next.
+   - [x] `buildBOM`/`buildBOMCsv`/`buildBOMMarkdown` moved to
+     `src/kitchen/export/bom.mjs`, same verbatim-then-parameterize approach.
+     `isCabinetLikeItem` and `planLabel` (both still App.jsx-local, the
+     second used widely elsewhere in its JSX) are threaded through `ctx`
+     rather than duplicated. App.jsx: 2892 -> 2844 lines. Verified the same
+     three ways: build passes; a live-browser snapshot of `getBOM()`/the
+     "Export BOM CSV"/"Export BOM Markdown" button downloads taken
+     immediately before and after (via `git stash`) is byte-identical; added
+     `tests/kitchen-bom.test.mjs` (4 cases) — module/drawer counts, the
+     power-point exclusion from the appliance list, CSV quoting/row count,
+     and that Markdown lists every module and appliance row.
+   - `exportProjectPackage` (the project zip, which calls the now-extracted
+     builders plus a generated PDF) not moved yet — it has real side effects
+     (JSZip, dynamic `import('jspdf')`) rather than being a pure string
+     builder, so it's a different, riskier kind of extraction than the four
+     above. Left for its own pass.
 2. Browser API + named-versions localStorage logic into hooks.
 3. `WallElevation`, `NorthSouthElevation`, `ReferencesView` become their own
    components; replace the hard-coded `2324`/`4746`/`2700` literals (42
