@@ -1,0 +1,4 @@
+
+> home-interior@1.0.0 test:materials
+> node scripts/material-scene-browser.cjs
+
