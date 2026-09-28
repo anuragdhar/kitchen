@@ -1,0 +1,24 @@
+name: Prepare reviewed material integration
+on:
+  push:
+    branches: [automation/interior-material-bindings-20260928]
+permissions:
+  contents: write
+jobs:
+  prepare:
+    if: startsWith(github.event.head_commit.message, 'prepare-material-bindings')
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - run: |
+          python .maintenance/material-bindings.py
+          git diff --exit-code -- react-configurator/src/config react-configurator/src/persistence react-configurator/src/hooks react-configurator/package-lock.json Interior blender freecad
+          git diff --check
+          git add react-configurator/src react-configurator/package.json
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'feat: bind verified wood and plaster roles to authored room renderers'
+          git push origin HEAD:refs/heads/automation/interior-material-bindings-20260928

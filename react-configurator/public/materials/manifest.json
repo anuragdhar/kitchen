@@ -1,0 +1,142 @@
+{
+  "schemaVersion": 1,
+  "license": "CC0-1.0",
+  "source": "https://polyhaven.com",
+  "assets": [
+    {
+      "id": "teak_veneer",
+      "sourceUrl": "https://polyhaven.com/a/teak_veneer",
+      "license": "CC0-1.0",
+      "physicalSizeMetres": 1.0,
+      "resolution": "1k",
+      "maps": {
+        "basecolor": {
+          "path": "teak_veneer/basecolor.jpg",
+          "sourceUrl": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/teak_veneer/teak_veneer_diff_1k.jpg",
+          "sha256": "ba501180029ec8804e430177e4d67446da23a3be4d5dbad94a498de070324275",
+          "bytes": 612194
+        },
+        "normal": {
+          "path": "teak_veneer/normal.jpg",
+          "sourceUrl": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/teak_veneer/teak_veneer_nor_gl_1k.jpg",
+          "sha256": "e2cd5aa363feea0bb1fd5c682f9b28c9810def07621915a413a834fafd57c851",
+          "bytes": 410625
+        },
+        "roughness": {
+          "path": "teak_veneer/roughness.jpg",
+          "sourceUrl": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/teak_veneer/teak_veneer_rough_1k.jpg",
+          "sha256": "cb8a09ae509a4c89df998fc14e1deb0c623615bf2f480af78d561d8536972db0",
+          "bytes": 731629
+        }
+      }
+    },
+    {
+      "id": "white_oak_veneer",
+      "sourceUrl": "https://polyhaven.com/a/white_oak_veneer",
+      "license": "CC0-1.0",
+      "physicalSizeMetres": 0.5,
+      "resolution": "1k",
+      "maps": {
+        "basecolor": {
+          "path": "white_oak_veneer/basecolor.jpg",
+          "sourceUrl": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/white_oak_veneer/white_oak_veneer_diff_1k.jpg",
+          "sha256": "8fdec14fd3c06de907693c9c3241037dc93327ad907296371a2f74a0becd8187",
+          "bytes": 595257
+        },
+        "normal": {
+          "path": "white_oak_veneer/normal.jpg",
+          "sourceUrl": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/white_oak_veneer/white_oak_veneer_nor_gl_1k.jpg",
+          "sha256": "9e8dd65e443d92107caa4cd30403d78946a8b8c5a6029e6446c7368865b1d1c0",
+          "bytes": 623607
+        },
+        "roughness": {
+          "path": "white_oak_veneer/roughness.jpg",
+          "sourceUrl": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/white_oak_veneer/white_oak_veneer_rough_1k.jpg",
+          "sha256": "a8670e80f203bd031ac3c80f0f606383be51a0ee108e016fa19cad6b9bd373e7",
+          "bytes": 520649
+        }
+      }
+    },
+    {
+      "id": "red_oak_veneer",
+      "sourceUrl": "https://polyhaven.com/a/red_oak_veneer",
+      "license": "CC0-1.0",
+      "physicalSizeMetres": 1.0,
+      "resolution": "1k",
+      "maps": {
+        "basecolor": {
+          "path": "red_oak_veneer/basecolor.jpg",
+          "sourceUrl": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/red_oak_veneer/red_oak_veneer_diff_1k.jpg",
+          "sha256": "28fd7bcc1b8b3cc0531591353820ef143d4af27e8c5cf6170f78b223e39c34ad",
+          "bytes": 586317
+        },
+        "normal": {
+          "path": "red_oak_veneer/normal.jpg",
+          "sourceUrl": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/red_oak_veneer/red_oak_veneer_nor_gl_1k.jpg",
+          "sha256": "7d52f9741f20dfa5b31b88e46869f79654f10e11c2819d095fd444b5c505971e",
+          "bytes": 319137
+        },
+        "roughness": {
+          "path": "red_oak_veneer/roughness.jpg",
+          "sourceUrl": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/red_oak_veneer/red_oak_veneer_rough_1k.jpg",
+          "sha256": "8622e4ef0eb77d29971c76d6bf084d2dc65a7a1e6710c83771115f5a5424e93f",
+          "bytes": 845349
+        }
+      }
+    },
+    {
+      "id": "cherry_veneer",
+      "sourceUrl": "https://polyhaven.com/a/cherry_veneer",
+      "license": "CC0-1.0",
+      "physicalSizeMetres": 1.0,
+      "resolution": "1k",
+      "maps": {
+        "basecolor": {
+          "path": "cherry_veneer/basecolor.jpg",
+          "sourceUrl": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/cherry_veneer/cherry_veneer_diff_1k.jpg",
+          "sha256": "d50fed9f9964721d6b18581cadb6d95717a714b85361b22078e7d913ba5ce4d2",
+          "bytes": 485750
+        },
+        "normal": {
+          "path": "cherry_veneer/normal.jpg",
+          "sourceUrl": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/cherry_veneer/cherry_veneer_nor_gl_1k.jpg",
+          "sha256": "d2c722c80651e7c1074d46f27c18a78de5bce9ced1c8afc82ea3aa555555e57a",
+          "bytes": 288037
+        },
+        "roughness": {
+          "path": "cherry_veneer/roughness.jpg",
+          "sourceUrl": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/cherry_veneer/cherry_veneer_rough_1k.jpg",
+          "sha256": "25dc671f72a5c78c2fec855b95a009d1c948a9616007887a653c2c695ee1b7a6",
+          "bytes": 522104
+        }
+      }
+    },
+    {
+      "id": "beige_wall_001",
+      "sourceUrl": "https://polyhaven.com/a/beige_wall_001",
+      "license": "CC0-1.0",
+      "physicalSizeMetres": 3.0,
+      "resolution": "1k",
+      "maps": {
+        "basecolor": {
+          "path": "beige_wall_001/basecolor.jpg",
+          "sourceUrl": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/beige_wall_001/beige_wall_001_diff_1k.jpg",
+          "sha256": "72104704d0b9bd3713c5f6238971252b63eccf6e61263059c674caa8f3d0fa6d",
+          "bytes": 33074
+        },
+        "normal": {
+          "path": "beige_wall_001/normal.jpg",
+          "sourceUrl": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/beige_wall_001/beige_wall_001_nor_gl_1k.jpg",
+          "sha256": "cec747be50f91da0693986080b6f59ef868d53cb2ab7d577982165ece63ed75e",
+          "bytes": 153434
+        },
+        "roughness": {
+          "path": "beige_wall_001/roughness.jpg",
+          "sourceUrl": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/beige_wall_001/beige_wall_001_rough_1k.jpg",
+          "sha256": "fc8328f47f4d2d82d5311a75bcb5c8cd8979d171a0ee097ad9e44ca9c5a00d60",
+          "bytes": 151256
+        }
+      }
+    }
+  ]
+}
