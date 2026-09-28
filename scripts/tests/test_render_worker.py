@@ -53,7 +53,7 @@ class WorkerContracts(unittest.TestCase):
     def test_safe_files_and_symlinks(self):
         with tempfile.TemporaryDirectory() as directory:
             root=Path(directory);(root/'ok.png').write_bytes(b'png')
-            self.assertEqual(safe_file(root,'ok.png'),root/'ok.png')
+            self.assertEqual(safe_file(root,'ok.png'),root.resolve()/'ok.png')
             for name in ['../secret','/secret','C:/secret','dir\\secret','missing.png']:
                 with self.assertRaises(ValueError):safe_file(root,name)
             try:(root/'alias').symlink_to(root/'ok.png')
