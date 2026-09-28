@@ -5,7 +5,7 @@ Paths below are relative to `react-configurator/` unless otherwise stated.
 | Task | Starting point |
 | --- | --- |
 | Whole-home navigation | src/main.jsx -> src/HomeApp.jsx |
-| Local GitHub update button | src/HomeApp.jsx; vite.config.mjs; scripts/local-update.mjs |
+| Local GitHub update button | src/HomeApp.jsx; vite.config.mjs; scripts/local-update-plugin.mjs; scripts/local-update.mjs |
 | Kitchen defaults and named variants | src/config/kitchenConfig.js |
 | Kitchen views and controls | src/App.jsx |
 | Atomic project state and autosave status | src/hooks/useKitchenProject.js |
@@ -26,7 +26,9 @@ The home page's Update from GitHub control is available only on the local Vite
 development server. Its loopback-only endpoint fetches the current branch from
 `origin`, requires a clean checkout, fast-forwards, runs `npm ci` if the app's
 package files changed, and restarts Vite. The page reloads after the restart.
-It is not included in a production static build.
+The Codespaces preview uses the same endpoint through `.devcontainer/vite.config.mjs`
+and accepts only the current Codespace's private forwarded host. It is not included
+in a production static build.
 
 ## Coordinate contract
 

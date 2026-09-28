@@ -42,3 +42,8 @@ test('readiness reports the stable workspace identity', () => {
   registered.handler({}, { setHeader() {}, end(value) { body = value; } });
   assert.equal(body, workspaceId);
 });
+
+test('Codespaces preview includes the GitHub update endpoint', () => {
+  assert.deepEqual(makePreviewConfig({}).plugins.map(plugin => plugin.name),
+    ['home-interior-preview-readiness', 'local-github-update']);
+});

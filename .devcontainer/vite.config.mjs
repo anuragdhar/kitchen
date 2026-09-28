@@ -1,5 +1,6 @@
 import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
+import { localUpdatePlugin } from '../react-configurator/scripts/local-update-plugin.mjs';
 
 const root = fileURLToPath(new URL('../react-configurator/', import.meta.url));
 export const workspaceId = createHash('sha256').update(root).digest('hex');
@@ -27,7 +28,7 @@ export function makePreviewConfig(env = process.env) {
           response.end(workspaceId);
         });
       },
-    }],
+    }, localUpdatePlugin()],
   };
 }
 

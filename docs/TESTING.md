@@ -28,7 +28,9 @@ The local update control can be checked on the whole-home page. It requires a
 clean Git checkout before pulling, so a checkout with working changes should
 display its refusal without modifying files. The isolated `local-update.test.mjs`
 fixture checks a real fast-forward from a temporary local Git remote; it does
-not need access to GitHub.
+not need access to GitHub. `config.test.mjs` checks that the Codespaces preview
+includes the same endpoint, and `local-update-plugin.test.mjs` checks forwarded
+host and origin restrictions.
 
 ## Browser inspection
 

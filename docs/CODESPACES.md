@@ -18,6 +18,10 @@ material, lighting and save/load code is unchanged. Browser saves belong to the
 browser origin: export a project JSON before changing Codespaces or deleting one.
 A new Codespace URL will not automatically contain saves from a different URL.
 
+The home page's **Update from GitHub** button fetches the current branch and
+restarts the preview when the checkout is clean. After receiving an update to
+the preview server itself, restart the preview once using the command below.
+
 ## Restart / diagnose
 
 From the repository root:

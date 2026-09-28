@@ -41,6 +41,7 @@ function UpdateButton(){
     setMessage('Fetching from GitHub…')
     try{
       const response=await fetch('/__local_update/',{method:'POST',cache:'no-store'})
+      if(!response.headers.get('content-type')?.includes('application/json'))throw new Error('Update service is unavailable. Restart the app server and try again.')
       const result=await response.json()
       if(!response.ok)throw new Error(result.error||'Update failed.')
       setPhase('restarting')
