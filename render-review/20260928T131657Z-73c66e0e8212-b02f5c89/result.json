@@ -1,0 +1,113 @@
+{
+  "run": "20260928T131657Z-73c66e0e8212-b02f5c89",
+  "sourceCommit": "73c66e0e8212620180d943505cdbc2ee113642f5",
+  "job": {
+    "version": 1,
+    "enabled": true,
+    "request": "initial-room-review",
+    "rooms": [
+      "kitchen",
+      "balcony",
+      "drawing"
+    ],
+    "quality": "draft",
+    "device": "AUTO"
+  },
+  "inputMode": "repository-defaults",
+  "status": "passed",
+  "visualReview": "unreviewed",
+  "steps": [
+    {
+      "name": "dependencies",
+      "exitCode": 0,
+      "seconds": 5.51
+    },
+    {
+      "name": "build-tests",
+      "exitCode": 0,
+      "seconds": 8.52
+    },
+    {
+      "name": "archviz-tests",
+      "exitCode": 0,
+      "seconds": 0.5
+    },
+    {
+      "name": "python-tests",
+      "exitCode": 0,
+      "seconds": 0.52
+    },
+    {
+      "name": "chromium",
+      "exitCode": 0,
+      "seconds": 1.02
+    },
+    {
+      "name": "browser-fixture",
+      "exitCode": 0,
+      "seconds": 3.0
+    },
+    {
+      "name": "render",
+      "exitCode": 0,
+      "seconds": 72.62
+    }
+  ],
+  "rooms": [
+    {
+      "room": "kitchen",
+      "images": [
+        {
+          "file": "rooms/kitchen/current.png",
+          "sha256": "dcac61426e66ca26a369ec2ea893d52e57dab5e04b5f72d9373fa8e52027dde3"
+        },
+        {
+          "file": "rooms/kitchen/hero.png",
+          "sha256": "96a8816114b3d68cf8848ae7f40919e9ef2ce8662e257a7e793f8ca0d31eb3ab"
+        },
+        {
+          "file": "rooms/kitchen/reverse.png",
+          "sha256": "98485c2537676e6bfdd155ce3a390b866bf23017bd73859bb94aff1b718550c6"
+        }
+      ]
+    },
+    {
+      "room": "balcony",
+      "images": [
+        {
+          "file": "rooms/balcony/current.png",
+          "sha256": "d22025e7fc45e6492976328a75eadee97fb3eb0c3d9f1800aa9bbe1ffe6485f2"
+        },
+        {
+          "file": "rooms/balcony/hero.png",
+          "sha256": "a5c6cba0bb20f549e51e38f6825a6fc1e305292627b0b5b5b4cb9924c01041fe"
+        },
+        {
+          "file": "rooms/balcony/reverse.png",
+          "sha256": "5a8515d4076d729d80f444802e0390909e6397f1ae3a72652663bcf11dcb998a"
+        }
+      ]
+    },
+    {
+      "room": "drawing",
+      "images": [
+        {
+          "file": "rooms/drawing/authored-1.png",
+          "sha256": "cbf867ac11ef61781e6e31fd155670facd8ee1f0d8226dbf66cf5cd95d391b39"
+        },
+        {
+          "file": "rooms/drawing/authored-2.png",
+          "sha256": "3208f70e6767227a450ac28ec9b5e1e4e38c2c81e61cbf749281149899c780a1"
+        },
+        {
+          "file": "rooms/drawing/hero.png",
+          "sha256": "edf4826fae662cd6c3e1af716b725080cdabb56a822cb02266fff809beff8bff"
+        },
+        {
+          "file": "rooms/drawing/reverse.png",
+          "sha256": "495367f98aa748fdbac5175f9aacc15d7fae8482d28029d1f020ffa671ae2822"
+        }
+      ]
+    }
+  ]
+}

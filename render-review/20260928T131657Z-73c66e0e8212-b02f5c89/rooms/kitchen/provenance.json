@@ -1,0 +1,39 @@
+{
+  "room": "kitchen",
+  "job": "7491b9856ba347b5",
+  "sourceKind": "editable-snapshot",
+  "sourceSha256": "8f17a33c80d145013a4b6425380e8fbdf7ccf2741f81a9323a9a619720d090f1",
+  "generatorSha256": "c662f18bc710ff7121190bb0a9651f74fd37e0274480e9cf1d02019315e2587a",
+  "contractSha256": "870053ff51994deb544a574e792ad4810a4ed07d81b9a9e51c80368d10ac274a",
+  "profileSha256": "72d0a76cc7a4cbf6539f9708a1e551fc4dd511528b732a1a5b810db7a5dc9920",
+  "blender": "5.2.2 LTS",
+  "device": "HIP",
+  "quality": "draft",
+  "geometryAudit": {
+    "sourceObjects": 550,
+    "importedMeshes": 550,
+    "maximumBoundsErrorMetres": 4.418611529999339e-07,
+    "triangleCountsMatch": true,
+    "scope": "Source IDs, per-object world bounds and triangle counts; not a construction/collision certificate."
+  },
+  "geometryUnchangedDuringRendering": true,
+  "limitations": [
+    "Generated camera composition and appearance need image review.",
+    "Photographic light sources are not surveyed fixture placements.",
+    "No existing interactive baked GLB or saved project was replaced."
+  ],
+  "images": [
+    {
+      "file": "rooms/kitchen/current.png",
+      "sha256": "dcac61426e66ca26a369ec2ea893d52e57dab5e04b5f72d9373fa8e52027dde3"
+    },
+    {
+      "file": "rooms/kitchen/hero.png",
+      "sha256": "96a8816114b3d68cf8848ae7f40919e9ef2ce8662e257a7e793f8ca0d31eb3ab"
+    },
+    {
+      "file": "rooms/kitchen/reverse.png",
+      "sha256": "98485c2537676e6bfdd155ce3a390b866bf23017bd73859bb94aff1b718550c6"
+    }
+  ]
+}
