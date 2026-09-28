@@ -12,11 +12,32 @@ npm run check
 ```
 
 `npm test` runs Node's test runner with explicit test-file paths (including on Windows) with no external packages.
-`npm run check` runs that suite and `vite build`. Run these commands locally;
-the repository has no GitHub-hosted test workflows. The Windows render worker
-runs its checks in an isolated local checkout before publishing render evidence.
-The fast gate currently has no repository-wide lint or type-check stage; do not
-claim those checks ran. Add them incrementally rather than reformatting all files.
+`npm run check` runs that suite and `vite build`. Run these commands locally.
+`.github/workflows/check.yml` also runs `npm ci` + `npm run check` (only) on
+push/PR; it does not cover `test:browser`, `test:persistence`, `test:materials`,
+`test:lighting`, `test:baked-lighting`, `visual:qa`, or the Python/Blender
+checks below. The Windows render worker still runs the full check list,
+including those, in an isolated local checkout before publishing render
+evidence. The fast gate currently has no repository-wide lint or type-check
+stage; do not claim those checks ran. Add them incrementally rather than
+reformatting all files.
+
+`npm test` now also runs `tests/archviz.test.mjs`, `tests/parallel-profiles.test.mjs`,
+and `tests/whole-home-render.test.mjs` (previously only run as a separate
+`archviz-tests` stage inside `scripts/render_worker.py`; that stage still runs
+there too, so a render-worker run exercises them twice — harmless, and kept
+for now so its per-stage evidence reporting is unchanged).
+
+The Python tests under `blender/test_*.py` and `scripts/tests/test_*.py` can be
+run directly with `python scripts/run_python_tests.py` from the repo root,
+without going through `scripts/render_worker.py`. As of 2026-09-28,
+`test_actual_room_registry_and_source_modes` in `blender/test_parallel_profiles.py`
+fails against the current `configs/archviz-profiles.json`/room profiles: it
+expects `rooms.bedroom3.native` to be set, while
+`react-configurator/tests/archviz.test.mjs` asserts the opposite
+(`p.rooms.bedroom3.native === undefined`). This predates this document's
+edit and was not introduced by it; the two suites disagree and need a decision
+about which is current before either is changed.
 
 Current-default tests preserve dimensions, item geometry, IDs, variant positions,
 door clearances, nominal aisle calculations, shaft placement, and module lengths.

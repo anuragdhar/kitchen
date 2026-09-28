@@ -49,18 +49,42 @@ The repo is scattered in three ways:
   forbids deleting reference images, authored models, or saved layouts, and
   some of the "duplicates" in `configs/` are user-saved layouts, not junk.
 
-## Phase 1 — One place for tests and scripts
+## Phase 1 — One place for tests and scripts (partly done 2026-09-28)
 
-- Make `npm test` pick up `tests/*.test.mjs` automatically (glob or a manifest)
-  instead of an explicit file list, so `archviz.test.mjs`,
-  `parallel-profiles.test.mjs`, and `whole-home-render.test.mjs` stop being
-  silently excluded.
-- Rename/move the Playwright drivers (`scripts/*-browser.cjs`) into
-  `tests/browser/*.cjs` so "tests" and "scripts" aren't mixed by convention.
-- Move `blender/test_*.py` into `blender/tests/`.
-- Add `npm run test:py` (wraps the existing `unittest discover` calls) and a
-  GitHub Actions workflow that runs `npm run check` + `npm run test:py` on
-  push/PR (`.github/workflows/` is currently empty).
+- [x] `npm test` now also runs `tests/archviz.test.mjs`,
+      `tests/parallel-profiles.test.mjs`, and `tests/whole-home-render.test.mjs`
+      (all pass, no external deps, ~65ms). They were previously only run as a
+      separate `archviz-tests` stage inside `scripts/render_worker.py`; that
+      stage is left in place (harmless duplicate run) rather than edited, since
+      it also drives the committed render-evidence pipeline.
+- [x] Added `.github/workflows/check.yml`: runs `npm ci` + `npm run check` on
+      push/PR (`.github/workflows/` was empty). Deliberately does **not**
+      attempt `test:browser`/`test:persistence`/`test:materials`/`test:lighting`/
+      `test:baked-lighting`/`visual:qa` or the Python/Blender checks — those
+      need a managed local server, Chromium and/or Blender that a hosted
+      runner doesn't have configured here. Do not read a green run of this
+      workflow as covering those checks.
+- [x] Added `scripts/run_python_tests.py` so the `blender/test_*.py` and
+      `scripts/tests/test_*.py` suites can be run directly (`python
+      scripts/run_python_tests.py`) without going through
+      `scripts/render_worker.py`. Running it surfaced a **pre-existing**
+      disagreement (not introduced here, not fixed here): `blender/test_parallel_profiles.py`'s
+      `test_actual_room_registry_and_source_modes` expects
+      `rooms.bedroom3.native` to be set, while
+      `react-configurator/tests/archviz.test.mjs` asserts the opposite. Needs
+      a decision (Phase 5) about which is current.
+- Deferred (real blast radius on live infrastructure, not done autonomously):
+  - Renaming `react-configurator/scripts/*-browser.cjs` into a `tests/browser/`
+    folder. These are referenced from `package.json` scripts *and* from
+    `scripts/render_worker.py`'s stage list, which produces the render
+    evidence used to gate merges (see recent `render-review/` commits). A
+    cosmetic rename here is low value for the risk of breaking that pipeline
+    without a full run on the actual render worker to confirm.
+  - Moving `blender/test_*.py` into `blender/tests/`. Same reasoning: three
+    docs and `render_worker.py`'s `unittest discover -s blender -p ...` calls
+    reference the current flat location.
+  - Both are still recommended, just as their own reviewed change with a real
+    render-worker run to confirm, not bundled into this cleanup pass.
 
 ## Phase 2 — Shared definitions instead of copies
 
