@@ -1,0 +1,134 @@
+{
+  "run": "20260928T153438Z-7fd33df46fc4-225f5eed",
+  "sourceCommit": "7fd33df46fc4ae80e1039fcef72726ad3018b4f3",
+  "job": {
+    "version": 1,
+    "enabled": true,
+    "request": "patch-2b2f066f3548f9ac",
+    "rooms": [
+      "lobby"
+    ],
+    "quality": "draft",
+    "device": "AUTO"
+  },
+  "inputMode": "repository-defaults",
+  "status": "passed",
+  "visualReview": "unreviewed",
+  "steps": [
+    {
+      "name": "dependencies",
+      "exitCode": 0,
+      "seconds": 0,
+      "cached": true
+    },
+    {
+      "name": "build-tests",
+      "exitCode": 0,
+      "seconds": 13.53
+    },
+    {
+      "name": "archviz-tests",
+      "exitCode": 0,
+      "seconds": 0.52
+    },
+    {
+      "name": "python-archviz",
+      "exitCode": 0,
+      "seconds": 0.52
+    },
+    {
+      "name": "python-profiles",
+      "exitCode": 0,
+      "seconds": 0.51
+    },
+    {
+      "name": "python-whole-home",
+      "exitCode": 0,
+      "seconds": 0.5
+    },
+    {
+      "name": "python-worker",
+      "exitCode": 0,
+      "seconds": 2.52
+    },
+    {
+      "name": "python-parallel",
+      "exitCode": 0,
+      "seconds": 2.52
+    },
+    {
+      "name": "python-patches",
+      "exitCode": 0,
+      "seconds": 0.52
+    },
+    {
+      "name": "python-compile",
+      "exitCode": 0,
+      "seconds": 0.52
+    },
+    {
+      "name": "chromium",
+      "exitCode": 0,
+      "seconds": 2.02
+    },
+    {
+      "name": "browser-fixture",
+      "exitCode": 0,
+      "seconds": 5.01
+    },
+    {
+      "name": "browser-correctness",
+      "exitCode": 0,
+      "seconds": 4.02
+    },
+    {
+      "name": "browser-persistence",
+      "exitCode": 0,
+      "seconds": 10.17
+    },
+    {
+      "name": "browser-interior",
+      "exitCode": 0,
+      "seconds": 2.0
+    },
+    {
+      "name": "browser-materials",
+      "exitCode": 0,
+      "seconds": 6.0
+    },
+    {
+      "name": "browser-lighting",
+      "exitCode": 0,
+      "seconds": 4.52
+    },
+    {
+      "name": "devcontainer-config",
+      "exitCode": 0,
+      "seconds": 0.5
+    },
+    {
+      "name": "render",
+      "exitCode": 0,
+      "seconds": 40.12
+    }
+  ],
+  "rooms": [
+    {
+      "room": "lobby",
+      "images": [
+        {
+          "file": "rooms/lobby/current.png",
+          "sha256": "d8f09117c7fce46077204c566b674daf06f02df69bfdf283f36fec582051d8d0"
+        },
+        {
+          "file": "rooms/lobby/hero.png",
+          "sha256": "8076e0a7644e06be643c17bbd8910a1d44704eff2aed90cdcaa120fa88560209"
+        },
+        {
+          "file": "rooms/lobby/reverse.png",
+          "sha256": "5fc4525b50576ab6e9c1add999b2c8c2993f18f3a30b681f969bb72032ce72c4"
+        }
+      ]
+    }
+  ]
+}

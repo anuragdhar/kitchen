@@ -1,0 +1,52 @@
+TAP version 13
+# Subtest: Node 22, locked installation, and automatic private-default preview
+ok 1 - Node 22, locked installation, and automatic private-default preview
+  ---
+  duration_ms: 0.9685
+  type: 'test'
+  ...
+# Subtest: local preview uses a fixed port without globally allowing hostnames
+ok 2 - local preview uses a fixed port without globally allowing hostnames
+  ---
+  duration_ms: 0.0992
+  type: 'test'
+  ...
+# Subtest: only the current Codespace hostname is allowed
+ok 3 - only the current Codespace hostname is allowed
+  ---
+  duration_ms: 0.1996
+  type: 'test'
+  ...
+# Subtest: the platform forwarding domain is respected
+ok 4 - the platform forwarding domain is respected
+  ---
+  duration_ms: 0.1152
+  type: 'test'
+  ...
+# Subtest: malformed forwarding names are rejected
+ok 5 - malformed forwarding names are rejected
+  ---
+  duration_ms: 0.3345
+  type: 'test'
+  ...
+# Subtest: readiness reports the stable workspace identity
+ok 6 - readiness reports the stable workspace identity
+  ---
+  duration_ms: 0.1374
+  type: 'test'
+  ...
+# Subtest: Codespaces preview includes the GitHub update endpoint
+ok 7 - Codespaces preview includes the GitHub update endpoint
+  ---
+  duration_ms: 0.1171
+  type: 'test'
+  ...
+1..7
+# tests 7
+# suites 0
+# pass 7
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 93.6947
