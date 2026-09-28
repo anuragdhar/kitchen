@@ -78,6 +78,9 @@ print 30-second progress heartbeats and write logs.
 
 ## Room patch inbox
 
+See [`PatchToApply/README.md`](../PatchToApply/README.md) for the ZIP layout,
+supported rooms, Windows creation command, and failure handling.
+
 Place one trusted room ZIP at a time in `PatchToApply/`. The running Windows
 worker sees the same stable file on two polls, invokes
 `PatchToApply/permanent-patch-runner.ps1`, and applies it in a separate Git
