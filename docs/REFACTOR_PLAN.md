@@ -86,19 +86,39 @@ The repo is scattered in three ways:
   - Both are still recommended, just as their own reviewed change with a real
     render-worker run to confirm, not bundled into this cleanup pass.
 
-## Phase 2 — Shared definitions instead of copies
+## Phase 2 — Shared definitions instead of copies (partly done 2026-09-28,
+## partly corrected/deferred after closer inspection)
 
-- One room list (id, label, plan bounds, hotspot) in `src/home/rooms.mjs`;
-  `HomeApp.jsx`, `homeRoomViews.js`, and `roomShellConfig.js` read from it
-  instead of keeping their own.
-- One `src/config/planGeometry.js` for the floor-plan pixel size and scale
-  factors currently duplicated between `HomeApp.jsx` and `WholeHome3D.jsx`,
-  with the screen/room/Three.js coordinate conversions written down explicitly
-  (see `docs/ARCHITECTURE.md` "Coordinate contract").
+- [x] The floor-plan image is 800×875 px, and that pixel size was genuinely
+      duplicated: named `PLAN_WIDTH`/`PLAN_HEIGHT` in `WholeHome3D.jsx`, and
+      as the bare magic-number divisors `/8`/`/8.75` in `HomeApp.jsx`'s
+      `planRect()`. Both now read `PLAN_IMAGE` from
+      `src/config/entryConfig.js`. Numerically identical (800/100=8,
+      875/100=8.75); confirmed with a Playwright screenshot of the whole-home
+      page after the change — every hotspot still lands exactly on its room.
+- **Correcting the original survey**: the plan-scale factors
+  (`xMetresPerPixel`/`zMetresPerPixel`) were *not* actually duplicated between
+  `HomeApp.jsx`/`WholeHome3D.jsx` as first reported — `ENTRY.planScale` in
+  `entryConfig.js` was already the single source `WholeHome3D.jsx`,
+  `EntryGallery3D.jsx`, `ArchivedBlenderHomeView.jsx`, and
+  `WholeHomeRenderStudio.jsx` all import. No change was needed there.
+- **Deferred, not a safe mechanical extraction**: unifying "the room list"
+  across `HomeApp.jsx`'s `rooms` (navigation copy/color), `homeRoomViews.js`'s
+  `HOME_ROOM_LAYOUTS`/`BLENDER_ROOM_VIEWS` (render bounds, baked-model camera
+  framing), `roomShellConfig.js`'s `EMPTY_ROOM_SHELLS` (room-shell geometry,
+  doors, furniture), and `home/rooms.mjs`'s `HOME_ROOMS` (inspiration/material/
+  lighting tag order). On inspection these are not four copies of the same
+  data: each carries different, purpose-specific fields, and some values
+  genuinely differ between them on purpose (e.g. kitchen's hotspot color is
+  `#b45309` in `HomeApp.jsx` vs `#dca56c` in `homeRoomViews.js` — a UI accent
+  color vs. a render/plan tint, not a bug). Forcing these into one shape would
+  be a real design decision with behavior risk, not a mechanical move; it
+  needs its own reviewed change with visual verification per affected view,
+  not a blind merge.
 - One shared Three.js viewer hook/module (renderer, camera, `OrbitControls`)
-  used by the 8 components that currently each set one up independently.
-- Add a fixture test before each consolidation, per `AGENTS.md`'s refactoring
-  sequence: capture behavior first, then extract.
+  used by the 8 components that currently each set one up independently: not
+  attempted yet. Same caution applies — needs a fixture/visual check per
+  component, one at a time.
 
 ## Phase 3 — Folder structure for `src/`
 

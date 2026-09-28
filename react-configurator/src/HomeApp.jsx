@@ -16,6 +16,7 @@ import {BALCONY_OFFICE} from './config/balconyOfficeConfig.js'
 import {STUDY_ROOM} from './config/studyRoomConfig.js'
 import {EMPTY_ROOM_SHELLS} from './config/roomShellConfig.js'
 import {KITCHEN} from './config/kitchenConfig.js'
+import {PLAN_IMAGE} from './config/entryConfig.js'
 import floorPlanImage from '../../Interior/home a 501 floor - unmodified.png'
 
 const rooms={
@@ -135,7 +136,10 @@ function RoomHotspot({room,style,onOpen,label,badge}){
   </button>
 }
 
-const planRect=(x1,y1,x2,y2)=>({left:`${x1/8}%`,top:`${y1/8.75}%`,width:`${(x2-x1)/8}%`,height:`${(y2-y1)/8.75}%`})
+// Percentage-per-pixel against the same plan image WholeHome3D.jsx uses (PLAN_IMAGE),
+// so a hotspot box and the 3D plan-to-metres conversion can't silently drift apart.
+const PLAN_PCT_X=PLAN_IMAGE.widthPx/100,PLAN_PCT_Y=PLAN_IMAGE.heightPx/100
+const planRect=(x1,y1,x2,y2)=>({left:`${x1/PLAN_PCT_X}%`,top:`${y1/PLAN_PCT_Y}%`,width:`${(x2-x1)/PLAN_PCT_X}%`,height:`${(y2-y1)/PLAN_PCT_Y}%`})
 const planHotspots=[
   ['storage',planRect(145,396,205,451)],
   ['kitchen',planRect(130,503,255,703)],

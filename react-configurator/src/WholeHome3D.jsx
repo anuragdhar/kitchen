@@ -26,7 +26,7 @@ import {createDrawingRoomTelevision} from './DrawingRoomTelevision.js'
 import {createStoreStorage} from './StoreStorage.js'
 import {BALCONY_OFFICE,BALCONY_DESK_HEIGHT_KEY} from './config/balconyOfficeConfig.js'
 import {KITCHEN,KITCHEN_REFRIGERATOR,EAST_INIT,WEST_INIT,KITCHEN_AUTOSAVE_KEY,NORTH_HOB_OPTION_Y_MM,EAST_TOP_UPPER_DEPTH,WEST_TOP_UPPER_DEPTH,autoFillModules} from './config/kitchenConfig.js'
-import {ENTRY,ENTRY_WALL_SEGMENTS} from './config/entryConfig.js'
+import {ENTRY,ENTRY_WALL_SEGMENTS,PLAN_IMAGE} from './config/entryConfig.js'
 import {createEntryArrivalDoor} from './EntryArrivalDoor.js'
 import {createEntryRecessStorage} from './EntryRecessStorage.js'
 import WallSelectionPanel from './WallSelectionPanel.jsx'
@@ -36,7 +36,7 @@ import BlenderHomeView from './BlenderHomeView.jsx'
 import {HOME_ROOM_LAYOUTS} from './config/homeRoomViews.js'
 
 // The A501 plan is south-up: image right is west and image down is north.
-const PLAN_WIDTH=800,PLAN_HEIGHT=875
+const PLAN_WIDTH=PLAN_IMAGE.widthPx,PLAN_HEIGHT=PLAN_IMAGE.heightPx
 const X_METRES_PER_PIXEL=ENTRY.planScale.xMetresPerPixel
 const Z_METRES_PER_PIXEL=ENTRY.planScale.zMetresPerPixel
 const X=x=>x*X_METRES_PER_PIXEL

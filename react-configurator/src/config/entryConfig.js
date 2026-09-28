@@ -1,3 +1,10 @@
+// The A501 whole-home floor-plan PNG (Interior/home a 501 floor - unmodified.png),
+// shared by HomeApp.jsx's plan hotspots and WholeHome3D.jsx's plan-to-metres
+// conversion. Keep both readers pointed at this instead of repeating the pixel
+// size as separate magic numbers (previously 800/875 in one file and the
+// equivalent /8, /8.75 percentage divisors in the other).
+export const PLAN_IMAGE = {widthPx: 800, heightPx: 875}
+
 export const ENTRY = {
   planBounds: {x1: 515, y1: 715, x2: 688, y2: 874},
   planScale: {xMetresPerPixel: 4.993 / 260, zMetresPerPixel: 3.277 / 163},
