@@ -13,7 +13,6 @@ import { DEFAULT_MATERIALS, VIEW_STYLE, HEIGHT_GUIDES, RENDER_CONFIG } from './c
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js'
-import JSZip from 'jszip'
 import { createPbrMaterial } from './render/materialFactory.js'
 import { buildPlanSvg as buildPlanSvgPure } from './kitchen/export/planSvg.mjs'
 import { buildPlanDxf as buildPlanDxfPure } from './kitchen/export/planDxf.mjs'
@@ -338,77 +337,6 @@ ${westRows}
   const exportBOMCsv=()=>downloadText('kitchen-bom.csv',buildBOMCsv(),'text/csv')
   const buildBOMMarkdown=()=>buildBOMMarkdownPure({bom,KITCHEN,COUNTER_THICKNESS,BACKSPLASH_HEIGHT,eastRunLength,westRunLength,eastTopUpperDepth,westTopUpperDepth,renderMaterials})
   const exportBOMMarkdown=()=>downloadText('kitchen-bom.md',buildBOMMarkdown(),'text/markdown')
-  const exportProjectPackage=async()=>{
-    try{
-      const project=buildProjectData()
-      const manifest={
-        app:'kitchen-configurator',
-        version:'1.0.0-react-phases',
-        exportedAt:project.exportedAt,
-        room:project.dimensions,
-        validation:{all:vSimple.all, passing:validationRows.filter(r=>r.status==='pass').length, total:validationRows.length},
-        included:[
-          'layout/Galley_2324x4746_Rule9_Current.json',
-          'drawings/kitchen-2d-plan-coohom-background.svg',
-          'drawings/kitchen-2d-plan-coohom-background.dxf',
-          'bom/kitchen-bom.csv',
-          'bom/kitchen-bom.md',
-          'pdf/kitchen-project-summary.pdf',
-          'validation/validation-results.json',
-          'notes/export-package-notes.md'
-        ],
-        notes:'ZIP includes a generated PDF project summary. Coohom guide export is currently paused. PNG screenshots and elevation SVG/PNG/PDF exports are still available from the visible React view buttons.'
-      }
-      const { jsPDF } = await import('jspdf')
-      const pdf=new jsPDF({orientation:'portrait',unit:'pt',format:'a4'})
-      const pageHeight=842
-      let y=42
-      const addLine=(text,size=10,gap=14)=>{
-        if(y>pageHeight-48){ pdf.addPage(); y=42 }
-        pdf.setFontSize(size)
-        pdf.text(String(text),42,y,{maxWidth:510})
-        y+=gap
-      }
-      addLine(`Kitchen Project Summary - Galley ${KITCHEN.width}x${KITCHEN.length} Current Configuration`,16,22)
-      addLine(`Exported: ${project.exportedAt}`,9,16)
-      addLine('Room',13,18)
-      addLine(`${KITCHEN.width} mm wide x ${KITCHEN.length} mm long x ${KITCHEN.height} mm high. East base 600D, West counter ${KITCHEN.westCounterDepth||600}D, walkway ${walkwayFloor} mm floor / ${walkwayEye} mm eye.`,10,28)
-      addLine('Locked Clear Zones',13,18)
-      addLine(`West door clear zone y0-y${KITCHEN.westGap.to} remains floor-to-ceiling clear. The 300 mm north marker is only a below-window reference, not a full-width no-counter zone. Shaft remains fixed at north-west y${KITCHEN.shaft.y}.`,10,28)
-      addLine('Validation',13,18)
-      validationRows.forEach(r=>addLine(`${r.status.toUpperCase()} - ${r.rule}: ${r.measured}`,9,13))
-      y+=8
-      addLine('BOM Summary',13,18)
-      addLine(`Base cabinets ${bom.baseCount}, wall lower ${bom.wallLowerCount}, wall top ${bom.wallTopCount}, shutters ${bom.shutterCount}, drawers ${bom.drawerCount}, handles ${bom.handleCount} (handleless fronts).`,10,16)
-      addLine(`Countertop ${bom.counterLenMm} mm (${bom.counterLenM} m), backsplash ${bom.backsplashAreaM2} m2.`,10,22)
-      addLine('Materials',13,18)
-      Object.entries(materials).filter(([key])=>key!=='handleFinish').forEach(([key,value])=>addLine(`${key}: ${value}`,9,13))
-      addLine('handleStyle: handleless',9,13)
-      y+=8
-      addLine('Appliances',13,18)
-      bom.appliances.forEach(a=>addLine(`${a.wall} ${a.id}: y${a.y} mm, ${a.w}W x ${a.d}D`,9,13))
-      const pdfBytes=pdf.output('arraybuffer')
-      const zip=new JSZip()
-      zip.file('manifest.json',JSON.stringify(manifest,null,2))
-      zip.file('layout/Galley_2324x4746_Rule9_Current.json',JSON.stringify(project,null,2))
-      zip.file('drawings/kitchen-2d-plan-coohom-background.svg',buildPlanSvg())
-      zip.file('drawings/kitchen-2d-plan-coohom-background.dxf',buildPlanDxf())
-      zip.file('bom/kitchen-bom.csv',buildBOMCsv())
-      zip.file('bom/kitchen-bom.md',buildBOMMarkdown())
-      zip.file('pdf/kitchen-project-summary.pdf',pdfBytes)
-      zip.file('validation/validation-results.json',JSON.stringify(validationRows,null,2))
-      zip.file('notes/export-package-notes.md',`# Kitchen Export Package\n\nRoom: ${KITCHEN.width} x ${KITCHEN.length} x ${KITCHEN.height} mm.\n\nValidation: ${vSimple.all?'PASS':'CHECK'} (${manifest.validation.passing}/${manifest.validation.total} rows passing).\n\nWest appliances from south to north: ${[...west].filter(it=>['dishwasher','sink','washing','shaft'].includes(it.id)).sort((a,b)=>a.y-b.y).map(it=>`${it.id} y${it.y}`).join(', ')}. East cooking and appliance run unchanged.\n\nThis package is generated in-browser from the React shared layout model. FreeCAD and Blender outputs are generated by their repo scripts and are not embedded by the browser unless they are added as static assets later.\n`)
-      const blob=await zip.generateAsync({type:'blob'})
-      const url=URL.createObjectURL(blob)
-      const a=document.createElement('a')
-      a.href=url
-      a.download='kitchen-project-package.zip'
-      a.click()
-      URL.revokeObjectURL(url)
-    }catch(e){
-      setImportWarning('Package export failed: '+e.message)
-    }
-  }
 
   // elevation exports helpers
   const downloadSvgFromRef=(ref, filename)=>{
@@ -2020,7 +1948,9 @@ ${westRows}
       <button onClick={()=>loadVersion('current')} style={{padding:'10px 16px',background:'#e8f5ed',color:'#14532d',border:'2px solid #15803d',borderRadius:10,fontWeight:800}}>Restore saved kitchen baseline</button>
       <button onClick={()=>selectView('references')} style={{padding:'10px 16px',background:view==='references'?'#0c4a6e':'#fff',color:view==='references'?'#fff':'#0c4a6e',border:'2px solid #0c4a6e',borderRadius:10,fontWeight:800}}>Reference Links</button>
       <button onClick={()=>setShowHeightGuides(v=>!v)} style={{padding:'10px 16px',background:showHeightGuides?'#4f46e5':'#fff',color:showHeightGuides?'#fff':'#3730a3',border:'2px solid #4f46e5',borderRadius:10,fontWeight:800}}>Height Guide</button>
-      <button onClick={()=>setShowServices(v=>!v)} aria-pressed={showServices} style={{padding:'10px 16px',background:showServices?'#0e7490':'#fff',color:showServices?'#fff':'#0e7490',border:'2px solid #0e7490',borderRadius:10,fontWeight:800}}>Services</button>
+      {/* The overlay lives in the top plan; jump there when enabling so the
+          button always shows something (owner feedback 2026-09-28). */}
+      <button onClick={()=>{const next=!showServices;setShowServices(next);if(next)selectView('top')}} aria-pressed={showServices} style={{padding:'10px 16px',background:showServices?'#0e7490':'#fff',color:showServices?'#fff':'#0e7490',border:'2px solid #0e7490',borderRadius:10,fontWeight:800}}>Services</button>
       <button onClick={export3DScreenshot} disabled={view!=='three'} style={{padding:'10px 16px',background:view==='three'?'#111':'#ddd',color:view==='three'?'#fff':'#777',border:'none',borderRadius:10,fontWeight:800}}>3D Screenshot</button>
       <button onClick={exportPlanSvg} style={{padding:'8px 12px',background:'#fff',color:'#111',border:'2px solid #7b3f21',borderRadius:10,fontWeight:800}}>Export 2D SVG</button>
       <button onClick={exportPlanPng} style={{padding:'8px 12px',background:'#fff',color:'#111',border:'2px solid #7b3f21',borderRadius:10,fontWeight:800}}>Export 2D PNG</button>
@@ -2028,7 +1958,9 @@ ${westRows}
       {/* Coohom Guide hidden for now - code preserved, button commented out */}
       {/* <button onClick={exportCoohomGuide} style={{padding:'8px 12px',background:'#7b3f21',color:'#fff',border:'2px solid #7b3f21',borderRadius:10,fontWeight:800}}>Coohom Guide</button> */}
       <button onClick={exportJSON} style={{padding:'8px 12px',background:'#111',color:'#fff',border:'none',borderRadius:10,fontWeight:800}}>Export JSON</button>
-      <button onClick={exportProjectPackage} style={{padding:'8px 12px',background:'#2f6f6d',color:'#fff',border:'2px solid #2f6f6d',borderRadius:10,fontWeight:800}}>Export Project Package</button>
+      {/* "Export Project Package" (ZIP of screenshots/PDF/exports) removed
+          2026-09-28 on the owner's request - it served an earlier workflow;
+          the codebase artifacts (JSON/SVG/DXF/BOM exports) remain. */}
       <span style={{padding:'8px 12px',background:vSimple.all?'#d1fae5':'#fee2e2',borderRadius:10,fontWeight:800,fontSize:12}}>{vSimple.all?'Config Valid':'Invalid'} East:{vSimple.eastOk?'OK':'No'} West:{vSimple.westOk?'OK':'No'}</span>
       <span style={{display:'inline-flex',gap:6,alignItems:'center',padding:'6px 10px',background:'#fff',border:'2px solid #111',borderRadius:10,fontWeight:800}}>
         Grid:

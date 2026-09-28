@@ -280,8 +280,11 @@ which `AGENTS.md` reserves for explicit user direction:
 
 - Resolve the `APPLIANCES` / `CURRENT_APPLIANCES` / `LAYOUT_MODEL` disagreement
   documented in `docs/CURRENT_STATE.md`.
-- Decide whether `react-configurator/output/` and `render-review/` (generated
-  evidence) should stay tracked in git, move to release artifacts, or be pruned.
+- ~~Decide whether `react-configurator/output/` should stay tracked~~ —
+  resolved 2026-09-28: the owner asked for stale generated artifacts to be
+  removed, and `output/` (55 unreferenced preview screenshots) was deleted.
+  `render-review/` is untouched: the local render worker still publishes its
+  evidence there and recent merges were gated on it.
 - Decide what to do with the byte-identical duplicate files (images, DXF,
   `configs/*.json`) — some `configs/` duplicates are user-saved layouts with
   intentional alternate names, not accidental copies.

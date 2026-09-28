@@ -543,6 +543,10 @@ function LiveWholeHome3D({onOpenRoom}){
     }
     const hemi=new THREE.HemisphereLight('#ffffff','#8b9ca8',1.4);scene.add(hemi)
     const sun=new THREE.DirectionalLight('#fff5e5',2);sun.position.set(-5,16,-7);scene.add(sun);scene.add(sun.target)
+    // Interior task/accent lights would mask the pure sun effect (owner
+    // feedback 2026-09-28), so daylight hours switch them off entirely and
+    // night hands the scene back to them.
+    const interiorLights=[];scene.traverse(object=>{if(object.isLight&&object!==hemi&&object!==sun)interiorLights.push({light:object,base:object.intensity})})
 
     const centerX=X((50+688)/2),centerZ=Z((69+874)/2)
     // Daylight preview: an indicative equinox sun path oriented by the site's
@@ -552,6 +556,7 @@ function LiveWholeHome3D({onOpenRoom}){
         hemi.color.set('#ffffff');hemi.groundColor.set('#8b9ca8');hemi.intensity=1.4
         sun.color.set('#fff5e5');sun.intensity=2;sun.position.set(-5,16,-7);sun.target.position.set(0,0,0)
         scene.background.set('#edf3f7')
+        interiorLights.forEach(({light,base})=>{light.intensity=base})
         return null
       }
       const p=daylightPreset(hour,{trueNorthOffsetDeg:TRUE_NORTH_OFFSET_DEG,latitudeDeg:SITE_LATITUDE_DEG})
@@ -560,6 +565,7 @@ function LiveWholeHome3D({onOpenRoom}){
       sun.position.set(centerX+p.direction[0]*40,Math.max(p.direction[1],.03)*40,centerZ+p.direction[2]*40)
       sun.target.position.set(centerX,0,centerZ)
       scene.background.set(p.background)
+      interiorLights.forEach(({light,base})=>{light.intensity=p.up?0:base*1.2})
       return p
     }
     const setCamera=mode=>{

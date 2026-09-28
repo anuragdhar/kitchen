@@ -338,10 +338,29 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
       tagSurfaceMaterial(oak,'wood')
       const upholstery=new THREE.MeshStandardMaterial({color:'#ded2bd',roughness:.96})
       const metal=new THREE.MeshStandardMaterial({color:'#393b38',metalness:.45,roughness:.42})
-      // A 1200 x 700 mm table sits west of the pooja alcove, leaving its east-side approach open.
-      addBox(mm(diningTable.widthMm),.055,mm(diningTable.lengthMm),tableX,mm(diningTable.heightMm),tableZ,oak,furniture)
-      addBox(.11,.67,.11,tableX,.38,tableZ,metal,furniture)
-      addBox(.54,.035,.54,tableX,.035,tableZ,metal,furniture)
+      // A 1200 x 700 mm table sits west of the pooja alcove, leaving its
+      // east-side approach open. Upgraded 2026-09-28 on the owner's request
+      // for higher-quality real furniture in renders: rounded-edge solid-oak
+      // top over a shaped apron, on a turned pedestal with a brass collar and
+      // a weighted disc foot. Footprint and height are unchanged from
+      // roomShellConfig, so clearances are identical to the previous box table.
+      const tableTopW=mm(diningTable.widthMm),tableTopL=mm(diningTable.lengthMm),tableTopY=mm(diningTable.heightMm)
+      const oakDark=new THREE.MeshStandardMaterial({color:'#8f6a44',roughness:.52,metalness:.02});tagSurfaceMaterial(oakDark,'wood')
+      const brass=new THREE.MeshStandardMaterial({color:'#b08d57',roughness:.28,metalness:.72})
+      const tableTop=new THREE.Mesh(new THREE.CylinderGeometry(.5,.5,.042,48),oak)
+      tableTop.scale.set(tableTopL,1,tableTopW);tableTop.position.set(tableX,tableTopY,tableZ);furniture.add(tableTop)
+      const tableEdge=new THREE.Mesh(new THREE.TorusGeometry(.5,.021,12,48),oakDark)
+      tableEdge.rotation.x=Math.PI/2;tableEdge.scale.set(tableTopL,tableTopW,1);tableEdge.position.set(tableX,tableTopY,tableZ);furniture.add(tableEdge)
+      const apron=new THREE.Mesh(new THREE.CylinderGeometry(.42,.40,.06,48),oakDark)
+      apron.scale.set(tableTopL,1,tableTopW);apron.position.set(tableX,tableTopY-.05,tableZ);furniture.add(apron)
+      const pedestal=new THREE.Mesh(new THREE.CylinderGeometry(.052,.075,tableTopY-.13,24),oakDark)
+      pedestal.position.set(tableX,(tableTopY-.13)/2+.05,tableZ);furniture.add(pedestal)
+      const collar=new THREE.Mesh(new THREE.CylinderGeometry(.06,.06,.03,24),brass)
+      collar.position.set(tableX,tableTopY-.10,tableZ);furniture.add(collar)
+      const foot=new THREE.Mesh(new THREE.CylinderGeometry(.30,.34,.045,36),oakDark)
+      foot.scale.set(1.25,1,1);foot.position.set(tableX,.025,tableZ);furniture.add(foot)
+      const footRing=new THREE.Mesh(new THREE.TorusGeometry(.31,.008,10,36),brass)
+      footRing.rotation.x=Math.PI/2;footRing.scale.set(1.25,1,1);footRing.position.set(tableX,.05,tableZ);furniture.add(footRing)
       for(const side of [-1,1]) for(const zMm of chairRowsZmm){
         const x=tableX+side*mm(chairOffsetXmm),z=mm(zMm)
         addBox(.44,.065,.46,x,.47,z,upholstery,furniture)

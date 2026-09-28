@@ -6,11 +6,17 @@ import * as THREE from 'three'
 // nothing here changes room geometry, openings or stored layouts, and the
 // materials are deliberately untagged so the interior-materials panel does
 // not repaint soft furnishings as wood or plaster.
+//
+// Same-day follow-up from the owner: decor must stay OUT of the high-quality
+// Blender renders ("no artificial objects in the render"), so every factory
+// tags its group archvizExclude - the live views keep the styling, the
+// archviz capture skips it entirely.
 
 const mat=(color,extra={})=>new THREE.MeshStandardMaterial({color,roughness:.85,metalness:0,...extra})
+const decorGroup=name=>{const group=new THREE.Group();group.name=name;group.userData.archvizExclude=true;return group}
 
 export function createRug(width,depth,color){
-  const group=new THREE.Group();group.name='decor rug'
+  const group=decorGroup('decor rug')
   const border=new THREE.Mesh(new THREE.BoxGeometry(width+.06,.010,depth+.06),mat('#d8cfc2',{roughness:.95}))
   border.position.y=.005;group.add(border)
   const rug=new THREE.Mesh(new THREE.BoxGeometry(width,.012,depth),mat(color,{roughness:.95}))
@@ -19,7 +25,7 @@ export function createRug(width,depth,color){
 }
 
 export function createPottedPlant(scale=1){
-  const group=new THREE.Group();group.name='decor plant'
+  const group=decorGroup('decor plant')
   const pot=new THREE.Mesh(new THREE.CylinderGeometry(.11*scale,.09*scale,.22*scale,20),mat('#8a6f5c'))
   pot.position.y=.11*scale;group.add(pot)
   const soil=new THREE.Mesh(new THREE.CylinderGeometry(.10*scale,.10*scale,.02,20),mat('#3f342b'))
@@ -33,7 +39,7 @@ export function createPottedPlant(scale=1){
 }
 
 export function createWallArt(width,height,artColor){
-  const group=new THREE.Group();group.name='decor wall art'
+  const group=decorGroup('decor wall art')
   const frame=new THREE.Mesh(new THREE.BoxGeometry(width,height,.035),mat('#2e2a26',{roughness:.5}))
   group.add(frame)
   const canvas=new THREE.Mesh(new THREE.BoxGeometry(width-.07,height-.07,.012),mat(artColor,{roughness:.65}))
@@ -44,12 +50,14 @@ export function createWallArt(width,height,artColor){
 }
 
 export function createFloorLamp(){
-  const group=new THREE.Group();group.name='decor floor lamp'
+  const group=decorGroup('decor floor lamp')
   const base=new THREE.Mesh(new THREE.CylinderGeometry(.14,.16,.03,20),mat('#3a362f'))
   base.position.y=.015;group.add(base)
   const pole=new THREE.Mesh(new THREE.CylinderGeometry(.016,.016,1.35,12),mat('#4a4038',{roughness:.4,metalness:.4}))
   pole.position.y=.705;group.add(pole)
-  const shade=new THREE.Mesh(new THREE.CylinderGeometry(.16,.20,.26,20,1,true),mat('#f1e4cd',{roughness:.9,side:THREE.DoubleSide}))
+  // Closed, single-sided shade: an earlier open-ended DoubleSide cylinder was
+  // the prime suspect in a Cycles 5.2 shader crash during archviz renders.
+  const shade=new THREE.Mesh(new THREE.CylinderGeometry(.16,.20,.26,20),mat('#f1e4cd',{roughness:.9}))
   shade.position.y=1.45;group.add(shade)
   const glow=new THREE.Mesh(new THREE.SphereGeometry(.05,10,10),new THREE.MeshStandardMaterial({color:'#ffe6b8',emissive:'#ffcf8a',emissiveIntensity:1.2}))
   glow.position.y=1.42;group.add(glow)
@@ -58,7 +66,7 @@ export function createFloorLamp(){
 
 export function createCushion(width,color){
   const cushion=new THREE.Mesh(new THREE.BoxGeometry(width,width*.42,width*.9),mat(color,{roughness:.95}))
-  cushion.name='decor cushion'
+  cushion.name='decor cushion';cushion.userData.archvizExclude=true
   cushion.geometry.translate(0,width*.21,0)
   return cushion
 }

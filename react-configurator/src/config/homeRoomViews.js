@@ -18,7 +18,10 @@ export const HOME_ROOM_LAYOUTS=[
     bakedModel:'/models/A501-drawing-baked.glb',
     // Blender (x,y,z) metres -> glTF (x,z,-y); authored plan bounds stay unchanged.
     bakedView:{center:[11.551,1.1,11.701],span:5.348,interiorPosition:[11.1,1.48,14.0],interiorTarget:[11.78,1.28,10.3]}},
-  {key:'bedroom1',name:'Bedroom 1',bounds:[339,612,515,794],color:'#bda4d5',render:'bedroom-one'},
+  // Bounds include the enclosed balcony strip (plan x 273-339) so the Blender
+  // model view shows the balcony and its window (owner feedback 2026-09-28);
+  // the balcony also keeps its own dedicated card below.
+  {key:'bedroom1',name:'Bedroom 1',bounds:[273,612,515,794],color:'#bda4d5',render:'bedroom-one'},
   {key:'bedroom1-balcony',name:'Bedroom 1 balcony',bounds:[273,672,339,794],color:'#d8c5a8',render:'bedroom-one-balcony'},
   {key:'entry',name:'Main entry',bounds:[515,715,688,874],color:'#c2a88e',render:'main-entry'},
 ]

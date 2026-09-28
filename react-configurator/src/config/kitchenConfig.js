@@ -17,7 +17,10 @@ export const EAST_LOWER_UPPER_DEPTH = 320
 export const EAST_TOP_UPPER_DEPTH = 550
 export const WEST_COUNTER_DEPTH = 600 // 24in nominal, equal to east for open wet appliances
 export const WEST_LOWER_UPPER_DEPTH = 320
-export const WEST_TOP_UPPER_DEPTH = 450
+// 2026-09-28 owner design change: the west top uppers match the 600 mm base
+// run below them ("upper cabinet on the west side wall same thickness as the
+// lower cabinet"). The toolbar toggle still offers the slimmer 320 option.
+export const WEST_TOP_UPPER_DEPTH = 600
 
 export const KITCHEN = { width:ROOM_WIDTH, length:ROOM_LENGTH, height:ROOM_HEIGHT, door:{w:855,x:0}, southWallReturn:{fromWestMm:855,lengthMm:ROOM_WIDTH-855}, window:{w:1100,h:ROOM_HEIGHT-KITCHEN_WINDOW_SILL_MM,sill:KITCHEN_WINDOW_SILL_MM,x:612, belowDepth:WINDOW_BELOW_DEPTH, transomHeight:610, sections:2, topFixed:true, bottomOperation:'sliding', bottomFixedCount:0, bottomSlidingCount:2}, shaft:{w:SHAFT_W,l:SHAFT_L,x:SHAFT_X,y:SHAFT_Y}, mergedShaftPlan:{x1:127,y1:667,x2:165,y2:703}, northClear:NORTH_CLEAR, windowBelow:{x:612,w:1100,depth:WINDOW_BELOW_DEPTH}, westGap:{from:WEST_CLEAR_FROM,to:WEST_CLEAR_TO,w:WEST_CLEAR_TO-WEST_CLEAR_FROM}, westCounterDepth:WEST_COUNTER_DEPTH, eastBacksplashSliderDepth:102, westSliderDepth:152, walkway:{floor:1124,eye:1004} }
 
@@ -110,7 +113,7 @@ export const CABINET_RUNS = [
   { id:'west-counter-run', category:'cabinetRun', wall:'west', x:0, y:WEST_CLEAR_TO, z:0, width:ROOM_LENGTH-WEST_CLEAR_TO, depth:WEST_COUNTER_DEPTH, height:900,
     locked:false, color:'#c8b39d', material:'laminate', clearance:{ kind:'doorClearZone', from:WEST_CLEAR_FROM, to:WEST_CLEAR_TO }, label:'West 600D counter after 610mm door clear zone' },
   { id:'west-lower-upper', category:'cabinetRun', wall:'west', x:0, y:WEST_CLEAR_TO, z:1350, width:ROOM_LENGTH-WEST_CLEAR_TO, depth:WEST_LOWER_UPPER_DEPTH, height:500, locked:false, color:'#dac8b7', material:'laminate', clearance:{ kind:'doorClearZone', from:WEST_CLEAR_FROM, to:WEST_CLEAR_TO }, label:'West 320D lower upper after door clear zone' },
-  { id:'west-top-upper', category:'cabinetRun', wall:'west', x:0, y:WEST_CLEAR_TO, z:1850, width:ROOM_LENGTH-WEST_CLEAR_TO, depth:WEST_TOP_UPPER_DEPTH, height:850, locked:false, color:'#bfa891', material:'laminate', clearance:{ kind:'doorClearZone', from:WEST_CLEAR_FROM, to:WEST_CLEAR_TO }, label:'West 450D top upper after door clear zone no gap' },
+  { id:'west-top-upper', category:'cabinetRun', wall:'west', x:0, y:WEST_CLEAR_TO, z:1850, width:ROOM_LENGTH-WEST_CLEAR_TO, depth:WEST_TOP_UPPER_DEPTH, height:850, locked:false, color:'#bfa891', material:'laminate', clearance:{ kind:'doorClearZone', from:WEST_CLEAR_FROM, to:WEST_CLEAR_TO }, label:`West ${WEST_TOP_UPPER_DEPTH}D top upper after door clear zone no gap` },
   { id:'west-door-clear-zone', category:'clearZone', wall:'west', x:0, y:WEST_CLEAR_FROM, z:0, width:WEST_CLEAR_TO-WEST_CLEAR_FROM, depth:WEST_COUNTER_DEPTH, height:ROOM_HEIGHT, locked:true, color:'#fffaf3', material:'void', clearance:{ kind:'fullHeight', from:WEST_CLEAR_FROM, to:WEST_CLEAR_TO }, label:'West door clear zone y0-y610 (2ft) no counter no upper no LED' },
   { id:'north-window-below-zone', category:'referenceZone', wall:'north', x:612, y:ROOM_LENGTH-WINDOW_BELOW_DEPTH, z:0, width:1100, depth:WINDOW_BELOW_DEPTH, height:900, locked:true, color:'#eaf6fd', material:'void', clearance:{ kind:'windowBelow', depth:WINDOW_BELOW_DEPTH }, label:'Window-only below-sill reference zone' }
 ]
