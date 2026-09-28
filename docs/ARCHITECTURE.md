@@ -14,6 +14,7 @@ Paths below are relative to `react-configurator/` unless otherwise stated.
 | Other room defaults | src/config/ |
 | Material settings / creation | src/config/renderConfig.js; src/render/materialFactory.js |
 | Balcony / study / whole-home rendering | src/BalconyOffice3D.jsx; src/StudyRoom3D.jsx; src/WholeHome3D.jsx |
+| Blender whole-home views | blender/export_web_preview.py; public/models/A501-blender-lighting.glb; src/BlenderHomeView.jsx; src/HomeLightingGallery.jsx |
 | Headless kitchen inspection | scripts/headless-query.cjs; scripts/browser-helpers.cjs |
 | Screenshot smoke checks | scripts/visual-qa.cjs |
 | Dependency-free basic layout checks | src/domain/layoutChecks.mjs |
@@ -29,6 +30,16 @@ package files changed, and restarts Vite. The page reloads after the restart.
 The Codespaces preview uses the same endpoint through `.devcontainer/vite.config.mjs`
 and accepts only the current Codespace's private forwarded host. It is not included
 in a production static build.
+
+## Blender whole-home preview
+
+The Whole home 3D page switches between a Blender-authored lighting model, the
+Blender stills and tour, and the live editable Three.js view. The model is exported
+from `blender/whole_home/lighting/A501-whole-home-lighting.blend` with
+`blender --background --python blender/export_web_preview.py`. The export omits
+the eight ceiling panels for a cutaway orbit view; it does not edit the `.blend`.
+The GLB is a snapshot of that scene, so saved kitchen edits still appear in the
+editable view only. Browser lighting cannot reproduce Blender's rendered stills.
 
 ## Coordinate contract
 

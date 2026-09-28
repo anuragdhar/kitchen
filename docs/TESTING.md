@@ -32,6 +32,12 @@ not need access to GitHub. `config.test.mjs` checks that the Codespaces preview
 includes the same endpoint, and `local-update-plugin.test.mjs` checks forwarded
 host and origin restrictions.
 
+## Blender view inspection
+
+For Blender whole-home view changes, inspect the exported GLB on desktop and
+mobile, switch to the stills/tour and back to Editable 3D, and check browser
+errors. A build confirms assets are bundled but does not verify camera framing.
+
 ## Browser inspection
 
 Start the server in a separate terminal:

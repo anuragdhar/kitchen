@@ -33,6 +33,7 @@ import {createEntryRecessStorage} from './EntryRecessStorage.js'
 import WallSelectionPanel from './WallSelectionPanel.jsx'
 import PlanMarkPanel from './PlanMarkPanel.jsx'
 import HomeLightingGallery from './HomeLightingGallery.jsx'
+import BlenderHomeView from './BlenderHomeView.jsx'
 
 // The A501 plan is south-up: image right is west and image down is north.
 const PLAN_WIDTH=800,PLAN_HEIGHT=875
@@ -76,7 +77,7 @@ const GLASS=[
   [273,794,339,794,1.0,HEIGHT],
 ]
 
-export default function WholeHome3D({onOpenRoom}){
+function LiveWholeHome3D({onOpenRoom}){
   const mountRef=useRef(null),sceneRef=useRef(null)
   const [exportStatus,setExportStatus]=useState('')
   const [view,setView]=useState('perspective')
@@ -641,8 +642,23 @@ export default function WholeHome3D({onOpenRoom}){
         ['Drawing Room','drawing'],['Bedroom 1','bedroom1'],['Main entry','entry'],
       ].map(([label,key])=><button key={key} onClick={()=>onOpenRoom(key)} style={buttonStyle(false)}>{label} ↗</button>)}
     </div>
-    <HomeLightingGallery/>
   </section>
 }
 
 function buttonStyle(active){return{padding:'8px 12px',borderRadius:9,border:'1px solid #cbd5e1',background:active?'#172033':'#fff',color:active?'#fff':'#172033',fontWeight:800,cursor:'pointer'}}
+
+export default function WholeHome3D({onOpenRoom}){
+  const [source,setSource]=useState('blender-model')
+  return <div>
+    <nav aria-label="Whole-home 3D source" style={{display:'flex',gap:8,flexWrap:'wrap',marginBottom:12}}>
+      {[
+        ['blender-model','Blender model'],
+        ['blender-renders','Blender renders and tour'],
+        ['live','Editable 3D'],
+      ].map(([value,label])=><button key={value} aria-pressed={source===value} onClick={()=>setSource(value)} style={buttonStyle(source===value)}>{label}</button>)}
+    </nav>
+    {source==='blender-model'&&<BlenderHomeView/>}
+    {source==='blender-renders'&&<HomeLightingGallery/>}
+    {source==='live'&&<LiveWholeHome3D onOpenRoom={onOpenRoom}/>}
+  </div>
+}
