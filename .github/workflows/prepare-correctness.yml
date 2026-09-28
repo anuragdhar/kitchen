@@ -21,6 +21,7 @@ jobs:
         run: |
           python .maintenance/apply-correctness.py
           python .maintenance/adjust-browser.py
+          python .maintenance/start-plan.py
       - name: Tests before installation
         working-directory: react-configurator
         run: npm test
