@@ -1,0 +1,74 @@
+{
+  "schema": "a501.whole-home-output",
+  "version": 1,
+  "job": "844acdb97661",
+  "preset": "day",
+  "quality": "draft",
+  "rooms": [
+    {
+      "id": "whole-home",
+      "name": "Whole-home cutaway",
+      "image": "/renders/whole-home-realistic/844acdb97661/whole-home.png"
+    },
+    {
+      "id": "bedroom3",
+      "name": "Bedroom 3",
+      "image": "/renders/whole-home-realistic/844acdb97661/bedroom3.png"
+    },
+    {
+      "id": "study",
+      "name": "Study",
+      "image": "/renders/whole-home-realistic/844acdb97661/study.png"
+    },
+    {
+      "id": "balcony",
+      "name": "Balcony office",
+      "image": "/renders/whole-home-realistic/844acdb97661/balcony.png"
+    },
+    {
+      "id": "terrace",
+      "name": "Terrace",
+      "image": "/renders/whole-home-realistic/844acdb97661/terrace.png"
+    },
+    {
+      "id": "kitchen",
+      "name": "Kitchen",
+      "image": "/renders/whole-home-realistic/844acdb97661/kitchen.png"
+    },
+    {
+      "id": "lobby",
+      "name": "Lobby / Dining",
+      "image": "/renders/whole-home-realistic/844acdb97661/lobby.png"
+    },
+    {
+      "id": "drawing",
+      "name": "Drawing Room",
+      "image": "/renders/whole-home-realistic/844acdb97661/drawing.png"
+    },
+    {
+      "id": "bedroom1",
+      "name": "Bedroom 1",
+      "image": "/renders/whole-home-realistic/844acdb97661/bedroom1.png"
+    },
+    {
+      "id": "bedroom1-balcony",
+      "name": "Bedroom 1 balcony",
+      "image": "/renders/whole-home-realistic/844acdb97661/bedroom1-balcony.png"
+    },
+    {
+      "id": "entry",
+      "name": "Main entry",
+      "image": "/renders/whole-home-realistic/844acdb97661/entry.png"
+    },
+    {
+      "id": "storage",
+      "name": "Storage",
+      "image": "/renders/whole-home-realistic/844acdb97661/storage.png"
+    },
+    {
+      "id": "pooja",
+      "name": "Pooja Ghar",
+      "image": "/renders/whole-home-realistic/844acdb97661/pooja.png"
+    }
+  ]
+}

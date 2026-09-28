@@ -1,0 +1,573 @@
+{
+  "source": "blender\\whole_home\\lighting\\A501-whole-home-lighting.blend",
+  "source_sha256": "c15980da01b28c4d630af82bbf59d4c5e7230acb450c6bc204ceedfb3dea250c",
+  "generator_sha256": "1b17950021282d0e8c4aaa7b17e1abb2dfcc586746a9b726cf2157041d0e6bcb",
+  "dependencies": {
+    "blender\\render_whole_home_realistic.py": "1b17950021282d0e8c4aaa7b17e1abb2dfcc586746a9b726cf2157041d0e6bcb",
+    "blender\\photoreal_drawing_room.py": "58fed92715fcb6bc3069ca3ebe6b26ebe099189f62555de4b31e8e6f4c6ee58a",
+    "blender\\whole_home_render_contract.py": "7e61d7fe7d5c8d090258d912263ab664b5121d6bd8f74ce2b5d905db7f293cbb",
+    "react-configurator\\public\\textures\\wood095\\color.jpg": "cfa114637073e16344c317fdbe8bef8977bb227ac4fec12f1b0932dd9f6ddef1",
+    "react-configurator\\public\\textures\\wood095\\roughness.jpg": "9054077f21ab91597182c7beb52ba069e060b4ca4adbd55b092494c048513903",
+    "react-configurator\\public\\textures\\wood095\\displacement.jpg": "36b0a03864aea29362e715d353be4a744470c8c9432b68c42c9b280241354ed1"
+  },
+  "blender": "5.2.2 LTS",
+  "device": "HIP",
+  "job": {
+    "schema": "a501.whole-home-render",
+    "version": 1,
+    "units": "metres",
+    "axes": "BLENDER_Z_UP",
+    "preset": "day",
+    "quality": "draft",
+    "rooms": [
+      {
+        "id": "bedroom3",
+        "name": "Bedroom 3",
+        "bounds": [
+          0.9601923076923078,
+          -7.840674846625767,
+          4.89698076923077,
+          -3.9806503067484664
+        ],
+        "artifacts": []
+      },
+      {
+        "id": "study",
+        "name": "Study",
+        "bounds": [
+          4.89698076923077,
+          -8.926306748466258,
+          8.142430769230769,
+          -3.9806503067484664
+        ],
+        "artifacts": []
+      },
+      {
+        "id": "balcony",
+        "name": "Balcony office",
+        "bounds": [
+          8.142430769230769,
+          -6.352957055214724,
+          9.525107692307692,
+          -3.7796073619631905
+        ],
+        "artifacts": []
+      },
+      {
+        "id": "terrace",
+        "name": "Terrace",
+        "bounds": [
+          4.89698076923077,
+          -3.7796073619631905,
+          8.142430769230769,
+          -1.387196319018405
+        ],
+        "artifacts": []
+      },
+      {
+        "id": "kitchen",
+        "name": "Kitchen",
+        "bounds": [
+          2.4965,
+          -14.133319018404908,
+          4.89698076923077,
+          -10.112460122699387
+        ],
+        "artifacts": []
+      },
+      {
+        "id": "lobby",
+        "name": "Lobby / Dining",
+        "bounds": [
+          4.89698076923077,
+          -12.303828220858897,
+          9.88998076923077,
+          -9.026828220858896
+        ],
+        "artifacts": []
+      },
+      {
+        "id": "drawing",
+        "name": "Drawing Room",
+        "bounds": [
+          9.88998076923077,
+          -14.37457055214724,
+          13.212246153846154,
+          -9.026828220858896
+        ],
+        "artifacts": []
+      },
+      {
+        "id": "bedroom1",
+        "name": "Bedroom 1",
+        "bounds": [
+          6.5101038461538465,
+          -15.962809815950921,
+          9.88998076923077,
+          -12.303828220858897
+        ],
+        "artifacts": []
+      },
+      {
+        "id": "bedroom1-balcony",
+        "name": "Bedroom 1 balcony",
+        "bounds": [
+          5.24265,
+          -15.962809815950921,
+          6.5101038461538465,
+          -13.510085889570552
+        ],
+        "artifacts": []
+      },
+      {
+        "id": "entry",
+        "name": "Main entry",
+        "bounds": [
+          9.88998076923077,
+          -17.57115337423313,
+          13.212246153846154,
+          -14.37457055214724
+        ],
+        "artifacts": []
+      },
+      {
+        "id": "storage",
+        "name": "Storage",
+        "bounds": [
+          2.7845576923076925,
+          -9.067036809815951,
+          3.9367884615384616,
+          -7.961300613496933
+        ],
+        "artifacts": []
+      },
+      {
+        "id": "pooja",
+        "name": "Pooja Ghar",
+        "bounds": [
+          4.89698076923077,
+          -13.309042944785277,
+          6.087619230769231,
+          -12.303828220858897
+        ],
+        "artifacts": []
+      }
+    ]
+  },
+  "preserved_meshes": 1069,
+  "material_changes": [
+    {
+      "object": "Element 1",
+      "from": "Warm Beige Wall 001 painted plaster - Poly Haven CC0",
+      "to": "plaster"
+    },
+    {
+      "object": "Element 2",
+      "from": "Warm Beige Wall 001 painted plaster - Poly Haven CC0",
+      "to": "plaster"
+    },
+    {
+      "object": "Element 3",
+      "from": "Warm Beige Wall 001 painted plaster - Poly Haven CC0",
+      "to": "plaster"
+    },
+    {
+      "object": "Element 4",
+      "from": "Warm Beige Wall 001 painted plaster - Poly Haven CC0",
+      "to": "plaster"
+    },
+    {
+      "object": "Element 5",
+      "from": "Warm Beige Wall 001 painted plaster - Poly Haven CC0",
+      "to": "plaster"
+    },
+    {
+      "object": "Element 6",
+      "from": "Warm Beige Wall 001 painted plaster - Poly Haven CC0",
+      "to": "plaster"
+    },
+    {
+      "object": "Element 7",
+      "from": "Warm Beige Wall 001 painted plaster - Poly Haven CC0",
+      "to": "plaster"
+    },
+    {
+      "object": "Element 8",
+      "from": "Warm Beige Wall 001 painted plaster - Poly Haven CC0",
+      "to": "plaster"
+    },
+    {
+      "object": "Element 9",
+      "from": "Warm Beige Wall 001 painted plaster - Poly Haven CC0",
+      "to": "plaster"
+    },
+    {
+      "object": "Element 10",
+      "from": "Warm Beige Wall 001 painted plaster - Poly Haven CC0",
+      "to": "plaster"
+    },
+    {
+      "object": "Element 11",
+      "from": "Warm Beige Wall 001 painted plaster - Poly Haven CC0",
+      "to": "plaster"
+    },
+    {
+      "object": "Element 12",
+      "from": "Warm Beige Wall 001 painted plaster - Poly Haven CC0",
+      "to": "plaster"
+    },
+    {
+      "object": "Element 13",
+      "from": "Warm Beige Wall 001 painted plaster - Poly Haven CC0",
+      "to": "plaster"
+    },
+    {
+      "object": "Element 14",
+      "from": "Warm Beige Wall 001 painted plaster - Poly Haven CC0",
+      "to": "plaster"
+    },
+    {
+      "object": "Element 15",
+      "from": "Warm Beige Wall 001 painted plaster - Poly Haven CC0",
+      "to": "plaster"
+    },
+    {
+      "object": "Element 16",
+      "from": "Warm Beige Wall 001 painted plaster - Poly Haven CC0",
+      "to": "plaster"
+    },
+    {
+      "object": "Element 17",
+      "from": "Warm Beige Wall 001 painted plaster - Poly Haven CC0",
+      "to": "plaster"
+    },
+    {
+      "object": "Element 18",
+      "from": "Warm Beige Wall 001 painted plaster - Poly Haven CC0",
+      "to": "plaster"
+    },
+    {
+      "object": "Element 19",
+      "from": "Warm Beige Wall 001 painted plaster - Poly Haven CC0",
+      "to": "plaster"
+    },
+    {
+      "object": "Element 20",
+      "from": "Warm Beige Wall 001 painted plaster - Poly Haven CC0",
+      "to": "plaster"
+    },
+    {
+      "object": "Element 21",
+      "from": "Warm Beige Wall 001 painted plaster - Poly Haven CC0",
+      "to": "plaster"
+    },
+    {
+      "object": "Element 22",
+      "from": "Warm Beige Wall 001 painted plaster - Poly Haven CC0",
+      "to": "plaster"
+    },
+    {
+      "object": "Element 23",
+      "from": "Warm Beige Wall 001 painted plaster - Poly Haven CC0",
+      "to": "plaster"
+    },
+    {
+      "object": "Element 24",
+      "from": "Warm Beige Wall 001 painted plaster - Poly Haven CC0",
+      "to": "plaster"
+    },
+    {
+      "object": "Element 28",
+      "from": "Warm Beige Wall 001 painted plaster - Poly Haven CC0",
+      "to": "plaster"
+    },
+    {
+      "object": "Element 46",
+      "from": "Warm Beige Wall 001 painted plaster - Poly Haven CC0",
+      "to": "plaster"
+    },
+    {
+      "object": "Element 47",
+      "from": "Warm Beige Wall 001 painted plaster - Poly Haven CC0",
+      "to": "plaster"
+    },
+    {
+      "object": "Element 48",
+      "from": "Warm Beige Wall 001 painted plaster - Poly Haven CC0",
+      "to": "plaster"
+    },
+    {
+      "object": "Element 49",
+      "from": "Warm Beige Wall 001 painted plaster - Poly Haven CC0",
+      "to": "plaster"
+    },
+    {
+      "object": "Element 50",
+      "from": "Warm Beige Wall 001 painted plaster - Poly Haven CC0",
+      "to": "plaster"
+    },
+    {
+      "object": "Element 51",
+      "from": "Warm Beige Wall 001 painted plaster - Poly Haven CC0",
+      "to": "plaster"
+    },
+    {
+      "object": "Element 52",
+      "from": "Warm Beige Wall 001 painted plaster - Poly Haven CC0",
+      "to": "plaster"
+    },
+    {
+      "object": "Element 53",
+      "from": "Warm Beige Wall 001 painted plaster - Poly Haven CC0",
+      "to": "plaster"
+    },
+    {
+      "object": "Element 54",
+      "from": "Warm Beige Wall 001 painted plaster - Poly Haven CC0",
+      "to": "plaster"
+    },
+    {
+      "object": "Element 55",
+      "from": "Warm Beige Wall 001 painted plaster - Poly Haven CC0",
+      "to": "plaster"
+    },
+    {
+      "object": "Element 56",
+      "from": "Warm Beige Wall 001 painted plaster - Poly Haven CC0",
+      "to": "plaster"
+    },
+    {
+      "object": "Element 57",
+      "from": "Warm Beige Wall 001 painted plaster - Poly Haven CC0",
+      "to": "plaster"
+    },
+    {
+      "object": "Element 58",
+      "from": "Warm Beige Wall 001 painted plaster - Poly Haven CC0",
+      "to": "plaster"
+    },
+    {
+      "object": "Element 59",
+      "from": "Warm Beige Wall 001 painted plaster - Poly Haven CC0",
+      "to": "plaster"
+    },
+    {
+      "object": "Element 60",
+      "from": "Warm Beige Wall 001 painted plaster - Poly Haven CC0",
+      "to": "plaster"
+    },
+    {
+      "object": "Element 61",
+      "from": "Warm Beige Wall 001 painted plaster - Poly Haven CC0",
+      "to": "plaster"
+    },
+    {
+      "object": "Element 64",
+      "from": "Warm Beige Wall 001 painted plaster - Poly Haven CC0",
+      "to": "plaster"
+    },
+    {
+      "object": "Element 65",
+      "from": "Warm Beige Wall 001 painted plaster - Poly Haven CC0",
+      "to": "plaster"
+    },
+    {
+      "object": "Element 69",
+      "from": "Warm Beige Wall 001 painted plaster - Poly Haven CC0",
+      "to": "plaster"
+    },
+    {
+      "object": "Element 70",
+      "from": "Warm Beige Wall 001 painted plaster - Poly Haven CC0",
+      "to": "plaster"
+    },
+    {
+      "object": "Element 71",
+      "from": "Warm Beige Wall 001 painted plaster - Poly Haven CC0",
+      "to": "plaster"
+    },
+    {
+      "object": "Element 72",
+      "from": "Warm Beige Wall 001 painted plaster - Poly Haven CC0",
+      "to": "plaster"
+    },
+    {
+      "object": "Element 73",
+      "from": "Warm Beige Wall 001 painted plaster - Poly Haven CC0",
+      "to": "plaster"
+    },
+    {
+      "object": "Element 76",
+      "from": "Warm Beige Wall 001 painted plaster - Poly Haven CC0",
+      "to": "plaster"
+    },
+    {
+      "object": "Element 77",
+      "from": "Warm Beige Wall 001 painted plaster - Poly Haven CC0",
+      "to": "plaster"
+    },
+    {
+      "object": "Element 78",
+      "from": "Warm Beige Wall 001 painted plaster - Poly Haven CC0",
+      "to": "plaster"
+    },
+    {
+      "object": "Element 79",
+      "from": "Warm Beige Wall 001 painted plaster - Poly Haven CC0",
+      "to": "plaster"
+    },
+    {
+      "object": "Element 80",
+      "from": "Warm Beige Wall 001 painted plaster - Poly Haven CC0",
+      "to": "plaster"
+    },
+    {
+      "object": "Element 81",
+      "from": "Warm Beige Wall 001 painted plaster - Poly Haven CC0",
+      "to": "plaster"
+    },
+    {
+      "object": "Element 82",
+      "from": "Warm Beige Wall 001 painted plaster - Poly Haven CC0",
+      "to": "plaster"
+    },
+    {
+      "object": "Element 83",
+      "from": "Warm Beige Wall 001 painted plaster - Poly Haven CC0",
+      "to": "plaster"
+    },
+    {
+      "object": "Element 87",
+      "from": "Warm Beige Wall 001 painted plaster - Poly Haven CC0",
+      "to": "plaster"
+    },
+    {
+      "object": "Element 88",
+      "from": "Warm Beige Wall 001 painted plaster - Poly Haven CC0",
+      "to": "plaster"
+    },
+    {
+      "object": "Element 92",
+      "from": "Warm Beige Wall 001 painted plaster - Poly Haven CC0",
+      "to": "plaster"
+    },
+    {
+      "object": "Element 93",
+      "from": "Warm Beige Wall 001 painted plaster - Poly Haven CC0",
+      "to": "plaster"
+    },
+    {
+      "object": "Element 94",
+      "from": "Warm Beige Wall 001 painted plaster - Poly Haven CC0",
+      "to": "plaster"
+    },
+    {
+      "object": "Element 95",
+      "from": "Warm Beige Wall 001 painted plaster - Poly Haven CC0",
+      "to": "plaster"
+    },
+    {
+      "object": "Element 96",
+      "from": "Warm Beige Wall 001 painted plaster - Poly Haven CC0",
+      "to": "plaster"
+    },
+    {
+      "object": "Element 97",
+      "from": "Warm Beige Wall 001 painted plaster - Poly Haven CC0",
+      "to": "plaster"
+    },
+    {
+      "object": "Element 98",
+      "from": "Warm Beige Wall 001 painted plaster - Poly Haven CC0",
+      "to": "plaster"
+    },
+    {
+      "object": "Element 102",
+      "from": "Warm Beige Wall 001 painted plaster - Poly Haven CC0",
+      "to": "plaster"
+    },
+    {
+      "object": "drawing-room | limestone floor",
+      "from": "Warm pale limestone floor",
+      "to": "stone"
+    },
+    {
+      "object": "lobby-dining | limestone floor",
+      "from": "Warm pale limestone floor",
+      "to": "stone"
+    },
+    {
+      "object": "bedroom-one | limestone floor",
+      "from": "Warm pale limestone floor",
+      "to": "stone"
+    },
+    {
+      "object": "bedroom-three | limestone floor",
+      "from": "Warm pale limestone floor",
+      "to": "stone"
+    },
+    {
+      "object": "study-bedroom-two | limestone floor",
+      "from": "Warm pale limestone floor",
+      "to": "stone"
+    },
+    {
+      "object": "kitchen | limestone floor",
+      "from": "Warm pale limestone floor",
+      "to": "stone"
+    },
+    {
+      "object": "main-entry | limestone floor",
+      "from": "Warm pale limestone floor",
+      "to": "stone"
+    },
+    {
+      "object": "balcony-office | limestone floor",
+      "from": "Warm pale limestone floor",
+      "to": "stone"
+    },
+    {
+      "object": "terrace | limestone floor",
+      "from": "Warm pale limestone floor",
+      "to": "stone"
+    },
+    {
+      "object": "pooja-ghar | warm floor",
+      "from": "Warm pale limestone floor",
+      "to": "stone"
+    },
+    {
+      "object": "storage | warm floor",
+      "from": "Warm pale limestone floor",
+      "to": "stone"
+    },
+    {
+      "object": "bedroom-one-balcony | warm floor",
+      "from": "Warm pale limestone floor",
+      "to": "stone"
+    }
+  ],
+  "placed_artifacts": [],
+  "blend": "blender\\whole_home\\realistic\\844acdb97661\\A501-whole-home-realistic.blend",
+  "blend_sha256": "947236d0bb0ebaba1a1061f2b7c0e946cad44e573f92e3f8c220474c197d90db",
+  "images": {
+    "whole-home": "b042a05ae3f5013589fb0a27b6539a3a70ace8915c780d5f3d4bcf5721481602",
+    "bedroom3": "b1e236960e4519d620ee25c22c4f1be562896efc2450ed9017d8a37a854cef18",
+    "study": "c96628f5d0ed158a46d1b9179b87c786332ec11a27fdbb4d8d02caff5f3a43f3",
+    "balcony": "3784a679d66b2e26a15ad98880db22b9374fd32a6255016deec650742c0fd61c",
+    "terrace": "bda490ee08428bdba2c44689c3a78c236a8de267aaabd220f4de760cc800e4c4",
+    "kitchen": "e284b9ab74ccb15f5c1610b557b962b58704ca19f7edae59860ceea0bf46b4e3",
+    "lobby": "d3be2b696dfeff246b06fcef45491bb6a64b00c5250519e8d148c20838f2672e",
+    "drawing": "5e70d170d11cf6586d3dc5d54f0aa2bb5b712a0a494ccd82b869379e3a47cbf1",
+    "bedroom1": "dd042f3285277d7cedd70aa9ffb7e9c72d031f9f11cffdd56c7b21306b9aa2e9",
+    "bedroom1-balcony": "4d71de06b745d349691d19be4a8665559fa3ee4b6ea33ea7415f6371d645084f",
+    "entry": "48acfaca3e05c0d2571ca0a4cb95e57e54681bb1e0d7a5bccd4ae707105c6ed4",
+    "storage": "5491f09fc0ecef933aee7f75fb16168068827aa07bdcfbf8cdfa0de557b8f63a",
+    "pooja": "09af4701bd760e66c499d284f991693307d118fb6559c194acedb108174b9b1a"
+  },
+  "limits": [
+    "Authored furniture retained; dedicated room additions are not transplanted.",
+    "Camera framing, appearance and construction clearances require human review.",
+    "Existing interactive baked GLBs are not replaced by this still-render pass."
+  ]
+}
