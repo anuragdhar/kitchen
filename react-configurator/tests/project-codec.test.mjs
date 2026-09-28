@@ -89,3 +89,11 @@ test('explicit null fields are invalid, not silently replaced by legacy defaults
     const p=customProject();mutate(p);assert.throws(()=>decodeProject(p,options));
   }
 });
+
+test('known colorless hidden placeholders retain absent color during legacy migration',()=>{
+  const base=structuredClone(defaults);delete base.east[1].color;
+  const original=structuredClone(base);
+  const result=decodeProject(base,{kitchen,defaults:original});
+  assert.deepEqual(result.state,base);
+  assert.equal(Object.hasOwn(result.state.east[1],'color'),false);
+});

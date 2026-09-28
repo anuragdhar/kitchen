@@ -119,7 +119,7 @@ function fromLegacyItem(item, defaults, model) {
   // Never invent/repair geometry from a default merely because a field is absent.
   result.x = item.x; result.y = item.y;
   if (own(item, 'locked') && !own(item, 'fixed')) result.fixed = item.locked;
-  if (!own(item, 'color') && !known?.color) result.color = '#cccccc';
+  if (!known && !own(item, 'color') && result.hidden !== true) result.color = '#cccccc';
   return result;
 }
 
