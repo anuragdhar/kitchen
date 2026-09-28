@@ -41,12 +41,14 @@ if ! owned_pid "$PID"; then
   printf '%s\n' "$PID" >"$STATE/server.pid"
 fi
 for ((attempt=0; attempt<60; attempt++)); do
-  if ! owned_pid "$PID"; then
+  # A newly spawned child may still be executing nohup before Node replaces it.
+  # Wait for ownership + HTTP readiness; fail immediately only when it exits.
+  if ! kill -0 "$PID" 2>/dev/null; then
     echo "Preview failed to start. See $STATE/server.log" >&2
     tail -n 30 "$STATE/server.log" >&2
     exit 1
   fi
-  if healthy; then
+  if owned_pid "$PID" && healthy; then
     echo 'Home Interior is ready at http://localhost:5173/ (Codespaces: Ports -> 5173 -> Open in Browser).'
     echo "Preview PID: $PID; log: $STATE/server.log"
     echo 'Keep port visibility Private. Stop the codespace when finished.'
