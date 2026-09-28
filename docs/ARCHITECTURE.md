@@ -15,6 +15,7 @@ Paths below are relative to `react-configurator/` unless otherwise stated.
 | Material settings / creation | src/config/renderConfig.js; src/render/materialFactory.js |
 | Balcony / study / whole-home rendering | src/BalconyOffice3D.jsx; src/StudyRoom3D.jsx; src/WholeHome3D.jsx |
 | Blender whole-home views | blender/export_web_preview.py; public/models/A501-blender-lighting.glb; src/BlenderHomeView.jsx; src/HomeLightingGallery.jsx |
+| Individual room Blender views | src/config/homeRoomViews.js; src/HomeApp.jsx; src/BlenderHomeView.jsx |
 | Headless kitchen inspection | scripts/headless-query.cjs; scripts/browser-helpers.cjs |
 | Screenshot smoke checks | scripts/visual-qa.cjs |
 | Dependency-free basic layout checks | src/domain/layoutChecks.mjs |
@@ -40,6 +41,11 @@ from `blender/whole_home/lighting/A501-whole-home-lighting.blend` with
 the eight ceiling panels for a cutaway orbit view; it does not edit the `.blend`.
 The GLB is a snapshot of that scene, so saved kitchen edits still appear in the
 editable view only. Browser lighting cannot reproduce Blender's rendered stills.
+Individual room views clip the same GLB to each room's A501 plan bounds and show
+its Blender still. The shared bounds live in `src/config/homeRoomViews.js`; the
+viewer converts plan pixels to GLB metres with the existing `ENTRY.planScale`
+X/Z factors. Bedroom and kitchen workspace geometry and saved projects remain
+with their existing live components under the Editable workspace tab.
 
 ## Coordinate contract
 

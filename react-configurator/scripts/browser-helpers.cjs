@@ -23,6 +23,7 @@ async function openKitchen(page, url) {
   await page.goto(url, {waitUntil: 'domcontentloaded', timeout: 30000});
   if (!(await page.evaluate(() => Boolean(window.kitchenAPI)))) {
     await page.getByRole('button', {name: 'Open Kitchen', exact: true}).first().click({timeout: 30000, noWaitAfter: true});
+    await page.getByRole('button', {name: 'Editable workspace', exact: true}).click({timeout: 30000, noWaitAfter: true});
   }
   // Room switching is a React state change, not a document navigation.
   // Wait for its actual API; cold software-WebGL initialization can be expensive.

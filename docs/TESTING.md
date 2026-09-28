@@ -37,6 +37,8 @@ host and origin restrictions.
 For Blender whole-home view changes, inspect the exported GLB on desktop and
 mobile, switch to the stills/tour and back to Editable 3D, and check browser
 errors. A build confirms assets are bundled but does not verify camera framing.
+For room view changes, inspect a large and a narrow room, switch to its render
+and editable workspace, and verify the model displays the intended room.
 
 ## Browser inspection
 

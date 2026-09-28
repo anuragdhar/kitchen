@@ -7,7 +7,7 @@
     "visual:qa": "node scripts/visual-qa.cjs",
     "inspect": "node scripts/headless-query.cjs",
     "test:bolt": "node scripts/validate-3d-bolt.mjs",
-    "test": "node --test tests/current-layout.test.mjs tests/layout-checks.test.mjs tests/browser-helpers.test.mjs tests/kitchen-validation.test.mjs tests/current-validation.test.mjs tests/kitchen-navigation.test.mjs tests/project-codec.test.mjs tests/project-storage.test.mjs tests/current-project.test.mjs tests/interior-inspiration.test.mjs tests/interior-materials.test.mjs tests/interior-lighting.test.mjs tests/local-update.test.mjs tests/local-update-plugin.test.mjs ../scripts/windows/launchers.test.mjs",
+    "test": "node --test tests/current-layout.test.mjs tests/layout-checks.test.mjs tests/browser-helpers.test.mjs tests/kitchen-validation.test.mjs tests/current-validation.test.mjs tests/kitchen-navigation.test.mjs tests/project-codec.test.mjs tests/project-storage.test.mjs tests/current-project.test.mjs tests/interior-inspiration.test.mjs tests/interior-materials.test.mjs tests/interior-lighting.test.mjs tests/local-update.test.mjs tests/local-update-plugin.test.mjs tests/blender-room-views.test.mjs ../scripts/windows/launchers.test.mjs",
     "check": "npm test && npm run build",
     "test:browser": "node scripts/correctness-browser.cjs",
     "test:persistence": "node scripts/persistence-browser.cjs",

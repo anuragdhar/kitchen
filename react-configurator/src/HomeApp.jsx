@@ -8,6 +8,8 @@ import StudyRoom3D from './StudyRoom3D.jsx'
 import EmptyRoomGallery from './EmptyRoomGallery.jsx'
 import EntryGallery3D from './EntryGallery3D.jsx'
 import WholeHome3D from './WholeHome3D.jsx'
+import BlenderHomeView from './BlenderHomeView.jsx'
+import {BLENDER_ROOM_VIEWS} from './config/homeRoomViews.js'
 import {BALCONY_OFFICE} from './config/balconyOfficeConfig.js'
 import {STUDY_ROOM} from './config/studyRoomConfig.js'
 import {EMPTY_ROOM_SHELLS} from './config/roomShellConfig.js'
@@ -300,6 +302,33 @@ function BalconyWorkspace(){
   </main>
 }
 
+function RoomPresentation({section,children}){
+  const room=BLENDER_ROOM_VIEWS[section]
+  const [view,setView]=useState('blender-model')
+  return <>
+    <nav className="room-presentation-navigation" aria-label={`${room.name} 3D source`} style={{display:'flex',gap:8,flexWrap:'wrap',padding:'12px clamp(14px,2vw,28px)',background:'#eef3f6'}}>
+      {[
+        ['blender-model','Blender model'],
+        ['blender-render','Blender render'],
+        ['editable','Editable workspace'],
+      ].map(([value,label])=><button key={value} aria-pressed={view===value} onClick={()=>setView(value)} style={{...buttonStyle,border:'1px solid #cbd5e1',borderRadius:9,padding:'8px 12px',background:view===value?'#172033':'#fff',color:view===value?'#fff':'#172033'}}>{label}</button>)}
+    </nav>
+    {view==='blender-model'&&<main className="room-presentation-blender" style={{background:'#eef3f6',padding:'0 clamp(14px,2vw,28px) 28px'}}><BlenderHomeView room={room}/></main>}
+    {view==='blender-render'&&<main className="room-presentation-blender" style={{background:'#eef3f6',padding:'0 clamp(14px,2vw,28px) 28px'}}>
+      <section style={{background:'#fff',border:'1px solid #dbe3e9',borderRadius:22,padding:16,boxShadow:'0 16px 42px rgba(23,32,51,.1)'}}>
+        <h1 style={{fontSize:22,margin:'0 0 6px',color:'#172033'}}>{room.name} Blender render</h1>
+        <p style={{fontSize:13,color:'#64748b',margin:'0 0 12px'}}>Lighting and finish preview from the saved Blender scene.</p>
+        <img src={`/renders/home-lighting/${room.render}.png`} alt={`${room.name} Blender lighting and finish render`} style={{display:'block',width:'100%',maxWidth:1200,height:'auto',borderRadius:12,margin:'0 auto'}}/>
+        {room.extraRenders?.length>0&&<div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(min(100%,320px),1fr))',gap:14,marginTop:16}}>
+          {room.extraRenders.map(([file,label])=><figure key={file} style={{margin:0}}><img loading="lazy" src={`/renders/${file}`} alt={label} style={{display:'block',width:'100%',height:'auto',borderRadius:12}}/><figcaption style={{fontSize:12,color:'#64748b',marginTop:5}}>{label}</figcaption></figure>)}
+        </div>}
+      </section>
+    </main>}
+    {view==='editable'&&children}
+    <style>{`@media(min-width:1500px){.room-presentation-navigation,.room-presentation-blender{padding-left:280px!important}}`}</style>
+  </>
+}
+
 export default function HomeApp(){
   const [section,setSection]=useState('home')
   useEffect(()=>{window.scrollTo({top:0,left:0,behavior:'auto'})},[section])
@@ -308,14 +337,14 @@ export default function HomeApp(){
     <HomeHeader section={section} onHome={()=>setSection('home')} onOpen3D={()=>setSection('whole3d')}/>
     {section!=='home'&&section!=='dxf'&&<MiniFloorNavigator section={section} onOpen={setSection}/>}
     {section==='home'&&<WholeHome onOpen={setSection}/>} 
-    {section==='kitchen'&&<KitchenConfigurator/>}
-    {section==='study'&&<StudyWorkspace/>}
-    {section==='balcony'&&<BalconyWorkspace/>}
+    {section==='kitchen'&&<RoomPresentation key={section} section={section}><KitchenConfigurator/></RoomPresentation>}
+    {section==='study'&&<RoomPresentation key={section} section={section}><StudyWorkspace/></RoomPresentation>}
+    {section==='balcony'&&<RoomPresentation key={section} section={section}><BalconyWorkspace/></RoomPresentation>}
     {section==='shells'&&<EmptyShellWorkspace/>}
     {section==='whole3d'&&<WholeHome3DWorkspace onOpenRoom={setSection}/>}
-    {rooms[section]?.shellKey&&<EmptyShellWorkspace key={section} initialRoomKey={rooms[section].shellKey} initialView={rooms[section].initialView||'overview'}/>}
-    {section==='storage'&&<StorageGallery3D/>}
-    {section==='entry'&&<EntryWorkspace/>}
+    {rooms[section]?.shellKey&&<RoomPresentation key={section} section={section}><EmptyShellWorkspace initialRoomKey={rooms[section].shellKey} initialView={rooms[section].initialView||'overview'}/></RoomPresentation>}
+    {section==='storage'&&<RoomPresentation key={section} section={section}><StorageGallery3D/></RoomPresentation>}
+    {section==='entry'&&<RoomPresentation key={section} section={section}><EntryWorkspace/></RoomPresentation>}
     {section==='dxf'&&<DxfWorkspace/>}
   </>
 }

@@ -108,6 +108,7 @@ function dxfEntities(text) {
     await page.getByRole('button', {name: 'Return to whole home plan', exact: true}).click({noWaitAfter: true});
     await page.waitForFunction(() => window.kitchenAPI === undefined);
     await page.getByRole('button', {name: 'Open Kitchen', exact: true}).first().click({noWaitAfter: true});
+    await page.getByRole('button', {name: 'Editable workspace', exact: true}).click({noWaitAfter: true});
     await page.waitForFunction(() => window.kitchenAPI?.validate().all === true);
     await page.evaluate(() => window.kitchenAPI.reset());
     await page.getByRole('button', {name: 'Top View (Plan)', exact: true}).click({noWaitAfter: true});

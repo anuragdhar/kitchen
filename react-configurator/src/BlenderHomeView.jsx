@@ -3,8 +3,9 @@ import * as THREE from 'three'
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js'
 import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader.js'
 import {RoomEnvironment} from 'three/examples/jsm/environments/RoomEnvironment.js'
+import {ENTRY} from './config/entryConfig.js'
 
-export default function BlenderHomeView(){
+export default function BlenderHomeView({room=null}){
   const mountRef=useRef(null)
   const [error,setError]=useState('')
 
@@ -18,10 +19,23 @@ export default function BlenderHomeView(){
     renderer.outputColorSpace=THREE.SRGBColorSpace
     renderer.toneMapping=THREE.ACESFilmicToneMapping
     renderer.toneMappingExposure=.85
+    let clippingPlanes=null
+    if(room){
+      const [x1,y1,x2,y2]=room.bounds
+      const sx=ENTRY.planScale.xMetresPerPixel,sz=ENTRY.planScale.zMetresPerPixel
+      const pad=.08
+      clippingPlanes=[
+        new THREE.Plane(new THREE.Vector3(1,0,0),-x1*sx+pad),
+        new THREE.Plane(new THREE.Vector3(-1,0,0),x2*sx+pad),
+        new THREE.Plane(new THREE.Vector3(0,0,1),-y1*sz+pad),
+        new THREE.Plane(new THREE.Vector3(0,0,-1),y2*sz+pad),
+      ]
+    }
     mount.appendChild(renderer.domElement)
     const pmrem=new THREE.PMREMGenerator(renderer)
     const environment=pmrem.fromScene(new RoomEnvironment(renderer),.04).texture
     scene.environment=environment
+    if(clippingPlanes)renderer.clippingPlanes=clippingPlanes
     scene.add(new THREE.HemisphereLight('#ffffff','#897f75',.9))
     const sun=new THREE.DirectionalLight('#fff2da',1.25)
     sun.position.set(-8,18,10)
@@ -31,8 +45,9 @@ export default function BlenderHomeView(){
     let model=null,modelCenter=null,modelSpan=0,disposed=false,raf=0
     const frameModel=()=>{
       if(!modelCenter)return
-      const zoomOut=Math.max(1,.95/(mount.clientWidth/mount.clientHeight))
-      camera.position.set(modelCenter.x+modelSpan*.55*zoomOut,modelCenter.y+modelSpan*.95*zoomOut,modelCenter.z+modelSpan*.8*zoomOut)
+      const zoomOut=Math.max(1,(room?1.2:.95)/(mount.clientWidth/mount.clientHeight))
+      const [dx,dy,dz]=room?.camera||[.55,.95,.8]
+      camera.position.set(modelCenter.x+modelSpan*dx*zoomOut,modelCenter.y+modelSpan*dy*zoomOut,modelCenter.z+modelSpan*dz*zoomOut)
       controls.target.copy(modelCenter)
       controls.maxDistance=modelSpan*5
       controls.update()
@@ -43,9 +58,16 @@ export default function BlenderHomeView(){
       model=gltf.scene
       scene.add(model)
       const bounds=new THREE.Box3().setFromObject(model)
-      modelCenter=bounds.getCenter(new THREE.Vector3())
-      const size=bounds.getSize(new THREE.Vector3())
-      modelSpan=Math.max(size.x,size.z,1)
+      if(room){
+        const [x1,y1,x2,y2]=room.bounds
+        const sx=ENTRY.planScale.xMetresPerPixel,sz=ENTRY.planScale.zMetresPerPixel
+        modelCenter=new THREE.Vector3((x1+x2)*sx/2,1.2,(y1+y2)*sz/2)
+        modelSpan=Math.max((x2-x1)*sx,(y2-y1)*sz,room.cameraSpan||3.5)
+      }else{
+        modelCenter=bounds.getCenter(new THREE.Vector3())
+        const size=bounds.getSize(new THREE.Vector3())
+        modelSpan=Math.max(size.x,size.z,1)
+      }
       frameModel()
     },undefined,()=>{if(!disposed)setError('Could not load the Blender model.')})
 
@@ -80,12 +102,12 @@ export default function BlenderHomeView(){
       renderer.dispose()
       renderer.domElement.remove()
     }
-  },[])
+  },[room])
 
   return <section style={{background:'#fff',border:'1px solid #dbe3e9',borderRadius:22,overflow:'hidden',boxShadow:'0 16px 42px rgba(23,32,51,.1)'}}>
     <div style={{padding:'14px 16px',borderBottom:'1px solid #e2e8f0'}}>
-      <b style={{fontSize:18,color:'#172033'}}>Blender lighting model</b>
-      <div style={{fontSize:12,color:'#64748b',marginTop:3}}>Drag to orbit and scroll to zoom. This is an exported Blender scene; saved design edits appear in Editable 3D. Photoreal lighting is in Blender renders.</div>
+      <b style={{fontSize:18,color:'#172033'}}>{room?`${room.name} Blender model`:'Blender lighting model'}</b>
+      <div style={{fontSize:12,color:'#64748b',marginTop:3}}>Drag to orbit and scroll to zoom. This is an exported Blender scene; saved design edits appear in the editable view. Photoreal lighting is in Blender renders.</div>
     </div>
     {error&&<div role="alert" style={{padding:16,color:'#b91c1c'}}>{error}</div>}
     <div ref={mountRef} style={{height:'clamp(620px,82vh,1050px)',width:'100%'}}/>

@@ -57,11 +57,13 @@ test('whole-home page is opened before waiting for kitchen API', async () => {
   const calls = [];
   const page = {goto: async () => calls.push('goto'), evaluate: async () => false,
     getByRole: (role, options) => {
-      assert.equal(role, 'button'); assert.equal(options.name, 'Open Kitchen');
-      return {first: () => ({click: async () => calls.push('click')})};
+      assert.equal(role, 'button');
+      if (options.name === 'Open Kitchen') return {first: () => ({click: async () => calls.push('click')})};
+      assert.equal(options.name, 'Editable workspace');
+      return {click: async () => calls.push('editable')};
     }, waitForFunction: async () => calls.push('wait')};
   await openKitchen(page, 'http://localhost:5173');
-  assert.deepEqual(calls, ['goto', 'click', 'wait']);
+  assert.deepEqual(calls, ['goto', 'click', 'editable', 'wait']);
 });
 test('already mounted kitchen needs no navigation click', async () => {
   let waited = false;
