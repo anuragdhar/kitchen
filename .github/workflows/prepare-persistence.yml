@@ -6,7 +6,7 @@ permissions:
   contents: write
 jobs:
   prepare:
-    if: github.event.head_commit.message == 'chore: prepare guarded persistence edits'
+    if: "github.event.head_commit.message == 'chore: prepare guarded persistence edits'"
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
