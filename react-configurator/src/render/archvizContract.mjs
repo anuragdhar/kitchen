@@ -1,9 +1,12 @@
+import {assertEditableRoomSource} from './roomParity.mjs';
+
 // The transport is glTF metres, Y up. Blender performs the standard (x,-z,y) import.
 export const finiteVector = (value, length=3) => Array.isArray(value) && value.length===length && value.every(Number.isFinite);
 export const validRoom = value => typeof value==='string' && /^[a-z][a-z0-9-]{0,63}$/.test(value);
 export function validateCapture(value) {
   if(value?.schema!=='a501.archviz-source' || value.version!==1 || value.units!=='metres' || value.axes!=='GLTF_Y_UP') throw Error('Unsupported archviz source.');
   if(!validRoom(value.room) || typeof value.sceneId!=='string') throw Error('Invalid room identity.');
+  assertEditableRoomSource(value.sceneId, value.room);
   if(!/^[a-f0-9]{64}$/.test(value.glbSha256)) throw Error('Missing model checksum.');
   if(!Number.isFinite(value.metresPerSourceUnit) || value.metresPerSourceUnit<=0) throw Error('Invalid source scale.');
   if(!Array.isArray(value.meshes) || !value.meshes.length || value.meshes.length>50000) throw Error('Expected 1–50,000 source meshes.');
