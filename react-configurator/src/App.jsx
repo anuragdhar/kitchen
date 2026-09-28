@@ -1,3 +1,6 @@
+import {useKitchenProject} from './hooks/useKitchenProject.js'
+import {MAX_PROJECT_BYTES, encodeProject} from './persistence/projectCodec.mjs'
+import {loadNamedProject, saveNamedProject} from './persistence/projectStorage.mjs'
 import {getInitialKitchenView} from './app/kitchenNavigation.mjs'
 import {buildKitchenValidationRows, summarizeValidation, getPlanDimensions} from './domain/kitchenValidation.mjs'
 import {EAST_BASE_DEPTH} from './config/kitchenConfig.js'
@@ -24,6 +27,10 @@ const normalizeKitchenMaterials=(m={})=>({
   counter:!m.counter || m.counter==='#d8c2a8' ? VIEW_STYLE.counter : m.counter,
 })
 
+const PROJECT_DEFAULTS={east:EAST_INIT,west:WEST_INIT,grid:0,materials:normalizeKitchenMaterials(),
+  eastModules:autoFillModules(KITCHEN.length),westModules:autoFillModules(KITCHEN.length-KITCHEN.westGap.to),
+  eastTopUpperDepth:EAST_TOP_UPPER_DEPTH,westTopUpperDepth:WEST_TOP_UPPER_DEPTH,hide3DObstructions:true}
+
 const REFERENCE_LINKS=[
   {
     title:'Galley Kitchen Ideas - SoloTravely',
@@ -34,48 +41,21 @@ const REFERENCE_LINKS=[
 ]
 
 export default function App(){
-  const eastIds=['microwave','applianceGarage','eastBacksplashSlider','gas','garage_NE','garage_SE','geyserEastTop']
-  const westIds=['shaft','washing','sink','sinkUpperDishRack','dishwasher','westSixInchSlider','waterpurifier','trashCan','geyser','westGarage','gasWestRemoved','powerPointWest1','powerPointWest2','powerPointEast1','powerPointEast2']
-  const byId=(items=[])=>Object.fromEntries(items.map(it=>[it.id,it]))
-  const fixList=(list,init)=>list.map(it=>{
-    const found=init.find(i=>i.id===it.id)
-    return {...(found||{}),...it, w:it.w||it.width||found?.w||600, d:it.d||it.depth||found?.d||400, h:it.h||it.height||found?.h||400 }
-  })
-  const migrateEastItems=(items=[],moveCurrentHob=false)=>{
-    const list=fixList(items,EAST_INIT).filter(it=>eastIds.includes(it.id))
-    const current=byId(list)
-    const hasNewShape= current.applianceGarage?.y===0 && current.microwave?.y===0 && [1200,1350,NORTH_HOB_OPTION_Y_MM].includes(current.gas?.y)
-    if(hasNewShape) return moveCurrentHob?list.map(it=>it.id==='gas'&&it.y===1350?{...it,y:NORTH_HOB_OPTION_Y_MM,label:'Gas cooktop moved north, with hidden chimney above'}:it):list
-    return EAST_INIT
-  }
-  const migrateWestItems=(items=[])=>{
-    const list=fixList(items,WEST_INIT).filter(it=>westIds.includes(it.id))
-    const ids=new Set(list.map(it=>it.id))
-    if(['washing','sink','dishwasher','shaft'].every(id=>ids.has(id)))
-      return list.map(it=>it.id==='shaft'?{...it,y:KITCHEN.shaft.y,w:KITCHEN.shaft.l,d:KITCHEN.shaft.w}:it)
-    return WEST_INIT
-  }
+  const persisted=useKitchenProject(PROJECT_DEFAULTS,KITCHEN,LS_KEY)
+  const {east,west,grid,materials,eastModules,westModules,eastTopUpperDepth,westTopUpperDepth,hide3DObstructions}=persisted.project
+  const {setEast,setWest,setGrid,setMaterials,setEastModules,setWestModules,setEastTopUpperDepth,setWestTopUpperDepth,setHide3DObstructions}=persisted.setters
   const eastRunLength=KITCHEN.length
   const westRunLength=KITCHEN.length-KITCHEN.westGap.to
-  const [east,setEast]=useState(()=>migrateEastItems(EAST_INIT)); const [west,setWest]=useState(()=>migrateWestItems(WEST_INIT))
   const [view,setView]=useState(()=>getInitialKitchenView(typeof window==='undefined'?'':window.location.search)); const [drag,setDrag]=useState(null)
-  const [grid,setGrid]=useState(0)
-  const [hide3DObstructions,setHide3DObstructions]=useState(true)
   const [unit,setUnit]=useState('mm')
   const [selectedId,setSelectedId]=useState(null)
   const [measureMode,setMeasureMode]=useState(false)
   const [measurePoints,setMeasurePoints]=useState([]) // [{x,y} mm]
   const [interactionMode,setInteractionMode]=useState('cabinet') // 'cabinet' | 'dimension' | 'measure' | 'transparent'
   const [showHeightGuides,setShowHeightGuides]=useState(false)
-  const [materials,setMaterials]=useState(()=>normalizeKitchenMaterials())
-  const [eastTopUpperDepth,setEastTopUpperDepth]=useState(EAST_TOP_UPPER_DEPTH)
-  const [westTopUpperDepth,setWestTopUpperDepth]=useState(WEST_TOP_UPPER_DEPTH)
-  const [eastModules,setEastModules]=useState(()=>autoFillModules(eastRunLength))
-  const [westModules,setWestModules]=useState(()=>autoFillModules(westRunLength))
   const [importWarning,setImportWarning]=useState('')
   const [bomNote,setBomNote]=useState('')
   const threeViewRef=useRef(null)
-  const kitchenHydratedRef=useRef(false)
   const hide3DObstructionsRef=useRef(true)
   const interactionModeRef=useRef('cabinet')
   const measurePointsRef=useRef([])
@@ -87,6 +67,8 @@ export default function App(){
   const northSvgRef=useRef(null)
   const southSvgRef=useRef(null)
   const fileInputRef=useRef(null)
+  const loadRequestRef=useRef(0)
+  useEffect(()=>()=>{loadRequestRef.current+=1},[])
   const scale=0.11
   const renderMaterials=materials
   const renderStyle={
@@ -159,37 +141,10 @@ export default function App(){
   }
   const getLayoutModel=()=>buildLayoutModel()
 
-  // autosave
-  useEffect(()=>{
-    if(!kitchenHydratedRef.current)return
-    try{
-      const payload={east,west,grid,materials,eastModules,westModules,eastTopUpperDepth,westTopUpperDepth,hide3DObstructions}
-      localStorage.setItem(LS_KEY, JSON.stringify(payload))
-    }catch{}
-  },[east,west,grid,materials,eastModules,westModules,eastTopUpperDepth,westTopUpperDepth,hide3DObstructions])
-  useEffect(()=>{
-    try{
-      const raw=localStorage.getItem(LS_KEY)
-      if(raw){
-        const p=JSON.parse(raw)
-        if(p.east && Array.isArray(p.east)) setEast(migrateEastItems(p.east,true))
-        if(p.west && Array.isArray(p.west)) setWest(migrateWestItems(p.west))
-        if(p.grid===50||p.grid===100||p.grid===0) setGrid(p.grid)
-        if(p.materials) setMaterials(prev=>normalizeKitchenMaterials({...prev,...p.materials}))
-        if(p.eastTopUpperDepth===320||p.eastTopUpperDepth===550) setEastTopUpperDepth(p.eastTopUpperDepth)
-        if(p.westTopUpperDepth===320||p.westTopUpperDepth===450) setWestTopUpperDepth(p.westTopUpperDepth)
-        if(typeof p.hide3DObstructions==='boolean') setHide3DObstructions(p.hide3DObstructions)
-        if(p.eastModules) setEastModules(p.eastModules.reduce((sum,m)=>sum+(m.width||0),0)===4446?autoFillModules(eastRunLength):p.eastModules)
-        if(p.westModules) setWestModules(p.westModules.reduce((sum,m)=>sum+(m.width||0),0)===3226?autoFillModules(westRunLength):p.westModules)
-      }
-    }catch{}
-    kitchenHydratedRef.current=true
-  },[])
-
   useEffect(()=>{const api={
     moveItem:(wall,id,ycm)=>{const y=snapVal(ycm*10); if(wall==='east')setEast(p=>p.map(it=>it.id===id?{...it,y}:it)); else setWest(p=>p.map(it=>it.id===id&&!it.fixed?{...it,y}:it))},
     moveItemMM:(wall,id,yMM)=>{const y=snapVal(yMM); if(wall==='east')setEast(p=>p.map(it=>it.id===id?{...it,y}:it)); else setWest(p=>p.map(it=>it.id===id&&!it.fixed?{...it,y}:it))},
-    getLayout:()=>({kitchen:KITCHEN,east,west,eastTopUpperDepth,westTopUpperDepth,validation:{...vSimple, detailed:validationRows}, rule:LAYOUT_MODEL.rule, layoutModel:getLayoutModel(), grid, walkway:{floor:walkwayFloor,eye:walkwayEye}, materials:renderMaterials, modules:{east:eastModules,west:westModules}, viewOptions:{hide3DObstructions}}), validate:()=>({ ...vSimple, detailed:validationRows, rows:validationRows }), reset:()=>{setEast(EAST_INIT);setWest(WEST_INIT); setEastModules(autoFillModules(eastRunLength)); setWestModules(autoFillModules(westRunLength)); setMaterials(normalizeKitchenMaterials()); setEastTopUpperDepth(EAST_TOP_UPPER_DEPTH); setWestTopUpperDepth(WEST_TOP_UPPER_DEPTH); setGrid(0); setHide3DObstructions(true); localStorage.removeItem(LS_KEY)}, getLayoutModel,
+    getLayout:()=>({kitchen:KITCHEN,east,west,eastTopUpperDepth,westTopUpperDepth,validation:{...vSimple, detailed:validationRows}, rule:LAYOUT_MODEL.rule, layoutModel:getLayoutModel(), grid, walkway:{floor:walkwayFloor,eye:walkwayEye}, materials:renderMaterials, modules:{east:eastModules,west:westModules}, viewOptions:{hide3DObstructions}}), validate:()=>({ ...vSimple, detailed:validationRows, rows:validationRows }), reset:()=>{persisted.resetProject();setImportWarning('')}, getLayoutModel,
     getGrid:()=>grid, setGrid:(g)=>setGrid(g===50||g===100?g:0), getWalkway:()=>({floor:walkwayFloor,eye:walkwayEye}),
     getDimensions:()=>({roomWidth:KITCHEN.width,roomLength:KITCHEN.length,eastBaseDepth:planDimensions.eastDepthMm,eastTopUpperDepth,westTopUpperDepth,westCounterDepth:planDimensions.westDepthMm,walkwayWidth:walkwayFloor,northClear:0,windowBelowDepth:KITCHEN.windowBelow?.depth||300,westDoorClear:{from:KITCHEN.westGap.from,to:KITCHEN.westGap.to},eastBacksplashSliderDepth:102,westSliderDepth:152}),
     getMaterials:()=>renderMaterials, setMaterial:(k,v)=>setMaterials(p=>normalizeKitchenMaterials({...p,[k]:v})),
@@ -227,65 +182,50 @@ export default function App(){
   const onMove=(e)=>{if(!drag)return; const dy=(e.clientY-drag.startY)/scale; const raw=drag.startItemY+dy; const snapped=snapVal(raw); const cur=[...east,...west].find(x=>x.id===drag.id); const wAlong=cur?.w ?? 600; const ny=Math.max(0,Math.min(KITCHEN.length-wAlong,snapped)); if(drag.wall==='east')setEast(p=>p.map(it=>it.id===drag.id?{...it,y:ny}:it)); else setWest(p=>p.map(it=>it.id===drag.id&&!it.fixed?{...it,y:ny}:it))}
   const onUp=()=>setDrag(null)
   const downloadText=(filename,text,type='text/plain')=>{const blob=new Blob([text],{type}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=filename; a.click(); URL.revokeObjectURL(url)}
-  const buildProjectData=()=>{const layoutModel=getLayoutModel(); return {kitchen:KITCHEN,east,west,eastTopUpperDepth,westTopUpperDepth,validation:{...vSimple,detailed:validationRows}, rule:LAYOUT_MODEL.rule, layoutModel, grid, dimensions:{roomWidth:KITCHEN.width,roomLength:KITCHEN.length,eastBaseDepth:planDimensions.eastDepthMm,eastTopUpperDepth,westTopUpperDepth,westCounterDepth:planDimensions.westDepthMm,walkwayWidth:walkwayFloor,northClear:0,windowBelowDepth:KITCHEN.windowBelow?.depth||300,westDoorClear:{from:KITCHEN.westGap.from,to:KITCHEN.westGap.to},eastBacksplashSliderDepth:102,westSliderDepth:152}, materials, modules:{east:eastModules,west:westModules}, viewOptions:{hide3DObstructions}, exportedAt:new Date().toISOString()}}
-  const exportJSON=()=>{const data=buildProjectData(); const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='Galley_2324x4746_Rule9_Current.json'; a.click()}
-  const saveVersion=(key)=>{ try{ const data={kitchen:KITCHEN,east,west,eastTopUpperDepth,westTopUpperDepth,grid,materials,eastModules,westModules, hide3DObstructions, validationRows, exportedAt:new Date().toISOString(), rule:LAYOUT_MODEL.rule}; localStorage.setItem(VERSION_KEYS[key], JSON.stringify(data)); setBomNote(`Saved ${key}`); setTimeout(()=>setBomNote(''),1500)}catch(e){ setImportWarning('Save failed: '+e.message)}}
+  const buildProjectData=()=>{const layoutModel=getLayoutModel(); return {...persisted.getDocument(),validation:{...vSimple,detailed:validationRows}, rule:LAYOUT_MODEL.rule, layoutModel, grid, dimensions:{roomWidth:KITCHEN.width,roomLength:KITCHEN.length,eastBaseDepth:planDimensions.eastDepthMm,eastTopUpperDepth,westTopUpperDepth,westCounterDepth:planDimensions.westDepthMm,walkwayWidth:walkwayFloor,northClear:0,windowBelowDepth:KITCHEN.windowBelow?.depth||300,westDoorClear:{from:KITCHEN.westGap.from,to:KITCHEN.westGap.to},eastBacksplashSliderDepth:102,westSliderDepth:152}, materials, modules:{east:eastModules,west:westModules}, viewOptions:{hide3DObstructions}, exportedAt:new Date().toISOString()}}
+  const exportJSON=()=>{
+    try{downloadText('Galley_2324x4746_Rule9_Current.json',JSON.stringify(buildProjectData(),null,2),'application/json')}
+    catch(error){setImportWarning('Export failed: '+error.message)}
+  }
+  const saveVersion=(key)=>{
+    try{
+      saveNamedProject(window.localStorage,VERSION_KEYS[key],persisted.project,KITCHEN)
+      setImportWarning('');setBomNote(`Saved ${key}`)
+    }catch(error){setImportWarning('Save failed: '+error.message)}
+  }
   const loadVersion=(key)=>{
     try{
-      const raw=localStorage.getItem(VERSION_KEYS[key])
-      if(!raw){ setImportWarning(`No saved version for ${key}`); return}
-      const p=JSON.parse(raw)
-      applyLoadedProject(p,false)
+      const result=loadNamedProject(window.localStorage,VERSION_KEYS[key],{kitchen:KITCHEN,defaults:PROJECT_DEFAULTS})
+      applyLoadedProject(encodeProject(result.state,KITCHEN),result.warnings)
       setBomNote(`Loaded ${key}`)
-    }catch(e){ setImportWarning('Load version failed: '+e.message)}
+    }catch(error){setImportWarning('Load failed: '+error.message)}
   }
-  const resetRule9=()=>{ setEast(EAST_INIT); setWest(WEST_INIT); setEastModules(autoFillModules(eastRunLength)); setWestModules(autoFillModules(westRunLength)); setMaterials(normalizeKitchenMaterials()); setEastTopUpperDepth(EAST_TOP_UPPER_DEPTH); setWestTopUpperDepth(WEST_TOP_UPPER_DEPTH); setGrid(0); setHide3DObstructions(true); setImportWarning('');}
+  const resetRule9=()=>{persisted.resetProject();setImportWarning('');setBomNote('Reset active workspace to configured defaults.')}
   const applyAiryLayout=()=>{
     setWest(AIRY_WEST_INIT.map(item=>({...item})))
     setBomNote('Airy kitchen layout applied; the saved baseline is available in the toolbar.')
   }
-  const applyLoadedProject=(p, showWarn=true)=>{
-    try{
-      // validate room dimensions if present
-      if(p.kitchen && (p.kitchen.width!==KITCHEN.width || p.kitchen.length!==KITCHEN.length)){
-        if(showWarn) setImportWarning(`Warning: room dimensions mismatch (${p.kitchen.width}x${p.kitchen.length}), expected ${KITCHEN.width}x${KITCHEN.length}. Loaded anyway.`)
-      }
-      // support both old shape (east,west) and layoutModel
-      let newEast=p.east || p.layoutModel?.appliances?.filter(a=>a.wall==='east').map(a=>({id:a.id, w:a.width||a.w, d:a.depth||a.d, h:a.height||a.h, y:a.y, x:a.x, color:a.color, label:a.label})) || EAST_INIT
-      let newWest=p.west || p.layoutModel?.appliances?.filter(a=>a.wall==='west').map(a=>({id:a.id, w:a.width||a.w, d:a.depth||a.d, h:a.height||a.h, y:a.y, x:a.x, color:a.color, fixed:!!a.locked})) || WEST_INIT
-      if(newEast && newEast.length) setEast(migrateEastItems(newEast))
-      if(newWest && newWest.length) setWest(migrateWestItems(newWest))
-      if(p.grid===0||p.grid===50||p.grid===100) setGrid(p.grid)
-      if(p.materials) setMaterials(prev=>normalizeKitchenMaterials({...prev,...p.materials}))
-      setEastTopUpperDepth(p.eastTopUpperDepth===320?320:EAST_TOP_UPPER_DEPTH)
-      setWestTopUpperDepth(p.westTopUpperDepth===320?320:WEST_TOP_UPPER_DEPTH)
-      if(typeof p.hide3DObstructions==='boolean') setHide3DObstructions(p.hide3DObstructions)
-      if(typeof p.viewOptions?.hide3DObstructions==='boolean') setHide3DObstructions(p.viewOptions.hide3DObstructions)
-      if(p.modules?.east) setEastModules(p.modules.east.reduce((sum,m)=>sum+(m.width||0),0)===4446?autoFillModules(eastRunLength):p.modules.east)
-      if(p.modules?.west) setWestModules(p.modules.west.reduce((sum,m)=>sum+(m.width||0),0)===3226?autoFillModules(westRunLength):p.modules.west)
-      if(p.eastModules) setEastModules(p.eastModules.reduce((sum,m)=>sum+(m.width||0),0)===4446?autoFillModules(eastRunLength):p.eastModules)
-      if(p.westModules) setWestModules(p.westModules.reduce((sum,m)=>sum+(m.width||0),0)===3226?autoFillModules(westRunLength):p.westModules)
-      if(p.validation) {} // not needed
-      // warn for missing IDs in the current east-open / west-wet layout
-      const expectedIds=['microwave','applianceGarage','eastBacksplashSlider','gas','washing','sink','sinkUpperDishRack','dishwasher','westSixInchSlider','shaft']
-      const loadedIds=[...newEast,...newWest].map(i=>i.id)
-      const missing=expectedIds.filter(id=>!loadedIds.includes(id))
-      if(missing.length && showWarn) setImportWarning(`Warning: missing IDs ${missing.join(', ')} - filled from defaults`)
-      if(!missing.length && showWarn) setImportWarning('')
-    }catch(e){ if(showWarn) setImportWarning('Import failed: '+e.message)}
+  const applyLoadedProject=(input,extraWarnings=[],expectedGeneration)=>{
+    const result=persisted.loadProject(input,expectedGeneration)
+    const rows=buildKitchenValidationRows({east:result.state.east,west:result.state.west,kitchen:KITCHEN,eastDepthMm:EAST_BASE_DEPTH,northHobOptionY:NORTH_HOB_OPTION_Y_MM})
+    const warning=summarizeValidation(rows).all?'':'Design checks need attention; imported positions were preserved.'
+    setImportWarning([...extraWarnings,...result.warnings,warning].filter(Boolean).join('\n'))
+    setSelectedId(null);setMeasurePoints([]);setDrag(null)
+    return result
   }
-  const handleLoadFile=(e)=>{
+  const handleLoadFile=async(e)=>{
     const file=e.target.files?.[0]
-    if(!file) return
-    const reader=new FileReader()
-    reader.onload=()=>{
-      try{
-        const data=JSON.parse(reader.result)
-        applyLoadedProject(data,true)
-      }catch(err){ setImportWarning('Invalid JSON: '+err.message)}
-    }
-    reader.readAsText(file)
     e.target.value=''
+    if(!file)return
+    const request=++loadRequestRef.current
+    const generation=persisted.getGeneration()
+    try{
+      if(file.size>MAX_PROJECT_BYTES)throw new Error('Project file exceeds 2 MiB.')
+      const text=await file.text()
+      if(request!==loadRequestRef.current)return
+      applyLoadedProject(text,[],generation)
+      setBomNote('Project loaded. Custom geometry was preserved.')
+    }catch(error){if(request===loadRequestRef.current)setImportWarning('Import failed: '+error.message)}
   }
 
   const export3DScreenshot=()=>{const view3d=threeViewRef.current; if(!view3d)return; view3d.renderer.render(view3d.scene,view3d.camera); const a=document.createElement('a'); a.href=view3d.renderer.domElement.toDataURL('image/png'); a.download='kitchen-3d-render.png'; a.click()}
@@ -3018,13 +2958,19 @@ ${westRows}
       {/* Save/Load/Versions */}
       <div style={{background:'#fff',borderRadius:14,padding:14,border:'1px solid #e5e0d5'}}>
         <h3 style={{margin:'0 0 8px 0',fontSize:15}}>Project - Save / Load / Versions</h3>
+        <div role="status" aria-label="Project save status" style={{marginBottom:8,fontSize:12}}>{persisted.status.message}</div>
+        {persisted.notice && <div role="note" style={{fontSize:12,whiteSpace:'pre-wrap',marginBottom:8}}>{persisted.notice}</div>}
+        <div style={{display:'flex',gap:8,flexWrap:'wrap',marginBottom:8}}>
+          <button onClick={()=>{try{persisted.restorePrevious();setImportWarning('')}catch(error){setImportWarning(error.message)}}}>Restore previous autosave</button>
+          {persisted.status.state==='error' && <button onClick={()=>{if(window.confirm('Save this workspace over the stored autosave? Its previous contents will be copied to a recovery key first. Export JSON first to keep an independent copy.'))persisted.resumeAutosave()}}>Resume autosave</button>}
+        </div>
         <div style={{display:'flex',gap:8,flexWrap:'wrap'}}>
           <button onClick={exportJSON} style={{padding:'8px 12px',background:'#111',color:'#fff',border:'none',borderRadius:8,fontWeight:800}}>Save Project JSON</button>
           <button onClick={()=>fileInputRef.current?.click()} style={{padding:'8px 12px',background:'#fff',color:'#111',border:'2px solid #111',borderRadius:8,fontWeight:800}}>Load Project JSON</button>
           <button onClick={resetRule9} style={{padding:'8px 12px',background:'#fff',color:'#111',border:'2px solid #c4b5a5',borderRadius:8,fontWeight:800}}>Reset to New Config</button>
         </div>
-        <input ref={fileInputRef} type="file" accept=".json,application/json" onChange={handleLoadFile} style={{display:'none'}}/>
-        {importWarning && <div style={{marginTop:8,padding:'8px 10px',background:'#fef2f2',border:'1px solid #fecaca',borderRadius:8,color:'#991b1b',fontSize:12,whiteSpace:'pre-wrap'}}>{importWarning}</div>}
+        <input aria-label="Project JSON file" ref={fileInputRef} type="file" accept=".json,application/json" onChange={handleLoadFile} style={{display:'none'}}/>
+        {importWarning && <div role="alert" style={{marginTop:8,padding:'8px 10px',background:'#fef2f2',border:'1px solid #fecaca',borderRadius:8,color:'#991b1b',fontSize:12,whiteSpace:'pre-wrap'}}>{importWarning}</div>}
         {bomNote && <div style={{marginTop:8,padding:'6px 10px',background:'#f0fdf4',border:'1px solid #bbf7d0',borderRadius:8,color:'#166534',fontSize:12}}>{bomNote}</div>}
         <div style={{marginTop:12,borderTop:'1px solid #eee',paddingTop:10}}>
           <div style={{fontWeight:800,fontSize:12,marginBottom:6}}>Named versions (localStorage)</div>
@@ -3038,13 +2984,13 @@ ${westRows}
               <div key={key} style={{border:'1px solid #ddd',borderRadius:10,padding:'8px 10px',minWidth:140}}>
                 <div style={{fontWeight:800,fontSize:12}}>{label}</div>
                 <div style={{display:'flex',gap:6,marginTop:6}}>
-                  <button onClick={()=>saveVersion(key)} style={{padding:'4px 8px',background:'#111',color:'#fff',border:'none',borderRadius:6,fontSize:12,fontWeight:700}}>Save</button>
-                  <button onClick={()=>loadVersion(key)} style={{padding:'4px 8px',background:'#fff',color:'#111',border:'1px solid #111',borderRadius:6,fontSize:12,fontWeight:700}}>Load</button>
+                  <button aria-label={`Save ${key} project`} onClick={()=>saveVersion(key)} style={{padding:'4px 8px',background:'#111',color:'#fff',border:'none',borderRadius:6,fontSize:12,fontWeight:700}}>Save</button>
+                  <button aria-label={`Load ${key} project`} onClick={()=>loadVersion(key)} style={{padding:'4px 8px',background:'#fff',color:'#111',border:'1px solid #111',borderRadius:6,fontSize:12,fontWeight:700}}>Load</button>
                 </div>
               </div>
             ))}
           </div>
-          <div style={{fontSize:11,color:'#666',marginTop:8}}>Autosave active (localStorage key {LS_KEY}). Import warns instead of crashing.</div>
+          <div style={{fontSize:11,color:'#666',marginTop:8}}>Versioned autosave: {persisted.storageKey}. Legacy saves are retained. Invalid files leave the workspace unchanged.</div>
         </div>
       </div>
     </div>

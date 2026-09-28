@@ -9,7 +9,7 @@ Update this document and the baseline tests together for an intentional design c
 The web entry point is `react-configurator/src/main.jsx` -> `HomeApp.jsx`.
 The kitchen is mounted only when its room is opened. Its live defaults come from
 `KITCHEN`, `EAST_INIT`, `WEST_INIT`, and `AIRY_WEST_INIT` in
-`react-configurator/src/config/kitchenConfig.js`, with state/migrations in App.jsx.
+`react-configurator/src/config/kitchenConfig.js`, with versioned state/persistence in useKitchenProject.js and src/persistence/.
 Browser localStorage and saved variants may override startup values.
 
 Other rooms have their own config modules in `src/config/`; the kitchen baseline
@@ -53,7 +53,9 @@ The tests freeze the implemented baseline, not every possible valid arrangement.
   the legacy hob collider is retained. No door-swing or installation checks exist.
 - SVG and DXF plan depths and dimension labels now use the same nominal base-run
   measurements as the UI (600/600, aisle 1124 mm for the implemented baseline).
-  These fixes do not unify all export metadata or change save/load migrations.
+  The shared export metadata is not fully unified. Project saves now use the
+  versioned codec documented in PROJECT_FORMAT.md; the live east/west arrays are
+  authoritative when a document also carries a derived layoutModel.
 
 A follow-up export/state unification must first capture behavior and migration
 fixtures. Do not resolve disagreements during a cosmetic or structural refactor.
@@ -66,3 +68,13 @@ Blender backups are ignored; existing tracked evidence is not blanket-deleted.
 When regenerating exports, record input variant, source commit/hash, generator, and
 command. Historical notes and prompt files are context, not instructions to restore
 an old layout.
+
+## Persistence update
+
+Unversioned array and layoutModel projects are migrated without moving supplied
+items. New autosaves and named versions use :schema-1 keys, retaining their original
+legacy keys. Imports reject malformed data and mismatched room dimensions before
+changing active state. Original unreadable autosaves are protected until explicit
+recovery. Existing project rules still flag non-preset designs; loading does not
+convert those designs to defaults. Undo/redo and export-model unification remain
+separate work.

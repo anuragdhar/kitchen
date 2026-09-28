@@ -83,10 +83,21 @@ material-only geometry preservation, and API cleanup on room navigation. Browser
 outputs go to test-results/correctness; screenshots are evidence, not approved baselines.
 
 The read-only getPlanSvg(), getPlanDxf(), and getProjectData() browser API methods
-call the same builders as the existing exports. Saving/migration formats are unchanged.
+call the same builders as the existing exports. Project saving/loading is now versioned; see PROJECT_FORMAT.md.
 
 The correctness browser suite uses the actual application with `?kitchenView=top`.
 This optional view preference leaves normal startup in 3D and never changes layout
 or saved data. The suite verifies plan/API/export behavior, not WebGL performance.
 Default headless 3D startup exceeded a 60-second API wait on the initial runner;
 3D startup/performance and visual comparison remain separate follow-up work.
+
+## Save/load regression checks
+
+The Node suite covers v1 round trips, explicit v0 adapters, unknown versions,
+finite dimensions, visibility/metadata, malformed late-stage modules, room mismatch,
+size/depth limits, quota failures, backups, and observed cross-tab conflicts.
+`npm run test:persistence` starts a loopback Vite server on port 4176 (or uses
+KITCHEN_APP_URL) and exercises actual JSON upload/download, named versions, reload,
+legacy migration, stale file reads, corrupt autosaves, and injected quota failures.
+Browser contexts are isolated from user data; all runs use kitchenView=top and do
+not establish 3D performance. Artifacts go to test-results/persistence/.
