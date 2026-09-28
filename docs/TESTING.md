@@ -1,7 +1,7 @@
 # Testing and reproducibility
 
 Use Node 22 and npm, from `react-configurator/`. The committed npm lockfile is the
-installation authority. No dependency versions are changed by this foundation update.
+installation authority. The lockfile includes the previously omitted dxf-viewer dependency tree; existing locked package versions are preserved.
 
 ## Fast gate
 
@@ -46,8 +46,8 @@ method, thrown API call, malformed required return value, runtime error, or malf
 validation row fails inspection. `--strict` also returns exit status 1 for reported
 validation failures. Optional APIs are explicitly reported as unavailable.
 
-A passing browser validator is only as complete as the legacy app validator. In
-particular the existing unconditional walkway pass is documented in CURRENT_STATE.md.
+The runtime validator checks every required row. A pass is not a door-swing,
+appliance-service or construction-safety assessment. See CURRENT_STATE.md for scope.
 
 ## Screenshots are smoke evidence, not approved baselines
 
@@ -71,3 +71,22 @@ Record exact commands and results, including NOT RUN and the reason. For UI work
 record which affected views were reviewed. For design changes, document the geometric
 diff and baseline update. A unit pass is not proof of a build, browser pass, export
 round trip, FreeCAD/Blender execution, or construction suitability.
+
+## Validation/export regression checks
+
+`npm test` also covers overall-rule aggregation, non-neighbor and cross-wall 3D
+collisions, fixed-object bounds/clearance, nominal aisle failures, and baseline/airy
+variants with baseline/refined east cabinets. `npm run test:browser` starts its own
+Vite server on loopback port 4175 unless KITCHEN_APP_URL is supplied. Install Chromium
+first. It checks live API/panel/project agreement, SVG/DXF geometry and labels,
+material-only geometry preservation, and API cleanup on room navigation. Browser
+outputs go to test-results/correctness; screenshots are evidence, not approved baselines.
+
+The read-only getPlanSvg(), getPlanDxf(), and getProjectData() browser API methods
+call the same builders as the existing exports. Saving/migration formats are unchanged.
+
+The correctness browser suite uses the actual application with `?kitchenView=top`.
+This optional view preference leaves normal startup in 3D and never changes layout
+or saved data. The suite verifies plan/API/export behavior, not WebGL performance.
+Default headless 3D startup exceeded a 60-second API wait on the initial runner;
+3D startup/performance and visual comparison remain separate follow-up work.
