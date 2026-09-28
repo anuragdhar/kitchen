@@ -20,7 +20,8 @@ A new Codespace URL will not automatically contain saves from a different URL.
 
 The home page's **Update from GitHub** button fetches the current branch and
 restarts the preview when the checkout is clean. After receiving an update to
-the preview server itself, restart the preview once using the command below.
+the preview server itself, restart the Codespace from its menu once so the new
+server configuration loads.
 
 ## Restart / diagnose
 
