@@ -1,0 +1,21 @@
+{
+  "name": "Home Interior browser workspace",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:1-22-bookworm",
+  "remoteUser": "node",
+  "hostRequirements": { "cpus": 2, "memory": "8gb" },
+  "forwardPorts": [5173],
+  "portsAttributes": {
+    "5173": {
+      "label": "Home Interior",
+      "protocol": "http",
+      "onAutoForward": "openBrowser"
+    }
+  },
+  "otherPortsAttributes": { "onAutoForward": "ignore" },
+  "postCreateCommand": "cd react-configurator && npm ci",
+  "postStartCommand": "bash .devcontainer/start-preview.sh",
+  "waitFor": "postCreateCommand",
+  "customizations": {
+    "codespaces": { "openFiles": ["docs/CODESPACES.md"] }
+  }
+}
