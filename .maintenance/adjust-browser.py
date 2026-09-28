@@ -1,0 +1,21 @@
+from pathlib import Path
+
+p = Path('react-configurator/scripts/browser-helpers.cjs')
+s = p.read_text()
+assert ".first().click({timeout: 15000});" in s
+s = s.replace(".first().click({timeout: 15000});", ".first().click({timeout: 30000, noWaitAfter: true});")
+s = s.replace("  await page.waitForFunction(() => Boolean(window.kitchenAPI), null, {timeout: 15000});", "  // Room switching is a React state change, not a document navigation.\n  // Wait for its actual API; cold software-WebGL initialization can be expensive.\n  await page.waitForFunction(() => Boolean(window.kitchenAPI), null, {timeout: 60000});")
+p.write_text(s)
+p = Path('react-configurator/scripts/correctness-browser.cjs')
+s = p.read_text()
+s = s.replace("  let server, browser, output = '';", "  let server, browser, page, output = '';\n  const errors = [], diagnostics = [];\n  const step = message => { console.log(`[correctness] ${message}`); diagnostics.push(message); };")
+s = s.replace("const page = await browser.newPage", "page = await browser.newPage")
+s = s.replace("    const errors = [];\n    page.on('pageerror', error => errors.push(error.message));", "    page.setDefaultTimeout(60000);\n    page.on('pageerror', error => { errors.push(error.message); console.error('PAGE ERROR:', error.message); });\n    page.on('console', message => { if (message.type() === 'error') console.error('BROWSER:', message.text()); });\n    step('Opening kitchen with explicit API readiness');")
+s = s.replace("    const initial = await page.evaluate", "    step('Kitchen ready; switching to plan for geometry and export checks');\n    await page.getByRole('button', {name: 'Top View (Plan)', exact: true}).click({noWaitAfter: true});\n    const initial = await page.evaluate")
+s = s.replace("    await page.evaluate(() => window.kitchenAPI.moveItemMM", "    step('SVG and DXF geometry checked; injecting non-order failure');\n    await page.evaluate(() => window.kitchenAPI.moveItemMM")
+s = s.replace("    const beforeMaterial =", "    step('Validation propagation checked; testing material-only changes');\n    const beforeMaterial =")
+s = s.replace("    await page.getByRole('button', {name: 'Return to whole home plan', exact: true}).click();", "    step('Material invariance checked; leaving and reopening kitchen');\n    await page.getByRole('button', {name: 'Return to whole home plan', exact: true}).click({noWaitAfter: true});")
+s = s.replace("{name: 'Open Kitchen', exact: true}).first().click();", "{name: 'Open Kitchen', exact: true}).first().click({noWaitAfter: true});")
+s = s.replace("    await page.screenshot({path: path.join(out, 'kitchen.png'), fullPage: true});", "    await page.getByRole('button', {name: 'Top View (Plan)', exact: true}).click({noWaitAfter: true});\n    await page.screenshot({path: path.join(out, 'kitchen.png'), fullPage: true});\n    step('Room lifecycle and plan screenshot complete');")
+s = s.replace("  } finally {\n    if (browser)", "  } catch (error) {\n    fs.writeFileSync(path.join(out, 'failure.json'), JSON.stringify({error: String(error), errors, diagnostics, serverOutput: output}, null, 2));\n    if (page) await page.screenshot({path: path.join(out, 'failure.png'), fullPage: true, timeout: 5000}).catch(() => {});\n    throw error;\n  } finally {\n    if (browser)")
+p.write_text(s)

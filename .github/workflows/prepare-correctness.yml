@@ -18,7 +18,9 @@ jobs:
         with:
           node-version-file: .nvmrc
       - name: Apply hash-guarded edits without changing configuration
-        run: python .maintenance/apply-correctness.py
+        run: |
+          python .maintenance/apply-correctness.py
+          python .maintenance/adjust-browser.py
       - name: Tests before installation
         working-directory: react-configurator
         run: npm test
@@ -54,7 +56,7 @@ jobs:
           git diff --exit-code -- react-configurator/src/config react-configurator/src/HomeApp.jsx freecad blender Interior
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add react-configurator/src/App.jsx react-configurator/package.json react-configurator/package-lock.json docs/CURRENT_STATE.md docs/ARCHITECTURE.md docs/TESTING.md
+          git add react-configurator/src/App.jsx react-configurator/package.json react-configurator/package-lock.json docs/CURRENT_STATE.md docs/ARCHITECTURE.md docs/TESTING.md react-configurator/scripts/browser-helpers.cjs react-configurator/scripts/correctness-browser.cjs
           git diff --cached --stat
           git commit -m "fix: integrate validated geometry and consistent plan exports; repair lockfile"
           git push origin HEAD:refs/heads/chore/prepare-correctness-20260928
