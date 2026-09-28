@@ -40,12 +40,16 @@ from `blender/whole_home/lighting/A501-whole-home-lighting.blend` with
 `blender --background --python blender/export_web_preview.py`. The export omits
 the eight ceiling panels for a cutaway orbit view; it does not edit the `.blend`.
 The GLB is a snapshot of that scene, so saved kitchen edits still appear in the
-editable view only. Browser lighting cannot reproduce Blender's rendered stills.
-Individual room views clip the same GLB to each room's A501 plan bounds and show
+editable view only. The default viewer now uses a Cycles lighting bake exported by
+`blender/bake_web_lighting.py`; the former GLB is the Studio lighting option.
+See INTERACTIVE_BLENDER_LIGHTING.md for source files, rebuild commands and limits.
+Most individual room views clip the shared GLB to each room's A501 plan bounds and show
 its Blender still. The shared bounds live in `src/config/homeRoomViews.js`; the
 viewer converts plan pixels to GLB metres with the existing `ENTRY.planScale`
 X/Z factors. Bedroom and kitchen workspace geometry and saved projects remain
-with their existing live components under the Editable workspace tab.
+with their existing live components under the Editable workspace tab. Bedroom 3 and Drawing Room each
+uses its dedicated baked model in Blender lighting mode, with metre-based framing
+and an eye-level camera; Studio mode retains its shared-plan model region.
 
 ## Coordinate contract
 

@@ -1,0 +1,10 @@
+{
+  "source": "blender\\whole_home\\lighting\\A501-whole-home-lighting.blend",
+  "source_sha256": "c15980da01b28c4d630af82bbf59d4c5e7230acb450c6bc204ceedfb3dea250c",
+  "generator_sha256": "58fed92715fcb6bc3069ca3ebe6b26ebe099189f62555de4b31e8e6f4c6ee58a",
+  "preserved_authored_meshes": 1069,
+  "focused_meshes": 74,
+  "preview": false,
+  "blender": "5.2.2 LTS",
+  "coordinates": "metres, Z up; all source vertices and transforms unchanged"
+}

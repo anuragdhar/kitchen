@@ -40,6 +40,13 @@ errors. A build confirms assets are bundled but does not verify camera framing.
 For room view changes, inspect a large and a narrow room, switch to its render
 and editable workspace, and verify the model displays the intended room.
 
+`npm run test:baked-lighting` checks the baked Blender viewer against a running
+server (default localhost:5173; override KITCHEN_APP_URL). Chrome is the default
+browser channel; BROWSER_CHANNEL can override it. It covers desktop/mobile
+viewports, orbit/zoom, lighting selection and room/whole-home tab switching.
+Screenshots and results go to `test-results/baked-lighting`. See
+INTERACTIVE_BLENDER_LIGHTING.md for the bake commands and recorded limitations.
+
 ## Browser inspection
 
 Start the server in a separate terminal:

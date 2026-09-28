@@ -1,0 +1,17 @@
+{
+  "source": "blender\\bedroom3\\daylight\\A501-bedroom3-realistic.blend",
+  "source_sha256": "8502253c03ce7bf5df7b5d1f75f21efeddb4ab77e1c53644da800bcdcde4de93",
+  "generator_sha256": "a7cdad45ad6b1d1a9a64a215a1e7caffab7e810b535be1f9c642eb4aa969889d",
+  "blender": "5.2.2 LTS",
+  "arguments": {
+    "scene": "bedroom3",
+    "size": 2048,
+    "samples": 64
+  },
+  "output": "react-configurator\\public\\models\\A501-bedroom3-baked.glb",
+  "output_sha256": "52267e56d8be5b9cd1fd9bde11dc2d92e2fd8291ffa333a59b829e1903eec053",
+  "preserved_meshes": 98,
+  "baked_meshes": 89,
+  "linear_scale": 16.0,
+  "coordinates": "glTF metres: (x, y, z) = Blender (x, z, -y); authored transforms unchanged"
+}

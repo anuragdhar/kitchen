@@ -1,0 +1,20 @@
+{
+  "source": "C:\\source\\kitchen\\blender\\bedroom3\\A501-bedroom3-detail.blend",
+  "source_sha256": "60c9a43b113587fb08820239d2abb031d522c1a2feb6d260b9075e5d740d6d40",
+  "generator": "C:\\source\\kitchen\\blender\\photoreal_bedroom3.py",
+  "generator_sha256": "9a8394f587107d2d0ee0abd8acd547c645405937cb19ab9eb68e304f6c8f3c04",
+  "blender": "5.2.2 LTS",
+  "arguments": {
+    "preview": false,
+    "engine": "CYCLES",
+    "device": "HIP",
+    "output": "C:\\source\\kitchen\\blender\\bedroom3\\daylight"
+  },
+  "authored_meshes_unchanged": 145,
+  "coordinates": "Blender metres; Z up; no change to authored geometry",
+  "renders": {
+    "A501-bedroom3-realistic-overview.png": "396588ec07f7ff158be0292ba09444782bbfb67481451d4afd748f3eef0e8664",
+    "A501-bedroom3-realistic-vanity.png": "38006442631fde7d32105b9c0acd09cf28748397716e4df3ba349d0a08c55a42"
+  },
+  "completed": true
+}

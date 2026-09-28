@@ -1,0 +1,17 @@
+{
+  "source": "blender\\whole_home\\lighting\\A501-whole-home-lighting.blend",
+  "source_sha256": "c15980da01b28c4d630af82bbf59d4c5e7230acb450c6bc204ceedfb3dea250c",
+  "generator_sha256": "a7cdad45ad6b1d1a9a64a215a1e7caffab7e810b535be1f9c642eb4aa969889d",
+  "blender": "5.2.2 LTS",
+  "arguments": {
+    "scene": "home",
+    "size": 4096,
+    "samples": 64
+  },
+  "output": "react-configurator\\public\\models\\A501-home-baked.glb",
+  "output_sha256": "b0a727d2830944d754f49c1419413a14336ea3d686c5fb74851cb8e64113d034",
+  "preserved_meshes": 1061,
+  "baked_meshes": 852,
+  "linear_scale": 16.0,
+  "coordinates": "glTF metres: (x, y, z) = Blender (x, z, -y); authored transforms unchanged"
+}
