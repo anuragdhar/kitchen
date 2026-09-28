@@ -26,8 +26,8 @@ jobs:
       - run: npx playwright install --with-deps chromium
       - name: Export the actual authored entry through the browser UI
         run: npm run test:render-export
-      - name: Install the independent Blender renderer
-        run: sudo apt-get update && sudo apt-get install -y blender python3-pil
+      - name: Install the independent Blender renderer and its glTF import dependency
+        run: sudo apt-get update && sudo apt-get install -y blender python3-numpy python3-pil
       - name: Render the exported scene with Cycles CPU
         run: node scripts/blender-render.cjs --job test-results/render-export/render-job.json --output test-results/blender --quality smoke --device cpu
       - name: Check render output and report
