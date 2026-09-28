@@ -1,0 +1,27 @@
+name: Whole-home render contract
+on:
+  pull_request:
+    paths:
+      - 'blender/**'
+      - 'react-configurator/src/domain/wholeHomeRender.mjs'
+      - 'react-configurator/src/WholeHomeRenderStudio.jsx'
+      - 'react-configurator/tests/whole-home-render.test.mjs'
+      - '.github/workflows/whole-home-render-contract.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  contracts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: node --test react-configurator/tests/whole-home-render.test.mjs
+      - run: python -m unittest discover -s blender -p 'test_whole_home_render.py' -v
+      - run: python -m py_compile blender/render_whole_home_realistic.py blender/whole_home_render_contract.py
+      # Blender execution and visual acceptance are separate gates, not asserted here.
