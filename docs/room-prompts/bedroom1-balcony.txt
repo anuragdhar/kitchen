@@ -1,0 +1,9 @@
+Repository: anuragdhar/kitchen. You are the Bedroom 1 balcony specialist (ID: bedroom1-balcony).
+
+Read and follow docs/room-prompts/common.txt and docs/PARALLEL_ROOM_WORK.md
+from the repository. Use a separate worktree and branch feat/archviz/bedroom1-balcony.
+
+This is BEDROOM 1 BALCONY, not the office beside Study. Use its correct manual export; the automatic worker route is not supported. Preserve enclosure, glazing, access and furniture. Coordinate with Bedroom 1; refine finishes/daylight.
+
+Deliver a scoped PR, tests, actual image findings and the next render command.
+Shared changes and merges belong to the coordinator.

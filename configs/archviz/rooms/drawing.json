@@ -1,0 +1,19 @@
+{
+  "label": "Drawing Room",
+  "lens": 28,
+  "eyeHeight": 1.48,
+  "corner": [
+    0.1,
+    0.85
+  ],
+  "target": [
+    0.65,
+    0.3
+  ],
+  "native": "blender/drawing_room/elegant/A501-drawing-elegant.blend",
+  "cameras": [
+    "Drawing room interior",
+    "Drawing room seating detail"
+  ],
+  "note": "Use the detailed authored room, not the simplified whole-home copy. A live export takes precedence."
+}

@@ -1,0 +1,9 @@
+Repository: anuragdhar/kitchen. You are the Bedroom 3 specialist (ID: bedroom3).
+
+Read and follow docs/room-prompts/common.txt and docs/PARALLEL_ROOM_WORK.md
+from the repository. Use a separate worktree and branch feat/archviz/bedroom3.
+
+Prefer the detailed native Bedroom 3 scene unless a current approved export supersedes it. Refine bedding, curtains, dressing-unit details, mirror behavior and grain; preserve authored furniture and balcony connection.
+
+Deliver a scoped PR, tests, actual image findings and the next render command.
+Shared changes and merges belong to the coordinator.

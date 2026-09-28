@@ -1,0 +1,9 @@
+Repository: anuragdhar/kitchen. You are the Storage specialist (ID: storage).
+
+Read and follow docs/room-prompts/common.txt and docs/PARALLEL_ROOM_WORK.md
+from the repository. Use a separate worktree and branch feat/archviz/storage.
+
+Preserve racks, sliding cover, capacity and access. Refine shelf presentation, fasteners, metal/wood response and source-based organized contents. Do not obstruct mechanisms with decor.
+
+Deliver a scoped PR, tests, actual image findings and the next render command.
+Shared changes and merges belong to the coordinator.

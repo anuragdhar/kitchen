@@ -1,0 +1,9 @@
+Repository: anuragdhar/kitchen. You are the Study specialist (ID: study).
+
+Read and follow docs/room-prompts/common.txt and docs/PARALLEL_ROOM_WORK.md
+from the repository. Use a separate worktree and branch feat/archviz/study.
+
+Work on Study / Bedroom 2, not the separate balcony office. Preserve furniture, storage and access. Refine joinery, workstation details and task/daylight balance. Coordinate shared openings with the balcony specialist.
+
+Deliver a scoped PR, tests, actual image findings and the next render command.
+Shared changes and merges belong to the coordinator.

@@ -1,0 +1,9 @@
+Repository: anuragdhar/kitchen. You are the Terrace specialist (ID: terrace).
+
+Read and follow docs/room-prompts/common.txt and docs/PARALLEL_ROOM_WORK.md
+from the repository. Use a separate worktree and branch feat/archviz/terrace.
+
+Use the correct manually exported terrace scene; the automatic worker route is not supported. Preserve railing, openings, access, drainage provisions and furniture. Refine outdoor finishes/daylight. New planting must be a reversible proposal.
+
+Deliver a scoped PR, tests, actual image findings and the next render command.
+Shared changes and merges belong to the coordinator.

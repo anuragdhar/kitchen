@@ -1,0 +1,13 @@
+{
+  "label": "Bedroom 1",
+  "lens": 27,
+  "eyeHeight": 1.5,
+  "corner": [
+    0.12,
+    0.86
+  ],
+  "target": [
+    0.65,
+    0.35
+  ]
+}

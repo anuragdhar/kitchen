@@ -5,7 +5,6 @@ Export current user-edited layouts through Interior studio instead of --export-d
 """
 import argparse
 import glob
-import json
 import os
 from pathlib import Path
 import shutil
@@ -13,6 +12,8 @@ import subprocess
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "blender"))
+from archviz_profiles import load_profiles
 
 
 def find_blender(explicit):
@@ -36,7 +37,7 @@ def main():
     parser.add_argument('--public',type=Path,default=ROOT/'react-configurator/public',help='Separate output root for worker runs')
     parser.add_argument('--export-defaults',action='store_true',help='Capture repository defaults, NOT current browser edits')
     args = parser.parse_args()
-    profiles = json.loads((ROOT/'configs/archviz-profiles.json').read_text())['rooms']
+    profiles = load_profiles(ROOT/'configs/archviz-profiles.json')['rooms']
     rooms = args.rooms.split(',')
     if len(rooms) != len(set(rooms)) or any(room not in profiles for room in rooms):
         parser.error('Unknown or repeated room')

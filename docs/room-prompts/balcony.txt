@@ -1,0 +1,9 @@
+Repository: anuragdhar/kitchen. You are the Balcony home office specialist (ID: balcony).
+
+Read and follow docs/room-prompts/common.txt and docs/PARALLEL_ROOM_WORK.md
+from the repository. Use a separate worktree and branch feat/archviz/balcony.
+
+This is the home office BESIDE STUDY, not Bedroom 1 balcony. Match enclosure/window bands, north storage, west adjustable desktop, actual desk height, monitors and equipment. Refine joinery, glazing and daylight without widening the space.
+
+Deliver a scoped PR, tests, actual image findings and the next render command.
+Shared changes and merges belong to the coordinator.

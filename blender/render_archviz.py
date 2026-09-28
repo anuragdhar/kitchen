@@ -19,6 +19,8 @@ HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent
 sys.path.insert(0, str(HERE))
 from archviz_contract import atomic_json, blender_bounds, load_bundle, sha256
+from archviz_profiles import load_profiles, profile_digest
+from archviz_room_details import apply_room_details
 PROFILES = ROOT/'configs/archviz-profiles.json'
 
 
@@ -270,7 +272,7 @@ def studio_lighting(scene, capture, visible, mode):
 
 def run(args, temporary):
     import bpy
-    profiles = json.loads(PROFILES.read_text())
+    profiles = load_profiles(PROFILES)
     capture = None
     if args.bundle:
         capture, source = load_bundle(args.bundle, temporary)
@@ -297,7 +299,6 @@ def run(args, temporary):
         raise ValueError('No room render profile')
     scene = bpy.context.scene
     bpy.context.view_layer.update()
-    baseline = geometry_signature(scene)
     print('ARCHVIZ_GEOMETRY_OK',room,json.dumps(audit),flush=True)
     if args.check_only:
         return
@@ -307,6 +308,10 @@ def run(args, temporary):
         wanted = set(args.shots.split(','));shots = [shot for shot in shots if shot[0] in wanted]
         if not shots:
             raise ValueError('None of the requested shots is usable')
+    details = apply_room_details(scene, room, profiles['rooms'][room], ROOT, geometry_signature)
+    # Original meshes were checked by the hook. Include additions in the final
+    # invariant so nothing moves during subsequent shading or rendering.
+    detailed_baseline = geometry_signature(scene)
     changes = finish_pass(scene)
     lighting = studio_lighting(scene,capture,visible,args.lighting)
     device = cycles_device(scene,args.device)
@@ -338,16 +343,17 @@ def run(args, temporary):
         with progress(f'{room}: {key} / {args.quality} / {device}'):
             bpy.ops.render.render(write_still=True)
         images.append({'label':label,'url':f'/renders/archviz/{job}/{key}.png','sha256':sha256(image),'size':[width,height]})
-    if geometry_signature(scene) != baseline:
+    if geometry_signature(scene) != detailed_baseline:
         raise AssertionError('Authored geometry, visibility or transforms changed')
     if args.save_scene:
         bpy.ops.file.pack_all()
         bpy.ops.wm.save_as_mainfile(filepath=str(output/'scene.blend'))
     provenance = {'room':room,'job':job,'sourceKind':source_kind,'sourceName':source.name,
-        'sourceSha256':sha256(source),'capture':capture,'profileSha256':sha256(PROFILES),
+        'sourceSha256':sha256(source),'capture':capture,'profileSha256':profile_digest(profiles,room,details['moduleSha256']),
         'generatorSha256':sha256(__file__),'contractSha256':sha256(HERE/'archviz_contract.py'),
         'blender':bpy.app.version_string,'device':device,'quality':args.quality,'lighting':args.lighting if capture else 'authored',
-        'geometryAudit':audit,'geometryUnchangedDuringRendering':True,'finishChanges':changes,'lights':lighting,
+        'geometryAudit':audit,'geometryUnchangedDuringRendering':True,'roomDetails':details,
+        'profileLoaderSha256':sha256(HERE/'archviz_profiles.py'),'detailLoaderSha256':sha256(HERE/'archviz_room_details.py'),'finishChanges':changes,'lights':lighting,
         'images':images,'reviewStatus':'unreviewed',
         'limitations':['Generated camera composition and appearance need image review.',
                        'Photographic light sources are not surveyed fixture placements.',

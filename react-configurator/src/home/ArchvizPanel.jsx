@@ -1,5 +1,5 @@
 import React,{useState,useSyncExternalStore} from 'react';
-import profiles from '../../../configs/archviz-profiles.json';
+import profiles from './archvizProfiles.js';
 import {getInteriorScenes,subscribeScenes} from '../render/interiorScene.js';
 import {exportArchvizBundle,downloadArchvizBundle} from '../render/archvizExport.js';
 import {validateRenderGallery} from '../render/archvizContract.mjs';
