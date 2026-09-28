@@ -1,0 +1,18 @@
+{
+  "generatedAt": "2026-09-27T21:09:26.922Z",
+  "cadUnits": "millimetres",
+  "cadOrientation": "north +Y, east +X",
+  "glbUnits": "metres; Y up; north +Z, east -X",
+  "wallOutlines": 57,
+  "furnitureOutlines": 615,
+  "triangles": 15680,
+  "kitchenSnapshot": null,
+  "limitations": [
+    "CAD is exported from the current whole-home geometry, not a surveyed construction drawing.",
+    "Individual rooms are scaled to the source plan bounds in the whole-home view; compare imported room dimensions against the dedicated room dimensions before construction.",
+    "Furniture DXF is a reference projection, not editable Coohom furniture.",
+    "GLB is a furnished reference; normal Coohom personal model upload excludes full-home models.",
+    "GLB preserves current modeled detail, not every detail of the dedicated kitchen.",
+    "Door and window recognition and dimensions need review after CAD import."
+  ]
+}

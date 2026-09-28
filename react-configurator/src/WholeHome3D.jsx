@@ -1,3 +1,8 @@
+import {exportCoohomPackage} from './CoohomExport.js'
+import {createDrawingLobbyPartition} from './DrawingLobbyPartition.js'
+import {createStudyFurniture} from './StudyFurniture.js'
+import {createLobbyConcealedDoor} from './LobbyConcealedDoor.js'
+import {createBedroom3DressingTable} from './Bedroom3DressingTable.js'
 import React,{useEffect,useRef,useState} from 'react'
 import * as THREE from 'three'
 import {createSeatedPoojaPerson} from './SeatedPoojaPerson.js'
@@ -9,16 +14,28 @@ import floorPlanImage from '../../Interior/home a 501 floor - unmodified.png'
 import {EMPTY_ROOM_SHELLS} from './config/roomShellConfig.js'
 import {STUDY_ROOM} from './config/studyRoomConfig.js'
 import {createStudyTerrace} from './StudyTerrace.js'
+import {createBedroom3SouthExtension} from './Bedroom3SouthExtension.js'
+import {createBedroom3Bed} from './Bedroom3Bed.js'
+import {createBedroom3EntryDoor} from './Bedroom3EntryDoor.js'
+import {createBedroom3Wardrobe} from './Bedroom3Wardrobe.js'
+import {createLobbyEastIroningStorage} from './LobbyEastIroningStorage.js'
+import {createRoomAirConditioning} from './RoomAirConditioning.js'
+import {createRoomTaskLighting} from './RoomTaskLighting.js'
+import {createDrawingRoomTelevision} from './DrawingRoomTelevision.js'
+import {createStoreStorage} from './StoreStorage.js'
 import {BALCONY_OFFICE,BALCONY_DESK_HEIGHT_KEY} from './config/balconyOfficeConfig.js'
-import {KITCHEN,KITCHEN_REFRIGERATOR,EAST_INIT,WEST_INIT,KITCHEN_AUTOSAVE_KEY,autoFillModules} from './config/kitchenConfig.js'
-import {ENTRY} from './config/entryConfig.js'
+import {KITCHEN,KITCHEN_REFRIGERATOR,EAST_INIT,WEST_INIT,KITCHEN_AUTOSAVE_KEY,NORTH_HOB_OPTION_Y_MM,EAST_TOP_UPPER_DEPTH,WEST_TOP_UPPER_DEPTH,autoFillModules} from './config/kitchenConfig.js'
+import {ENTRY,ENTRY_WALL_SEGMENTS} from './config/entryConfig.js'
+import {createEntryArrivalDoor} from './EntryArrivalDoor.js'
+import {createEntryRecessStorage} from './EntryRecessStorage.js'
 import WallSelectionPanel from './WallSelectionPanel.jsx'
 import PlanMarkPanel from './PlanMarkPanel.jsx'
+import HomeLightingGallery from './HomeLightingGallery.jsx'
 
 // The A501 plan is south-up: image right is west and image down is north.
 const PLAN_WIDTH=800,PLAN_HEIGHT=875
-const X_METRES_PER_PIXEL=4.993/260
-const Z_METRES_PER_PIXEL=3.277/163
+const X_METRES_PER_PIXEL=ENTRY.planScale.xMetresPerPixel
+const Z_METRES_PER_PIXEL=ENTRY.planScale.zMetresPerPixel
 const X=x=>x*X_METRES_PER_PIXEL
 const Z=y=>y*Z_METRES_PER_PIXEL
 const W=X(PLAN_WIDTH),L=Z(PLAN_HEIGHT),HEIGHT=2.7
@@ -39,7 +56,7 @@ const ROOMS=[
 
 // Wall spans follow the visible plan lines, with gaps left for the current openings.
 const WALLS=[
-  [50,198,255,198],[50,198,50,390],[50,390,209,390],
+  [50,198,50,390],
   [255,444,424,444],
   [424,316,496,316],
   [50,390,50,503],[50,503,130,503],[130,390,130,503],[130,503,130,671],
@@ -49,15 +66,7 @@ const WALLS=[
   [KITCHEN.mergedShaftPlan.x1,KITCHEN.mergedShaftPlan.y2,130,KITCHEN.mergedShaftPlan.y2],
   [255,671,255,KITCHEN.mergedShaftPlan.y2],
   [688,449,688,715],
-  [515,715,515,874],[515,874,ENTRY.shoeRack.planX1,874],
-  [570,715,688,715],
-  [688,715,688,ENTRY.outerEntryOpening.fromPlanY],
-  [688,ENTRY.outerEntryOpening.toPlanY,688,874],
-  [570,874,688,874],
-  // The marked entry shaft uses the existing exterior wall as its fourth side.
-  [ENTRY.shaft.planX1,ENTRY.shaft.planY1,ENTRY.shaft.planX2,ENTRY.shaft.planY1],
-  [ENTRY.shaft.planX1,ENTRY.shaft.planY1,ENTRY.shaft.planX1,ENTRY.shaft.planY2],
-  [ENTRY.shaft.planX1,ENTRY.shaft.planY2,ENTRY.shaft.planX2,ENTRY.shaft.planY2],
+  ...ENTRY_WALL_SEGMENTS,
 ]
 
 const GLASS=[
@@ -67,10 +76,15 @@ const GLASS=[
 
 export default function WholeHome3D({onOpenRoom}){
   const mountRef=useRef(null),sceneRef=useRef(null)
+  const [exportStatus,setExportStatus]=useState('')
   const [view,setView]=useState('perspective')
   const [showWalls,setShowWalls]=useState(true)
   const [showPoojaPerson,setShowPoojaPerson]=useState(true)
+  const [showIroningBoard,setShowIroningBoard]=useState(false)
   const [poojaDoorsOpen,setPoojaDoorsOpen]=useState(true)
+  const [partitionOpen,setPartitionOpen]=useState(false)
+  const [mirrorOpen,setMirrorOpen]=useState(false)
+  const [storageCoverOpen,setStorageCoverOpen]=useState(false)
   const [wallSelection,setWallSelection]=useState(null)
   const [wallNote,setWallNote]=useState('')
   const [markMode,setMarkMode]=useState(false)
@@ -94,6 +108,7 @@ export default function WholeHome3D({onOpenRoom}){
     const model=new THREE.Group();scene.add(model)
     const walls=new THREE.Group();model.add(walls)
     const wallMaterial=new THREE.MeshStandardMaterial({color:'#ece8e0',roughness:.87,side:THREE.DoubleSide})
+    const drawingWallMaterial=new THREE.MeshStandardMaterial({color:'#dfd2c4',roughness:.87,side:THREE.DoubleSide})
     const aluminium=new THREE.MeshStandardMaterial({color:'#303b45',metalness:.65,roughness:.31})
     const glass=new THREE.MeshStandardMaterial({color:'#a5dbe9',transparent:true,opacity:.35,metalness:.08,roughness:.12,side:THREE.DoubleSide,depthWrite:false})
     const wood=new THREE.MeshStandardMaterial({color:'#b18b67',roughness:.7})
@@ -127,6 +142,8 @@ export default function WholeHome3D({onOpenRoom}){
       return beam
     }
     WALLS.forEach(segment=>{const mesh=addSpan(segment);if(mesh)mesh.userData={planWall:segment}})
+    model.add(createEntryArrivalDoor(X,Z))
+    model.add(createEntryRecessStorage(X,Z))
     const entryOpening=ENTRY.outerEntryOpening
     addSpan([entryOpening.wallPlanX,entryOpening.fromPlanY,entryOpening.wallPlanX,entryOpening.toPlanY],entryOpening.heightMm/1000,HEIGHT)
     for(const [x1,y1,x2,y2,bottom,top] of GLASS){
@@ -156,7 +173,7 @@ export default function WholeHome3D({onOpenRoom}){
       const roomName=ROOMS.find(room=>room.bounds===bounds)?.name||'Whole home'
       const total=side==='north'||side==='south'?width:length
       const valid=holes.map(h=>({...h,start:Math.max(0,h.start),end:Math.min(total,h.end)})).filter(h=>h.end>h.start).sort((a,b)=>a.start-b.start)
-      const line=(start,end,bottom=0,top=HEIGHT,material=wallMaterial)=>{
+      const line=(start,end,bottom=0,top=HEIGHT,material=roomName==='Drawing Room'?drawingWallMaterial:wallMaterial)=>{
         if(end<=start) return
         const a=side==='north'?[start,0]:side==='south'?[start,length]:side==='west'?[0,start]:[width,start]
         const b=side==='north'?[end,0]:side==='south'?[end,length]:side==='west'?[0,end]:[width,end]
@@ -200,9 +217,14 @@ export default function WholeHome3D({onOpenRoom}){
 
     const drawing=EMPTY_ROOM_SHELLS.drawing,db=boundsFor('Drawing Room')
     const dg=roomGroup(db,drawing.widthMm,drawing.lengthMm)
+    dg.add(createRoomAirConditioning(drawing))
+    dg.add(createRoomTaskLighting(drawing))
+    dg.add(createDrawingRoomTelevision(drawing))
+    const partition=createDrawingLobbyPartition(drawing,'drawing');dg.add(partition)
+    partition.userData.setOpen(partitionOpen)
     const dw=drawing.windows[0],dd=drawing.doors[0],open=drawing.wallOpenings.east
     roomEdge(db,drawing.widthMm,drawing.lengthMm,'south',[{start:dw.fromMm,end:dw.fromMm+dw.widthMm,bottom:dw.bottomMm/1000,top:dw.topMm/1000,glass:true}])
-    roomEdge(db,drawing.widthMm,drawing.lengthMm,'north',[{start:dd.fromMm,end:dd.fromMm+dd.widthMm,top:dd.heightMm/1000}])
+    roomEdge(db,drawing.widthMm,drawing.lengthMm,'north',drawing.doors.filter(door=>door.wall==='north').map(door=>({start:door.fromMm,end:door.fromMm+door.widthMm,top:door.heightMm/1000})))
     roomEdge(db,drawing.widthMm,drawing.lengthMm,'east',[{start:open.fromMm,end:open.toMm,top:HEIGHT}])
     roomEdge(db,drawing.widthMm,drawing.lengthMm,'west')
     const beam=drawing.hangingBeams[0]
@@ -212,12 +234,18 @@ export default function WholeHome3D({onOpenRoom}){
     const {sofa,coffeeTable,windowSeat}=drawing.furniture
     localBox(dg,sofa.widthMm,360,sofa.lengthMm,sofa.centerXmm,350,sofa.centerZmm,fabric)
     localBox(dg,160,490,sofa.lengthMm,sofa.centerXmm-sofa.widthMm/2+80,650,sofa.centerZmm,fabric)
-    localBox(dg,coffeeTable.widthMm,55,coffeeTable.lengthMm,coffeeTable.centerXmm,420,coffeeTable.centerZmm,paleWood)
+    const coffeeTop=new THREE.Mesh(new THREE.CylinderGeometry(1,1,.055,48),paleWood)
+    coffeeTop.scale.set(coffeeTable.widthMm/2000,1,coffeeTable.lengthMm/2000)
+    coffeeTop.position.set(coffeeTable.centerXmm/1000,.43,coffeeTable.centerZmm/1000);dg.add(coffeeTop)
+    for(const dx of [-200,200])for(const dz of [-300,300])localBox(dg,35,390,35,coffeeTable.centerXmm+dx,215,coffeeTable.centerZmm+dz,aluminium)
     localBox(dg,windowSeat.widthMm,windowSeat.heightMm,windowSeat.depthMm,windowSeat.centerXmm,windowSeat.heightMm/2,windowSeat.centerZmm,paleWood)
     localBox(dg,windowSeat.widthMm,65,windowSeat.depthMm,windowSeat.centerXmm,windowSeat.heightMm+32,windowSeat.centerZmm,cushion)
 
     const lobby=EMPTY_ROOM_SHELLS.lobby,lb=boundsFor('Lobby / Dining')
     const lg=roomGroup(lb,lobby.widthMm,lobby.lengthMm)
+    lg.add(createRoomAirConditioning(lobby))
+    lg.add(createRoomTaskLighting(lobby))
+    lg.add(createLobbyConcealedDoor(lobby))
     const toilet=lobby.doors.find(door=>door.wall==='south'),bedDoor=lobby.doors.find(door=>door.wall==='north')
     roomEdge(lb,lobby.widthMm,lobby.lengthMm,'south',[{start:toilet.fromMm,end:toilet.fromMm+toilet.widthMm,top:toilet.heightMm/1000}])
     roomEdge(lb,lobby.widthMm,lobby.lengthMm,'north',[
@@ -225,6 +253,8 @@ export default function WholeHome3D({onOpenRoom}){
       {start:lobby.poojaAlcove.fromMm,end:lobby.poojaAlcove.fromMm+lobby.poojaAlcove.widthMm,top:HEIGHT},
     ])
     roomEdge(lb,lobby.widthMm,lobby.lengthMm,'east',[{start:lobby.wallOpenings.east.fromMm,end:lobby.wallOpenings.east.toMm,top:HEIGHT}])
+    const ironingStorage=createLobbyEastIroningStorage(lobby)
+    lg.add(ironingStorage)
     const table=lobby.furniture.diningTable
     localBox(lg,table.widthMm,55,table.lengthMm,table.centerXmm,table.heightMm,table.centerZmm,paleWood)
     localBox(lg,90,table.heightMm-50,90,table.centerXmm,table.heightMm/2,table.centerZmm,aluminium)
@@ -246,9 +276,25 @@ export default function WholeHome3D({onOpenRoom}){
     const lbeam=lobby.hangingBeams[0],la=roomPoint(lb,lobby.widthMm,lobby.lengthMm,0,lbeam.fromMm),le=roomPoint(lb,lobby.widthMm,lobby.lengthMm,0,lbeam.toMm)
     addSpan([...la,...le],HEIGHT-lbeam.dropMm/1000,HEIGHT)
 
+    const bedroom3=EMPTY_ROOM_SHELLS.bedroom3,b3b=boundsFor('Bedroom 3')
+    const b3g=roomGroup(b3b,bedroom3.widthMm,bedroom3.lengthMm)
+    roomEdge(b3b,bedroom3.widthMm,bedroom3.lengthMm,'north',bedroom3.doors.filter(door=>door.wall==='north').map(door=>({start:door.fromMm,end:door.fromMm+door.widthMm,top:door.heightMm/1000})))
+    const {cabinet:b3Cabinet,balcony:b3Balcony}=bedroom3.southExtension
+    roomEdge(b3b,bedroom3.widthMm,bedroom3.lengthMm,'south',[
+      {start:b3Cabinet.fromWestMm,end:b3Cabinet.fromWestMm+b3Cabinet.widthMm,bottom:b3Cabinet.floorClearanceMm/1000,top:(b3Cabinet.floorClearanceMm+b3Cabinet.heightMm)/1000},
+      {start:b3Balcony.doorFromWestMm,end:b3Balcony.doorFromWestMm+b3Balcony.doorWidthMm,bottom:0,top:b3Balcony.doorHeightMm/1000,glass:true},
+      {start:b3Balcony.windowFromWestMm,end:b3Balcony.windowFromWestMm+b3Balcony.windowWidthMm,bottom:b3Balcony.windowSillMm/1000,top:b3Balcony.windowTopMm/1000,glass:true},
+    ])
+    b3g.add(createBedroom3SouthExtension(bedroom3))
+    b3g.add(createBedroom3Bed(bedroom3))
+    const vanity=createBedroom3DressingTable(bedroom3);b3g.add(vanity);vanity.userData.setMirrorOpen(mirrorOpen)
+    b3g.add(createBedroom3EntryDoor(bedroom3))
+    b3g.add(createBedroom3Wardrobe(bedroom3))
+
     const study=STUDY_ROOM,sd=study.dimensions,sb=boundsFor('Study')
     const sg=roomGroup(sb,sd.widthMm,sd.lengthMm)
     sg.add(createStudyTerrace(study))
+    sg.add(createStudyFurniture(study).group)
     const sDoor=study.openings.mainDoor,sTerrace=study.openings.terraceDoor,sOffice=study.openings.balconyOffice
     const built=study.cabinetry.southBuiltIn
     roomEdge(sb,sd.widthMm,sd.lengthMm,'south',[
@@ -290,6 +336,7 @@ export default function WholeHome3D({onOpenRoom}){
 
     const bedroom=EMPTY_ROOM_SHELLS.bedroom1,bbounds=boundsFor('Bedroom 1')
     const bg=roomGroup(bbounds,bedroom.widthMm,bedroom.lengthMm)
+    bg.add(createRoomAirConditioning(bedroom))
     const poojaWardrobe=bedroom.balconyExtension?.poojaWallWardrobe
     if(poojaWardrobe){
       const {widthMm:width,depthMm:depth,heightMm:height,doorCount}=poojaWardrobe
@@ -381,6 +428,10 @@ export default function WholeHome3D({onOpenRoom}){
     // The south wall and bedroom door are shared with the lobby model above.
 
     const kb=boundsFor('Kitchen'),kg=roomGroup(kb,KITCHEN.width,KITCHEN.length)
+    const storeStorage=createStoreStorage()
+    storeStorage.userData.setCoverOpen(storageCoverOpen)
+    storeStorage.position.z=KITCHEN.length/1000
+    kg.add(storeStorage)
     roomEdge(kb,KITCHEN.width,KITCHEN.length,'south',[{start:KITCHEN.door.x,end:KITCHEN.door.x+KITCHEN.door.w,top:HEIGHT}])
     roomEdge(kb,KITCHEN.width,KITCHEN.length,'north',[{start:KITCHEN.window.x,end:KITCHEN.window.x+KITCHEN.window.w,bottom:KITCHEN.window.sill/1000,top:HEIGHT,glass:true}])
     const fridge=KITCHEN_REFRIGERATOR
@@ -398,8 +449,11 @@ export default function WholeHome3D({onOpenRoom}){
     }
     let savedKitchen={}
     try{savedKitchen=JSON.parse(localStorage.getItem(KITCHEN_AUTOSAVE_KEY)||'{}')}catch{}
-    const kitchenItems=[...(Array.isArray(savedKitchen.east)?savedKitchen.east:EAST_INIT),...(Array.isArray(savedKitchen.west)?savedKitchen.west:WEST_INIT)].map(item=>item.id==='shaft'?{...item,y:KITCHEN.shaft.y,w:KITCHEN.shaft.l,d:KITCHEN.shaft.w}:item)
+    const kitchenItems=[...(Array.isArray(savedKitchen.east)?savedKitchen.east:EAST_INIT),...(Array.isArray(savedKitchen.west)?savedKitchen.west:WEST_INIT)].map(item=>item.id==='shaft'?{...item,y:KITCHEN.shaft.y,w:KITCHEN.shaft.l,d:KITCHEN.shaft.w}:item.id==='gas'&&item.y===1350?{...item,y:NORTH_HOB_OPTION_Y_MM}:item)
     const kitchenCabinet=new THREE.MeshStandardMaterial({color:savedKitchen.materials?.cabinetBody||'#efe9df',roughness:.72})
+    const counterMaterial=new THREE.MeshStandardMaterial({color:savedKitchen.materials?.counter||'#ddd8cf',roughness:.4})
+    const darkAppliance=new THREE.MeshStandardMaterial({color:'#22282c',roughness:.28,metalness:.5})
+    const steelAppliance=new THREE.MeshStandardMaterial({color:'#afb5b8',roughness:.32,metalness:.65})
     const westWetSlots=kitchenItems.filter(item=>!item.hidden&&['washing','dishwasher','sink'].includes(item.id)).sort((a,b)=>a.y-b.y)
     for(const [side,modules] of [
       ['east',Array.isArray(savedKitchen.eastModules)?savedKitchen.eastModules:autoFillModules(KITCHEN.length)],
@@ -423,15 +477,53 @@ export default function WholeHome3D({onOpenRoom}){
           return result
         })():[[from,to]]
         for(const [start,end] of spans){
-          localBox(kg,580,820,end-start,side==='east'?KITCHEN.width-300:300,460,KITCHEN.length-(start+end)/2,kitchenCabinet)
+          localBox(kg,600,820,end-start,side==='east'?KITCHEN.width-300:300,460,KITCHEN.length-(start+end)/2,kitchenCabinet)
+          localBox(kg,600,30,end-start,side==='east'?KITCHEN.width-300:300,885,KITCHEN.length-(start+end)/2,counterMaterial)
         }
         cursor-=width
+      }
+    }
+    // Match the upper runs in the detailed kitchen, including the dish-rack opening.
+    for(const side of ['east','west']){
+      const start=side==='east'?0:KITCHEN.westGap.to,end=KITCHEN.length
+      const upperDepth=Number(savedKitchen[side+'TopUpperDepth'])||(side==='east'?EAST_TOP_UPPER_DEPTH:WEST_TOP_UPPER_DEPTH)
+      const rack=side==='west'?kitchenItems.find(i=>i.id==='sinkUpperDishRack'&&!i.hidden):null
+      const lowerSpans=rack?[[start,Math.max(start,rack.y)],[Math.min(end,rack.y+rack.w),end]]:[[start,end]]
+      for(const [a,b] of lowerSpans)if(b>a)localBox(kg,320,500,b-a,side==='east'?KITCHEN.width-160:160,1600,KITCHEN.length-(a+b)/2,kitchenCabinet)
+      localBox(kg,upperDepth,850,end-start,side==='east'?KITCHEN.width-upperDepth/2:upperDepth/2,2275,KITCHEN.length-(start+end)/2,kitchenCabinet)
+      for(let y=start;y<end;y+=600){
+        const width=Math.min(600,end-y)
+        localBox(kg,12,830,3,side==='east'?KITCHEN.width-upperDepth-3:upperDepth+3,2275,KITCHEN.length-y,darkAppliance)
+        if(!rack||y+width<=rack.y||y>=rack.y+rack.w)localBox(kg,12,480,3,side==='east'?KITCHEN.width-323:323,1600,KITCHEN.length-y,darkAppliance)
       }
     }
     for(const item of kitchenItems){
       if(item.hidden||item.powerPoint||!item.w||!item.d||!item.h)continue
       const itemMaterial=new THREE.MeshStandardMaterial({color:item.color||'#c4b5a5',roughness:.72})
-      localBox(kg,item.d,item.h,item.w,(item.x||0)+item.d/2,(item.z||0)+item.h/2,KITCHEN.length-(item.y||0)-item.w/2,itemMaterial)
+      const cx=(item.x||0)+item.d/2,cz=KITCHEN.length-(item.y||0)-item.w/2,cy=(item.z||0)+item.h/2
+      if(item.id==='sink'){
+        localBox(kg,item.d,25,item.w,cx,885,cz,steelAppliance)
+        localBox(kg,item.d-90,8,item.w-120,cx,900,cz,darkAppliance)
+        localBox(kg,600-item.d,30,item.w,item.d+(600-item.d)/2,885,cz,counterMaterial)
+        localBox(kg,25,230,25,70,1000,cz,steelAppliance)
+        localBox(kg,160,22,22,140,1104,cz,steelAppliance)
+        continue
+      }
+      localBox(kg,item.d,item.h,item.w,cx,cy,cz,itemMaterial)
+      if(item.id==='washing'){
+        const drum=new THREE.Mesh(new THREE.CylinderGeometry(.2,.2,.025,32),darkAppliance);drum.rotation.z=Math.PI/2;drum.position.set(((item.x||0)+item.d+12)/1000,.45,cz/1000);kg.add(drum)
+        localBox(kg,15,65,item.w-50,(item.x||0)+item.d+8,790,cz,steelAppliance)
+      }
+      if(item.id==='dishwasher'){
+        localBox(kg,18,item.h-35,item.w-25,(item.x||0)+item.d+9,item.h/2,cz,steelAppliance)
+        localBox(kg,25,25,item.w-100,(item.x||0)+item.d+25,item.h-120,cz,darkAppliance)
+      }
+      if(item.id==='gas'){
+        localBox(kg,item.d-35,20,item.w-25,cx,915,cz,darkAppliance)
+        for(const offset of [-item.w*.3,0,item.w*.3]){const burner=new THREE.Mesh(new THREE.CylinderGeometry(.065,.065,.015,24),steelAppliance);burner.position.set(cx/1000,.933,(cz+offset)/1000);kg.add(burner)}
+      }
+      if(item.id==='microwave')localBox(kg,15,item.h-60,item.w-90,(item.x||0)-8,cy,cz,darkAppliance)
+      if(item.id==='applianceGarage')localBox(kg,15,item.h-70,item.w-50,(item.x||0)-8,cy,cz,darkAppliance)
     }
     scene.add(new THREE.HemisphereLight('#ffffff','#8b9ca8',1.4))
     const sun=new THREE.DirectionalLight('#fff5e5',2);sun.position.set(-5,16,-7);scene.add(sun)
@@ -487,13 +579,17 @@ export default function WholeHome3D({onOpenRoom}){
     renderer.domElement.addEventListener('pointerdown',onPointerDown)
     renderer.domElement.addEventListener('pointerup',onPointerUp)
     let raf=0;const render=()=>{controls.update();renderer.render(scene,camera);raf=requestAnimationFrame(render)};render()
-    sceneRef.current={setCamera,setWallsVisible:visible=>{walls.visible=visible},setPoojaPersonVisible:visible=>{seatedPerson.visible=visible},setPoojaDoorsOpen:value=>{poojaDoors.userData.setDoorsOpen(value)},clearMark}
+    sceneRef.current={exportCoohom:()=>exportCoohomPackage({model,wallMeshes,rooms:ROOMS,scaleX:X_METRES_PER_PIXEL,scaleZ:Z_METRES_PER_PIXEL,kitchenSnapshot:Object.keys(savedKitchen).length?savedKitchen:null}),setStorageCoverOpen:value=>storeStorage.userData.setCoverOpen(value),setMirrorOpen:value=>vanity.userData.setMirrorOpen?.(value),setPartitionOpen:value=>partition.userData.setOpen?.(value),setCamera,setWallsVisible:visible=>{walls.visible=visible},setBoardOpen:value=>{ironingStorage.userData.setBoardOpen(value)},setPoojaPersonVisible:visible=>{seatedPerson.visible=visible},setPoojaDoorsOpen:value=>{poojaDoors.userData.setDoorsOpen(value)},clearMark}
     return()=>{cancelAnimationFrame(raf);observer.disconnect();renderer.domElement.removeEventListener('pointerdown',onPointerDown);renderer.domElement.removeEventListener('pointerup',onPointerUp);controls.dispose();model.traverse(object=>{object.geometry?.dispose?.();object.material?.dispose?.()});markedWallMaterial.dispose();texture.dispose();environment.dispose();pmrem.dispose();renderer.dispose();renderer.domElement.remove();sceneRef.current=null}
   },[])
 
   useEffect(()=>{sceneRef.current?.setCamera(view)},[view])
   useEffect(()=>{sceneRef.current?.setWallsVisible(showWalls)},[showWalls])
   useEffect(()=>{sceneRef.current?.setPoojaPersonVisible(showPoojaPerson)},[showPoojaPerson])
+  useEffect(()=>{sceneRef.current?.setBoardOpen(showIroningBoard)},[showIroningBoard])
+  useEffect(()=>{sceneRef.current?.setStorageCoverOpen(storageCoverOpen)},[storageCoverOpen])
+  useEffect(()=>{sceneRef.current?.setMirrorOpen(mirrorOpen)},[mirrorOpen])
+  useEffect(()=>{sceneRef.current?.setPartitionOpen(partitionOpen)},[partitionOpen])
   useEffect(()=>{sceneRef.current?.setPoojaDoorsOpen(poojaDoorsOpen)},[poojaDoorsOpen])
 
   return <section style={{background:'#fff',border:'1px solid #dbe3e9',borderRadius:22,overflow:'hidden',boxShadow:'0 16px 42px rgba(23,32,51,.1)'}}>
@@ -505,6 +601,11 @@ export default function WholeHome3D({onOpenRoom}){
         <button aria-pressed={view==='south'} onClick={()=>{setView('south');setShowWalls(false)}} style={buttonStyle(view==='south')}>South view</button>
         <button onClick={()=>setShowWalls(value=>!value)} style={buttonStyle(showWalls)}>{showWalls?'Hide walls':'Show walls'}</button>
         <button onClick={()=>setShowPoojaPerson(value=>!value)} style={buttonStyle(showPoojaPerson)}>{showPoojaPerson?'Hide seated person':'Show seated person'}</button>
+        <button onClick={()=>setShowIroningBoard(value=>!value)} style={buttonStyle(showIroningBoard)}>{showIroningBoard?'Stow ironing board':'Pull out ironing board'}</button>
+        <button disabled={exportStatus==='Exporting…'} onClick={async()=>{setExportStatus('Exporting…');try{await sceneRef.current.exportCoohom();setExportStatus('Export downloaded')}catch(error){setExportStatus('Export failed: '+error.message)}}} style={buttonStyle(false)}>Export for Coohom</button><span role="status">{exportStatus}</span>
+        <button onClick={()=>setStorageCoverOpen(value=>!value)} style={buttonStyle(storageCoverOpen)}>{storageCoverOpen?'Close storage cover':'Open storage cover'}</button>
+        <button onClick={()=>setMirrorOpen(value=>!value)} style={buttonStyle(mirrorOpen)}>{mirrorOpen?'Close vanity mirror':'Open vanity mirror'}</button>
+        <button onClick={()=>setPartitionOpen(value=>!value)} style={buttonStyle(partitionOpen)}>{partitionOpen?'Close drawing partition':'Open drawing partition'}</button>
         <button onClick={()=>setPoojaDoorsOpen(value=>!value)} style={buttonStyle(poojaDoorsOpen)}>{poojaDoorsOpen?'Close Pooja doors':'Open Pooja doors'}</button>
         <button onClick={()=>setMarkMode(value=>!value)} style={buttonStyle(markMode)}>{markMode?'Back to 3D':'Mark area on plan'}</button>
       </div>
@@ -518,6 +619,7 @@ export default function WholeHome3D({onOpenRoom}){
         ['Drawing Room','drawing'],['Bedroom 1','bedroom1'],['Main entry','entry'],
       ].map(([label,key])=><button key={key} onClick={()=>onOpenRoom(key)} style={buttonStyle(false)}>{label} ↗</button>)}
     </div>
+    <HomeLightingGallery/>
   </section>
 }
 

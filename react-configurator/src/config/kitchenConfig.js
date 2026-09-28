@@ -1,5 +1,6 @@
 export const ROOM_WIDTH = 2324
 export const KITCHEN_AUTOSAVE_KEY = 'kitchen-autosave-v4-west-wet-east-open-garage'
+export const NORTH_HOB_OPTION_Y_MM = 2400 // northward from Option C, still clear of the operable north window
 export const ROOM_LENGTH = 4746
 export const ROOM_HEIGHT = 2700
 export const WEST_CLEAR_FROM = 0
@@ -27,13 +28,22 @@ export const KITCHEN_REFRIGERATOR = {
   fromKitchenWestMm:1400, southWallThicknessMm:45, faces:'west',
 }
 
+// West-facing pull-out storage fills the former internal access recess.
+// The washer stays in the kitchen until its service connections are confirmed.
+export const KITCHEN_STORE_STORAGE = {
+  fromKitchenWestMm:1000,widthMm:1092,fromKitchenSouthMm:1058,depthMm:1000,heightMm:2600,faces:'west',
+  shelfLevelsMm:[850,1150,1450,1750,2050],pantryWidthMm:700,
+  racks:{lengthMm:762,widthMm:355.6,heightMm:1644.65,gapMm:150,shelfLevelsMm:[150,500,850,1200,1615]},
+  slidingCover:{fromSouthMm:1100,widthMm:1000,heightMm:2200,travelMm:1000,frontOffsetMm:120},
+}
+
 // Current configuration: west wet wall and east cooking/appliance wall.
 // East South->North: open microwave, open appliance garage with food processor, gas cooktop, 4in backsplash slider storage.
 export const EAST_INIT = [
   {id:'microwave', label:'Open microwave above backsplash at east south beginning y0', w:600, d:400, h:350, y:0, x:1924, z:1360, color:'#1a1a1a', open:true, noCover:true, wallMounted:true},
   {id:'applianceGarage', label:'Open appliance garage at counter height with food processor, pulls toward gas', w:850, d:600, h:450, y:0, x:1724, z:900, color:'#C4B5A5', open:true, noCover:true, pullToward:'gas', subcomponents:[{id:'foodprocessor-inside-applianceGarage', label:'Food processor inside open appliance garage'}]},
   {id:'eastBacksplashSlider', label:'4in backsplash slider storage along east wall behind counter and stove', w:ROOM_LENGTH, d:102, h:450, y:0, x:2222, z:900, color:'#d9c6af', backsplashSlider:true, sliderDoor:true},
-  {id:'gas', label:'Gas Stove 700W y1200 east with hidden chimney above', w:700, d:600, h:900, y:1200, x:1724, color:'#2a2a2a', subcomponents:[{id:'gas-cooktop-east', label:'cooktop slab east'}, {id:'kitchen-chimney-east', label:'kitchen chimney above gas'}]},
+  {id:'gas', label:'Gas cooktop moved north with hidden chimney above', w:700, d:600, h:900, y:NORTH_HOB_OPTION_Y_MM, x:1724, color:'#2a2a2a', subcomponents:[{id:'gas-cooktop-east', label:'cooktop slab east'}, {id:'kitchen-chimney-east', label:'kitchen chimney above gas'}]},
   {id:'garage_NE', label:'East north tall cabinet removed for current option', w:0, d:0, h:0, y:0, x:1724, color:'#C4B5A5', hidden:true},
   {id:'garage_SE', label:'East south tall cabinet removed - replaced by open microwave and appliance garage', w:0, d:0, h:0, y:0, x:1724, color:'#C4B5A5', hidden:true},
   {id:'geyserEastTop', label:'Hot Water Geyser east top - kept for reference (now west)', w:200, d:200, h:300, y:2600, x:1724, color:'#c9d6e3', z:2100, wallMounted:true, topMounted:true, hidden:true}

@@ -1,0 +1,7 @@
+00:01.375  blend            | Read blend: "C:\source\kitchen\blender\bedroom3\A501-bedroom3-realistic.blend"
+Blender 5.2.2 LTS (hash d13f752e3b9c built 2026-09-15 01:37:04)
+Writing: C:\Users\anura\AppData\Local\Temp\A501-bedroom3-realistic.crash.txt
+Error   : EXCEPTION_ACCESS_VIOLATION
+Address : 0x00007FFB9B73E168
+Module  : embree4.dll
+Thread  : 00006fe0

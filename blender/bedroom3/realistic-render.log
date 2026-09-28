@@ -1,0 +1,15 @@
+00:01.406  blend            | Read blend: "C:\source\kitchen\blender\bedroom3\A501-bedroom3-detail.blend"
+C:\source\kitchen\blender\photoreal_bedroom3.py:43: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0
+  mat.use_nodes = True
+C:\source\kitchen\blender\photoreal_bedroom3.py:121: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0
+  if mat == wall or not mat.use_nodes:
+C:\source\kitchen\blender\photoreal_bedroom3.py:16: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0
+  mat.use_nodes = True
+00:03.578  render           | Saved: 'C:\source\kitchen\blender\bedroom3\A501-bedroom3-realistic-overview.png'
+00:04.422  render           | Saved: 'C:\source\kitchen\blender\bedroom3\A501-bedroom3-realistic-vanity.png'
+BEDROOM3_FRONT_OBJECTS_HIDDEN 75
+Info: Saved as "A501-bedroom3-realistic.blend"
+BEDROOM3_REALISTIC_RENDER_COMPLETE
+Blender 5.2.2 LTS (hash d13f752e3b9c built 2026-09-15 01:37:04)
+
+Blender quit

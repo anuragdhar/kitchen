@@ -1,3 +1,4 @@
+import StorageGallery3D from './StorageGallery3D.jsx'
 import React,{useEffect,useState} from 'react'
 import KitchenConfigurator from './App.jsx'
 import DxfWorkspace from './DxfWorkspace.jsx'
@@ -13,6 +14,7 @@ import {KITCHEN} from './config/kitchenConfig.js'
 import floorPlanImage from '../../Interior/home a 501 floor - unmodified.png'
 
 const rooms={
+  storage:{name:'Storage',eyebrow:'Racks beside the fridge',description:'Open the dedicated rack and sliding-cover view.',color:'#796040'},
   kitchen:{name:'Kitchen',eyebrow:'Detailed design available',description:'Open the existing galley kitchen planner, elevations, 3D view, materials, validation and exports.',color:'#b45309'},
   study:{name:'Study',eyebrow:'Ready to design together',description:'A new room workspace for layout, storage, lighting, desk placement and finishes.',color:'#2563eb'},
   balcony:{name:'Balcony office',eyebrow:'Active design area',description:'Turn the narrow east balcony into a focused, comfortable home office.',color:'#7c3aed'},
@@ -54,6 +56,7 @@ function RoomHotspot({room,style,onOpen,label,badge}){
 
 const planRect=(x1,y1,x2,y2)=>({left:`${x1/8}%`,top:`${y1/8.75}%`,width:`${(x2-x1)/8}%`,height:`${(y2-y1)/8.75}%`})
 const planHotspots=[
+  ['storage',planRect(145,396,205,451)],
   ['kitchen',planRect(130,503,255,703)],
   ['bedroom3',planRect(50,198,255,390)],
   ['study',planRect(255,198,424,444)],
@@ -147,7 +150,7 @@ function EmptyShellWorkspace({initialRoomKey=null,initialView='overview'}){
   const pooja=initialView==='pooja'?singleRoom?.poojaAlcove:null
   return <main style={{minHeight:'calc(100vh - 68px)',background:'linear-gradient(145deg,#edf7f8,#f8fafc)',padding:'12px clamp(14px,2vw,28px) 28px'}}>
     <div style={{maxWidth:1900,margin:'0 auto'}}>
-      <div style={{display:'flex',alignItems:'baseline',gap:14,flexWrap:'wrap',margin:'0 0 8px'}}><h1 style={{fontSize:'clamp(28px,3vw,42px)',letterSpacing:'-.035em',margin:0,color:'#172033'}}>{pooja?'Pooja Ghar':singleRoom?singleRoom.name:'Other rooms in 3D'}</h1><span style={{fontSize:13,color:'#64748b'}}>{pooja?`${pooja.widthMm.toLocaleString()} × ${pooja.depthMm.toLocaleString()} mm · ${pooja.platformHeightMm} mm raised platform · ${pooja.drawerDepthMm} mm deep drawer facing Lobby / Dining`:singleRoom?`${singleRoom.widthMm.toLocaleString()} × ${singleRoom.lengthMm.toLocaleString()} mm · ${initialRoomKey==='bedroom1'?'bed and west-wall wardrobe':initialRoomKey==='lobby'||initialRoomKey==='drawing'?'furnished concept':'empty shell'}`:'Select a room'}</span></div>
+      <div style={{display:'flex',alignItems:'baseline',gap:14,flexWrap:'wrap',margin:'0 0 8px'}}><h1 style={{fontSize:'clamp(28px,3vw,42px)',letterSpacing:'-.035em',margin:0,color:'#172033'}}>{pooja?'Pooja Ghar':singleRoom?singleRoom.name:'Other rooms in 3D'}</h1><span style={{fontSize:13,color:'#64748b'}}>{pooja?`${pooja.widthMm.toLocaleString()} × ${pooja.depthMm.toLocaleString()} mm · ${pooja.platformHeightMm} mm raised platform · ${pooja.drawerDepthMm} mm deep drawer facing Lobby / Dining`:singleRoom?`${singleRoom.widthMm.toLocaleString()} × ${singleRoom.lengthMm.toLocaleString()} mm · ${initialRoomKey==='bedroom1'?'bed and west-wall wardrobe':initialRoomKey==='bedroom3'?'six-foot bed, balcony and cabinet':initialRoomKey==='lobby'||initialRoomKey==='drawing'?'furnished concept':'empty shell'}`:'Select a room'}</span></div>
       <EmptyRoomGallery initialRoomKey={initialRoomKey||'bedroom1'} initialView={initialView} showSelector={!singleRoom}/>
     </div>
   </main>
@@ -232,6 +235,7 @@ export default function HomeApp(){
     {section==='shells'&&<EmptyShellWorkspace/>}
     {section==='whole3d'&&<WholeHome3DWorkspace onOpenRoom={setSection}/>}
     {rooms[section]?.shellKey&&<EmptyShellWorkspace key={section} initialRoomKey={rooms[section].shellKey} initialView={rooms[section].initialView||'overview'}/>}
+    {section==='storage'&&<StorageGallery3D/>}
     {section==='entry'&&<EntryWorkspace/>}
     {section==='dxf'&&<DxfWorkspace/>}
   </>

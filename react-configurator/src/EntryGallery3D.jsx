@@ -2,117 +2,108 @@ import React,{useEffect,useRef,useState} from 'react'
 import * as THREE from 'three'
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js'
 import {RoomEnvironment} from 'three/examples/jsm/environments/RoomEnvironment.js'
-import {ENTRY} from './config/entryConfig.js'
+import {ENTRY,ENTRY_WALL_SEGMENTS} from './config/entryConfig.js'
+import {createEntryArrivalDoor} from './EntryArrivalDoor.js'
+import {createEntryRecessStorage} from './EntryRecessStorage.js'
 
-const mm=value=>value/1000
 const buttonStyle=active=>({padding:'7px 11px',borderRadius:9,border:'1px solid #cbd5e1',background:active?'#172033':'#fff',color:active?'#fff':'#172033',fontWeight:800,cursor:'pointer'})
 
 export default function EntryGallery3D(){
   const [view,setView]=useState('overview')
-  const mountRef=useRef(null)
-  const sceneRef=useRef(null)
+  const mountRef=useRef(null),sceneRef=useRef(null)
 
   useEffect(()=>{
     const mount=mountRef.current
-    if(!mount) return
-    const approach=mm(ENTRY.approachLengthMm),passage=mm(ENTRY.clearWidthMm),doorWidth=mm(ENTRY.mainDoorWidthMm),height=mm(ENTRY.wallHeightMm)
+    if(!mount)return
+    const {planBounds,planScale}=ENTRY
+    const x=planX=>(planX-planBounds.x1)*planScale.xMetresPerPixel
+    const z=planY=>(planY-planBounds.y1)*planScale.zMetresPerPixel
+    const width=x(planBounds.x2),length=z(planBounds.y2),height=ENTRY.wallHeightMm/1000
     const scene=new THREE.Scene();scene.background=new THREE.Color('#eef3f6')
-    const camera=new THREE.PerspectiveCamera(46,1,.01,100)
+    const camera=new THREE.PerspectiveCamera(47,1,.01,100)
     const renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance'})
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio,2.2))
-    renderer.outputColorSpace=THREE.SRGBColorSpace
-    renderer.toneMapping=THREE.ACESFilmicToneMapping
-    renderer.toneMappingExposure=1
-    renderer.shadowMap.enabled=true
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio,2.2));renderer.outputColorSpace=THREE.SRGBColorSpace
+    renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=.84;renderer.shadowMap.enabled=true
     mount.appendChild(renderer.domElement)
     const pmrem=new THREE.PMREMGenerator(renderer),environment=pmrem.fromScene(new RoomEnvironment(renderer),.04).texture
     scene.environment=environment
     const controls=new OrbitControls(camera,renderer.domElement);controls.enableDamping=true
     const model=new THREE.Group();scene.add(model)
-    const floorMaterial=new THREE.MeshStandardMaterial({color:'#d9d0c4',roughness:.8})
-    const insideFloorMaterial=new THREE.MeshStandardMaterial({color:'#c6d4cf',roughness:.8})
-    const wallMaterial=new THREE.MeshStandardMaterial({color:'#ede9e1',roughness:.83})
-    const frameMaterial=new THREE.MeshStandardMaterial({color:'#f7f4ed',roughness:.62})
-    const doorMaterial=new THREE.MeshStandardMaterial({color:'#855b42',roughness:.62})
-    const shoeMaterial=new THREE.MeshStandardMaterial({color:'#a87956',roughness:.7})
-    const metalMaterial=new THREE.MeshStandardMaterial({color:'#c4a46b',metalness:.72,roughness:.28})
-    const addBox=(w,h,d,x,y,z,material,parent=model)=>{
+    const floorMaterial=new THREE.MeshStandardMaterial({color:'#bda890',roughness:.84})
+    const wallMaterial=new THREE.MeshStandardMaterial({color:'#d3ccc2',roughness:.85})
+    const timber=new THREE.MeshStandardMaterial({color:'#aa7b56',roughness:.68})
+    const doorMaterial=new THREE.MeshStandardMaterial({color:'#825d44',roughness:.63})
+    const metal=new THREE.MeshStandardMaterial({color:'#ad936a',metalness:.67,roughness:.3})
+    const addBox=(w,h,d,cx,cy,cz,material,parent=model)=>{
       const mesh=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),material)
-      mesh.position.set(x,y,z);mesh.castShadow=true;mesh.receiveShadow=true;parent.add(mesh)
+      mesh.position.set(cx,cy,cz);mesh.castShadow=true;mesh.receiveShadow=true;parent.add(mesh)
       return mesh
     }
+    addBox(width,.06,length,width/2,-.03,length/2,floorMaterial)
+    const addSpan=([x1,y1,x2,y2],bottom=0,top=height)=>{
+      const a=x(x1),b=x(x2),c=z(y1),d=z(y2),span=Math.hypot(b-a,d-c)
+      if(span<.01||top<=bottom)return
+      const mesh=addBox(span,top-bottom,.085,(a+b)/2,(bottom+top)/2,(c+d)/2,wallMaterial)
+      mesh.rotation.y=-Math.atan2(d-c,b-a)
+    }
+    ENTRY_WALL_SEGMENTS.forEach(segment=>addSpan(segment))
+    model.add(createEntryArrivalDoor(x,z))
+    model.add(createEntryRecessStorage(x,z))
+    const outer=ENTRY.outerEntryOpening
+    addSpan([outer.wallPlanX,outer.fromPlanY,outer.wallPlanX,outer.toPlanY],outer.heightMm/1000,height)
+    const inner=ENTRY.innerOpening
+    addSpan([inner.fromPlanX,inner.wallPlanY,inner.toPlanX,inner.wallPlanY],inner.heightMm/1000,height)
 
-    // The northwest approach follows the 2134 mm entry run, then turns south into the home.
-    addBox(approach,.065,passage,approach/2,-.033,passage/2,floorMaterial)
-    addBox(1.1,.065,2.35,approach+.55,-.033,1.175,insideFloorMaterial)
-    addBox(approach,height,.08,approach/2,height/2,-.04,wallMaterial)
-    // The rack projects beyond the north end wall, with its doors facing the entry.
-    const rack=ENTRY.shoeRack,rackDepth=mm(rack.projectionMm),rackHeight=mm(rack.heightMm)
-    const rackWidth=mm(rack.widthMm)
-    const sideReturn=(passage-rackWidth)/2
-    addBox(.08,height,sideReturn,-.04,height/2,sideReturn/2,wallMaterial)
-    addBox(.08,height,sideReturn,-.04,height/2,passage-sideReturn/2,wallMaterial)
-    addBox(.08,height-rackHeight,rackWidth,-.04,(height+rackHeight)/2,passage/2,wallMaterial)
-    const rackX=-rackDepth/2,rackFrontX=0
-    addBox(rackDepth,rackHeight,rackWidth,rackX,rackHeight/2,passage/2,shoeMaterial)
+    const rack=ENTRY.shoeRack,rackWidth=rack.widthMm/1000,rackDepth=rack.projectionMm/1000,rackHeight=rack.heightMm/1000
+    const rackX=x((rack.planX1+rack.planX2)/2),rackFront=z(rack.planNorthY)-.005
+    addBox(rackWidth,rackHeight,rackDepth,rackX,rackHeight/2,rackFront+rackDepth/2,timber)
     for(let i=0;i<rack.doorCount;i++){
-      const panelWidth=rackWidth/rack.doorCount
-      const panelZ=passage/2-rackWidth/2+(i+.5)*panelWidth
-      addBox(.03,rackHeight-.06,panelWidth-.012,rackFrontX+.015,rackHeight/2,panelZ,doorMaterial)
-      addBox(.024,.3,.018,rackFrontX+.045,1.1,panelZ+(i===0?panelWidth*.33:-panelWidth*.33),metalMaterial)
+      const panelWidth=rackWidth/rack.doorCount,panelX=rackX-rackWidth/2+(i+.5)*panelWidth
+      addBox(panelWidth-.012,rackHeight-.06,.024,panelX,rackHeight/2,rackFront-.012,doorMaterial)
+      addBox(.025,.24,.026,panelX+(i===0?.11:-.11),1.08,rackFront-.04,metal)
     }
 
-    // Main entrance door at the inner end of the entry run.
-    const doorLeft=(passage-doorWidth)/2,doorRight=doorLeft+doorWidth,doorHeight=2.2
-    for(const z of [doorLeft,doorRight]) addBox(.1,doorHeight,.08,approach,doorHeight/2,z,frameMaterial)
-    addBox(.1,height-doorHeight,passage,approach,(height+doorHeight)/2,passage/2,wallMaterial)
-    addBox(.12,.045,passage,approach,.022,passage/2,frameMaterial)
-    const hinge=new THREE.Group();hinge.position.set(approach,0,doorLeft+.03);model.add(hinge)
-    addBox(.045,doorHeight-.07,doorWidth-.09,.02,(doorHeight-.07)/2,(doorWidth-.09)/2,doorMaterial,hinge)
-    addBox(.075,.03,.075,.06,1.02,doorWidth-.2,metalMaterial,hinge)
-    hinge.rotation.y=1.02
+    // Door into the Drawing Room is at the south end of this plan-shaped entry.
+    const innerWidth=x(inner.toPlanX)-x(inner.fromPlanX)
+    const leafWidth=Math.min(ENTRY.mainDoorWidthMm/1000,innerWidth-.08)
+    const leaf=new THREE.Group();leaf.position.set(x(inner.toPlanX)-.035,0,0);leaf.rotation.y=1.02;model.add(leaf)
+    addBox(leafWidth,inner.heightMm/1000-.07,.045,-leafWidth/2,(inner.heightMm/1000-.07)/2,0,doorMaterial,leaf)
+    addBox(.07,.025,.065,-leafWidth+.17,1.05,.045,metal,leaf)
 
-    model.add(new THREE.ArrowHelper(new THREE.Vector3(1,0,0),new THREE.Vector3(rackFrontX+.12,.09,passage/2),approach-rackFrontX-.38,0x2563eb,.18,.11))
-    model.add(new THREE.ArrowHelper(new THREE.Vector3(0,0,1),new THREE.Vector3(approach+.55,.09,.56),1.33,0x2563eb,.18,.11))
     const labelTextures=[]
-    const addLabel=(label,x,y,z,width=1.1)=>{
-      const canvas=document.createElement('canvas');canvas.width=320;canvas.height=96
-      const ctx=canvas.getContext('2d');ctx.fillStyle='rgba(255,255,255,.94)';ctx.beginPath();ctx.roundRect(4,4,312,88,18);ctx.fill();ctx.fillStyle='#172033';ctx.font='bold 27px Arial';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(label,160,48)
+    const addLabel=(label,cx,cy,cz,scale=1)=>{
+      const canvas=document.createElement('canvas');canvas.width=360;canvas.height=96
+      const ctx=canvas.getContext('2d');ctx.fillStyle='rgba(255,255,255,.95)';ctx.beginPath();ctx.roundRect(4,4,352,88,18);ctx.fill();ctx.fillStyle='#172033';ctx.font='bold 25px Arial';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(label,180,48)
       const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.SRGBColorSpace;labelTextures.push(texture)
-      const sprite=new THREE.Sprite(new THREE.SpriteMaterial({map:texture,transparent:true,depthTest:false}));sprite.position.set(x,y,z);sprite.scale.set(width,width*.3,1);sprite.renderOrder=1000;model.add(sprite)
+      const sprite=new THREE.Sprite(new THREE.SpriteMaterial({map:texture,transparent:true,depthTest:false}));sprite.position.set(cx,cy,cz);sprite.scale.set(scale,scale*.27,1);sprite.renderOrder=1000;model.add(sprite)
     }
-    addLabel('NORTHWEST ENTRY',.42,.18,.17,1.15)
-    addLabel('MAIN DOOR',approach,2.48,passage/2,1.15)
-    addLabel('SHOE RACK',rackX,rackHeight+.18,passage/2,.94)
-    addLabel('RIGHT TURN',approach+.55,.16,1.86,1.05)
-    scene.add(new THREE.HemisphereLight('#ffffff','#78909c',1.15))
-    const sun=new THREE.DirectionalLight('#fff3dc',1.7);sun.position.set(-2,7,4);sun.castShadow=true;scene.add(sun)
+    addLabel('TO DRAWING ROOM',x((inner.fromPlanX+inner.toPlanX)/2),2.42,.22,1.12)
+    addLabel('ENTRY SHAFT',x((ENTRY.shaft.planX1+ENTRY.shaft.planX2)/2),2.44,z((ENTRY.shaft.planY1+ENTRY.shaft.planY2)/2),.95)
+    addLabel('OUTER ENTRY',width-.2,2.48,z((outer.fromPlanY+outer.toPlanY)/2),.92)
+    addLabel('SHOE RACK',rackX,rackHeight+.18,rackFront+.08,.9)
+    scene.add(new THREE.HemisphereLight('#ffffff','#78909c',1))
+    const sun=new THREE.DirectionalLight('#fff3dc',1.3);sun.position.set(-2,7,4);sun.castShadow=true;scene.add(sun)
     const setCamera=key=>{
-      if(key==='top'){camera.position.set(1.65,6,1.15);camera.up.set(0,0,1);controls.target.set(1.65,0,1.15)}
-      else{camera.position.set(4.55,5.45,3.65);camera.up.set(0,1,0);controls.target.set(1.65,.45,1.05)}
+      if(key==='top'){camera.position.set(width/2,10.3,length/2+.01);camera.up.set(0,0,-1);controls.target.set(width/2,0,length/2)}
+      else{camera.position.set(width/2+3.2,8.6,length+4.3);camera.up.set(0,1,0);controls.target.set(width/2,.55,length/2)}
       camera.lookAt(controls.target);controls.update()
     }
     setCamera('overview')
-    const resize=()=>{const width=mount.clientWidth,height=mount.clientHeight;renderer.setSize(width,height,false);camera.aspect=width/height;camera.updateProjectionMatrix()}
+    const resize=()=>{const viewportWidth=mount.clientWidth,viewportHeight=mount.clientHeight;renderer.setSize(viewportWidth,viewportHeight,false);camera.aspect=viewportWidth/viewportHeight;camera.updateProjectionMatrix()}
     const observer=new ResizeObserver(resize);observer.observe(mount);resize()
     let raf=0;const render=()=>{controls.update();renderer.render(scene,camera);raf=requestAnimationFrame(render)};render()
     sceneRef.current={setCamera}
-    return()=>{
-      cancelAnimationFrame(raf);observer.disconnect();controls.dispose()
-      labelTextures.forEach(texture=>texture.dispose())
-      model.traverse(object=>{object.geometry?.dispose?.();if(Array.isArray(object.material))object.material.forEach(material=>material.dispose());else object.material?.dispose?.()})
-      environment.dispose();pmrem.dispose();renderer.dispose();renderer.domElement.remove();sceneRef.current=null
-    }
+    return()=>{cancelAnimationFrame(raf);observer.disconnect();controls.dispose();labelTextures.forEach(texture=>texture.dispose());model.traverse(object=>{object.geometry?.dispose?.();if(Array.isArray(object.material))object.material.forEach(material=>material.dispose());else object.material?.dispose?.()});environment.dispose();pmrem.dispose();renderer.dispose();renderer.domElement.remove();sceneRef.current=null}
   },[])
 
   useEffect(()=>{sceneRef.current?.setCamera(view)},[view])
 
   return <section style={{background:'#fff',border:'1px solid #dbe3e9',borderRadius:22,overflow:'hidden',boxShadow:'0 16px 42px rgba(23,32,51,.1)'}}>
     <div style={{padding:'14px 16px',display:'flex',gap:12,alignItems:'center',justifyContent:'space-between',flexWrap:'wrap',borderBottom:'1px solid #e2e8f0'}}>
-      <div><b style={{fontSize:18,color:'#172033'}}>Northwest entry gallery</b><div style={{fontSize:12,color:'#64748b',marginTop:3}}>2,134 mm approach · 1,000 mm clear passage · main entrance door</div></div>
+      <div><b style={{fontSize:18,color:'#172033'}}>Northwest entry gallery</b><div style={{fontSize:12,color:'#64748b',marginTop:3}}>Outward-opening arrival door · shaft · shoe rack · door to Drawing Room</div></div>
       <div style={{display:'flex',gap:7}}><button onClick={()=>setView('overview')} style={buttonStyle(view==='overview')}>Overview</button><button onClick={()=>setView('top')} style={buttonStyle(view==='top')}>Top</button></div>
     </div>
     <div ref={mountRef} style={{height:'clamp(620px,82vh,1100px)',width:'100%'}}/>
-    <div style={{padding:'0 16px 15px',fontSize:12,color:'#64748b'}}>S ↑ · N ↓ · E ← · W → · Blue arrows show the approach and the right turn into the home.</div>
+    <div style={{padding:'0 16px 15px',fontSize:12,color:'#64748b'}}>S ↑ · N ↓ · E ← · W → · This view uses the same entry wall coordinates as Whole home 3D.</div>
   </section>
 }

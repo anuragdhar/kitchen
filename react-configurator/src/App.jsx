@@ -1,5 +1,6 @@
+import {storeStorageParts} from './StoreStorage.js'
 import React,{useState,useEffect,useRef,useMemo} from 'react'
-import {KITCHEN,KITCHEN_REFRIGERATOR,EAST_INIT,WEST_INIT,AIRY_WEST_INIT,EAST_TOP_UPPER_DEPTH,WEST_TOP_UPPER_DEPTH,KITCHEN_AUTOSAVE_KEY, LAYOUT_MODEL, MODULE_WIDTHS, MODULE_DEFS, PLINTH_HEIGHT, COUNTER_THICKNESS, BACKSPLASH_HEIGHT, autoFillModules} from './config/kitchenConfig.js'
+import {KITCHEN,KITCHEN_REFRIGERATOR,KITCHEN_STORE_STORAGE,EAST_INIT,WEST_INIT,AIRY_WEST_INIT,EAST_TOP_UPPER_DEPTH,WEST_TOP_UPPER_DEPTH,KITCHEN_AUTOSAVE_KEY,NORTH_HOB_OPTION_Y_MM, LAYOUT_MODEL, MODULE_WIDTHS, MODULE_DEFS, PLINTH_HEIGHT, COUNTER_THICKNESS, BACKSPLASH_HEIGHT, autoFillModules} from './config/kitchenConfig.js'
 import { DEFAULT_MATERIALS, VIEW_STYLE, HEIGHT_GUIDES, RENDER_CONFIG } from './config/renderConfig.js'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
@@ -37,11 +38,11 @@ export default function App(){
     const found=init.find(i=>i.id===it.id)
     return {...(found||{}),...it, w:it.w||it.width||found?.w||600, d:it.d||it.depth||found?.d||400, h:it.h||it.height||found?.h||400 }
   })
-  const migrateEastItems=(items=[])=>{
+  const migrateEastItems=(items=[],moveCurrentHob=false)=>{
     const list=fixList(items,EAST_INIT).filter(it=>eastIds.includes(it.id))
     const current=byId(list)
-    const hasNewShape= current.applianceGarage?.y===0 && current.microwave?.y===0 && [1200,1350].includes(current.gas?.y)
-    if(hasNewShape) return list.length? list : EAST_INIT
+    const hasNewShape= current.applianceGarage?.y===0 && current.microwave?.y===0 && [1200,1350,NORTH_HOB_OPTION_Y_MM].includes(current.gas?.y)
+    if(hasNewShape) return moveCurrentHob?list.map(it=>it.id==='gas'&&it.y===1350?{...it,y:NORTH_HOB_OPTION_Y_MM,label:'Gas cooktop moved north, with hidden chimney above'}:it):list
     return EAST_INIT
   }
   const migrateWestItems=(items=[])=>{
@@ -118,7 +119,7 @@ export default function App(){
   }
   const refineEastCookingZone=()=>setEast(items=>items.map(item=>{
     if(item.id==='applianceGarage') return {...item,w:600,d:500,h:420,x:KITCHEN.width-500,label:'Open 600 mm appliance garage below the microwave'}
-    if(item.id==='gas') return {...item,y:1350,label:'Gas cooktop 1350 mm from south, with hidden chimney above'}
+    if(item.id==='gas') return {...item,y:NORTH_HOB_OPTION_Y_MM,label:'Gas cooktop moved north, with hidden chimney above'}
     return item
   }))
 
@@ -127,8 +128,8 @@ export default function App(){
     const rows=[]
     const e=[...east].sort((a,b)=>a.y-b.y)
     const mw=e.find(x=>x.id==='microwave'), ag=e.find(x=>x.id==='applianceGarage'), gasE=e.find(x=>x.id==='gas'), eastSlider=e.find(x=>x.id==='eastBacksplashSlider')
-    const baselineEast=ag?.w===850&&ag?.d===600&&gasE?.y===1200
-    const refinedEast=ag?.w===600&&ag?.d===500&&ag?.h===420&&gasE?.y===1350
+    const baselineEast=ag?.w===850&&ag?.d===600&&[1200,NORTH_HOB_OPTION_Y_MM].includes(gasE?.y)
+    const refinedEast=ag?.w===600&&ag?.d===500&&ag?.h===420&&[1350,NORTH_HOB_OPTION_Y_MM].includes(gasE?.y)
     const eastOrderPass=!!(mw&&ag&&gasE&&eastSlider&&mw.y===0&&ag.y===0&&(baselineEast||refinedEast)&&eastSlider.d===102&&mw.open&&ag.open)
     rows.push({id:'east-order', rule:'East microwave, appliance garage and hob match a saved layout', status:eastOrderPass?'pass':'fail', measured:`mw y${mw?.y??'?'} garage ${ag?.w??'?'}W × ${ag?.d??'?'}D at y${ag?.y??'?'} gas y${gasE?.y??'?'} clear ${gasE&&ag?gasE.y-(ag.y+ag.w):'?'} mm`, expected:'baseline or refined east arrangement', fix:'Restore the baseline or apply the refined east cooking zone'})
 
@@ -222,7 +223,7 @@ export default function App(){
       const raw=localStorage.getItem(LS_KEY)
       if(raw){
         const p=JSON.parse(raw)
-        if(p.east && Array.isArray(p.east)) setEast(migrateEastItems(p.east))
+        if(p.east && Array.isArray(p.east)) setEast(migrateEastItems(p.east,true))
         if(p.west && Array.isArray(p.west)) setWest(migrateWestItems(p.west))
         if(p.grid===50||p.grid===100||p.grid===0) setGrid(p.grid)
         if(p.materials) setMaterials(prev=>normalizeKitchenMaterials({...prev,...p.materials}))
@@ -1183,6 +1184,11 @@ ${westRows}
         addBox(`LG refrigerator west door ${side+1}`,fridge.fromKitchenWestMm-22,fridgeSouthY+side*fridge.widthMm/2+5,13,22,fridge.widthMm/2-10,fridge.heightMm-26,makeMat('#c5c8ca',1,{metalness:.72,roughness:.24}))
         addBox(`LG refrigerator handle ${side+1}`,fridge.fromKitchenWestMm-46,fridgeSouthY+fridge.widthMm/2+(side===0?-82:52),430,24,30,930,makeMat('#3a3e42',1,{metalness:.5,roughness:.35}))
       }
+      const storageSliding=[]
+      for(const part of storeStorageParts()){
+        const mesh=addBox(part.name,part.x,-part.z-part.d,part.y,part.w,part.d,part.h,makeMat(part.color,1,{roughness:.72}))
+        if(part.sliding){storageSliding.push({mesh,z:mesh.position.z});mesh.userData.storageSliding=true;if(!clickableCabinets.includes(mesh))clickableCabinets.push(mesh)}
+      }
       addBox('ceiling',0,0,KITCHEN.height,KITCHEN.width,KITCHEN.length,36,'#f4eadf')
       addBox('recessed ceiling center',310,620,KITCHEN.height-50,1700,3500,28,'#eadac8')
       // --- Proper 2-bay north window: centre mullion only - top 610 fixed x2 / bottom 1190 sliding x2 ---
@@ -1934,6 +1940,12 @@ ${westRows}
         if(!hit) return
         e.stopPropagation()
         controls.enabled=false
+        if(hit.userData.storageSliding){
+          const opened=!hit.userData.opened
+          storageSliding.forEach(({mesh,z})=>{mesh.position.z=z+(opened?s(KITCHEN_STORE_STORAGE.slidingCover.travelMm):0);mesh.userData.opened=opened})
+          controls.enabled=true
+          return
+        }
         const wasOpened=hit.userData.opened
         const targetPos=wasOpened? hit.userData.originalPosition.clone() : hit.userData.originalPosition.clone().add(getOffsetForCabinet(hit))
         const startPos=hit.position.clone()

@@ -1,3 +1,4 @@
+import {createStudyFurniture} from './StudyFurniture.js'
 import React,{useEffect,useRef,useState} from 'react'
 import * as THREE from 'three'
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js'
@@ -10,11 +11,12 @@ const mm=value=>value/1000
 export default function StudyRoom3D(){
   const mountRef=useRef(null)
   const sceneRef=useRef(null)
-  const [preset,setPreset]=useState('overview')
-  const [showEastWall,setShowEastWall]=useState(true)
+  const [preset,setPreset]=useState('kids')
+  const [showEastWall,setShowEastWall]=useState(false)
   const [showNorthWall,setShowNorthWall]=useState(false)
   const [showLabels,setShowLabels]=useState(true)
   const [showDirections,setShowDirections]=useState(true)
+  const [kidsPreview,setKidsPreview]=useState('night')
 
   useEffect(()=>{
     const mount=mountRef.current
@@ -158,6 +160,9 @@ export default function StudyRoom3D(){
     for(const x of [.05,W-.05]) addBox(.03,.085,L,x,.05,L/2,trimMaterial)
     const rug=new THREE.Mesh(new THREE.PlaneGeometry(1.8,2.45),new THREE.MeshStandardMaterial({color:'#b9c8cf',roughness:.95,side:THREE.DoubleSide}))
     rug.rotation.x=-Math.PI/2;rug.position.set(W/2,.006,L/2);rug.receiveShadow=true;room.add(rug)
+    const {group:kidsGroup,nightBeds,daySeats}=createStudyFurniture(STUDY_ROOM)
+    room.add(kidsGroup)
+    kidsGroup.visible=kidsPreview!=='off';nightBeds.visible=kidsPreview==='night';daySeats.visible=kidsPreview==='day'
     const labels=[]
     const addLabel=(text,x,y,z,color='#2563eb')=>{
       const canvas=document.createElement('canvas');canvas.width=640;canvas.height=128
@@ -175,6 +180,7 @@ export default function StudyRoom3D(){
     const fill=new THREE.PointLight('#dbeafe',1.15,9);fill.position.set(W*.55,H*.72,L*.5);scene.add(fill)
     const setCamera=key=>{
       if(key==='top'){camera.position.set(W/2,7,L/2+.01);controls.target.set(W/2,0,L/2);camera.up.set(0,0,-1)}
+      else if(key==='kids'){camera.position.set(W/2+1.35,8.5,L+1.8);controls.target.set(W/2,.25,L/2);camera.up.set(0,1,0)}
       else if(key==='office'){camera.position.set(-4,H*.62,L*.55);controls.target.set(0,H*.4,(westOpeningStart+westOpeningEnd)/2);camera.up.set(0,1,0)}
       else if(key==='southCabinet'){camera.position.set(cabinetCenterX,H*.62,L-3.6);controls.target.set(cabinetCenterX,cabinetBottom+cabinetH*.5,L);camera.up.set(0,1,0)}
       else if(key==='mainEntry'){camera.position.set(.35,H*.62,1.7);controls.target.set(W,mainH*.48,(mainStart+mainEnd)/2);camera.up.set(0,1,0)}
@@ -182,25 +188,27 @@ export default function StudyRoom3D(){
       else{camera.position.set(W+2.25,H*1.08,L+2.45);controls.target.set(W/2,H*.44,L/2);camera.up.set(0,1,0)}
       camera.lookAt(controls.target);controls.update()
     }
-    setCamera('overview')
+    setCamera('kids')
     const resize=()=>{const width=mount.clientWidth,height=mount.clientHeight;renderer.setSize(width,height,false);camera.aspect=width/height;camera.updateProjectionMatrix()}
     const observer=new ResizeObserver(resize);observer.observe(mount);resize()
     let raf=0;const render=()=>{controls.update();renderer.render(scene,camera);raf=requestAnimationFrame(render)};render()
     eastGroup.visible=showEastWall;northGroup.visible=showNorthWall
-    sceneRef.current={setCamera,setEastVisible:value=>{eastGroup.visible=value},setNorthVisible:value=>{northGroup.visible=value},setLabelsVisible:value=>{labels.forEach(({sprite})=>{sprite.visible=value})},setDirectionsVisible:value=>{directionGroup.visible=value}}
+    sceneRef.current={setCamera,setEastVisible:value=>{eastGroup.visible=value},setNorthVisible:value=>{northGroup.visible=value},setKidsPreview:value=>{kidsGroup.visible=value!=='off';nightBeds.visible=value==='night';daySeats.visible=value==='day'},setLabelsVisible:value=>{labels.forEach(({sprite})=>{sprite.visible=value})},setDirectionsVisible:value=>{directionGroup.visible=value}}
     return()=>{cancelAnimationFrame(raf);observer.disconnect();controls.dispose();labels.forEach(({texture})=>texture.dispose());directionTextures.forEach(texture=>texture.dispose());room.traverse(object=>{object.geometry?.dispose?.();if(Array.isArray(object.material))object.material.forEach(m=>m.dispose());else object.material?.dispose?.()});environment.dispose();pmrem.dispose();renderer.dispose();renderer.domElement.remove();sceneRef.current=null}
   },[])
   useEffect(()=>{sceneRef.current?.setCamera(preset)},[preset])
   useEffect(()=>{sceneRef.current?.setEastVisible(showEastWall)},[showEastWall])
   useEffect(()=>{sceneRef.current?.setNorthVisible(showNorthWall)},[showNorthWall])
+  useEffect(()=>{sceneRef.current?.setKidsPreview(kidsPreview)},[kidsPreview])
   useEffect(()=>{sceneRef.current?.setLabelsVisible(showLabels)},[showLabels])
   useEffect(()=>{sceneRef.current?.setDirectionsVisible(showDirections)},[showDirections])
 
   return <section style={{marginTop:24,background:'#fff',border:'1px solid #dbe3e9',borderRadius:22,overflow:'hidden',boxShadow:'0 16px 42px rgba(23,32,51,.1)'}}>
     <div style={{padding:'14px 16px',display:'flex',alignItems:'center',justifyContent:'space-between',gap:12,flexWrap:'wrap',borderBottom:'1px solid #e2e8f0'}}>
-      <div><b style={{fontSize:17,color:'#172033'}}>Interactive study shell</b><div style={{fontSize:12,color:'#64748b',marginTop:3}}>3,239 × 4,908 mm · provisional 2,700 mm ceiling · drag to orbit · scroll to zoom</div></div>
+      <div><b style={{fontSize:17,color:'#172033'}}>Interactive study shell</b><div style={{fontSize:12,color:'#64748b',marginTop:3}}>3,239 × 4,908 mm · provisional 2,700 mm ceiling · drag to orbit · scroll to zoom</div><div style={{fontSize:12,color:'#6d28d9',fontWeight:700,marginTop:4}}>Kids layout preview: one east-wall single bed and one southeast study desk with chair</div></div>
       <div style={{display:'flex',gap:7,flexWrap:'wrap'}}>
-        {[['overview','Overview'],['top','Top'],['office','Office connection'],['southCabinet','South cabinet'],['mainEntry','Main entry'],['northBookshelf','North bookshelf']].map(([key,label])=><button key={key} onClick={()=>{setPreset(key);if(key==='mainEntry')setShowEastWall(true)}} style={{padding:'7px 10px',borderRadius:9,border:'1px solid #cbd5e1',background:preset===key?'#172033':'#fff',color:preset===key?'#fff':'#172033',fontWeight:800,cursor:'pointer'}}>{label}</button>)}
+        {[['kids','Kids layout'],['overview','Overview'],['top','Top'],['office','Office connection'],['southCabinet','South cabinet'],['mainEntry','Main entry'],['northBookshelf','North bookshelf']].map(([key,label])=><button key={key} onClick={()=>{setPreset(key);if(key==='mainEntry')setShowEastWall(true);if(key==='kids')setShowEastWall(false)}} style={{padding:'7px 10px',borderRadius:9,border:'1px solid #cbd5e1',background:preset===key?'#172033':'#fff',color:preset===key?'#fff':'#172033',fontWeight:800,cursor:'pointer'}}>{label}</button>)}
+        {[['night','Bed out'],['day','Day seat'],['off','Hide preview']].map(([key,label])=><button key={key} onClick={()=>setKidsPreview(key)} style={{padding:'7px 10px',borderRadius:9,border:'1px solid #a78bfa',background:kidsPreview===key?'#6d28d9':'#fff',color:kidsPreview===key?'#fff':'#6d28d9',fontWeight:800,cursor:'pointer'}}>{label}</button>)}
         <button onClick={()=>setShowEastWall(value=>!value)} style={{padding:'7px 10px',borderRadius:9,border:'1px solid #cbd5e1',background:showEastWall?'#fff':'#fee2e2',color:'#172033',fontWeight:800,cursor:'pointer'}}>{showEastWall?'Hide east wall':'Show east wall'}</button>
         <button onClick={()=>setShowNorthWall(value=>!value)} style={{padding:'7px 10px',borderRadius:9,border:'1px solid #cbd5e1',background:showNorthWall?'#fff':'#fee2e2',color:'#172033',fontWeight:800,cursor:'pointer'}}>{showNorthWall?'Hide north wall':'Show north wall'}</button>
         <button onClick={()=>setShowLabels(value=>!value)} style={{padding:'7px 10px',borderRadius:9,border:'1px solid #cbd5e1',background:showLabels?'#dbeafe':'#fff',color:'#172033',fontWeight:800,cursor:'pointer'}}>{showLabels?'Hide labels':'Show labels'}</button>

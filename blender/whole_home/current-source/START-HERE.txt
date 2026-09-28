@@ -1,0 +1,21 @@
+A501 — Coohom trial import package
+
+1. In Coohom create a design and choose Import floor plan / CAD.
+2. Select A501-floor-plan-import.dxf. Units are MILLIMETRES.
+3. Review wall recognition, door gaps, windows and room dimensions before accepting.
+4. Use A501-furnished-plan-reference.dxf as a separate placement reference, not as the wall-recognition input.
+5. A501-furnished-reference.glb preserves the modeled home for compatible 3D viewers. It is NOT a native editable Coohom project and normal Coohom model upload does not accept a whole furnished home.
+6. Recreate Coohom furniture or import supported individual objects separately. No Coohom import has been validated yet.
+
+CAD is exported from the current whole-home geometry, not a surveyed construction drawing.
+Individual rooms are scaled to the source plan bounds in the whole-home view; compare imported room dimensions against the dedicated room dimensions before construction.
+Furniture DXF is a reference projection, not editable Coohom furniture.
+GLB is a furnished reference; normal Coohom personal model upload excludes full-home models.
+GLB preserves current modeled detail, not every detail of the dedicated kitchen.
+Door and window recognition and dimensions need review after CAD import.
+
+Kitchen source: code defaults; export from your usual browser using the export button to include its saved kitchen
+
+Official guidance:
+https://blog.coohom.com/autocad-drawing-and-coohom-design-3d-design-and-fast-rendering/
+https://www.coohom.com/en_US/helpcenter/article/how-to-upload-my-own-3d-models
