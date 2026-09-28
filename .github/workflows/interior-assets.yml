@@ -1,0 +1,61 @@
+name: Interior asset preparation
+on:
+  push:
+    branches: [automation/interior-assets-20260928]
+permissions:
+  contents: read
+jobs:
+  assets:
+    if: startsWith(github.event.head_commit.message, 'prepare-interior-assets')
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - run: |
+          python .maintenance/download-interior-assets.py
+          git diff --check
+          git add react-configurator/public/materials
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'assets: bundle licensed species-specific wood and plaster PBR maps'
+          git push origin HEAD:refs/heads/automation/interior-assets-20260928
+      - uses: actions/upload-artifact@v4
+        with:
+          name: interior-materials
+          path: react-configurator/public/materials/
+          retention-days: 1
+  dependencies:
+    if: startsWith(github.event.head_commit.message, 'prepare-interior-assets')
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - run: npm ci --no-audit --no-fund
+        working-directory: react-configurator
+      - name: Package dependencies and runtime image inputs for local testing
+        run: |
+          tar -czf /tmp/interior-node-modules.tar.gz -C react-configurator node_modules
+          python - <<'PY'
+          import pathlib,subprocess,zipfile
+          with zipfile.ZipFile('/tmp/interior-runtime.zip','w',zipfile.ZIP_DEFLATED) as z:
+            for n in subprocess.check_output(['git','ls-files','-z']).decode().split('\0'):
+              p=pathlib.Path(n)
+              if p.is_file() and (n.startswith('Interior/') or n.startswith('react-configurator/public/')) and '/renders/' not in n and p.suffix.lower() in {'.jpg','.png','.jpeg','.dxf','.webp'}:
+                z.write(p,n)
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: interior-local-test-inputs
+          path: |
+            /tmp/interior-node-modules.tar.gz
+            /tmp/interior-runtime.zip
+          retention-days: 1
