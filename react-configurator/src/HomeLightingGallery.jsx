@@ -1,4 +1,5 @@
 import React from 'react'
+import WholeHomeRenderStudio from './WholeHomeRenderStudio.jsx'
 
 const views = [
   ['Drawing Room', 'drawing-room', 'Existing chandelier, wall wash and reading light'],
@@ -17,6 +18,7 @@ const views = [
 
 export default function HomeLightingGallery() {
   return <section style={{padding:'22px 20px',borderTop:'1px solid #e2e8f0',background:'#faf7f2'}}>
+    <WholeHomeRenderStudio/>
     <h2 style={{fontSize:22,margin:'0 0 6px',color:'#30281f'}}>Lighting and finish previews</h2>
     <p style={{margin:'0 0 16px',color:'#625a51',maxWidth:780}}>Warm beige plaster, sand ceilings and layered lighting across the current home layout. These Blender images show finish and fixture placement concepts; the furnishings and kitchen details remain simplified.</p>
     <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(300px,1fr))',gap:16}}>
