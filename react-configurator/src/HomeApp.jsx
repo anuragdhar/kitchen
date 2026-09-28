@@ -1,3 +1,4 @@
+import InteriorStudio from './home/InteriorStudio.jsx'
 import StorageGallery3D from './StorageGallery3D.jsx'
 import React,{useEffect,useState} from 'react'
 import KitchenConfigurator from './App.jsx'
@@ -36,7 +37,7 @@ function HomeHeader({section,onHome,onOpen3D}){
     <div style={{maxWidth:1920,margin:'0 auto',minHeight:68,padding:'0 clamp(18px,3vw,48px)',display:'flex',alignItems:'center',justifyContent:'space-between',gap:16}}>
       <button onClick={onHome} style={{...buttonStyle,background:'transparent',padding:'8px 0',fontSize:18,color:'#241f1a',display:'flex',alignItems:'center',gap:10}} aria-label="Return to whole home plan">
         <span style={{width:32,height:32,display:'grid',placeItems:'center',borderRadius:10,background:'#241f1a',color:'#fff'}}>H</span>
-        Home Design Studio
+        Home Interior
       </button>
       <div style={{display:'flex',alignItems:'center',gap:10}}>
         <span style={{fontSize:13,color:'#6f665e'}}>{section==='home'?'Whole home':rooms[section]?.name}</span>
@@ -226,6 +227,7 @@ export default function HomeApp(){
   const [section,setSection]=useState('home')
   useEffect(()=>{window.scrollTo({top:0,left:0,behavior:'auto'})},[section])
   return <>
+    <InteriorStudio/>
     <HomeHeader section={section} onHome={()=>setSection('home')} onOpen3D={()=>setSection('whole3d')}/>
     {section!=='home'&&section!=='dxf'&&<MiniFloorNavigator section={section} onOpen={setSection}/>}
     {section==='home'&&<WholeHome onOpen={setSection}/>} 

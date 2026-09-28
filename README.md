@@ -1,4 +1,4 @@
-# Home Design Studio
+# Home Interior
 
 React/Three.js home-design workspaces, kitchen layout tools, and CAD/rendering
 experiments. The application starts at `react-configurator/src/main.jsx` ->
@@ -83,3 +83,8 @@ foundation update. Generated files are not an alternative source of live geometr
 Keep original floor plans and authored assets. In particular, `HomeApp.jsx` imports
 an image from `Interior/`. Only the tracked dependency backup was removed; existing
 render evidence, models, and historical layouts remain available.
+
+## Whole-home interior studio
+
+Open **Interior studio** for the room-classified reference library. See
+[Inspiration guide](docs/INSPIRATION.md). Existing kitchen save files remain compatible.
