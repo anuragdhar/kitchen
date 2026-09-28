@@ -1,8 +1,10 @@
 {
   "version": 1,
   "enabled": true,
-  "request": "initial-room-review",
-  "rooms": ["kitchen", "balcony", "drawing"],
+  "request": "patch-2b2f066f3548f9ac",
+  "rooms": [
+    "lobby"
+  ],
   "quality": "draft",
   "device": "AUTO"
 }

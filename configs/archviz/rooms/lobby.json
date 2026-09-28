@@ -1,13 +1,14 @@
 {
   "label": "Lobby / Dining",
-  "lens": 28,
-  "eyeHeight": 1.5,
+  "lens": 30,
+  "eyeHeight": 1.2,
   "corner": [
-    0.12,
-    0.88
+    0.08,
+    0.3
   ],
   "target": [
-    0.65,
-    0.32
-  ]
+    0.635,
+    0.648
+  ],
+  "note": "Hero stands by the closed west partition looking north-east across the dining table to the pooja and east storage. Reverse stands in the north-east corner looking west along the table to the partition. A 1.2 m eye height keeps the camera nearly level so verticals stay straight."
 }
