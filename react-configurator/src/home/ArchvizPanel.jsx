@@ -3,13 +3,14 @@ import profiles from './archvizProfiles.js';
 import {getInteriorScenes,subscribeScenes} from '../render/interiorScene.js';
 import {exportArchvizBundle,downloadArchvizBundle} from '../render/archvizExport.js';
 import {validateRenderGallery} from '../render/archvizContract.mjs';
+import {sourceSceneForRoom,usesEditableRoomSource} from '../render/roomParity.mjs';
 
 export default function ArchvizPanel(){
   const summary=useSyncExternalStore(subscribeScenes,()=>JSON.stringify(getInteriorScenes().map(r=>({id:r.id,ready:r.ready,errors:r.errors}))));
   const records=JSON.parse(summary);
   const [selectedScene,setSelectedScene]=useState(''),[room,setRoom]=useState(''),[busy,setBusy]=useState(false);
   const [message,setMessage]=useState(''),[gallery,setGallery]=useState(null);
-  const sceneId=records.some(r=>r.id===selectedScene)?selectedScene:records[0]?.id||'';
+  const sceneId=sourceSceneForRoom(records,selectedScene,room);
   const ready=records.find(r=>r.id===sceneId)?.ready;
   async function download(){
     setBusy(true);setMessage('Capturing the actual editable scene, textures and camera…');
@@ -29,12 +30,12 @@ export default function ArchvizPanel(){
   }
   return <section aria-label="Current design Blender export">
     <h3>Current design → Blender</h3>
-    <p>Use this for the kitchen and balcony office: it exports the <strong>actual editable 3D scene</strong>, not the older whole-home Blender model. Furniture positions, selected finishes, desk height and visible cabinet state travel with the export.</p>
-    <p>Open the room’s <strong>Editable workspace</strong> and its 3D view first. Choose an interior camera and the intended door/wall visibility. The room profile below controls photographic treatment; it does not crop or replace the source geometry.</p>
+    <p>Bedroom 3, the kitchen and balcony office use the <strong>actual editable 3D scene</strong>, never the older whole-home Blender model. Furniture positions, selected finishes, desk height and visible cabinet state travel with the export. Geometry beyond the room walls is retained at its authored depth.</p>
+    <p>Open the room’s <strong>Editable workspace</strong> and its 3D view first. Choose an interior camera and the intended door/wall visibility. The room profile controls photographic treatment; it does not crop or replace the source geometry.</p>
     <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(min(100%,220px),1fr))',gap:12}}>
       <label>Source 3D scene<select aria-label="Source 3D scene" value={sceneId} onChange={e=>setSelectedScene(e.target.value)} disabled={busy}>
-        {!records.length&&<option value="">Open an editable 3D room first</option>}
-        {records.map(r=><option key={r.id} value={r.id}>{r.id} — {r.ready?'ready':r.errors.length?r.errors.join('; '):'loading'}</option>)}
+        {!sceneId&&<option value="">Open this room’s editable 3D workspace first</option>}
+        {records.map(r=><option key={r.id} value={r.id} disabled={usesEditableRoomSource(room)&&r.id!==room}>{r.id} — {r.ready?'ready':r.errors.length?r.errors.join('; '):'loading'}</option>)}
       </select></label>
       <label>Room render profile<select aria-label="Room render profile" value={room} onChange={e=>setRoom(e.target.value)} disabled={busy}>
         <option value="">Select the room shown in the source scene</option>
@@ -42,6 +43,8 @@ export default function ArchvizPanel(){
       </select></label>
     </div>
     {room&&<p>{profiles.rooms[room].note||'Retain the authored furnishings and finishes; use a room-specific camera and lighting pass.'}</p>}
+    {room==='bedroom3'&&<p><strong>Bedroom 3:</strong> choose <strong>Balcony door + window</strong> in the workspace before exporting to include the south wall openings. The overview cutaway hides that wall group. The south cabinet and balcony must not be clipped to the internal room rectangle.</p>}
+    {usesEditableRoomSource(room)&&!sceneId&&<p role="status">The {room} editable scene is not open. A whole-home scene or another room cannot substitute for it.</p>}
     <div className="interior-row" style={{marginTop:12,flexWrap:'wrap'}}>
       <button disabled={busy||!ready||!room} onClick={download}>{busy?'Working…':'Export current design for Blender'}</button>
       <button disabled={busy} onClick={load}>Load completed room renders</button>
@@ -51,7 +54,8 @@ export default function ArchvizPanel(){
       <p>From the repository root, using your installed Blender executable:</p>
       <pre style={{whiteSpace:'pre-wrap',overflowWrap:'anywhere'}}>blender --background --python-exit-code 1 --python blender/render_archviz.py -- --bundle "path/to/A501-{room||'room'}-archviz.zip" --quality draft</pre>
       <p>The ZIP contains the model, source audit and reference screenshot. Use <code>--quality final</code> or <code>--quality portfolio</code> after reviewing the draft. Blender prints a progress heartbeat every 30 seconds during each render.</p>
-      <p>Drawing Room and Bedroom 3 can also render their detailed authored Blender sources with <code>--room drawing</code> or <code>--room bedroom3</code>. These are explicitly identified as snapshots, not current browser edits.</p>
+      <p>Use <code>python scripts/render_archviz_rooms.py --rooms {room||'kitchen,balcony,bedroom3'} --input "path/to/exports"</code> to render and publish the matching room preview together. Add <code>--export-defaults</code> only for repository defaults, not your current browser saves.</p>
+      <p>Drawing Room can still render its detailed archived source with <code>--room drawing</code>. Bedroom 3 now requires an editable export so its south extension and openings cannot silently revert to the historical model.</p>
     </details>
     <p><small>No existing saved project, layout, source model or baked interactive preview is overwritten. Images still need visual review; geometry checks do not certify construction clearances.</small></p>
     {gallery&&gallery.renders.filter(r=>!room||r.room===room).map(render=><section key={render.room}>
