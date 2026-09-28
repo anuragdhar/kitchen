@@ -81,7 +81,7 @@ promised visual match. More samples alone cannot supply missing design detail.
 
 Quality: draft 960px/48 samples, final 1920px/256, portfolio 2560px/512. Height
 follows camera aspect. Adaptive sampling, AgX and denoising are used. The internal
-192px test tier is for CI, not approval. `--shots current` limits a single-room
+192px test tier is for local checks, not approval. `--shots current` limits a single-room
 review to the captured camera. No speed or designer-quality guarantee is implied.
 
 Automatic navigation covers kitchen, balcony, study, bedrooms 1/3, drawing,
@@ -107,11 +107,11 @@ python -m unittest discover -s blender -p test_archviz.py -v
 Validation checks matching gallery/provenance, PNG headers/dimensions and SHA-256,
 not artistic quality or full image decoding. Review current/reference alignment,
 objects, visible state, camera framing, exposure, materials, noise and shadows.
-Images remain unreviewed until assessed. The workflow tests source contracts,
-app build, browser export, Blender imports and a tiny CPU fixture; it does not
+Images remain unreviewed until assessed. The local worker tests source contracts,
+app build, browser export and Blender rendering; it does not
 certify full-resolution interiors, physical mobile devices or Windows GPU speed.
 
 See `docs/RENDER_WORKER.md` for the continuous Windows worker, privacy, publication
 and local log paths. This delivery's local contract checks passed; full app,
-browser and Blender results must be read from actual CI/local execution, not
+browser and Blender results must be read from actual local execution, not
 inferred from publication or merging.

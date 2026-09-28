@@ -54,13 +54,10 @@ cd ..
 node .devcontainer/smoke.cjs
 ```
 
-The Codespaces preview workflow tests configuration, startup, repeated startup,
-locked dependency installation, the production build, and a real Chromium home
-page. It also runs the existing correctness and persistence browser suites
-against port 5173. Logs/screenshots are CI evidence, not approved visual baselines.
-Passing CI does **not** prove GitHub's Codespaces provisioning, authenticated
-forwarded URL, browser GPU behavior, or Blender rendering. Those require their
-own checks in a live Codespace. Blender is not installed by this configuration.
+The repository does not run a GitHub-hosted Codespaces test workflow. Run the
+app build, correctness and persistence suites on the local machine as described
+in `docs/TESTING.md`. Browser screenshots are smoke evidence, not approved
+visual baselines. Blender is not installed by this Codespaces configuration.
 
 ## Access and costs
 

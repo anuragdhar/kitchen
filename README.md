@@ -58,7 +58,9 @@ It checks the current kitchen baseline, pure geometry checks, inspection helpers
 and Windows launcher organization. Launcher execution checks run on Windows and
 are explicitly skipped on other platforms. `npm run check` additionally builds
 the application and needs `npm ci`.
-GitHub Actions runs the same tests and production build on pull requests.
+Tests and the production build run on the local machine. The Windows render
+worker also runs browser and Blender checks before publishing render evidence;
+see [Windows local render worker](docs/RENDER_WORKER.md).
 Neither command is a full visual or construction-safety assessment.
 
 With the dev server running in a separate terminal:

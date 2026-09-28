@@ -112,10 +112,6 @@ def publication_paths(paths, run):
 
 def merge_ready(pr, head, branch):
     if pr.get('state')!='OPEN' or pr.get('isDraft') or pr.get('baseRefName')!='main' or pr.get('headRefName')!=branch or pr.get('headRefOid')!=head: return False
-    for check in pr.get('statusCheckRollup') or []:
-        if check.get('__typename')=='StatusContext':
-            if check.get('state')!='SUCCESS': return False
-        elif check.get('status')!='COMPLETED' or check.get('conclusion') not in ('SUCCESS','NEUTRAL','SKIPPED'): return False
     return True
 
 
@@ -195,6 +191,9 @@ class Worker:
         for key in list(env):
             if re.search('TOKEN|SECRET|PASSWORD|API_KEY',key): env.pop(key)
         env.update(PYTHONUNBUFFERED='1',PLAYWRIGHT_BROWSERS_PATH=str(self.home/'browsers'))
+        if os.name=='nt' and 'PLAYWRIGHT_CHROMIUM_EXECUTABLE' not in env:
+            chrome=Path(env.get('PROGRAMFILES',r'C:\Program Files'))/'Google/Chrome/Application/chrome.exe'
+            if chrome.is_file(): env['PLAYWRIGHT_CHROMIUM_EXECUTABLE']=str(chrome)
         kwargs={'creationflags':subprocess.CREATE_NEW_PROCESS_GROUP} if os.name=='nt' else {'start_new_session':True}
         with raw.open('w',encoding='utf-8') as log:
             p=subprocess.Popen([str(a) for a in argv],cwd=cwd,env=env,stdin=subprocess.DEVNULL,stdout=log,stderr=subprocess.STDOUT,**kwargs)
@@ -278,10 +277,21 @@ class Worker:
                 if sha256(target)!=expected: raise ValueError('Input changed during copy; retry after saving it completely')
             app=work/'react-configurator';npm=[self.node,self.npm]
             stages=[('dependencies',npm+['ci','--no-audit','--no-fund'],app),('build-tests',npm+['run','check'],app),
-                    ('archviz-tests',[self.node,'--test','tests/archviz.test.mjs'],app),
-                    ('python-tests',[sys.executable,'-m','unittest','discover','-s','blender','-p','test_archviz.py'],work),
+                    ('archviz-tests',[self.node,'--test','tests/archviz.test.mjs','tests/parallel-profiles.test.mjs','tests/whole-home-render.test.mjs'],app),
+                    ('python-archviz',[sys.executable,'-m','unittest','discover','-s','blender','-p','test_archviz.py'],work),
+                    ('python-profiles',[sys.executable,'-m','unittest','discover','-s','blender','-p','test_parallel_profiles.py'],work),
+                    ('python-whole-home',[sys.executable,'-m','unittest','discover','-s','blender','-p','test_whole_home_render.py'],work),
+                    ('python-worker',[sys.executable,'-m','unittest','discover','-s','scripts/tests','-p','test_render_worker.py'],work),
+                    ('python-parallel',[sys.executable,'-m','unittest','discover','-s','scripts/tests','-p','test_parallel_rooms.py'],work),
+                    ('python-compile',[sys.executable,'-m','compileall','-q','blender','scripts'],work),
                     ('chromium',[self.node,'node_modules/playwright/cli.js','install','chromium'],app),
-                    ('browser-fixture',[self.node,'scripts/archviz-fixture-browser.mjs'],app)]
+                    ('browser-fixture',[self.node,'scripts/archviz-fixture-browser.mjs'],app),
+                    ('browser-correctness',npm+['run','test:browser'],app),
+                    ('browser-persistence',npm+['run','test:persistence'],app),
+                    ('browser-interior',[self.node,'scripts/interior-browser.cjs'],app),
+                    ('browser-materials',npm+['run','test:materials'],app),
+                    ('browser-lighting',npm+['run','test:lighting'],app),
+                    ('devcontainer-config',[self.node,'--test','.devcontainer/config.test.mjs'],work)]
             render=[sys.executable,'scripts/render_archviz_rooms.py','--rooms',','.join(job['rooms']),'--quality',job['quality'],
                     '--device',job['device'],'--input',str(folder/'inputs'),'--public',str(folder/'public')]
             if self.args.blender: render+=['--blender',self.args.blender]
@@ -334,9 +344,11 @@ class Worker:
             if len(prs)!=1: raise ValueError('Expected exactly one evidence PR')
             item.update(phase='pr',pr=prs[0]['number'],url=prs[0]['url']);self.save();print('WORKER_REVIEW',item['url'],flush=True)
         if item['phase']=='pr':
-            # Failed jobs remain review PRs; they never receive automatic approval.
+            # Only locally passed jobs can reach this merge path.
             if not self.args.auto_merge_evidence or item['status']!='passed': item['phase']='done';return
-            pr=json.loads(control([self.gh,'pr','view',str(item['pr']),'--repo',REPO,'--json','state,isDraft,baseRefName,headRefName,headRefOid,statusCheckRollup,files,createdAt'],self.home))
+            with self.guard: latest=self.latest
+            if item['source']!=latest: item['phase']='done';return
+            pr=json.loads(control([self.gh,'pr','view',str(item['pr']),'--repo',REPO,'--json','state,isDraft,baseRefName,headRefName,headRefOid,files,createdAt'],self.home))
             if pr['state'] in ('MERGED','CLOSED'): item['phase']='done';return
             age=(datetime.now(timezone.utc)-datetime.fromisoformat(pr['createdAt'].replace('Z','+00:00'))).total_seconds()
             if age<120 or not merge_ready(pr,item['head'],branch): return

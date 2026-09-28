@@ -12,8 +12,9 @@ npm run check
 ```
 
 `npm test` runs Node's test runner with explicit test-file paths (including on Windows) with no external packages.
-`npm run check` runs that suite and `vite build`. CI executes the tests before
-installing packages so a registry/install failure is not confused with a test failure.
+`npm run check` runs that suite and `vite build`. Run these commands locally;
+the repository has no GitHub-hosted test workflows. The Windows render worker
+runs its checks in an isolated local checkout before publishing render evidence.
 The fast gate currently has no repository-wide lint or type-check stage; do not
 claim those checks ran. Add them incrementally rather than reformatting all files.
 

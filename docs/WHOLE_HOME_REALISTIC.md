@@ -126,7 +126,7 @@ python -m py_compile blender/render_whole_home_realistic.py blender/whole_home_r
 
 Also run the normal app gate from `react-configurator/`: `npm ci`, then
 `npm run check`. The focused test is deliberately runnable without dependencies
-and has its own CI workflow; it does not silently claim to be part of `npm test`.
+and is included in the Windows worker's local contracts; it is not part of `npm test`.
 
 Before acceptance, render a no-decor draft, inspect candidate surfaces, add a
 single item, and rerender. Review a large room, the narrow balcony/Pooja views,
@@ -137,4 +137,4 @@ studio on desktop and mobile and verify the old model/render/editable tabs.
 Local development validation: focused Node and Python contract tests and Python
 compilation were executed; JSX was syntax-checked separately. **NOT RUN:** Blender,
 full npm dependency installation/build, browser interaction, image review, GPU
-performance and construction checks. Do not treat contract CI as visual acceptance.
+performance and construction checks. Do not treat contract tests as visual acceptance.

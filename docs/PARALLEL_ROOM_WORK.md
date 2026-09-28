@@ -70,10 +70,10 @@ node --test react-configurator/tests/archviz.test.mjs react-configurator/tests/p
 The scope check includes committed differences since merge-base, staged changes,
 unstaged changes and non-ignored new files. Rename detection is disabled so moving
 a file out of an owned path cannot conceal a shared-file deletion. Use
-`--committed-only` for a specific CI revision. Scope checks are not render checks.
-The parallel-room workflow repeats contracts on Linux and Windows and checks
-specialist PR paths. Coordinator branches still require normal review and CI.
-The normal app build and existing archviz workflow remain separate gates.
+`--committed-only` for a specific revision. Scope checks are not render checks.
+Run these contracts and specialist scope checks on the local machine. The
+Windows render worker runs the contracts, app build, browser checks and renders
+locally before publishing evidence. Coordinator branches still require review.
 
 ## Profile format and compatibility
 

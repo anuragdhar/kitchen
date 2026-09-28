@@ -4,7 +4,7 @@ const assert=require('node:assert/strict');const fs=require('node:fs');const pat
  try{
   server=spawn(process.execPath,['node_modules/vite/bin/vite.js','--host','127.0.0.1','--port','4183','--strictPort'],{stdio:['ignore','pipe','pipe']});server.stdout.on('data',b=>log+=b);server.stderr.on('data',b=>log+=b);
   const url='http://127.0.0.1:4183/?kitchenView=top';let ready=false;for(let i=0;i<150;i++){if(server.exitCode!==null)throw Error(log);try{if((await fetch(url)).ok){ready=true;break;}}catch{}await new Promise(r=>setTimeout(r,200));}assert.ok(ready,log);
-  browser=await chromium.launch();page=await browser.newPage({viewport:{width:1280,height:900}});page.setDefaultTimeout(60000);page.on('pageerror',e=>errors.push(e.message));await page.goto(url);
+  browser=await chromium.launch(process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE?{executablePath:process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE}:{});page=await browser.newPage({viewport:{width:1280,height:900}});page.setDefaultTimeout(60000);page.on('pageerror',e=>errors.push(e.message));await page.goto(url);
   await page.getByRole('button',{name:'Open Main entry',exact:true}).first().click({noWaitAfter:true});
   await page.getByRole('button',{name:'Editable workspace',exact:true}).click({noWaitAfter:true});
   await page.evaluate(async()=>{window.__rig=await import('/src/render/interiorScene.js');window.__lights=await import('/src/home/lightingStore.mjs');const s=window.__lights.lightingStore;s.set({...s.getSnapshot(),mode:'day'});});await page.waitForFunction(()=>window.__rig.getInteriorScene('entry')?.ready);

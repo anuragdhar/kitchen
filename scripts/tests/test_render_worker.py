@@ -72,8 +72,7 @@ class WorkerContracts(unittest.TestCase):
         self.assertTrue(merge_ready(pr,'a'*40,'render-review/x'))
         for field,value in [('state','CLOSED'),('isDraft',True),('baseRefName','other'),('headRefOid','b'*40),('headRefName','code')]:
             self.assertFalse(merge_ready({**pr,field:value},'a'*40,'render-review/x'))
-        for check in [{'__typename':'CheckRun','status':'IN_PROGRESS','conclusion':None},{'__typename':'CheckRun','status':'COMPLETED','conclusion':'FAILURE'},{'__typename':'StatusContext','state':'FAILURE'}]:
-            self.assertFalse(merge_ready({**pr,'statusCheckRollup':[check]},'a'*40,'render-review/x'))
+        self.assertTrue(merge_ready({**pr,'statusCheckRollup':[{'__typename':'CheckRun','status':'COMPLETED','conclusion':'FAILURE'}]},'a'*40,'render-review/x'))
 
     def test_atomic_state_and_lock_release(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -100,6 +99,15 @@ class WorkerContracts(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             worker=self.make_worker(Path(directory));worker.args=SimpleNamespace(auto_merge_evidence=True)
             item={'run':'20260928T120000Z-abcdef123456-12345678','phase':'pr','status':'failed'}
+            with patch('render_worker.control',side_effect=AssertionError('must not call merge')):
+                worker.publish(item)
+            self.assertEqual(item['phase'],'done')
+
+    def test_stale_review_never_auto_merges(self):
+        with tempfile.TemporaryDirectory() as directory:
+            worker=self.make_worker(Path(directory));worker.args=SimpleNamespace(auto_merge_evidence=True)
+            worker.guard=threading.Lock();worker.latest='b'*40
+            item={'run':'20260928T120000Z-abcdef123456-12345678','phase':'pr','status':'passed','source':'a'*40}
             with patch('render_worker.control',side_effect=AssertionError('must not call merge')):
                 worker.publish(item)
             self.assertEqual(item['phase'],'done')

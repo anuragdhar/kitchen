@@ -42,7 +42,7 @@ From the updated repository:
 .\scripts\windows\Start-RenderWorker.ps1 -TrustMain -Once
 # Continuous operation with review PR uploads:
 .\scripts\windows\Start-RenderWorker.ps1 -TrustMain -Publish
-# Optional automatic merge of successful evidence-only PRs after checks:
+# Optional automatic merge of successful evidence-only PRs after local checks:
 .\scripts\windows\Start-RenderWorker.ps1 -TrustMain -Publish -AutoMergeEvidence
 ```
 
@@ -67,8 +67,10 @@ network delays can extend a poll. Active jobs keep their revision. The newest
 source is used next and intermediate queued revisions are coalesced. Long stages
 print 30-second progress heartbeats and write logs.
 
-The fixed sequence is npm ci, npm run check, focused JavaScript/Python contracts,
-browser export fixture, and sequential room export/render/output validation.
+The fixed sequence is npm ci, npm run check, JavaScript/Python contracts,
+browser fixture/correctness/persistence/interior/material/lighting checks,
+and sequential room export/render/output validation. All commands execute on
+this Windows machine in the worker's isolated checkout.
 Failed stages stop that job. Failure diagnostics may get PRs but do not auto-merge.
 Images are always **unreviewed**; process success is not artistic approval.
 
@@ -120,10 +122,11 @@ These are review artifacts, not a deployment into the normal app gallery/server.
 
 A persistent outbox retries failed publication without re-running Blender. No
 force push is used. Optional auto-merge requires a successful local job, artifact
-paths only, matching expected head SHA, main base and successful/neutral/skipped
-completed GitHub checks. Repository rules still apply; no admin bypass or check
-disabling is used. Existing failed checks can leave a PR open. Manually closed
-PRs are respected. A one-shot run does not wait indefinitely for auto-merge;
+paths only, matching expected head SHA and main base. GitHub is used for Git and
+the review PR; it does not run tests or provide a merge check. Repository rules
+still apply; no admin bypass is used. Reviews for a superseded main commit stay
+open for manual review. Manually closed PRs are respected. A one-shot run does
+not wait indefinitely for auto-merge;
 remaining publication/merge work resumes on the next worker invocation.
 
 Limits: 20 MiB per published file, 80 MiB per review, 2 MiB published text per
@@ -139,8 +142,8 @@ Stop the worker before cleaning its old worktrees. Local status is
 python -m unittest discover -s scripts/tests -p test_render_worker.py -v
 ```
 
-The workflow repeats contracts on Linux/Windows and parses the PowerShell
-launcher. These tests are not end-to-end Windows GPU, UI or visual acceptance.
+The worker repeats contracts and browser checks locally on Windows. The render
+stage exercises Blender, but process success is not visual acceptance.
 Official references: https://git-scm.com/docs/git-worktree,
 https://cli.github.com/manual/gh_auth_setup-git,
 https://cli.github.com/manual/gh_pr_merge.

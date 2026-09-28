@@ -1,6 +1,6 @@
 Repository: anuragdhar/kitchen. Coordinate parallel room refinement. Read
 AGENTS.md, CURRENT_STATE.md, ROOM_ARCHVIZ.md, TESTING.md, RENDER_WORKER.md
-and PARALLEL_ROOM_WORK.md. Verify latest main and actual CI/render evidence.
+and PARALLEL_ROOM_WORK.md. Verify latest main and actual local test/render evidence.
 
 The foundation already separates profiles and provides no-op detailing hooks,
 room scope checks, worktree setup and specialist prompts. Do not build a second
