@@ -3,6 +3,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import {spawn} from 'node:child_process';
 import {chromium} from 'playwright';
+import JSZip from 'jszip';
 const out=path.resolve('test-results/archviz');await fs.mkdir(out,{recursive:true});
 let server,browser,log='';
 try{
@@ -22,8 +23,10 @@ try{
     camera.position.set(2200,1600,2600);camera.lookAt(0,400,0);
     const renderer=new THREE.WebGLRenderer({preserveDrawingBuffer:true});renderer.setSize(600,400);
     const furniture=new THREE.Group();furniture.rotation.y=.37;furniture.position.set(150,0,-200);scene.add(furniture);
-    const cabinet=new THREE.Mesh(new THREE.BoxGeometry(600,800,300),new THREE.MeshStandardMaterial({color:'#b7a282',roughness:.45}));cabinet.position.y=400;cabinet.name='Known 600 mm cabinet';furniture.add(cabinet);
-    const floor=new THREE.Mesh(new THREE.BoxGeometry(5000,80,5000),new THREE.MeshStandardMaterial({color:'#c9c7c2'}));floor.position.y=-40;scene.add(floor);
+    const texture=color=>{const canvas=document.createElement('canvas');canvas.width=canvas.height=4;const ctx=canvas.getContext('2d');ctx.fillStyle=color;ctx.fillRect(0,0,4,4);return new THREE.CanvasTexture(canvas);};
+    const material=new THREE.MeshStandardMaterial({map:texture('#b7a282'),normalMap:texture('#8080ff'),roughnessMap:texture('#888888'),roughness:.45});
+    const cabinet=new THREE.Mesh(new THREE.BoxGeometry(600,800,300),material);cabinet.position.y=400;cabinet.name='Known 600 mm cabinet';furniture.add(cabinet);
+    const floor=new THREE.Mesh(new THREE.BoxGeometry(5000,80,5000),material.clone());floor.position.y=-40;scene.add(floor);
     const hidden=new THREE.Group();hidden.visible=false;hidden.add(new THREE.Mesh(new THREE.BoxGeometry(99999,99999,99999),new THREE.MeshBasicMaterial()));scene.add(hidden);
     const fixture=new THREE.Group();fixture.userData.interiorFixture=true;fixture.add(new THREE.Mesh(new THREE.BoxGeometry(20000,20000,20000),new THREE.MeshBasicMaterial()));scene.add(fixture);
     const record=registerInteriorScene({id:'archviz-test-fixture',scene,camera,renderer,metresPerUnit:.001});await record.whenReady;
@@ -33,6 +36,10 @@ try{
     return {count,unchanged,manifest};
   });
   await (await download).saveAs(path.join(out,'fixture.zip'));
+  const zip=await JSZip.loadAsync(await fs.readFile(path.join(out,'fixture.zip')));
+  const glb=await zip.file('scene.glb').async('nodebuffer');
+  const gltf=JSON.parse(glb.subarray(20,20+glb.readUInt32LE(12)).toString());
+  assert.equal(gltf.images.length,3,'equivalent materials reuse their color, normal and roughness images');
   assert.equal(result.count,2);assert.equal(result.unchanged,true);assert.equal(result.manifest.metresPerSourceUnit,.001);assert.deepEqual(errors,[]);
   await fs.writeFile(path.join(out,'fixture-result.json'),JSON.stringify(result,null,2));
   console.log('ARCHVIZ_FIXTURE_OK: millimetres, rotated hierarchy, hidden ancestor, overlay exclusion and non-mutation');

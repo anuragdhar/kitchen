@@ -11,6 +11,7 @@ const fs=require('node:fs');const path=require('node:path');const {spawn}=requir
   page=await browser.newPage({viewport:{width:1280,height:900}});page.setDefaultTimeout(60000);page.on('pageerror',e=>errors.push(e.message));await page.goto(url);
   // A small real authored room exercises WebGL and material ownership, not a synthetic colour swatch.
   await page.getByRole('button',{name:'Open Main entry',exact:true}).first().click({noWaitAfter:true});
+  await page.getByRole('button',{name:'Editable workspace',exact:true}).click({noWaitAfter:true});
   await page.evaluate(async()=>{window.__interiorScenes=await import('/src/render/interiorScene.js');window.__appearance=await import('/src/home/appearanceStore.mjs');});
   await page.waitForFunction(()=>window.__interiorScenes.getInteriorScene('entry')?.ready);
   const snapshot=()=>page.evaluate(()=>{
@@ -29,7 +30,7 @@ const fs=require('node:fs');const path=require('node:path');const {spawn}=requir
   for(const wood of ['red-oak','cherry']){await page.evaluate(wood=>{const store=window.__appearance.appearanceStore;store.set({...store.getSnapshot(),wood});},wood);await page.waitForFunction(()=>{const r=window.__interiorScenes.getInteriorScene('entry');return r?.ready&&r.revision===window.__appearance.appearanceStore.getRevision();});assert.deepEqual((await snapshot()).geometry,baseline.geometry);}
   await page.evaluate(()=>{const store=window.__appearance.appearanceStore;store.set({...store.getSnapshot(),rooms:{entry:{wood:'teak'}}});});await page.waitForFunction(()=>window.__interiorScenes.getInteriorScene('entry')?.ready);assert.ok((await snapshot()).materials.some(m=>m.id==='teak'));
   await page.getByRole('button',{name:'Return to whole home plan',exact:true}).click({noWaitAfter:true});await page.waitForFunction(()=>window.__interiorScenes.getInteriorScenes().length===0);
-  await page.getByRole('button',{name:'Open Main entry',exact:true}).first().click({noWaitAfter:true});await page.waitForFunction(()=>window.__interiorScenes.getInteriorScene('entry')?.ready);
+  await page.getByRole('button',{name:'Open Main entry',exact:true}).first().click({noWaitAfter:true});await page.getByRole('button',{name:'Editable workspace',exact:true}).click({noWaitAfter:true});await page.waitForFunction(()=>window.__interiorScenes.getInteriorScene('entry')?.ready);
   await page.getByRole('button',{name:'Interior studio',exact:true}).click();await dialog.getByRole('button',{name:'Materials',exact:true}).click();await page.screenshot({path:path.join(out,'materials-panel.png')});
   assert.deepEqual(errors,[]);fs.writeFileSync(path.join(out,'result.json'),JSON.stringify({passed:['real PBR maps for all four species','unchanged geometry','untagged surfaces preserved','visible rendered difference','room overrides','scene cleanup/remount'],surfaceCount:baseline.count,pageErrors:errors},null,2));
  }catch(error){fs.writeFileSync(path.join(out,'failure.txt'),String(error)+'\n'+output+'\n'+errors.join('\n'));if(page)await page.screenshot({path:path.join(out,'failure.png'),timeout:5000}).catch(()=>{});throw error;}
