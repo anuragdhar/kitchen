@@ -1,16 +1,20 @@
 """Create an editable Blender scene and two first-pass home renders.
 
-Run with Blender in background mode. The source GLB comes from the app's
-whole-home exporter, so this scene is a visual concept rather than a survey.
+Run with Blender in background mode and pass --source after Blender's --:
+blender --background --python blender/render_whole_home.py -- --source path/to/scene.glb
+The source must be an unbaked editable GLB; this is a visual concept, not a survey.
+For current individual rooms use scripts/render_archviz_rooms.py instead.
 """
 
+import argparse
 from pathlib import Path
+import sys
 from mathutils import Vector
 import bpy
 
-
 ROOT = Path(__file__).resolve().parents[1]
-SOURCE = ROOT / "exports" / "coohom" / "files" / "A501-furnished-reference.glb"
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from archviz_contract import inspect_glb
 OUTPUT = ROOT / "blender" / "whole_home"
 
 
@@ -59,23 +63,23 @@ def render(camera, filename):
 
 
 def main():
-    if not SOURCE.exists():
-        raise FileNotFoundError(SOURCE)
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--source', type=Path, required=True, help='Explicit unbaked editable GLB; no retired exporter fallback')
+    args = parser.parse_args(sys.argv[sys.argv.index('--')+1:] if '--' in sys.argv else [])
+    source = args.source.resolve()
+    if not source.is_file():
+        raise FileNotFoundError(source)
+    inspect_glb(source)
     OUTPUT.mkdir(parents=True, exist_ok=True)
     bpy.ops.object.select_all(action="SELECT")
     bpy.ops.object.delete(use_global=False)
-    bpy.ops.import_scene.gltf(filepath=str(SOURCE))
-    # The export emits the shared wall finish first. Give it the requested
-    # muted clay-beige tone while preserving the other source materials.
-    wall_finish = bpy.data.materials["Material_0"]
-    wall_finish.name = "Muted earthen blush walls"
-    wall_finish.diffuse_color = (0.70, 0.53, 0.48, 1)
-    wall_finish.use_nodes = True
-    wall_bsdf = wall_finish.node_tree.nodes.get("Principled BSDF")
-    wall_bsdf.inputs["Base Color"].default_value = (0.70, 0.53, 0.48, 1)
-    wall_bsdf.inputs["Roughness"].default_value = 0.88
+    bpy.ops.import_scene.gltf(filepath=str(source))
+    # Keep explicit source materials. Export-specific Material_0 ordering is
+    # not a reliable surface identity for a generic editable GLB.
     meshes = [obj for obj in bpy.context.scene.objects if obj.type == "MESH"]
     vertices = [obj.matrix_world @ Vector(corner) for obj in meshes for corner in obj.bound_box]
+    if not vertices:
+        raise ValueError('The source GLB contains no mesh geometry')
     low = Vector(tuple(min(point[axis] for point in vertices) for axis in range(3)))
     high = Vector(tuple(max(point[axis] for point in vertices) for axis in range(3)))
     print("HOME_BOUNDS", tuple(low), tuple(high), "MESHES", len(meshes))

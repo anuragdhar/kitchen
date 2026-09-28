@@ -29,7 +29,9 @@ try{
     const floor=new THREE.Mesh(new THREE.BoxGeometry(5000,80,5000),material.clone());floor.position.y=-40;scene.add(floor);
     const hidden=new THREE.Group();hidden.visible=false;hidden.add(new THREE.Mesh(new THREE.BoxGeometry(99999,99999,99999),new THREE.MeshBasicMaterial()));scene.add(hidden);
     const fixture=new THREE.Group();fixture.userData.interiorFixture=true;fixture.add(new THREE.Mesh(new THREE.BoxGeometry(20000,20000,20000),new THREE.MeshBasicMaterial()));scene.add(fixture);
-    const record=registerInteriorScene({id:'archviz-test-fixture',scene,camera,renderer,metresPerUnit:.001});await record.whenReady;
+    // This isolated fixture stands in for the kitchen; identity must match the
+    // selected room just as it does for a real editable-scene export.
+    const record=registerInteriorScene({id:'kitchen',scene,camera,renderer,metresPerUnit:.001});await record.whenReady;
     const before=JSON.stringify(scene.toJSON());const capture=captureInteriorScene(record,'kitchen');const count=capture.meshes.length;capture.dispose();
     const {blob,manifest}=await exportArchvizBundle(record.id,'kitchen');
     const unchanged=before===JSON.stringify(scene.toJSON());downloadArchvizBundle(blob,'fixture');record.dispose();renderer.dispose();
@@ -41,6 +43,8 @@ try{
   const gltf=JSON.parse(glb.subarray(20,20+glb.readUInt32LE(12)).toString());
   assert.equal(gltf.images.length,3,'equivalent materials reuse their color, normal and roughness images');
   assert.equal(result.count,2);assert.equal(result.unchanged,true);assert.equal(result.manifest.metresPerSourceUnit,.001);assert.deepEqual(errors,[]);
+  assert.equal(result.manifest.sceneId,'kitchen');
+  assert.equal(result.manifest.room,'kitchen');
   await fs.writeFile(path.join(out,'fixture-result.json'),JSON.stringify(result,null,2));
-  console.log('ARCHVIZ_FIXTURE_OK: millimetres, rotated hierarchy, hidden ancestor, overlay exclusion and non-mutation');
+  console.log('ARCHVIZ_FIXTURE_OK: millimetres, rotated hierarchy, hidden ancestor, overlay exclusion, matching room identity and non-mutation');
 }finally{await browser?.close();server?.kill('SIGTERM');}
