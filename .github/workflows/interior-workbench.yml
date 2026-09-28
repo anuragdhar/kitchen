@@ -1,4 +1,4 @@
-name: Interior development snapshot
+name: Interior additional test inputs
 on:
   push:
     branches: [automation/interior-workbench-20260928]
@@ -11,20 +11,8 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
-      - name: Package tracked source for offline review
-        run: |
-          python - <<'PY'
-          import pathlib, subprocess, zipfile, json
-          paths = subprocess.check_output(['git','ls-files','-z']).decode().split('\0')
-          with zipfile.ZipFile('/tmp/interior-source.zip','w',zipfile.ZIP_DEFLATED) as z:
-            for name in paths:
-              p=pathlib.Path(name)
-              if p.is_file() and p.suffix.lower() in {'.js','.jsx','.mjs','.cjs','.json','.html','.css','.py','.md','.yml','.yaml','.bat','.ps1','.txt'} and p.stat().st_size < 1000000:
-                z.write(p, name)
-            z.writestr('_tracked_paths.json',json.dumps(paths))
-          PY
       - uses: actions/upload-artifact@v4
         with:
-          name: interior-source
-          path: /tmp/interior-source.zip
+          name: interior-drawing-inputs
+          path: docs/FloorPlan/floorplan_final.dxf
           retention-days: 1
