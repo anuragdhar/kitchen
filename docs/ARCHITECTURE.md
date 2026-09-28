@@ -6,7 +6,9 @@ Paths below are relative to `react-configurator/` unless otherwise stated.
 | --- | --- |
 | Whole-home navigation | src/main.jsx -> src/HomeApp.jsx |
 | Kitchen defaults and named variants | src/config/kitchenConfig.js |
-| Kitchen state, persistence and views | src/App.jsx |
+| Kitchen views and controls | src/App.jsx |
+| Atomic project state and autosave status | src/hooks/useKitchenProject.js |
+| Versioned project codecs and recovery storage | src/persistence/projectCodec.mjs; projectStorage.mjs |
 | Runtime validation and nominal plan measurements | src/domain/kitchenValidation.mjs |
 | Other room defaults | src/config/ |
 | Material settings / creation | src/config/renderConfig.js; src/render/materialFactory.js |
@@ -54,3 +56,12 @@ modules, then state/persistence hooks, then individual render/export responsibil
 Do not combine geometry changes with moving functions. Keep old save formats working
 until a tested migration is introduced. Avoid introducing another duplicate layout
 model or a new state framework just to split a large file.
+
+## Project persistence boundary
+
+The kitchen now holds serializable project state in one object. Imports prepare a
+complete schema-checked replacement before committing it; view selection remains
+separate. v0 adapters preserve supplied coordinates rather than infer a version
+from appliance positions. See PROJECT_FORMAT.md for formats, limits, storage keys
+and recovery. Geometry-validation failures are not data-format failures: editable
+drafts retain their measurements and the runtime validator still reports issues.
