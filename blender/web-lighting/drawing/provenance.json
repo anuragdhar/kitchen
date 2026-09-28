@@ -1,7 +1,7 @@
 {
   "source": "blender\\drawing_room\\elegant\\A501-drawing-elegant.blend",
   "source_sha256": "31d3f5c32d7d39b064a881a496bd1976b317d3d0cf295b74b425068ba95a9930",
-  "generator_sha256": "024332bb89a38d944a6a7535262ffba89b325e71930ef227063a631fbdf356e0",
+  "generator_sha256": "4f3ef0a2b748f7259b35e881d79d521b06988abd18c7b3d01eba98fed42199a4",
   "blender": "5.2.2 LTS",
   "arguments": {
     "scene": "drawing",
@@ -9,7 +9,7 @@
     "samples": 96
   },
   "output": "react-configurator\\public\\models\\A501-drawing-baked.glb",
-  "output_sha256": "41e247ea546660863cbff6700fcea7fd98c07b1f9eb6ec8397ccff8f869a78fc",
+  "output_sha256": "e86008f6abe31451ea362abad9d77b0b8ce6b4a3fcac4263aa4a08f0b2021f09",
   "preserved_meshes": 90,
   "baked_meshes": 74,
   "linear_scale": 16.0,

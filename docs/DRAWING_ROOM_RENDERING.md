@@ -60,3 +60,34 @@ The imported thick window pane uses an interior daylight proxy to avoid excessiv
 attenuation. Small fabric detail is clearer in the stills than in the atlas.
 Lighting changes require rebaking. The whole-home and original studio models
 retain the earlier shared scene; this update applies to the dedicated Drawing Room.
+
+Visual inspection still shows atlas seams on curved cushions and the vase, mild
+gradient banding, and dark lines above the window in the interactive export.
+The Cycles stills do not show these artifacts. The bake is an interactive preview,
+not a visual match to the still renderer. Its embedded 4096 atlas makes the GLB
+approximately 42 MB; physical mobile performance has not been benchmarked.
+
+## Validation, 2026-09-28
+
+- Final Cycles generator: exit 0, two 1600 × 1100 images inspected; assertions
+  preserved 1,069 source mesh vertex arrays and transforms.
+- Drawing bake: exit 0, 90 evaluated exported meshes, 74 baked meshes; geometry
+  assertions passed. Source, generator and output hashes are in provenance JSON.
+- Node 22 `npm.cmd run check`: exit 0, 151 tests passed and production build
+  completed. The existing Vite large-chunk warning remains.
+- `KITCHEN_APP_URL=http://127.0.0.1:5174 npm.cmd run test:baked-lighting`
+  (PowerShell environment): exit 0, desktop 1440 × 1100 and simulated mobile
+  390 × 844, no console/page errors. Drawing-room eye-level, orbit/zoom and
+  still-tab checks passed alongside the existing bedroom, Pooja and whole-home
+  checks. Reviewed drawing-room screenshots on both viewport sizes; this is
+  smoke evidence, not approved visual regression testing.
+- `python -m py_compile blender/photoreal_drawing_room.py blender/bake_web_lighting.py`
+  and `git diff --check`: exit 0.
+
+Changed application sources are `src/config/homeRoomViews.js` (dedicated model,
+camera and stills), `src/BlenderHomeView.jsx` (coplanar surface depth bias),
+`tests/blender-room-views.test.mjs` (asset contracts), and
+`scripts/baked-lighting-browser.cjs` (drawing-room eye-level/orbit/still checks).
+Generated model, atlas, scene, stills and provenance accompany the two Blender
+scripts. Architecture and interactive-lighting documentation describe the split
+between dedicated room exports and the shared whole-home export.
