@@ -1,3 +1,4 @@
+import {tagSurfaceMaterial} from './render/surfaceRoles.mjs'
 import * as THREE from 'three'
 import {ENTRY} from './config/entryConfig.js'
 
@@ -8,7 +9,9 @@ export function createEntryArrivalDoor(x,z){
   const wallX=x(door.wallPlanX),south=z(door.fromPlanY),north=z(door.toPlanY)
   const width=north-south
   const wood=new THREE.MeshStandardMaterial({color:'#825d44',roughness:.63})
+  tagSurfaceMaterial(wood,'wood','entry')
   const frame=new THREE.MeshStandardMaterial({color:'#aa7b56',roughness:.67})
+  tagSurfaceMaterial(frame,'wood','entry')
   const metal=new THREE.MeshStandardMaterial({color:'#ad936a',metalness:.67,roughness:.3})
   const box=(w,h,d,cx,cy,cz,material,parent=group)=>{
     const mesh=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),material)

@@ -27,9 +27,16 @@ jobs:
       - run: npm ci
       - run: npx playwright install --with-deps chromium
       - run: node scripts/interior-browser.cjs
+      - run: npm run test:materials
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: interior-verification
           path: react-configurator/test-results/interior/
+          retention-days: 7
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: materials-verification
+          path: react-configurator/test-results/materials/
           retention-days: 7

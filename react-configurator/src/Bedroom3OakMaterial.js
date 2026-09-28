@@ -1,3 +1,4 @@
+import {tagSurfaceMaterial} from './render/surfaceRoles.mjs'
 import * as THREE from 'three'
 
 // A small, deterministic wood map keeps the room and whole-home views in sync.
@@ -22,5 +23,5 @@ export function createBedroom3OakMaterial({base='#b27d4c',roughness=.42}={}){
   const map=new THREE.CanvasTexture(canvas)
   map.colorSpace=THREE.SRGBColorSpace
   map.anisotropy=8
-  return new THREE.MeshStandardMaterial({map,roughness})
+  return tagSurfaceMaterial(new THREE.MeshStandardMaterial({map,roughness}),'wood','bedroom3')
 }

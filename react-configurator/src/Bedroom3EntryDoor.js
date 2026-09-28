@@ -1,3 +1,4 @@
+import {tagSurfaceMaterial} from './render/surfaceRoles.mjs'
 import * as THREE from 'three'
 
 // Shared north-wall entry and toilet doors for both room and whole-home views.
@@ -5,7 +6,9 @@ export function createBedroom3EntryDoor(room){
   const group=new THREE.Group()
   group.name='Bedroom 3 entry and toilet doors'
   const frame=new THREE.MeshStandardMaterial({color:'#eee7dc',roughness:.65})
+  tagSurfaceMaterial(frame,'wood','bedroom3')
   const timber=new THREE.MeshStandardMaterial({color:'#916b4d',roughness:.67})
+  tagSurfaceMaterial(timber,'wood','bedroom3')
   const handle=new THREE.MeshStandardMaterial({color:'#b7a17e',metalness:.7,roughness:.25})
   const box=(w,h,d,x,y,z,material,parent=group)=>{
     const mesh=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),material)

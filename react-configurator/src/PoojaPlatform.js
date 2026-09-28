@@ -1,3 +1,4 @@
+import {tagSurfaceMaterial} from './render/surfaceRoles.mjs'
 import * as THREE from 'three'
 
 export function createPoojaPlatform(pooja,floorTopMm=0){
@@ -8,7 +9,9 @@ export function createPoojaPlatform(pooja,floorTopMm=0){
   const height=pooja.platformHeightMm/1000,drawerDepth=pooja.drawerDepthMm/1000
   const center=from+width/2
   const oak=new THREE.MeshStandardMaterial({color:'#aa825c',roughness:.7})
+  tagSurfaceMaterial(oak,'wood','pooja')
   const drawer=new THREE.MeshStandardMaterial({color:'#725039',roughness:.62})
+  tagSurfaceMaterial(drawer,'wood','pooja')
   const shadow=new THREE.MeshStandardMaterial({color:'#604b39',roughness:.78})
   const handle=new THREE.MeshStandardMaterial({color:'#aa9066',metalness:.65,roughness:.32})
   const addBox=(w,h,d,x,y,z,material)=>{
