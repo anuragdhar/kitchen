@@ -1,0 +1,82 @@
+{
+  "schema": "a501.current-room",
+  "version": 1,
+  "room": "kitchen",
+  "job": "f4cacad859794948",
+  "sceneId": "kitchen",
+  "sourceKind": "editable-snapshot",
+  "sourceSha256": "61e602817fd039b45f9292462c9bf6d189b8ab2604dc994e8f46c492717bc463",
+  "capturedAt": "2026-09-28T12:33:50.751Z",
+  "quality": "draft",
+  "model": {
+    "url": "/renders/archviz/f4cacad859794948/source.glb",
+    "sha256": "61e602817fd039b45f9292462c9bf6d189b8ab2604dc994e8f46c492717bc463",
+    "shading": "studio-unbaked"
+  },
+  "camera": {
+    "type": "perspective",
+    "position": [
+      2.199999999999999,
+      2.1000000000000005,
+      -4.999999999999999
+    ],
+    "quaternion": [
+      -0.01870119037944163,
+      0.9782211838743357,
+      0.1016227478666933,
+      0.1800177713835715
+    ],
+    "fov": 42,
+    "aspect": 1.6122209165687427,
+    "verticalSpan": null
+  },
+  "bounds": {
+    "min": [
+      -1.1620000000000001,
+      -0.03,
+      -4.473000000000001
+    ],
+    "max": [
+      1.161999969482422,
+      2.713999999761582,
+      2.438
+    ]
+  },
+  "images": [
+    {
+      "label": "Current editable camera",
+      "url": "/renders/archviz/f4cacad859794948/current.png",
+      "sha256": "f8b6dcafa773eb4cc24cb53b4e59d1955a8edf86daf515a058304722cdfbdb94",
+      "size": [
+        960,
+        595
+      ]
+    },
+    {
+      "label": "Room composition",
+      "url": "/renders/archviz/f4cacad859794948/hero.png",
+      "sha256": "fc4fdddbe43714ca9602b93a6f030d88268ca5fdec4262a620278d9970dccbfc",
+      "size": [
+        960,
+        640
+      ]
+    },
+    {
+      "label": "Reverse room view",
+      "url": "/renders/archviz/f4cacad859794948/reverse.png",
+      "sha256": "88406c636b9ffea38ce52527d4c93ddeb197fd02cab1b7213d5e8eace98547b2",
+      "size": [
+        960,
+        640
+      ]
+    }
+  ],
+  "geometryAudit": {
+    "sourceObjects": 550,
+    "importedMeshes": 550,
+    "maximumBoundsErrorMetres": 4.418611529999339e-07,
+    "triangleCountsMatch": true,
+    "scope": "Source IDs, per-object world bounds and triangle counts; not a construction/collision certificate."
+  },
+  "reviewStatus": "unreviewed"
+}
