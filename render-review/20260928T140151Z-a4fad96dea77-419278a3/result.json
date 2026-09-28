@@ -1,0 +1,168 @@
+{
+  "run": "20260928T140151Z-a4fad96dea77-419278a3",
+  "sourceCommit": "a4fad96dea773f742e9db230d4627d67e093bad4",
+  "job": {
+    "version": 1,
+    "enabled": true,
+    "request": "initial-room-review",
+    "rooms": [
+      "kitchen",
+      "balcony",
+      "drawing"
+    ],
+    "quality": "draft",
+    "device": "AUTO"
+  },
+  "inputMode": "repository-defaults",
+  "status": "passed",
+  "visualReview": "unreviewed",
+  "steps": [
+    {
+      "name": "dependencies",
+      "exitCode": 0,
+      "seconds": 16.02
+    },
+    {
+      "name": "build-tests",
+      "exitCode": 0,
+      "seconds": 9.02
+    },
+    {
+      "name": "archviz-tests",
+      "exitCode": 0,
+      "seconds": 0.5
+    },
+    {
+      "name": "python-archviz",
+      "exitCode": 0,
+      "seconds": 0.52
+    },
+    {
+      "name": "python-profiles",
+      "exitCode": 0,
+      "seconds": 0.5
+    },
+    {
+      "name": "python-whole-home",
+      "exitCode": 0,
+      "seconds": 0.52
+    },
+    {
+      "name": "python-worker",
+      "exitCode": 0,
+      "seconds": 2.02
+    },
+    {
+      "name": "python-parallel",
+      "exitCode": 0,
+      "seconds": 2.02
+    },
+    {
+      "name": "python-compile",
+      "exitCode": 0,
+      "seconds": 0.5
+    },
+    {
+      "name": "chromium",
+      "exitCode": 0,
+      "seconds": 1.02
+    },
+    {
+      "name": "browser-fixture",
+      "exitCode": 0,
+      "seconds": 3.51
+    },
+    {
+      "name": "browser-correctness",
+      "exitCode": 0,
+      "seconds": 4.0
+    },
+    {
+      "name": "browser-persistence",
+      "exitCode": 0,
+      "seconds": 9.02
+    },
+    {
+      "name": "browser-interior",
+      "exitCode": 0,
+      "seconds": 1.52
+    },
+    {
+      "name": "browser-materials",
+      "exitCode": 0,
+      "seconds": 5.52
+    },
+    {
+      "name": "browser-lighting",
+      "exitCode": 0,
+      "seconds": 4.02
+    },
+    {
+      "name": "devcontainer-config",
+      "exitCode": 0,
+      "seconds": 0.52
+    },
+    {
+      "name": "render",
+      "exitCode": 0,
+      "seconds": 66.11
+    }
+  ],
+  "rooms": [
+    {
+      "room": "kitchen",
+      "images": [
+        {
+          "file": "rooms/kitchen/current.png",
+          "sha256": "1f02b54cc821c33bf346ed2f8c821ccb3d74b0f1feaf44c82cc9633059a76178"
+        },
+        {
+          "file": "rooms/kitchen/hero.png",
+          "sha256": "2af1446864efe1fbf836d9be5283ae64f81080e32b9e0d3d4d6630f82694bb35"
+        },
+        {
+          "file": "rooms/kitchen/reverse.png",
+          "sha256": "0fe783ba730cfd33cd34efc459ed69d8c946768bee7554fc3729b7f6207fdce3"
+        }
+      ]
+    },
+    {
+      "room": "balcony",
+      "images": [
+        {
+          "file": "rooms/balcony/current.png",
+          "sha256": "fed1db40f6a180e2e7d1b08e825bbf56bfe631f102aacba4f45612476a875589"
+        },
+        {
+          "file": "rooms/balcony/hero.png",
+          "sha256": "6d12abcd3c246865919e4ce706f029b35a58b555dd512098d3785e0b783ca5d9"
+        },
+        {
+          "file": "rooms/balcony/reverse.png",
+          "sha256": "f2f2ad038c1c5d1cb2564f7456fb091059688874334ca56a8c582b1452c59ff4"
+        }
+      ]
+    },
+    {
+      "room": "drawing",
+      "images": [
+        {
+          "file": "rooms/drawing/authored-1.png",
+          "sha256": "f289dacabf96f2a5593ebd3a96d8a939164f6b9b6544ec7efea19531cefcffb8"
+        },
+        {
+          "file": "rooms/drawing/authored-2.png",
+          "sha256": "60cecfdb643408765c170f00f7f852e9873a6c7de311e037b8dd35d59baf3bf5"
+        },
+        {
+          "file": "rooms/drawing/hero.png",
+          "sha256": "efd4c986148c630cae32593d693d8d382f3d772a0a378616fc587ffa930bb21e"
+        },
+        {
+          "file": "rooms/drawing/reverse.png",
+          "sha256": "b7c22ce881017f68394a90abb5024cfd7b8d2a359e528bf500064560efe5af1a"
+        }
+      ]
+    }
+  ]
+}

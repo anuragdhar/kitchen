@@ -1,0 +1,12 @@
+
+> home-interior@1.0.0 test:persistence
+> node scripts/persistence-browser.cjs
+
+[persistence] Importing custom positions, elevation and options through file control
+[persistence] Download/upload round trip and named versions
+[persistence] Malformed imports leave both workspace and saved bytes unchanged
+[persistence] A delayed file read cannot overwrite a newer edit
+[persistence] Cross-tab changes block stale autosave and remain recoverable
+[persistence] Legacy autosave migrates without altering its original key
+[persistence] Corrupt autosave is visible, never silently overwritten
+[persistence] Storage quota errors are visible while the editable project remains available

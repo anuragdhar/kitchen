@@ -1,0 +1,39 @@
+{
+  "room": "balcony",
+  "job": "8a7583472ca540b2",
+  "sourceKind": "editable-snapshot",
+  "sourceSha256": "805f1872849026db3b76925f89c9fbdffb629ce787cf257a01a5732e7c5333be",
+  "generatorSha256": "c662f18bc710ff7121190bb0a9651f74fd37e0274480e9cf1d02019315e2587a",
+  "contractSha256": "870053ff51994deb544a574e792ad4810a4ed07d81b9a9e51c80368d10ac274a",
+  "profileSha256": "8ae15bd05aef3739d1c72f845394d69a8f58078398c8cf7ea6ac8f11fdb94b3f",
+  "blender": "5.2.2 LTS",
+  "device": "HIP",
+  "quality": "draft",
+  "geometryAudit": {
+    "sourceObjects": 160,
+    "importedMeshes": 160,
+    "maximumBoundsErrorMetres": 2.0371377473793473e-07,
+    "triangleCountsMatch": true,
+    "scope": "Source IDs, per-object world bounds and triangle counts; not a construction/collision certificate."
+  },
+  "geometryUnchangedDuringRendering": true,
+  "limitations": [
+    "Generated camera composition and appearance need image review.",
+    "Photographic light sources are not surveyed fixture placements.",
+    "No existing interactive baked GLB or saved project was replaced."
+  ],
+  "images": [
+    {
+      "file": "rooms/balcony/current.png",
+      "sha256": "fed1db40f6a180e2e7d1b08e825bbf56bfe631f102aacba4f45612476a875589"
+    },
+    {
+      "file": "rooms/balcony/hero.png",
+      "sha256": "6d12abcd3c246865919e4ce706f029b35a58b555dd512098d3785e0b783ca5d9"
+    },
+    {
+      "file": "rooms/balcony/reverse.png",
+      "sha256": "f2f2ad038c1c5d1cb2564f7456fb091059688874334ca56a8c582b1452c59ff4"
+    }
+  ]
+}

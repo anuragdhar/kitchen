@@ -1,0 +1,4 @@
+
+> home-interior@1.0.0 test:lighting
+> node scripts/lighting-browser.cjs
+
