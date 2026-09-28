@@ -63,7 +63,7 @@ export default function NorthSouthElevation({isNorth, planDimensions, showHeight
     <rect x={xOf(eastX)} y={yOf(900)} width={wOf(600)} height={hOf(900 - PLINTH_HEIGHT)} fill={renderStyle.baseCabinet} stroke="#111"/>
     <rect x={xOf(eastX)} y={yOf(900)} width={wOf(600)} height={hOf(COUNTER_THICKNESS)} fill={renderStyle.counter} stroke="#7d7165"/>
     <rect x={xOf(eastX)} y={yOf(1350)} width={wOf(320)} height={hOf(500)} fill={renderStyle.middleCabinet} stroke="#111"/>
-    <rect x={xOf(eastX+80)} y={yOf(2700)} width={wOf(470)} height={hOf(800)} fill={renderStyle.topCabinet} stroke="#111"/>
+    <rect x={xOf(eastX+80)} y={yOf(KITCHEN.height)} width={wOf(470)} height={hOf(800)} fill={renderStyle.topCabinet} stroke="#111"/>
     {/* west cabinet silhouette */}
     <rect x={xOf(westX)} y={yOf(900)} width={wOf(400)} height={hOf(900 - PLINTH_HEIGHT)} fill={renderStyle.baseCabinet} stroke="#111"/>
     <rect x={xOf(westX)} y={yOf(900)} width={wOf(400)} height={hOf(COUNTER_THICKNESS)} fill={renderStyle.counter} stroke="#7d7165"/>
@@ -72,25 +72,25 @@ export default function NorthSouthElevation({isNorth, planDimensions, showHeight
     {/* door / window */}
     {isNorth? (
       <g>
-        <rect x={xOf(612)} y={yOf(2700)} width={wOf(1100)} height={hOf(1800)} fill="rgba(126,184,232,0.32)" stroke="#2f8ac6" strokeWidth="2"/>
+        <rect x={xOf(612)} y={yOf(KITCHEN.height)} width={wOf(1100)} height={hOf(1800)} fill="rgba(126,184,232,0.32)" stroke="#2f8ac6" strokeWidth="2"/>
         {/* transom at 610 from head (2'-0") */}
-        <line x1={xOf(612)} y1={yOf(2700-610)} x2={xOf(1712)} y2={yOf(2700-610)} stroke="#1a1a18" strokeWidth="3"/>
+        <line x1={xOf(612)} y1={yOf(KITCHEN.height-610)} x2={xOf(1712)} y2={yOf(KITCHEN.height-610)} stroke="#1a1a18" strokeWidth="3"/>
         {/* centre vertical mullion - 2 partitions */}
-        <line x1={xOf(612+550)} y1={yOf(2700)} x2={xOf(612+550)} y2={yOf(900)} stroke="#1a1a18" strokeWidth="2.2"/>
+        <line x1={xOf(612+550)} y1={yOf(KITCHEN.height)} x2={xOf(612+550)} y2={yOf(900)} stroke="#1a1a18" strokeWidth="2.2"/>
         {/* left-top exhaust fan 300mm - HIGH CONTRAST */}
-        <rect x={xOf(612)+8} y={yOf(2700)-10} width={wOf(550)-16} height={hOf(610)-10} fill="#1a1a18" stroke="#111" strokeWidth="1.4"/>
-        <rect x={xOf(612)+16} y={yOf(2700)-10+6} width={wOf(550)-32} height={hOf(610)-22} fill="#eaf0f4" stroke="#c8d2db" strokeWidth="1"/>
+        <rect x={xOf(612)+8} y={yOf(KITCHEN.height)-10} width={wOf(550)-16} height={hOf(610)-10} fill="#1a1a18" stroke="#111" strokeWidth="1.4"/>
+        <rect x={xOf(612)+16} y={yOf(KITCHEN.height)-10+6} width={wOf(550)-32} height={hOf(610)-22} fill="#eaf0f4" stroke="#c8d2db" strokeWidth="1"/>
         {/* louvre lines */}
-        <line x1={xOf(612)+20} y1={yOf(2700-120)} x2={xOf(612+550)-20} y2={yOf(2700-120)} stroke="#b8c7d4" strokeWidth="1"/>
-        <line x1={xOf(612)+20} y1={yOf(2700-200)} x2={xOf(612+550)-20} y2={yOf(2700-200)} stroke="#b8c7d4" strokeWidth="1"/>
-        <line x1={xOf(612)+20} y1={yOf(2700-280)} x2={xOf(612+550)-20} y2={yOf(2700-280)} stroke="#b8c7d4" strokeWidth="1"/>
-        <line x1={xOf(612)+20} y1={yOf(2700-360)} x2={xOf(612+550)-20} y2={yOf(2700-360)} stroke="#b8c7d4" strokeWidth="1"/>
-        <line x1={xOf(612)+20} y1={yOf(2700-440)} x2={xOf(612+550)-20} y2={yOf(2700-440)} stroke="#b8c7d4" strokeWidth="1"/>
-        <circle cx={xOf(612+275)} cy={yOf(2700-305)} r={Math.min(wOf(300)/2, hOf(300)/2)} fill="#ffffff" stroke="#1a1a18" strokeWidth="2.6"/>
-        <circle cx={xOf(612+275)} cy={yOf(2700-305)} r={Math.min(wOf(300)/2, hOf(300)/2)-6} fill="none" stroke="#c05a2b" strokeWidth="1.2"/>
-        <circle cx={xOf(612+275)} cy={yOf(2700-305)} r={7} fill="#c05a2b" stroke="#fff" strokeWidth="1.2"/>
-        <line x1={xOf(612+275)-34} y1={yOf(2700-305)} x2={xOf(612+275)+34} y2={yOf(2700-305)} stroke="#2b2b2b" strokeWidth="2.2"/>
-        <line x1={xOf(612+275)} y1={yOf(2700-305)-34} x2={xOf(612+275)} y2={yOf(2700-305)+34} stroke="#2b2b2b" strokeWidth="2.2"/>
+        <line x1={xOf(612)+20} y1={yOf(KITCHEN.height-120)} x2={xOf(612+550)-20} y2={yOf(KITCHEN.height-120)} stroke="#b8c7d4" strokeWidth="1"/>
+        <line x1={xOf(612)+20} y1={yOf(KITCHEN.height-200)} x2={xOf(612+550)-20} y2={yOf(KITCHEN.height-200)} stroke="#b8c7d4" strokeWidth="1"/>
+        <line x1={xOf(612)+20} y1={yOf(KITCHEN.height-280)} x2={xOf(612+550)-20} y2={yOf(KITCHEN.height-280)} stroke="#b8c7d4" strokeWidth="1"/>
+        <line x1={xOf(612)+20} y1={yOf(KITCHEN.height-360)} x2={xOf(612+550)-20} y2={yOf(KITCHEN.height-360)} stroke="#b8c7d4" strokeWidth="1"/>
+        <line x1={xOf(612)+20} y1={yOf(KITCHEN.height-440)} x2={xOf(612+550)-20} y2={yOf(KITCHEN.height-440)} stroke="#b8c7d4" strokeWidth="1"/>
+        <circle cx={xOf(612+275)} cy={yOf(KITCHEN.height-305)} r={Math.min(wOf(300)/2, hOf(300)/2)} fill="#ffffff" stroke="#1a1a18" strokeWidth="2.6"/>
+        <circle cx={xOf(612+275)} cy={yOf(KITCHEN.height-305)} r={Math.min(wOf(300)/2, hOf(300)/2)-6} fill="none" stroke="#c05a2b" strokeWidth="1.2"/>
+        <circle cx={xOf(612+275)} cy={yOf(KITCHEN.height-305)} r={7} fill="#c05a2b" stroke="#fff" strokeWidth="1.2"/>
+        <line x1={xOf(612+275)-34} y1={yOf(KITCHEN.height-305)} x2={xOf(612+275)+34} y2={yOf(KITCHEN.height-305)} stroke="#2b2b2b" strokeWidth="2.2"/>
+        <line x1={xOf(612+275)} y1={yOf(KITCHEN.height-305)-34} x2={xOf(612+275)} y2={yOf(KITCHEN.height-305)+34} stroke="#2b2b2b" strokeWidth="2.2"/>
         <text x={xOf(1162)} y={yOf(2430)} textAnchor="middle" fontSize="10" fontWeight="800" fill="#1a1a18">TOP 610 - LEFT: 12" METAL EXHAUST / RIGHT: FIXED x1</text>
         <text x={xOf(1162)} y={yOf(1500)} textAnchor="middle" fontSize="10" fontWeight="800" fill="#c05a2b">BOTTOM 1190 - SLIDING x2 (both sides)</text>
         <text x={xOf(1162)} y={yOf(1800)} textAnchor="middle" fontSize="11" fontWeight="900" fill="#1f5f88">Window 1100x1800 sill 900 - 2 BAYS (centre mullion)</text>
@@ -113,10 +113,10 @@ export default function NorthSouthElevation({isNorth, planDimensions, showHeight
       <text x={frame.x+frame.w+38} y={yOf(1200)} transform={`rotate(90 ${frame.x+frame.w+38} ${yOf(1200)})`} textAnchor="middle" fill="#7d7165">Backsplash 600</text>
       <line x1={frame.x+frame.w+46} y1={yOf(1350)} x2={frame.x+frame.w+46} y2={yOf(1850)} stroke="#b8ab9a" strokeWidth="2"/>
       <text x={frame.x+frame.w+54} y={yOf(1600)} transform={`rotate(90 ${frame.x+frame.w+54} ${yOf(1600)})`} textAnchor="middle" fill="#6d6257">Lower upper 1350-1850</text>
-      <line x1={frame.x+frame.w+62} y1={yOf(1900)} x2={frame.x+frame.w+62} y2={yOf(2700)} stroke="#bfa891" strokeWidth="2"/>
+      <line x1={frame.x+frame.w+62} y1={yOf(1900)} x2={frame.x+frame.w+62} y2={yOf(KITCHEN.height)} stroke="#bfa891" strokeWidth="2"/>
       <text x={frame.x+frame.w+70} y={yOf(2300)} transform={`rotate(90 ${frame.x+frame.w+70} ${yOf(2300)})`} textAnchor="middle" fill="#6d6257">Top upper 1850-2700 no gap</text>
     </g>
-    <text x={frame.x-10} y={yOf(2700)+4} textAnchor="end" fontSize="12" fontWeight="800">2700</text>
+    <text x={frame.x-10} y={yOf(KITCHEN.height)+4} textAnchor="end" fontSize="12" fontWeight="800">{KITCHEN.height}</text>
     <text x={frame.x-10} y={yOf(0)+4} textAnchor="end" fontSize="12" fontWeight="800">0</text>
     {heightGuideOverlay()}
   </svg>)

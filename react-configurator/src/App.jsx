@@ -228,6 +228,11 @@ export default function App(){
   }
 
   const export3DScreenshot=()=>{const view3d=threeViewRef.current; if(!view3d)return; view3d.renderer.render(view3d.scene,view3d.camera); const a=document.createElement('a'); a.href=view3d.renderer.domElement.toDataURL('image/png'); a.download='kitchen-3d-render.png'; a.click()}
+  // Restores a regression from Phase 4a: this helper is also used by the
+  // separate interactive top-plan JSX below (not just the extracted
+  // buildPlanSvg), and was wrongly deleted along with it. See
+  // docs/REFACTOR_PLAN.md Phase 4 for the full account.
+  const svgY=(southY,depth)=>KITCHEN.length-southY-depth
   // Pure builders live in ./kitchen/export/ (see docs/REFACTOR_PLAN.md Phase 4);
   // these thin wrappers just assemble the current state into their ctx argument.
   const buildPlanSvg=()=>buildPlanSvgPure({KITCHEN,materials,grid,planDimensions,activeEast,activeWest,eastModules,westModules,moduleSegmentsFromNorth,renderStyle})
@@ -1127,7 +1132,7 @@ ${westRows}
         if(it.id==='garage_NE'){
           // East Tall NE 600x600x2700 - washing below, MICROWAVE above (as requested)
           const baseZ=0
-          addBox('east tall garage NE body',KITCHEN.width-it.d,it.y,baseZ,it.d,it.w,2700,surface.tallCabinet)
+          addBox('east tall garage NE body',KITCHEN.width-it.d,it.y,baseZ,it.d,it.w,KITCHEN.height,surface.tallCabinet)
           addBox('east tall front lower tambour',KITCHEN.width-it.d-18,it.y+10,baseZ+24,18,it.w-20,880,surface.tallCabinet)
           addBox('east tall front upper tambour',KITCHEN.width-it.d-18,it.y+10,1350+24,18,it.w-20,1320,surface.tallCabinet)
           // washing machine inside lower bay (visible when front opens)
@@ -2060,14 +2065,14 @@ ${westRows}
         <rect x="0" y={svgY(0,KITCHEN.westGap.to)} width="600" height={KITCHEN.westGap.to} fill="#fffaf3" stroke="#7b3f21" strokeWidth="4" strokeDasharray="22 14"/>
         <text x="200" y={svgY(0,KITCHEN.westGap.to)+KITCHEN.westGap.to/2-10} textAnchor="middle" fontSize="40" fontWeight="900" fill="#7b3f21">DOOR CLEAR</text>
         <text x="200" y={svgY(0,KITCHEN.westGap.to)+KITCHEN.westGap.to/2+32} textAnchor="middle" fontSize="32" fontWeight="800" fill="#7b3f21">y0-y{KITCHEN.westGap.to}</text>
-        <rect x={2324-600} y={svgY(0,eastRunLength)} width="600" height={eastRunLength} fill={renderStyle.baseCabinet} opacity="0.28" stroke="#b89f8a" strokeWidth="3"/>
+        <rect x={KITCHEN.width-600} y={svgY(0,eastRunLength)} width="600" height={eastRunLength} fill={renderStyle.baseCabinet} opacity="0.28" stroke="#b89f8a" strokeWidth="3"/>
         <rect x="0" y={svgY(KITCHEN.westGap.to,westRunLength)} width="600" height={westRunLength} fill={renderStyle.baseCabinet} opacity="0.28" stroke="#b89f8a" strokeWidth="3"/>
         {/* module splits in top view */}
         {(()=>{
           return moduleSegmentsFromNorth(eastModules,0,KITCHEN.length).map((m,i)=>{
             const lineY=svgY(m.y,0)
             if(i===0) return null
-            return <line key={`em-${i}`} x1={2324-600} y1={lineY} x2={2324} y2={lineY} stroke="#111" strokeWidth={m.type==='filler'?5:3} strokeDasharray={m.type==='filler'?'18 12':''}/>
+            return <line key={`em-${i}`} x1={KITCHEN.width-600} y1={lineY} x2={KITCHEN.width} y2={lineY} stroke="#111" strokeWidth={m.type==='filler'?5:3} strokeDasharray={m.type==='filler'?'18 12':''}/>
           })
         })()}
         {(()=>{
@@ -2097,20 +2102,20 @@ ${westRows}
           if(it.id==='garage_NE'){
             // East Tall NE 600x600x2700 y4146 - washing below + microwave above inside tall (right-hand side framing window)
             return (<g key={it.id} onMouseDown={e=>onDown(e,'east',it.id)} style={{cursor:'grab'}}>
-              <rect x={2324-it.d} y={svgY(it.y,it.w)} width={it.d} height={it.w} fill={it.color} stroke="#111" strokeWidth="5" rx="10"/>
-              <rect x={2324-it.d+12} y={svgY(it.y,it.w)+14} width={it.d-24} height={it.w-28} fill="#f7f1e8" stroke="#7b3f21" strokeWidth="3" rx="6" strokeDasharray="12 8"/>
-              <rect x={2324-it.d+26} y={svgY(it.y+it.w-250,130)} width={it.d-52} height={130} fill="#1a1a1a" stroke="#111" rx="4"/>
-              <text x={2324-it.d/2} y={svgY(it.y+it.w-250,130)+78} textAnchor="middle" fontSize="20" fontWeight="800" fill="#fff">MICROWAVE above</text>
-              <rect x={2324-it.d+40} y={svgY(it.y+80,120)} width={it.d-80} height={120} fill="#e8e4de" stroke="#111" rx="4"/>
-              <circle cx={2324-it.d/2} cy={svgY(it.y+80,120)+34} r="18" fill="#1f2327" stroke="#d2d2d2" strokeWidth="5"/>
-              <text x={2324-it.d/2} y={svgY(it.y+80,120)+86} textAnchor="middle" fontSize="14" fontWeight="800" fill="#111">WASHING below</text>
-              <rect x={2324-it.d+8} y={svgY(it.y,it.w)+8} width={it.d-16} height="26" fill="#fff" opacity="0.92" rx="5"/>
-              <text x={2324-it.d/2} y={svgY(it.y,it.w)+22} textAnchor="middle" fontSize="20" fontWeight="800" fill="#111">{it.w}W y{Math.round(it.y)} Tall NE</text>
-              <text x={2324-it.d/2} y={svgY(it.y,it.w)+it.w/2-10} textAnchor="middle" fontSize="18" fontWeight="800" fill="#111">TALL NE</text>
+              <rect x={KITCHEN.width-it.d} y={svgY(it.y,it.w)} width={it.d} height={it.w} fill={it.color} stroke="#111" strokeWidth="5" rx="10"/>
+              <rect x={KITCHEN.width-it.d+12} y={svgY(it.y,it.w)+14} width={it.d-24} height={it.w-28} fill="#f7f1e8" stroke="#7b3f21" strokeWidth="3" rx="6" strokeDasharray="12 8"/>
+              <rect x={KITCHEN.width-it.d+26} y={svgY(it.y+it.w-250,130)} width={it.d-52} height={130} fill="#1a1a1a" stroke="#111" rx="4"/>
+              <text x={KITCHEN.width-it.d/2} y={svgY(it.y+it.w-250,130)+78} textAnchor="middle" fontSize="20" fontWeight="800" fill="#fff">MICROWAVE above</text>
+              <rect x={KITCHEN.width-it.d+40} y={svgY(it.y+80,120)} width={it.d-80} height={120} fill="#e8e4de" stroke="#111" rx="4"/>
+              <circle cx={KITCHEN.width-it.d/2} cy={svgY(it.y+80,120)+34} r="18" fill="#1f2327" stroke="#d2d2d2" strokeWidth="5"/>
+              <text x={KITCHEN.width-it.d/2} y={svgY(it.y+80,120)+86} textAnchor="middle" fontSize="14" fontWeight="800" fill="#111">WASHING below</text>
+              <rect x={KITCHEN.width-it.d+8} y={svgY(it.y,it.w)+8} width={it.d-16} height="26" fill="#fff" opacity="0.92" rx="5"/>
+              <text x={KITCHEN.width-it.d/2} y={svgY(it.y,it.w)+22} textAnchor="middle" fontSize="20" fontWeight="800" fill="#111">{it.w}W y{Math.round(it.y)} Tall NE</text>
+              <text x={KITCHEN.width-it.d/2} y={svgY(it.y,it.w)+it.w/2-10} textAnchor="middle" fontSize="18" fontWeight="800" fill="#111">TALL NE</text>
             </g>)
           }
           if(it.id==='eastBacksplashSlider'){
-            const sx=2324-it.d, sy=svgY(it.y,it.w)
+            const sx=KITCHEN.width-it.d, sy=svgY(it.y,it.w)
             return (<g key={it.id} onMouseDown={e=>onDown(e,'east',it.id)} style={{cursor:'grab'}}>
               <rect x={sx} y={sy} width={it.d} height={it.w} fill="#d9c6af" stroke="#111" strokeWidth="4" rx="8" opacity="0.88"/>
               <line x1={sx+it.d/2} y1={sy+32} x2={sx+it.d/2} y2={sy+it.w-32} stroke="#5a4632" strokeWidth="4" strokeDasharray="16 12"/>
@@ -2120,43 +2125,43 @@ ${westRows}
           if(it.id==='trashCan'){
             // Trash pull-out Saints frame below sink - show in top plan
             return (<g key={it.id} onMouseDown={e=>{onDown(e,'east',it.id); setSelectedId(it.id)}} style={{cursor:'grab'}}>
-              <rect x={2324-it.d} y={svgY(it.y,it.w)} width={it.d} height={it.w} fill="#2b2b2b" stroke="#111" strokeWidth="4" rx="8"/>
-              <rect x={2324-it.d+12} y={svgY(it.y,it.w)+14} width={it.d-24} height={it.w-28} fill="#3a3a3a" stroke="#111" strokeWidth="2" rx="4" strokeDasharray="8 6"/>
-              <rect x={2324-it.d+20} y={svgY(it.y+it.w/2-26,52)} width={it.d-40} height={52} fill="#111" stroke="#c8b39d" rx="3"/>
-              <text x={2324-it.d/2} y={svgY(it.y+it.w/2-26,52)+32} textAnchor="middle" fontSize="16" fontWeight="800" fill="#fff">TRASH</text>
-              <text x={2324-it.d/2} y={svgY(it.y,it.w)+it.w/2+14} textAnchor="middle" fontSize="14" fontWeight="800" fill="#fff">Saints pull-out</text>
-              <rect x={2324-it.d+8} y={svgY(it.y,it.w)+8} width={it.d-16} height="26" fill="#fff" opacity="0.92" rx="5"/>
-              <text x={2324-it.d/2} y={svgY(it.y,it.w)+22} textAnchor="middle" fontSize="16" fontWeight="800" fill="#111">{it.w}x{it.d} y{Math.round(it.y)}</text>
+              <rect x={KITCHEN.width-it.d} y={svgY(it.y,it.w)} width={it.d} height={it.w} fill="#2b2b2b" stroke="#111" strokeWidth="4" rx="8"/>
+              <rect x={KITCHEN.width-it.d+12} y={svgY(it.y,it.w)+14} width={it.d-24} height={it.w-28} fill="#3a3a3a" stroke="#111" strokeWidth="2" rx="4" strokeDasharray="8 6"/>
+              <rect x={KITCHEN.width-it.d+20} y={svgY(it.y+it.w/2-26,52)} width={it.d-40} height={52} fill="#111" stroke="#c8b39d" rx="3"/>
+              <text x={KITCHEN.width-it.d/2} y={svgY(it.y+it.w/2-26,52)+32} textAnchor="middle" fontSize="16" fontWeight="800" fill="#fff">TRASH</text>
+              <text x={KITCHEN.width-it.d/2} y={svgY(it.y,it.w)+it.w/2+14} textAnchor="middle" fontSize="14" fontWeight="800" fill="#fff">Saints pull-out</text>
+              <rect x={KITCHEN.width-it.d+8} y={svgY(it.y,it.w)+8} width={it.d-16} height="26" fill="#fff" opacity="0.92" rx="5"/>
+              <text x={KITCHEN.width-it.d/2} y={svgY(it.y,it.w)+22} textAnchor="middle" fontSize="16" fontWeight="800" fill="#111">{it.w}x{it.d} y{Math.round(it.y)}</text>
             </g>)
           }
           if(it.id==='applianceGarage'){
             // Appliance garage - counter-mounted open garage with food processor inside
             return (<g key={it.id} onMouseDown={e=>onDown(e,'east',it.id)} style={{cursor:'grab'}}>
-              <rect x={2324-it.d} y={svgY(it.y,it.w)} width={it.d} height={it.w} fill={it.color} stroke="#111" strokeWidth="5" rx="10"/>
-              <rect x={2324-it.d+12} y={svgY(it.y,it.w)+14} width={it.d-24} height={it.w-28} fill="#f7f1e8" stroke="#7b3f21" strokeWidth="3" rx="6" strokeDasharray="12 8"/>
+              <rect x={KITCHEN.width-it.d} y={svgY(it.y,it.w)} width={it.d} height={it.w} fill={it.color} stroke="#111" strokeWidth="5" rx="10"/>
+              <rect x={KITCHEN.width-it.d+12} y={svgY(it.y,it.w)+14} width={it.d-24} height={it.w-28} fill="#f7f1e8" stroke="#7b3f21" strokeWidth="3" rx="6" strokeDasharray="12 8"/>
               {/* food processor inside garage */}
-              <rect x={2324-it.d+40} y={svgY(it.y+90,120)} width={it.d-80} height={120} fill="#b9b9b9" stroke="#111" rx="4"/>
-              <circle cx={2324-it.d/2} cy={svgY(it.y+90,120)+36} r="22" fill="#e8e8e8" stroke="#777"/>
-              <text x={2324-it.d/2} y={svgY(it.y+90,120)+88} textAnchor="middle" fontSize="18" fontWeight="800" fill="#111">FOOD PROCESSOR</text>
-              <path d={`M ${2324-it.d+20} ${svgY(it.y+it.w-90,55)} L ${2324-it.d-210} ${svgY(it.y+it.w-20,55)} L ${2324-it.d-210} ${svgY(it.y+80,55)} L ${2324-it.d+20} ${svgY(it.y+80,55)}`} fill="none" stroke="#2f6f6d" strokeWidth="5" strokeDasharray="16 10"/>
-              <rect x={2324-it.d+8} y={svgY(it.y,it.w)+8} width={it.d-16} height="26" fill="#fff" opacity="0.92" rx="5"/>
-              <text x={2324-it.d/2} y={svgY(it.y,it.w)+22} textAnchor="middle" fontSize="24" fontWeight="800" fill="#111">{it.w}W y{Math.round(it.y)} garage</text>
-              <text x={2324-it.d/2} y={svgY(it.y,it.w)+it.w/2-46} textAnchor="middle" fontSize="20" fontWeight="800" fill="#111">APPLIANCE GARAGE</text>
-              <text x={2324-it.d/2} y={svgY(it.y,it.w)+it.w/2-22} textAnchor="middle" fontSize="16" fontWeight="700" fill="#5a4632">open FP, pulls toward gas</text>
+              <rect x={KITCHEN.width-it.d+40} y={svgY(it.y+90,120)} width={it.d-80} height={120} fill="#b9b9b9" stroke="#111" rx="4"/>
+              <circle cx={KITCHEN.width-it.d/2} cy={svgY(it.y+90,120)+36} r="22" fill="#e8e8e8" stroke="#777"/>
+              <text x={KITCHEN.width-it.d/2} y={svgY(it.y+90,120)+88} textAnchor="middle" fontSize="18" fontWeight="800" fill="#111">FOOD PROCESSOR</text>
+              <path d={`M ${KITCHEN.width-it.d+20} ${svgY(it.y+it.w-90,55)} L ${KITCHEN.width-it.d-210} ${svgY(it.y+it.w-20,55)} L ${KITCHEN.width-it.d-210} ${svgY(it.y+80,55)} L ${KITCHEN.width-it.d+20} ${svgY(it.y+80,55)}`} fill="none" stroke="#2f6f6d" strokeWidth="5" strokeDasharray="16 10"/>
+              <rect x={KITCHEN.width-it.d+8} y={svgY(it.y,it.w)+8} width={it.d-16} height="26" fill="#fff" opacity="0.92" rx="5"/>
+              <text x={KITCHEN.width-it.d/2} y={svgY(it.y,it.w)+22} textAnchor="middle" fontSize="24" fontWeight="800" fill="#111">{it.w}W y{Math.round(it.y)} garage</text>
+              <text x={KITCHEN.width-it.d/2} y={svgY(it.y,it.w)+it.w/2-46} textAnchor="middle" fontSize="20" fontWeight="800" fill="#111">APPLIANCE GARAGE</text>
+              <text x={KITCHEN.width-it.d/2} y={svgY(it.y,it.w)+it.w/2-22} textAnchor="middle" fontSize="16" fontWeight="700" fill="#5a4632">open FP, pulls toward gas</text>
             </g>)
           }
           return (<g key={it.id} onMouseDown={e=>onDown(e,'east',it.id)} style={{cursor:'grab'}}>
-          <rect x={2324-it.d} y={svgY(it.y,it.w)} width={it.d} height={it.w} fill={it.color} stroke="#111" strokeWidth="5" rx="10"/>
-          <rect x={2324-it.d+8} y={svgY(it.y,it.w)+8} width={Math.max(1,it.d-16)} height="26" fill="#fff" opacity="0.92" rx="5"/>
-          <text x={2324-it.d/2} y={svgY(it.y,it.w)+22} textAnchor="middle" fontSize="28" fontWeight="800" fill="#111">{it.w}W y{Math.round(it.y)}mm</text>
-          <text x={2324-it.d/2} y={svgY(it.y,it.w)+it.w/2+14} textAnchor="middle" fontSize="34" fontWeight="800" fill={it.id==='gas'?'#fff':'#111'}>{planLabel(it.id)}</text>
+          <rect x={KITCHEN.width-it.d} y={svgY(it.y,it.w)} width={it.d} height={it.w} fill={it.color} stroke="#111" strokeWidth="5" rx="10"/>
+          <rect x={KITCHEN.width-it.d+8} y={svgY(it.y,it.w)+8} width={Math.max(1,it.d-16)} height="26" fill="#fff" opacity="0.92" rx="5"/>
+          <text x={KITCHEN.width-it.d/2} y={svgY(it.y,it.w)+22} textAnchor="middle" fontSize="28" fontWeight="800" fill="#111">{it.w}W y{Math.round(it.y)}mm</text>
+          <text x={KITCHEN.width-it.d/2} y={svgY(it.y,it.w)+it.w/2+14} textAnchor="middle" fontSize="34" fontWeight="800" fill={it.id==='gas'?'#fff':'#111'}>{planLabel(it.id)}</text>
           {it.id==='washing'&&<g>
-            <path d={`M ${2324-it.d+18} ${svgY(it.y,it.w)+it.w-28} Q ${2324-it.d-130} ${svgY(it.y,it.w)+it.w-120} ${2324-it.d+18} ${svgY(it.y,it.w)+it.w-230}`} fill="none" stroke="#2f6f6d" strokeWidth="5" strokeDasharray="12 10"/>
-            <text x={2324-it.d/2} y={svgY(it.y,it.w)+it.w-38} textAnchor="middle" fontSize="18" fontWeight="900" fill="#2f6f6d">opens left</text>
+            <path d={`M ${KITCHEN.width-it.d+18} ${svgY(it.y,it.w)+it.w-28} Q ${KITCHEN.width-it.d-130} ${svgY(it.y,it.w)+it.w-120} ${KITCHEN.width-it.d+18} ${svgY(it.y,it.w)+it.w-230}`} fill="none" stroke="#2f6f6d" strokeWidth="5" strokeDasharray="12 10"/>
+            <text x={KITCHEN.width-it.d/2} y={svgY(it.y,it.w)+it.w-38} textAnchor="middle" fontSize="18" fontWeight="900" fill="#2f6f6d">opens left</text>
           </g>}
           {it.id==='dishwasher'&&<g>
-            <rect x={2324-it.d-170} y={svgY(it.y,it.w)+75} width="160" height={it.w-150} fill="#d1cec8" stroke="#111" strokeWidth="3" opacity="0.86" rx="5"/>
-            <text x={2324-it.d/2} y={svgY(it.y,it.w)+it.w-38} textAnchor="middle" fontSize="18" fontWeight="900" fill="#2f6f6d">opens down</text>
+            <rect x={KITCHEN.width-it.d-170} y={svgY(it.y,it.w)+75} width="160" height={it.w-150} fill="#d1cec8" stroke="#111" strokeWidth="3" opacity="0.86" rx="5"/>
+            <text x={KITCHEN.width-it.d/2} y={svgY(it.y,it.w)+it.w-38} textAnchor="middle" fontSize="18" fontWeight="900" fill="#2f6f6d">opens down</text>
           </g>}
         </g>)})}
         {activeWest.map(it=>{
@@ -2242,7 +2247,7 @@ ${westRows}
           <text x={it.d/2} y={svgY(it.y,it.w)+22} textAnchor="middle" fontSize="28" fontWeight="800" fill="#111">{it.w}W y{Math.round(it.y)}mm</text>
           <text x={it.d/2} y={svgY(it.y,it.w)+it.w/2+14} textAnchor="middle" fontSize="34" fontWeight="800" fill={it.id==='sink'?'#fff':'#111'}>{planLabel(it.id)}</text>
         </g>)})}
-        <DimH x1={0} x2={KITCHEN.width} y={-110} text="Room width 2324 mm"/>
+        <DimH x1={0} x2={KITCHEN.width} y={-110} text={`Room width ${KITCHEN.width} mm`}/>
         <DimV y1={0} y2={KITCHEN.length} x={KITCHEN.width+110} text={`Room length ${KITCHEN.length} mm`}/>
         <DimH x1={KITCHEN.width-600} x2={KITCHEN.width} y={36} text="East 600 mm"/>
         <DimH x1={0} x2={600} y={36} text="West 600 mm"/>

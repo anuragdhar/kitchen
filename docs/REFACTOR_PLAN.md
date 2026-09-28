@@ -210,13 +210,33 @@ and after (a build is not sufficient per `AGENTS.md` "Completion"):
      this step called for, so no new test was needed. Verified with build +
      `npm test`, and a Playwright screenshot of both the North and South
      elevation tabs (correct scale/proportions, no console errors).
-   - Not yet touched: the ~15 further `2700` occurrences inside
-     `NorthSouthElevation`'s JSX body (absolute Z-coordinates for specific
-     drawn features, e.g. the ceiling line, window top) and the ~40 `2324`
-     occurrences in the separate top-plan SVG JSX section (interactive
-     click/drag view, distinct from the `buildPlanSvg` export builder already
-     extracted in Phase 4a). Same idea, larger surface area for one pass;
-     left for a follow-up.
+   - [x] The remaining ~40 `2324` occurrences in the top-plan SVG JSX section
+     (interactive click/drag view) and ~20 `2700` occurrences in
+     `NorthSouthElevation`'s JSX body (window/ceiling feature Z-coordinates)
+     replaced with `KITCHEN.width`/`KITCHEN.height` (2026-09-28), same
+     numerically-identical substitution. One `Room width 2324 mm` label and
+     one bare axis-label `2700` needed converting to template
+     literals/`{}` expressions rather than a blind token swap; caught the
+     axis label right after the substitution (it would otherwise have
+     rendered the literal text "KITCHEN.height" on screen instead of the
+     number) and fixed it before building.
+   - **A real regression, introduced in Phase 4a and live on `main` for four
+     commits, found and fixed while doing this pass.** Extracting
+     `buildPlanSvg` in Phase 4a deleted App.jsx's `const svgY=(southY,depth)
+     =>KITCHEN.length-southY-depth`, assuming it was private to that
+     function. It wasn't: the separate interactive top-plan SVG section
+     (drag-to-reposition items, distinct from the static `buildPlanSvg`
+     export) also called it by closure. Every visual check done for Phases
+     4a-4e happened to land on other tabs/rooms and never exercised the
+     Kitchen's own "Top View (Plan)" tab, so a `ReferenceError: svgY is not
+     defined` — which blanks the entire page, since App.jsx has no error
+     boundary — went undetected across `f6a7e08`..`3dd8815`. Caught this time
+     because verifying the `2324` replacement meant actually clicking that
+     tab. Restored the helper with a comment explaining why it must stay,
+     and re-verified every elevation/wall/top-plan view screenshotted in
+     this and the two prior commits, not just the one this pass touched.
+     Lesson recorded here rather than quietly folded in: screenshot
+     verification is only as good as which tabs it actually clicks.
    - [x] `WallElevation` (the East/West cabinet-wall drawing, ~280 lines)
      moved out of `App.jsx` into `src/kitchen/WallElevation.jsx` as its own
      component (2026-09-28). `KITCHEN`/`PLINTH_HEIGHT`/`HEIGHT_GUIDES` are
