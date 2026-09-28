@@ -86,6 +86,23 @@ export default function EntryGallery3D(){
     addLabel('ENTRY SHAFT',x((ENTRY.shaft.planX1+ENTRY.shaft.planX2)/2),2.44,z((ENTRY.shaft.planY1+ENTRY.shaft.planY2)/2),.95)
     addLabel('OUTER ENTRY',width-.2,2.48,z((outer.fromPlanY+outer.toPlanY)/2),.92)
     addLabel('SHOE RACK',rackX,rackHeight+.18,rackFront+.08,.9)
+
+    // Key station (owner request 2026-09-28: "where to store the keys"):
+    // wall-mounted tray + hooks just inside the arrival door, on the wall
+    // segment it's hung on (ENTRY.arrivalDoor, wallPlanX 575). The door hinges
+    // north and swings west-outside, so the interior face here is clear of
+    // its swing at every open angle; placed toward the door's north end so
+    // it's the first thing at hand on entry, well clear of the shoe rack at
+    // the south end of the same run.
+    const keyStationX=x(ENTRY.arrivalDoor.wallPlanX)+.045
+    const keyStationZ=z(ENTRY.arrivalDoor.fromPlanY+20)
+    const keyTray=new THREE.Mesh(new THREE.BoxGeometry(.03,.05,.22),timber)
+    keyTray.position.set(keyStationX,1.5,keyStationZ);keyTray.castShadow=true;keyTray.receiveShadow=true;model.add(keyTray)
+    for(const dz of [-.07,0,.07]){
+      const hook=new THREE.Mesh(new THREE.TorusGeometry(.018,.006,8,16,Math.PI*1.4),metal)
+      hook.rotation.z=Math.PI/2;hook.rotation.y=Math.PI/2;hook.position.set(keyStationX+.02,1.44,keyStationZ+dz);model.add(hook)
+    }
+    addLabel('KEYS',keyStationX+.16,1.62,keyStationZ,.55)
     scene.add(new THREE.HemisphereLight('#ffffff','#78909c',1))
     const sun=new THREE.DirectionalLight('#fff3dc',1.3);sun.position.set(-2,7,4);sun.castShadow=true;scene.add(sun)
     const setCamera=key=>{

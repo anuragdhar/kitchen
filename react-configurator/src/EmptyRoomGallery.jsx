@@ -16,7 +16,7 @@ import {createBedroom3Wardrobe} from './rooms/bedroom3/Bedroom3Wardrobe.js'
 import {createLobbyEastIroningStorage} from './rooms/lobby/LobbyEastIroningStorage.js'
 import {createRoomAirConditioning} from './rooms/shared/RoomAirConditioning.js'
 import {createRoomTaskLighting} from './rooms/shared/RoomTaskLighting.js'
-import {createRug,createPottedPlant,createWallArt,createFloorLamp,createCushion} from './rooms/shared/RoomDecor.js'
+import {createRug,createPottedPlant,createWallArt,createFloorLamp,createCushion,createLaundryHamper} from './rooms/shared/RoomDecor.js'
 import {createDrawingRoomTelevision} from './rooms/drawing/DrawingRoomTelevision.js'
 import {createEntryRecessStorage} from './rooms/entry/EntryRecessStorage.js'
 import {createLobbyConcealedDoor} from './rooms/lobby/LobbyConcealedDoor.js'
@@ -246,6 +246,12 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
       furniture.add(createBedroom3Bed(room))
       furniture.add(vanity)
       furniture.add(createBedroom3Wardrobe(room))
+      // Light decor pass, matching Lobby/Bedroom1/Study (owner request
+      // 2026-09-28). Placed in the open floor near the north entry door,
+      // clear of the bed (headed east), the west wardrobe run and the
+      // south balcony/cabinet extension.
+      const b3Plant=createPottedPlant(1.05);b3Plant.position.set(0.5,0,0.55);furniture.add(b3Plant)
+      const b3Art=createWallArt(.85,.6,'#7a6a55');b3Art.position.set(2.3,1.5,0.05);furniture.add(b3Art)
     }
     if(roomKey==='drawing'){
       const {sofa,coffeeTable,windowSeat}=room.furniture
@@ -383,6 +389,11 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
       for(const dz of [-.28,.28]){const cushion=createCushion(.34,dz<0?'#8d9c8f':'#b48b60');cushion.position.set(3.02,.445,2.478+dz);cushion.rotation.y=Math.PI/2;furniture.add(cushion)}
       const b1Art=createWallArt(.85,.6,'#7e8b99');b1Art.position.set(W-.05,1.55,2.478);b1Art.rotation.y=-Math.PI/2;furniture.add(b1Art)
       const b1Plant=createPottedPlant(1);b1Plant.position.set(2.2,0,.32);furniture.add(b1Plant)
+      // Laundry hamper (owner request 2026-09-29): open floor south of the
+      // wardrobe (which ends at z=1.8) and west of the bed (which starts at
+      // x=1.524), just inside the south door to Lobby/Dining - clear of both
+      // and clear of the door swing (door spans x 0.1-1.0 at the south wall).
+      const hamper=createLaundryHamper();hamper.position.set(0.85,0,2.65);furniture.add(hamper)
     }
     furniture.visible=showFurniture
     southWall.visible=showSouthWall

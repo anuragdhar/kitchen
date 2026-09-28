@@ -64,6 +64,24 @@ export function createFloorLamp(){
   return group
 }
 
+// A real functional fixture (owner request 2026-09-29: "where to place the
+// laundry box"), not throwaway styling - it stays IN the high-quality
+// Blender renders, unlike the decor pieces above (no archvizExclude tag).
+// A woven-look hamper with a lift lid, sized for a bedroom corner.
+export function createLaundryHamper(){
+  const group=new THREE.Group();group.name='laundry hamper'
+  const weave=mat('#c9a876',{roughness:.92})
+  const rim=mat('#8a6f4a',{roughness:.6})
+  const body=new THREE.Mesh(new THREE.CylinderGeometry(.19,.16,.46,20),weave)
+  body.position.y=.23;group.add(body)
+  const band1=new THREE.Mesh(new THREE.TorusGeometry(.175,.012,8,20),rim)
+  band1.rotation.x=Math.PI/2;band1.position.y=.10;group.add(band1)
+  const band2=band1.clone();band2.position.y=.36;group.add(band2)
+  const lid=new THREE.Mesh(new THREE.CylinderGeometry(.20,.20,.03,20),rim)
+  lid.position.y=.475;group.add(lid)
+  return group
+}
+
 export function createCushion(width,color){
   const cushion=new THREE.Mesh(new THREE.BoxGeometry(width,width*.42,width*.9),mat(color,{roughness:.95}))
   cushion.name='decor cushion';cushion.userData.archvizExclude=true
