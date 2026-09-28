@@ -47,8 +47,10 @@ export async function buildBlenderBundle(id,{quality='balanced',onProgress=()=>{
   if(getInteriorScene(id)!==record||appearanceStore.getRevision()!==appearanceRevision||lightingStore.getRevision()!==lightingRevision)throw Error('Scene/settings changed during export. Try again.');
   const job=validateRenderJob({schemaVersion:1,format:'home-interior-render',unit:'m',coordinateSystem:'Y_UP',sceneFile:'scene.glb',sceneSha256:await digest(glb),cameraName:RENDER_CAMERA,room:id,quality,aspect:record.camera.aspect||1.5,meshCount,vertices,fixtures:structuredClone(record.lighting?.fixtures||[]),punctualLights,worldStrength:Math.max(.015,Math.min(.35,(record.scene.environmentIntensity??.2)*.45)),appearance:appearanceStore.getSnapshot(),lighting:lightingStore.getSnapshot(),source:{revision:import.meta.env.VITE_GIT_REVISION||'not supplied',exportedAt:new Date().toISOString(),visibleSceneOnly:true,annotationSpritesExcluded:true}});
   const zip=new JSZip();zip.file('scene.glb',glb);zip.file('render-job.json',JSON.stringify(job,null,2));zip.file('README.txt','Home Interior Blender render package\n\nExtract this folder, then run from the repository:\nnode react-configurator/scripts/blender-render.cjs --job "<folder>/render-job.json" --output "<new render folder>"\nSet BLENDER_PATH to your installed Blender executable if it is not on PATH.\nThe job contains the actual visible meshes and camera in metres; labels/sprites are not architectural geometry. Room dimensions are not certified. Rendered lamp power is an artistic conversion, not photometric certification.\n');
-  progress('Compressing render package…');
-  const blob=await zip.generateAsync({type:'blob',compression:'DEFLATE',compressionOptions:{level:3}});
+  // GLB already embeds compressed PNG/JPEG maps. Re-deflating them on the UI
+  // thread delayed downloads under software WebGL; STORE retains every byte.
+  progress('Packaging render files…');
+  const blob=await zip.generateAsync({type:'blob',compression:'STORE',streamFiles:true});
   progress('Render package ready.');return {blob,job,glb};
  }finally{ownedGeometry.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());}
 }
