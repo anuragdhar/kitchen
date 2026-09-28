@@ -1,0 +1,14 @@
+{
+  "name": "Home Interior preview",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:1-22-bookworm",
+  "remoteUser": "node",
+  "hostRequirements": { "cpus": 2, "memory": "8gb" },
+  "postCreateCommand": "npm --prefix react-configurator ci",
+  "postStartCommand": "bash .devcontainer/start-preview.sh",
+  "waitFor": "postCreateCommand",
+  "forwardPorts": [5173],
+  "portsAttributes": {
+    "5173": { "label": "Home Interior", "onAutoForward": "openBrowser" }
+  },
+  "otherPortsAttributes": { "onAutoForward": "ignore" }
+}

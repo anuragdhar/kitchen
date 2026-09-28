@@ -27,12 +27,25 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
           cache-dependency-path: react-configurator/package-lock.json
+      - name: Codespaces configuration and launcher syntax
+        run: |
+          node --test ../.devcontainer/config.test.mjs
+          bash -n ../.devcontainer/start-preview.sh
       - name: Current-layout and tooling tests (no dependencies required)
         run: npm test
       - name: Install locked dependencies
         run: npm ci
       - name: Production build
         run: npm run build
+      - name: Codespaces preview startup and host restrictions
+        env:
+          CODESPACE_NAME: ci-home-interior
+          GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN: app.github.dev
+        run: |
+          bash ../.devcontainer/start-preview.sh
+          bash ../.devcontainer/start-preview.sh
+          test "$(curl --noproxy '*' -s -o /dev/null -w '%{http_code}' -H 'Host: ci-home-interior-5173.app.github.dev' http://127.0.0.1:5173/)" = 200
+          test "$(curl --noproxy '*' -s -o /dev/null -w '%{http_code}' -H 'Host: unrelated.example' http://127.0.0.1:5173/)" = 403
       - name: Install Chromium for behavior and export regressions
         run: npx playwright install --with-deps chromium
       - name: Browser correctness checks
