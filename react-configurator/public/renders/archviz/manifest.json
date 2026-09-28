@@ -195,6 +195,71 @@
         }
       ],
       "reviewStatus": "unreviewed"
+    },
+    {
+      "room": "study",
+      "job": "599e2c53c487403d",
+      "sourceKind": "editable-snapshot",
+      "quality": "draft",
+      "lighting": "day",
+      "images": [
+        {
+          "label": "Current editable camera",
+          "url": "/renders/archviz/599e2c53c487403d/current.png",
+          "sha256": "aba2eaada3105f55ce726a4e048240f0aa79be85cd9263d54f840cf5222e0ac2",
+          "size": [
+            960,
+            547
+          ]
+        },
+        {
+          "label": "Room composition",
+          "url": "/renders/archviz/599e2c53c487403d/hero.png",
+          "sha256": "df13f0d8df2be365dd1bc1da7858a9f9b00f40b9d988312eb4836e7eaac3c74e",
+          "size": [
+            960,
+            640
+          ]
+        },
+        {
+          "label": "Reverse room view",
+          "url": "/renders/archviz/599e2c53c487403d/reverse.png",
+          "sha256": "0cf3d4e3eb2b8ec85da807cd2e2c27942f63b38edccf967d06593de716bc2d78",
+          "size": [
+            960,
+            640
+          ]
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "room": "bedroom3",
+      "job": "40c622a6cdd14431",
+      "sourceKind": "editable-snapshot",
+      "quality": "draft",
+      "lighting": "day",
+      "images": [
+        {
+          "label": "Current editable camera",
+          "url": "/renders/archviz/40c622a6cdd14431/current.png",
+          "sha256": "c13c0c37aaeaae450c72a7d1ea71c4db52ded2ab145585aa1b9990ded4801264",
+          "size": [
+            960,
+            547
+          ]
+        },
+        {
+          "label": "Reverse room view",
+          "url": "/renders/archviz/40c622a6cdd14431/reverse.png",
+          "sha256": "dd937c1d6ab59ef7fe18211708e62fc97f92eb9382f63bce4e0eea553f122a3c",
+          "size": [
+            960,
+            640
+          ]
+        }
+      ],
+      "reviewStatus": "unreviewed"
     }
   ]
 }

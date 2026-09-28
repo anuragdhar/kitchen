@@ -1,0 +1,73 @@
+{
+  "schema": "a501.current-room",
+  "version": 1,
+  "room": "bedroom3",
+  "job": "40c622a6cdd14431",
+  "sceneId": "bedroom3",
+  "sourceKind": "editable-snapshot",
+  "sourceSha256": "dfe33bed145758ea20fb5b8980591c3de0983b228083337c50f917af3cece2af",
+  "capturedAt": "2026-09-28T20:16:11.196Z",
+  "quality": "draft",
+  "model": {
+    "url": "/renders/archviz/40c622a6cdd14431/source.glb",
+    "sha256": "dfe33bed145758ea20fb5b8980591c3de0983b228083337c50f917af3cece2af",
+    "shading": "studio-unbaked"
+  },
+  "camera": {
+    "type": "perspective",
+    "position": [
+      1.7833499999999998,
+      2.052,
+      0.7452000000000001
+    ],
+    "quaternion": [
+      0.02004374275489932,
+      0.9784354155028298,
+      0.11516299650510076,
+      -0.17029348285282878
+    ],
+    "fov": 46,
+    "aspect": 1.7560355781448538,
+    "verticalSpan": null
+  },
+  "bounds": {
+    "min": [
+      -0.05000000074505806,
+      -0.055499999850988385,
+      -0.5791750341439235
+    ],
+    "max": [
+      4.013000000745058,
+      2.700000023841858,
+      4.94850000089407
+    ]
+  },
+  "images": [
+    {
+      "label": "Current editable camera",
+      "url": "/renders/archviz/40c622a6cdd14431/current.png",
+      "sha256": "c13c0c37aaeaae450c72a7d1ea71c4db52ded2ab145585aa1b9990ded4801264",
+      "size": [
+        960,
+        547
+      ]
+    },
+    {
+      "label": "Reverse room view",
+      "url": "/renders/archviz/40c622a6cdd14431/reverse.png",
+      "sha256": "dd937c1d6ab59ef7fe18211708e62fc97f92eb9382f63bce4e0eea553f122a3c",
+      "size": [
+        960,
+        640
+      ]
+    }
+  ],
+  "geometryAudit": {
+    "sourceObjects": 129,
+    "importedMeshes": 129,
+    "maximumBoundsErrorMetres": 3.328323368023689e-07,
+    "triangleCountsMatch": true,
+    "scope": "Source IDs, per-object world bounds and triangle counts; not a construction/collision certificate."
+  },
+  "reviewStatus": "unreviewed"
+}
