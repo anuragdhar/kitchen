@@ -17,6 +17,7 @@ import {STUDY_ROOM} from './config/studyRoomConfig.js'
 import {EMPTY_ROOM_SHELLS} from './config/roomShellConfig.js'
 import {KITCHEN} from './config/kitchenConfig.js'
 import {PLAN_IMAGE} from './config/entryConfig.js'
+import {TRUE_NORTH_OFFSET_DEG} from './config/orientationConfig.js'
 import floorPlanImage from '../../Interior/home a 501 floor - unmodified.png'
 
 const rooms={
@@ -156,13 +157,13 @@ const planHotspots=[
 
 function MiniFloorNavigator({section,onOpen}){
   return <aside className="mini-floor-navigator" aria-label="Room navigation floor plan" style={{position:'fixed',left:14,top:84,width:238,zIndex:45,background:'rgba(255,255,255,.97)',border:'1px solid #d8d0c7',borderRadius:17,padding:10,boxShadow:'0 15px 40px rgba(39,31,24,.18)',display:'none'}}>
-    <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',gap:8,margin:'1px 2px 8px'}}><div><b style={{fontSize:13,color:'#241f1a'}}>Jump to a room</b><div style={{fontSize:10,color:'#756b62',marginTop:2}}>Click the plan</div></div><div aria-label="Plan compass: south up, north down, east left, west right" style={{width:40,height:40,border:'1.5px solid #241f1a',borderRadius:'50%',position:'relative',fontSize:8,fontWeight:900,color:'#241f1a'}}><span style={{position:'absolute',top:1,left:'50%',transform:'translateX(-50%)'}}>S</span><span style={{position:'absolute',bottom:1,left:'50%',transform:'translateX(-50%)',color:'#b91c1c'}}>N</span><span style={{position:'absolute',left:3,top:'50%',transform:'translateY(-50%)'}}>E</span><span style={{position:'absolute',right:3,top:'50%',transform:'translateY(-50%)'}}>W</span><span style={{position:'absolute',left:'50%',top:8,width:1,height:24,background:'#241f1a'}}/><span style={{position:'absolute',left:8,top:'50%',width:24,height:1,background:'#241f1a'}}/></div></div>
+    <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',gap:8,margin:'1px 2px 8px'}}><div><b style={{fontSize:13,color:'#241f1a'}}>Jump to a room</b><div style={{fontSize:10,color:'#756b62',marginTop:2}}>Click the plan</div></div><div aria-label={`Plan compass: south up, north down, east left, west right; red needle marks true north, about ${TRUE_NORTH_OFFSET_DEG} degrees off plan north`} style={{width:40,height:40,border:'1.5px solid #241f1a',borderRadius:'50%',position:'relative',fontSize:8,fontWeight:900,color:'#241f1a'}}><span style={{position:'absolute',top:1,left:'50%',transform:'translateX(-50%)'}}>S</span><span style={{position:'absolute',bottom:1,left:'50%',transform:'translateX(-50%)',color:'#b91c1c'}}>N</span><span style={{position:'absolute',left:3,top:'50%',transform:'translateY(-50%)'}}>E</span><span style={{position:'absolute',right:3,top:'50%',transform:'translateY(-50%)'}}>W</span><span style={{position:'absolute',left:'50%',top:8,width:1,height:24,background:'#241f1a'}}/><span style={{position:'absolute',left:8,top:'50%',width:24,height:1,background:'#241f1a'}}/><span style={{position:'absolute',inset:0,transform:`rotate(${TRUE_NORTH_OFFSET_DEG}deg)`}}><span style={{position:'absolute',left:'50%',top:'50%',width:2,height:14,marginLeft:-1,background:'#b91c1c'}}/><span style={{position:'absolute',left:'50%',bottom:2,transform:'translateX(-50%)',width:0,height:0,borderLeft:'3px solid transparent',borderRight:'3px solid transparent',borderTop:'5px solid #b91c1c'}}/></span></div></div>
     <div style={{position:'relative',overflow:'hidden',borderRadius:10,border:'1px solid #e5ded6',background:'#fff'}}>
       <img src={floorPlanImage} alt="Miniature A501 home floor plan" style={{display:'block',width:'100%',height:'auto'}}/>
       {planHotspots.map(([key,style,options],index)=>{const active=section===key;const info=rooms[key];return <button key={`${key}-${index}`} onClick={()=>onOpen(key)} aria-label={`Open ${options?.label||info.name}`} title={options?.label||info.name} style={{position:'absolute',...style,border:`${active?3:1.5}px solid ${info.color}`,background:active?`${info.color}70`:`${info.color}25`,borderRadius:4,cursor:'pointer',padding:0,boxShadow:active?`0 0 0 2px #fff, 0 0 0 4px ${info.color}`:'none'}}/>})}
     </div>
     <button onClick={()=>onOpen('whole3d')} style={{...buttonStyle,width:'100%',marginTop:9,background:section==='whole3d'?'#134e4a':'#0f766e',color:'#fff'}}>Whole home 3D ↗</button>
-    <div style={{fontSize:9,color:'#756b62',lineHeight:1.35,marginTop:7}}>S ↑ · N ↓ · E ← · W →</div>
+    <div style={{fontSize:9,color:'#756b62',lineHeight:1.35,marginTop:7}}>S ↑ · N ↓ · E ← · W → · <span style={{color:'#b91c1c',fontWeight:800}}>true N ≈{TRUE_NORTH_OFFSET_DEG}° off plan</span></div>
     <style>{`@media(min-width:1500px){.mini-floor-navigator{display:block!important}}`}</style>
   </aside>
 }
@@ -185,14 +186,19 @@ function WholeHome({onOpen}){
           </div>
           <div style={{position:'relative',width:'100%',margin:'0 auto',overflow:'hidden',borderRadius:16,background:'#fff'}}>
             <img src={floorPlanImage} alt="A501 whole home architectural floor plan" style={{display:'block',width:'100%',height:'auto'}}/>
-            <div aria-label="Plan directions: east is left, south is up, west is right, north is down" style={{position:'absolute',right:'2.5%',top:'2.5%',width:'clamp(62px,11vw,92px)',aspectRatio:'1',borderRadius:'50%',background:'rgba(255,255,255,.94)',border:'2px solid #241f1a',boxShadow:'0 5px 18px rgba(0,0,0,.15)',fontWeight:900,color:'#241f1a',fontSize:'clamp(9px,1.4vw,13px)'}}>
+            <div aria-label={`Plan directions: east is left, south is up, west is right, north is down. Red needle marks true north, about ${TRUE_NORTH_OFFSET_DEG} degrees off plan north.`} style={{position:'absolute',right:'2.5%',top:'2.5%',width:'clamp(62px,11vw,92px)',aspectRatio:'1',borderRadius:'50%',background:'rgba(255,255,255,.94)',border:'2px solid #241f1a',boxShadow:'0 5px 18px rgba(0,0,0,.15)',fontWeight:900,color:'#241f1a',fontSize:'clamp(9px,1.4vw,13px)'}}>
               <span style={{position:'absolute',top:4,left:'50%',transform:'translateX(-50%)'}}>S</span>
               <span style={{position:'absolute',bottom:4,left:'50%',transform:'translateX(-50%)',color:'#b91c1c'}}>N</span>
               <span style={{position:'absolute',left:6,top:'50%',transform:'translateY(-50%)'}}>E</span>
               <span style={{position:'absolute',right:7,top:'50%',transform:'translateY(-50%)'}}>W</span>
               <span style={{position:'absolute',left:'50%',top:'20%',width:2,height:'60%',background:'#241f1a',transform:'translateX(-50%)'}}/>
               <span style={{position:'absolute',left:'20%',top:'50%',height:2,width:'60%',background:'#241f1a',transform:'translateY(-50%)'}}/>
-              <span style={{position:'absolute',left:'50%',bottom:'14%',transform:'translateX(-50%)',width:0,height:0,borderLeft:'5px solid transparent',borderRight:'5px solid transparent',borderTop:'11px solid #b91c1c'}}/>
+              {/* True north differs from plan north; see orientationConfig.js. */}
+              <span style={{position:'absolute',inset:0,transform:`rotate(${TRUE_NORTH_OFFSET_DEG}deg)`}}>
+                <span style={{position:'absolute',left:'50%',top:'50%',width:2,height:'32%',marginLeft:-1,background:'#b91c1c'}}/>
+                <span style={{position:'absolute',left:'50%',bottom:'11%',transform:'translateX(-50%)',width:0,height:0,borderLeft:'5px solid transparent',borderRight:'5px solid transparent',borderTop:'11px solid #b91c1c'}}/>
+              </span>
+              <span style={{position:'absolute',left:'50%',bottom:'-30%',transform:'translateX(-50%)',whiteSpace:'nowrap',fontSize:'clamp(7px,1vw,10px)',color:'#b91c1c',background:'rgba(255,255,255,.9)',padding:'0 4px',borderRadius:4}}>true N {TRUE_NORTH_OFFSET_DEG}°</span>
             </div>
             {planHotspots.map(([room,style,options],index)=><RoomHotspot key={`${room}-${index}`} room={room} style={style} onOpen={onOpen} {...options}/>)}
           </div>

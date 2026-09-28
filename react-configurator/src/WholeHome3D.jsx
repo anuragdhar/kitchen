@@ -34,6 +34,8 @@ import PlanMarkPanel from './PlanMarkPanel.jsx'
 import HomeLightingGallery from './HomeLightingGallery.jsx'
 import BlenderHomeView from './BlenderHomeView.jsx'
 import {HOME_ROOM_LAYOUTS} from './config/homeRoomViews.js'
+import {daylightPreset} from './render/daylight.mjs'
+import {TRUE_NORTH_OFFSET_DEG,SITE_LATITUDE_DEG} from './config/orientationConfig.js'
 
 // The A501 plan is south-up: image right is west and image down is north.
 const PLAN_WIDTH=PLAN_IMAGE.widthPx,PLAN_HEIGHT=PLAN_IMAGE.heightPx
@@ -79,6 +81,9 @@ function LiveWholeHome3D({onOpenRoom}){
   const [wallSelection,setWallSelection]=useState(null)
   const [wallNote,setWallNote]=useState('')
   const [markMode,setMarkMode]=useState(false)
+  // null = existing studio lighting; a decimal hour drives the daylight sun.
+  const [sunHour,setSunHour]=useState(null)
+  const sunHourRef=useRef(null)
   const [planMark,setPlanMark]=useState(()=>{try{return JSON.parse(localStorage.getItem(PLAN_MARK_KEY)||'{}')}catch{return {}}})
 
   useEffect(()=>{try{localStorage.setItem(PLAN_MARK_KEY,JSON.stringify(planMark))}catch{}},[planMark])
@@ -534,10 +539,27 @@ function LiveWholeHome3D({onOpenRoom}){
       if(item.id==='microwave')localBox(kg,15,item.h-60,item.w-90,(item.x||0)-8,cy,cz,darkAppliance)
       if(item.id==='applianceGarage')localBox(kg,15,item.h-70,item.w-50,(item.x||0)-8,cy,cz,darkAppliance)
     }
-    scene.add(new THREE.HemisphereLight('#ffffff','#8b9ca8',1.4))
-    const sun=new THREE.DirectionalLight('#fff5e5',2);sun.position.set(-5,16,-7);scene.add(sun)
+    const hemi=new THREE.HemisphereLight('#ffffff','#8b9ca8',1.4);scene.add(hemi)
+    const sun=new THREE.DirectionalLight('#fff5e5',2);sun.position.set(-5,16,-7);scene.add(sun);scene.add(sun.target)
 
     const centerX=X((50+688)/2),centerZ=Z((69+874)/2)
+    // Daylight preview: an indicative equinox sun path oriented by the site's
+    // true north (orientationConfig.js). hour==null restores studio lighting.
+    const setDaylight=hour=>{
+      if(hour==null){
+        hemi.color.set('#ffffff');hemi.groundColor.set('#8b9ca8');hemi.intensity=1.4
+        sun.color.set('#fff5e5');sun.intensity=2;sun.position.set(-5,16,-7);sun.target.position.set(0,0,0)
+        scene.background.set('#edf3f7')
+        return null
+      }
+      const p=daylightPreset(hour,{trueNorthOffsetDeg:TRUE_NORTH_OFFSET_DEG,latitudeDeg:SITE_LATITUDE_DEG})
+      hemi.color.set(p.hemiSky);hemi.groundColor.set(p.hemiGround);hemi.intensity=p.hemiIntensity
+      sun.color.set(p.sunColor);sun.intensity=p.sunIntensity
+      sun.position.set(centerX+p.direction[0]*40,Math.max(p.direction[1],.03)*40,centerZ+p.direction[2]*40)
+      sun.target.position.set(centerX,0,centerZ)
+      scene.background.set(p.background)
+      return p
+    }
     const setCamera=mode=>{
       if(mode==='top'){
         camera.position.set(centerX,27,centerZ+.001);camera.up.set(0,0,-1);controls.target.set(centerX,0,centerZ)
@@ -590,7 +612,8 @@ function LiveWholeHome3D({onOpenRoom}){
     const interiorRoomIds=['bedroom3','study','balcony','terrace','kitchen','lobby','drawing','bedroom1','bedroom1-balcony','entry']
     const interiorScene=registerInteriorScene({id:'whole-home',scene,camera,renderer,zones:ROOMS.map((r,index)=>({id:interiorRoomIds[index],min:[X(r.bounds[0]),0,Z(r.bounds[1])],max:[X(r.bounds[2]),HEIGHT,Z(r.bounds[3])]}))})
     let raf=0;const render=()=>{controls.update();renderer.render(scene,camera);raf=requestAnimationFrame(render)};render()
-    sceneRef.current={setStorageCoverOpen:value=>storeStorage.userData.setCoverOpen(value),setMirrorOpen:value=>vanity.userData.setMirrorOpen?.(value),setPartitionOpen:value=>partition.userData.setOpen?.(value),setCamera,setWallsVisible:visible=>{walls.visible=visible},setBoardOpen:value=>{ironingStorage.userData.setBoardOpen(value)},setPoojaPersonVisible:visible=>{seatedPerson.visible=visible},setPoojaDoorsOpen:value=>{poojaDoors.userData.setDoorsOpen(value)},clearMark}
+    sceneRef.current={setStorageCoverOpen:value=>storeStorage.userData.setCoverOpen(value),setMirrorOpen:value=>vanity.userData.setMirrorOpen?.(value),setPartitionOpen:value=>partition.userData.setOpen?.(value),setCamera,setWallsVisible:visible=>{walls.visible=visible},setBoardOpen:value=>{ironingStorage.userData.setBoardOpen(value)},setPoojaPersonVisible:visible=>{seatedPerson.visible=visible},setPoojaDoorsOpen:value=>{poojaDoors.userData.setDoorsOpen(value)},clearMark,setDaylight}
+    setDaylight(sunHourRef.current)
     return()=>{interiorScene.dispose();cancelAnimationFrame(raf);observer.disconnect();renderer.domElement.removeEventListener('pointerdown',onPointerDown);renderer.domElement.removeEventListener('pointerup',onPointerUp);controls.dispose();model.traverse(object=>{object.geometry?.dispose?.();object.material?.dispose?.()});markedWallMaterial.dispose();texture.dispose();environment.dispose();pmrem.dispose();renderer.dispose();renderer.domElement.remove();sceneRef.current=null}
   },[])
 
@@ -602,6 +625,7 @@ function LiveWholeHome3D({onOpenRoom}){
   useEffect(()=>{sceneRef.current?.setMirrorOpen(mirrorOpen)},[mirrorOpen])
   useEffect(()=>{sceneRef.current?.setPartitionOpen(partitionOpen)},[partitionOpen])
   useEffect(()=>{sceneRef.current?.setPoojaDoorsOpen(poojaDoorsOpen)},[poojaDoorsOpen])
+  useEffect(()=>{sunHourRef.current=sunHour;sceneRef.current?.setDaylight(sunHour)},[sunHour])
 
   return <section style={{background:'#fff',border:'1px solid #dbe3e9',borderRadius:22,overflow:'hidden',boxShadow:'0 16px 42px rgba(23,32,51,.1)'}}>
     <div style={{padding:'14px 16px',display:'flex',justifyContent:'space-between',alignItems:'center',gap:12,flexWrap:'wrap',borderBottom:'1px solid #e2e8f0'}}>
@@ -620,6 +644,17 @@ function LiveWholeHome3D({onOpenRoom}){
         <button onClick={()=>setMarkMode(value=>!value)} style={buttonStyle(markMode)}>{markMode?'Back to 3D':'Mark area on plan'}</button>
       </div>
     </div>
+    {!markMode&&<div style={{display:'flex',gap:8,alignItems:'center',flexWrap:'wrap',padding:'9px 16px',borderBottom:'1px solid #e2e8f0',background:'#f8fafc'}}>
+      <b style={{fontSize:12,color:'#172033'}}>Daylight</b>
+      {[['Studio',null],['Sunrise',6.4],['Morning',9],['Noon',12],['Evening',16.5],['Sunset',17.7],['Night',21]].map(([label,hour])=>
+        <button key={label} aria-pressed={sunHour===hour} onClick={()=>setSunHour(hour)} style={{...buttonStyle(sunHour===hour),padding:'5px 10px',fontSize:12}}>{label}</button>)}
+      <label style={{display:'flex',alignItems:'center',gap:6,fontSize:12,color:'#475569'}}>
+        Time
+        <input type="range" min="5" max="21" step="0.25" value={sunHour??12} onChange={event=>setSunHour(Number(event.target.value))} style={{width:150}} aria-label="Time of day for the daylight sun"/>
+        {sunHour!=null&&<span style={{fontVariantNumeric:'tabular-nums',minWidth:44}}>{String(Math.floor(sunHour)).padStart(2,'0')}:{String(Math.round(sunHour%1*60)).padStart(2,'0')}</span>}
+      </label>
+      <span style={{fontSize:10,color:'#94a3b8'}}>Indicative equinox sun path · true north ≈{TRUE_NORTH_OFFSET_DEG}° off plan north · not a solar study</span>
+    </div>}
     <div ref={mountRef} style={{height:'clamp(620px,82vh,1050px)',width:'100%',display:markMode?'none':'block'}}/>
     {markMode?<PlanMarkPanel image={floorPlanImage} width={PLAN_WIDTH} height={PLAN_HEIGHT} rooms={ROOMS} mark={planMark} onChange={setPlanMark} onClose={()=>setMarkMode(false)}/>
       :<WallSelectionPanel selection={wallSelection} note={wallNote} onNoteChange={setWallNote} onClear={()=>sceneRef.current?.clearMark()}/>}

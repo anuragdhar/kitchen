@@ -37,6 +37,10 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
   const [showDrawingRender,setShowDrawingRender]=useState(initialRoomKey==='drawing')
   const [wallSelection,setWallSelection]=useState(null)
   const [wallNote,setWallNote]=useState('')
+  // Daytime natural light is the default per the owner's 2026-09-28 request
+  // ("I see only the night time view"); Evening restores the warm task-light mood.
+  const [daylightOn,setDaylightOn]=useState(true)
+  const daylightRef=useRef(true)
   const mountRef=useRef(null)
   const sceneRef=useRef(null)
   const room=EMPTY_ROOM_SHELLS[roomKey]
@@ -355,8 +359,26 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
       const sprite=new THREE.Sprite(new THREE.SpriteMaterial({map:texture,transparent:true,depthTest:false}));sprite.position.set(x,.1,z);sprite.scale.set(.34,.17,1);sprite.renderOrder=1000;shell.add(sprite)
     }
     addMarker('N',W/2,.25);addMarker('S',W/2,L-.25);addMarker('W',.25,L/2);addMarker('E',W-.25,L/2)
-    scene.add(new THREE.HemisphereLight('#ffffff','#718096',1.15))
+    const hemi=new THREE.HemisphereLight('#ffffff','#718096',1.15);scene.add(hemi)
     const sun=new THREE.DirectionalLight('#fff4dc',1.65);sun.position.set(-2,6,4);sun.castShadow=true;scene.add(sun)
+    // Every other light in the scene is warm task/accent mood lighting; in
+    // daylight mode those are dimmed instead of removed so fixtures stay lit.
+    const moodLights=[];scene.traverse(object=>{if(object.isLight&&object!==hemi&&object!==sun)moodLights.push({light:object,base:object.intensity})})
+    const setDaylight=on=>{
+      if(on){
+        hemi.color.set('#e9f2ff');hemi.groundColor.set('#b3a897');hemi.intensity=1.7
+        sun.color.set('#fff9ec');sun.intensity=2.6
+        scene.background.set('#f2f6f9')
+        moodLights.forEach(({light,base})=>{light.intensity=base*.1})
+      }else{
+        // A real dusk mood, so the warm task lighting reads as the room's light.
+        hemi.color.set('#c3d2e8');hemi.groundColor.set('#4e463e');hemi.intensity=.5
+        sun.color.set('#ffd9a8');sun.intensity=.55
+        scene.background.set('#242a33')
+        moodLights.forEach(({light,base})=>{light.intensity=base*1.25})
+      }
+    }
+    setDaylight(daylightRef.current)
     controls.target.set(W/2,H*.38,L/2)
     const setCamera=key=>{
       camera.fov=key==='poojaDoor'?54:46;camera.updateProjectionMatrix()
@@ -402,7 +424,7 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
     renderer.domElement.addEventListener('pointerup',onPointerUp)
     const interiorScene=registerInteriorScene({id:roomKey,scene,camera,renderer,zones:[{id:roomKey,min:[0,0,0],max:[W,H,L]}]})
     let raf=0;const render=()=>{controls.update();renderer.render(scene,camera);raf=requestAnimationFrame(render)};render()
-    sceneRef.current={setMirrorOpen:value=>vanity.userData.setMirrorOpen?.(value),setPartitionOpen:value=>partition.userData.setOpen?.(value),setCamera,setSouthVisible:value=>{southWall.visible=value},setFurnitureVisible:value=>{furniture.visible=value},setBoardOpen:value=>{ironingStorage?.userData.setBoardOpen(value)},setPoojaDoorsOpen:value=>{poojaDoors?.userData.setDoorsOpen(value)},clearMark}
+    sceneRef.current={setMirrorOpen:value=>vanity.userData.setMirrorOpen?.(value),setPartitionOpen:value=>partition.userData.setOpen?.(value),setCamera,setSouthVisible:value=>{southWall.visible=value},setFurnitureVisible:value=>{furniture.visible=value},setBoardOpen:value=>{ironingStorage?.userData.setBoardOpen(value)},setPoojaDoorsOpen:value=>{poojaDoors?.userData.setDoorsOpen(value)},clearMark,setDaylight}
     return()=>{interiorScene.dispose();cancelAnimationFrame(raf);observer.disconnect();renderer.domElement.removeEventListener('pointerdown',onPointerDown);renderer.domElement.removeEventListener('pointerup',onPointerUp);controls.dispose();labelTextures.forEach(texture=>texture.dispose());shell.traverse(object=>{object.geometry?.dispose?.();if(Array.isArray(object.material))object.material.forEach(material=>material.dispose());else object.material?.dispose?.()});markedWallMaterial.dispose();environment.dispose();pmrem.dispose();renderer.dispose();renderer.domElement.remove();sceneRef.current=null}
   },[roomKey,initialView])
 
@@ -413,6 +435,7 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
   useEffect(()=>{sceneRef.current?.setMirrorOpen(mirrorOpen)},[mirrorOpen,roomKey])
   useEffect(()=>{sceneRef.current?.setPartitionOpen(partitionOpen)},[partitionOpen,roomKey])
   useEffect(()=>{sceneRef.current?.setPoojaDoorsOpen(poojaDoorsOpen)},[poojaDoorsOpen,roomKey])
+  useEffect(()=>{daylightRef.current=daylightOn;sceneRef.current?.setDaylight(daylightOn)},[daylightOn,roomKey])
 
   return <>
     {showSelector&&<div style={{display:'flex',gap:8,flexWrap:'wrap',marginBottom:14}}>
@@ -422,6 +445,8 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
     <div style={{padding:'14px 16px',display:'flex',gap:10,alignItems:'center',justifyContent:'space-between',flexWrap:'wrap',borderBottom:'1px solid #e2e8f0'}}>
       <div><b style={{fontSize:18,color:'#172033'}}>{room.name}</b><div style={{fontSize:12,color:'#64748b',marginTop:3}}>{room.widthMm.toLocaleString()} × {room.lengthMm.toLocaleString()} mm · provisional {room.heightMm.toLocaleString()} mm ceiling datum</div></div>
       <div style={{display:'flex',gap:7,flexWrap:'wrap'}}>
+        <button onClick={()=>setDaylightOn(true)} aria-pressed={daylightOn} style={buttonStyle(daylightOn)}>Daylight</button>
+        <button onClick={()=>setDaylightOn(false)} aria-pressed={!daylightOn} style={buttonStyle(!daylightOn)}>Evening</button>
         <button onClick={()=>setView('overview')} aria-pressed={view==='overview'} style={buttonStyle(view==='overview')}>Overview</button>
         <button onClick={()=>setView('top')} aria-pressed={view==='top'} style={buttonStyle(view==='top')}>Top</button>
         {roomKey==='bedroom3'&&<button onClick={()=>{setShowSouthWall(true);setView('southOpenings')}} aria-pressed={view==='southOpenings'} style={buttonStyle(view==='southOpenings')}>Balcony door + window</button>}

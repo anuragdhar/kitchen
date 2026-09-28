@@ -52,6 +52,8 @@ export default function App(){
   const [measurePoints,setMeasurePoints]=useState([]) // [{x,y} mm]
   const [interactionMode,setInteractionMode]=useState('cabinet') // 'cabinet' | 'dimension' | 'measure' | 'transparent'
   const [showHeightGuides,setShowHeightGuides]=useState(false)
+  const [kitchenDaylight,setKitchenDaylight]=useState(false)
+  const kitchenDaylightRef=useRef(false)
   const [importWarning,setImportWarning]=useState('')
   const [bomNote,setBomNote]=useState('')
   const threeViewRef=useRef(null)
@@ -118,6 +120,7 @@ export default function App(){
     threeViewRef.current?.updateCutawayVisibility?.()
   },[hide3DObstructions])
   useEffect(()=>{ measurePointsRef.current=measurePoints },[measurePoints])
+  useEffect(()=>{ kitchenDaylightRef.current=kitchenDaylight; threeViewRef.current?.setDaylight?.(kitchenDaylight) },[kitchenDaylight])
   useEffect(()=>{ selectedItemRef.current=selectedItem },[selectedItem])
   useEffect(()=>{ unitRef.current=unit },[unit])
   useEffect(()=>{ interactionModeRef.current=interactionMode; if(interactionMode==='measure') setMeasureMode(true); else setMeasureMode(false); if(interactionMode!=='measure') setMeasurePoints([]); threeViewRef.current?.updateCursor?.(); },[interactionMode])
@@ -1429,8 +1432,8 @@ ${westRows}
         else addBox(`west ${it.id}`,0,it.y,0,it.d,it.w,it.h||400,it.color)
       })
       const lights=RENDER_CONFIG.lighting
-      scene.add(new THREE.AmbientLight(lights.ambient.color,lights.ambient.intensity))
-      scene.add(new THREE.HemisphereLight(lights.hemisphere.skyColor,lights.hemisphere.groundColor,lights.hemisphere.intensity))
+      const ambient=new THREE.AmbientLight(lights.ambient.color,lights.ambient.intensity);scene.add(ambient)
+      const hemisphere=new THREE.HemisphereLight(lights.hemisphere.skyColor,lights.hemisphere.groundColor,lights.hemisphere.intensity);scene.add(hemisphere)
       const light=new THREE.DirectionalLight(lights.key.color,lights.key.intensity)
       light.position.set(...lights.key.position)
       light.castShadow=true
@@ -1454,6 +1457,27 @@ ${westRows}
       ceilingGlow.name='soft ceiling bounce'
       ceilingGlow.position.set(...lights.ceilingGlow.positionMm.map(v=>s(v)))
       scene.add(ceilingGlow)
+      // Daylight boost: brighter, cooler natural light on request; false
+      // restores the configured RENDER_CONFIG.lighting studio values exactly.
+      const setDaylight=on=>{
+        if(on){
+          ambient.color.set('#f4f8ff');ambient.intensity=1.05
+          hemisphere.color.set('#dcebff');hemisphere.groundColor.set('#c9b8a4');hemisphere.intensity=1.2
+          light.color.set('#fffaf0');light.intensity=3.1
+          fill.color.set('#eef4ff');fill.intensity=.75
+          windowGlow.color.set('#eaf4ff');windowGlow.intensity=3.4
+          ceilingGlow.intensity=.35
+          scene.background.set('#f7fafe');if(scene.fog)scene.fog.color.set('#f7fafe')
+        }else{
+          ambient.color.set(lights.ambient.color);ambient.intensity=lights.ambient.intensity
+          hemisphere.color.set(lights.hemisphere.skyColor);hemisphere.groundColor.set(lights.hemisphere.groundColor);hemisphere.intensity=lights.hemisphere.intensity
+          light.color.set(lights.key.color);light.intensity=lights.key.intensity
+          fill.color.set(lights.fill.color);fill.intensity=lights.fill.intensity
+          windowGlow.color.set(lights.windowGlow.color);windowGlow.intensity=lights.windowGlow.intensity
+          ceilingGlow.intensity=lights.ceilingGlow.intensity
+          scene.background.set(RENDER_CONFIG.scene.background);if(scene.fog)scene.fog.color.set(RENDER_CONFIG.scene.fog.color)
+        }
+      }
       const gridConfig=RENDER_CONFIG.grid
       const grid=new THREE.GridHelper(s(Math.max(KITCHEN.length,KITCHEN.width)),gridConfig.divisions,gridConfig.colorCenter,gridConfig.colorGrid)
       grid.position.y=.1
@@ -1733,7 +1757,8 @@ ${westRows}
         pixelRatio:renderer.getPixelRatio()
       }
       const interiorScene=registerInteriorScene({id:'kitchen',scene,camera,renderer,metresPerUnit:.01,zones:[{id:'kitchen',min:[-KITCHEN.width/20,0,-KITCHEN.length/20],max:[KITCHEN.width/20,KITCHEN.height/10,KITCHEN.length/20]}]})
-      threeViewRef.current={renderer,scene,camera,controls,updateCutawayVisibility,updateCursor,clickableCabinets,gpuInfo}
+      threeViewRef.current={renderer,scene,camera,controls,updateCutawayVisibility,updateCursor,clickableCabinets,gpuInfo,setDaylight}
+      setDaylight(kitchenDaylightRef.current)
       updateCutawayVisibility(); updateCursor()
       let frameId=0
       const updateMeasureAndDimOverlays=()=>{
@@ -1888,6 +1913,7 @@ ${westRows}
         <input type="checkbox" checked={hide3DObstructions} onChange={e=>setHide3DObstructions(e.target.checked)}/>
         Hide blocking walls/ceiling
       </label>
+      <button aria-pressed={kitchenDaylight} onClick={()=>setKitchenDaylight(v=>!v)} style={{padding:'8px 12px',background:kitchenDaylight?'#0369a1':'#fff',color:kitchenDaylight?'#fff':'#0369a1',border:'2px solid #0369a1',borderRadius:10,fontWeight:800}}>{kitchenDaylight?'Daylight: on':'Daylight'}</button>
     </div></div><div style={{position:'relative'}}>
       <div ref={mountRef} style={{width:'100%',minHeight:520,border:'1px solid #ddd4c8',background:'#f7f3ed',cursor:'grab'}}/>
       {showHeightGuides && <div style={{position:'absolute',left:18,top:18,bottom:18,width:142,pointerEvents:'none',display:'flex',flexDirection:'column',justifyContent:'stretch',filter:'drop-shadow(0 0 8px rgba(79,70,229,.35))'}}>
