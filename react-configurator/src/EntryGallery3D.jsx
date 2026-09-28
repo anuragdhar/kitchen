@@ -1,3 +1,5 @@
+import {registerInteriorScene} from './render/interiorScene.js'
+import {tagSurfaceMaterial} from './render/surfaceRoles.mjs'
 import React,{useEffect,useRef,useState} from 'react'
 import * as THREE from 'three'
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js'
@@ -31,8 +33,11 @@ export default function EntryGallery3D(){
     const model=new THREE.Group();scene.add(model)
     const floorMaterial=new THREE.MeshStandardMaterial({color:'#bda890',roughness:.84})
     const wallMaterial=new THREE.MeshStandardMaterial({color:'#d3ccc2',roughness:.85})
+    tagSurfaceMaterial(wallMaterial,'plaster')
     const timber=new THREE.MeshStandardMaterial({color:'#aa7b56',roughness:.68})
+    tagSurfaceMaterial(timber,'wood')
     const doorMaterial=new THREE.MeshStandardMaterial({color:'#825d44',roughness:.63})
+    tagSurfaceMaterial(doorMaterial,'wood')
     const metal=new THREE.MeshStandardMaterial({color:'#ad936a',metalness:.67,roughness:.3})
     const addBox=(w,h,d,cx,cy,cz,material,parent=model)=>{
       const mesh=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),material)
@@ -91,9 +96,10 @@ export default function EntryGallery3D(){
     setCamera('overview')
     const resize=()=>{const viewportWidth=mount.clientWidth,viewportHeight=mount.clientHeight;renderer.setSize(viewportWidth,viewportHeight,false);camera.aspect=viewportWidth/viewportHeight;camera.updateProjectionMatrix()}
     const observer=new ResizeObserver(resize);observer.observe(mount);resize()
+    const interiorScene=registerInteriorScene({id:'entry',scene,camera,renderer,zones:[{id:'entry',min:[0,0,0],max:[width,height,length]}]})
     let raf=0;const render=()=>{controls.update();renderer.render(scene,camera);raf=requestAnimationFrame(render)};render()
     sceneRef.current={setCamera}
-    return()=>{cancelAnimationFrame(raf);observer.disconnect();controls.dispose();labelTextures.forEach(texture=>texture.dispose());model.traverse(object=>{object.geometry?.dispose?.();if(Array.isArray(object.material))object.material.forEach(material=>material.dispose());else object.material?.dispose?.()});environment.dispose();pmrem.dispose();renderer.dispose();renderer.domElement.remove();sceneRef.current=null}
+    return()=>{interiorScene.dispose();cancelAnimationFrame(raf);observer.disconnect();controls.dispose();labelTextures.forEach(texture=>texture.dispose());model.traverse(object=>{object.geometry?.dispose?.();if(Array.isArray(object.material))object.material.forEach(material=>material.dispose());else object.material?.dispose?.()});environment.dispose();pmrem.dispose();renderer.dispose();renderer.domElement.remove();sceneRef.current=null}
   },[])
 
   useEffect(()=>{sceneRef.current?.setCamera(view)},[view])

@@ -1,3 +1,5 @@
+import {registerInteriorScene} from './render/interiorScene.js'
+import {tagSurfaceMaterial} from './render/surfaceRoles.mjs'
 import {useKitchenProject} from './hooks/useKitchenProject.js'
 import {MAX_PROJECT_BYTES, encodeProject} from './persistence/projectCodec.mjs'
 import {loadNamedProject, saveNamedProject} from './persistence/projectStorage.mjs'
@@ -958,6 +960,8 @@ ${westRows}
         dark:makeMat('#1c1a18',1,RENDER_CONFIG.pbr.dark),
         plinth:makeMat(renderStyle.plinth,1,RENDER_CONFIG.pbr.plinth),
       }
+      for(const key of ['cabinet','tallCabinet','topCabinet','middleCabinet','shutter'])tagSurfaceMaterial(surface[key],'wood','kitchen')
+      tagSurfaceMaterial(surface.wall,'plaster','kitchen')
       const material=(c,opacity=1)=>{
         if(c?.isMaterial){
           if(opacity<1 && Math.abs((c.opacity??1)-opacity)>.001){
@@ -1078,6 +1082,7 @@ ${westRows}
       const storageSliding=[]
       for(const part of storeStorageParts()){
         const mesh=addBox(part.name,part.x,-part.z-part.d,part.y,part.w,part.d,part.h,makeMat(part.color,1,{roughness:.72}))
+        if(part.name==='storage sliding cover front')tagSurfaceMaterial(mesh.material,'wood','storage')
         if(part.sliding){storageSliding.push({mesh,z:mesh.position.z});mesh.userData.storageSliding=true;if(!clickableCabinets.includes(mesh))clickableCabinets.push(mesh)}
       }
       addBox('ceiling',0,0,KITCHEN.height,KITCHEN.width,KITCHEN.length,36,'#f4eadf')
@@ -1890,6 +1895,7 @@ ${westRows}
         shadowMapType:RENDER_CONFIG.renderer.shadowMapType,
         pixelRatio:renderer.getPixelRatio()
       }
+      const interiorScene=registerInteriorScene({id:'kitchen',scene,camera,renderer,metresPerUnit:.01,zones:[{id:'kitchen',min:[-KITCHEN.width/20,0,-KITCHEN.length/20],max:[KITCHEN.width/20,KITCHEN.height/10,KITCHEN.length/20]}]})
       threeViewRef.current={renderer,scene,camera,controls,updateCutawayVisibility,updateCursor,clickableCabinets,gpuInfo}
       updateCutawayVisibility(); updateCursor()
       let frameId=0
@@ -1979,7 +1985,7 @@ ${westRows}
         frameId=requestAnimationFrame(animate)
       }
       animate()
-      return ()=>{cancelAnimationFrame(frameId); observer.disconnect(); controls.dispose(); envTexture.dispose(); pmremGenerator.dispose(); renderer.domElement.removeEventListener('pointermove', onPointerMove); renderer.domElement.removeEventListener('pointerdown', onPointerDown); renderer.domElement.removeEventListener('pointerup', onPointerUp); renderer.domElement.removeEventListener('click', onClick); try{mount.removeChild(overlay)}catch{}; renderer.dispose(); mount.removeChild(renderer.domElement); if(threeViewRef.current?.renderer===renderer)threeViewRef.current=null}
+      return ()=>{interiorScene.dispose();cancelAnimationFrame(frameId); observer.disconnect(); controls.dispose(); envTexture.dispose(); pmremGenerator.dispose(); renderer.domElement.removeEventListener('pointermove', onPointerMove); renderer.domElement.removeEventListener('pointerdown', onPointerDown); renderer.domElement.removeEventListener('pointerup', onPointerUp); renderer.domElement.removeEventListener('click', onClick); try{mount.removeChild(overlay)}catch{}; renderer.dispose(); mount.removeChild(renderer.domElement); if(threeViewRef.current?.renderer===renderer)threeViewRef.current=null}
     },[east,west,materials,eastModules,westModules,eastTopUpperDepth,westTopUpperDepth])
     const setPreset=(preset)=>{
       const cam=threeViewRef.current?.camera

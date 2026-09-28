@@ -1,3 +1,5 @@
+import {registerInteriorScene} from './render/interiorScene.js'
+import {tagSurfaceMaterial} from './render/surfaceRoles.mjs'
 import React,{useEffect,useRef,useState} from 'react'
 import * as THREE from 'three'
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js'
@@ -160,11 +162,12 @@ export default function BalconyOffice3D(){
       for(let i=0;i<350;i++){const shade=210+(i%25);context.fillStyle=`rgba(${shade},${shade},${shade},.12)`;context.fillRect((i*83)%512,(i*151)%512,1.2,1.2)}
     })
     marbleTexture.repeat.set(2,4)
-    const makeMaterial=(color,roughness=.72,map=null,metalness=0)=>new THREE.MeshStandardMaterial({color,map,roughness,metalness,side:THREE.DoubleSide,envMapIntensity:.8})
+    const makeMaterial=(color,roughness=.72,map=null,metalness=0)=>{const m=new THREE.MeshStandardMaterial({color,map,roughness,metalness,side:THREE.DoubleSide,envMapIntensity:.8});return map===woodTexture?tagSurfaceMaterial(m,'wood','balcony'):m}
     const glassMaterial=new THREE.MeshPhysicalMaterial({color:'#bdeaff',transparent:true,opacity:.32,transmission:.7,roughness:.08,metalness:0,clearcoat:1,clearcoatRoughness:.12,side:THREE.DoubleSide,depthWrite:false,envMapIntensity:1.25})
     const addBox=({w,h,d,x,y,z,color,opacity=1,roughness=.72,map=null,metalness=0,customMaterial=null})=>{
       const geometry=new THREE.BoxGeometry(w,h,d)
       const material=customMaterial||new THREE.MeshStandardMaterial({color,map,transparent:opacity<1,opacity,roughness,metalness,side:THREE.DoubleSide,envMapIntensity:.8})
+      if(map===woodTexture)tagSurfaceMaterial(material,'wood','balcony')
       const mesh=new THREE.Mesh(geometry,material)
       mesh.position.set(x,y,z)
       mesh.castShadow=opacity>.5
@@ -180,7 +183,7 @@ export default function BalconyOffice3D(){
     addBox({w:W,h:.06,d:L,x:W/2,y:-.03,z:L/2,color:'#ffffff',map:marbleTexture,roughness:.32})
 
     // North wall with the cabinet in front of it.
-    addBox({w:W,h:H,d:.08,x:W/2,y:H/2,z:-.04,color:'#f4f1eb'})
+    tagSurfaceMaterial(addBox({w:W,h:H,d:.08,x:W/2,y:H/2,z:-.04,color:'#f4f1eb'}).material,'plaster','balcony')
 
     // South/front wall: grouped so it can be removed temporarily for inspection.
     const southWallGroup=new THREE.Group()
@@ -388,7 +391,7 @@ export default function BalconyOffice3D(){
     movingDesk.position.y=mm(adjustable.defaultHeightMm)
     room.add(movingDesk)
     const addMovingBox=({w,h,d,x,y,z,color,roughness=.72,map=null,metalness=0})=>{
-      const mesh=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),new THREE.MeshStandardMaterial({color,map,roughness,metalness,side:THREE.DoubleSide,envMapIntensity:.8}))
+      const mesh=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),makeMaterial(color,roughness,map,metalness))
       mesh.position.set(x,y,z)
       mesh.castShadow=true
       mesh.receiveShadow=true
@@ -520,6 +523,7 @@ export default function BalconyOffice3D(){
 
     const printerGroup=new THREE.Group()
     const printerShelf=new THREE.Mesh(new THREE.BoxGeometry(rearD-.025,.025,moduleD-.06),new THREE.MeshStandardMaterial({color:'#75563d',roughness:.5}))
+    tagSurfaceMaterial(printerShelf.material,'wood','balcony')
     printerShelf.position.set(rearD/2,toe+.035,centerBayCenterZ)
     printerShelf.castShadow=true
     printerGroup.add(printerShelf)
@@ -732,6 +736,7 @@ export default function BalconyOffice3D(){
     setDeskHeight(mm(adjustable.defaultHeightMm))
     setCabinetsOpen(allCabinetsOpen)
     setQuality(highQuality)
+    const interiorScene=registerInteriorScene({id:'balcony',scene,camera,renderer,zones:[{id:'balcony',min:[0,0,0],max:[W,H,L]}]})
     sceneRef.current={setCamera,setDeskHeight,setCabinetsOpen,setQuality,focusItem,captureScreenshot,clearSelection,setHumanVisible:visible=>{human.visible=visible},setDirectionsVisible:visible=>{directionGroup.visible=visible},setElectricalVisible:visible=>{electricalOverlays.forEach(({marker})=>{marker.visible=visible})},setSouthWallVisible:visible=>{southWallGroup.visible=visible},setWestWallVisible:visible=>{westWallGroup.visible=visible}}
 
     const raycaster=new THREE.Raycaster()
@@ -779,7 +784,7 @@ export default function BalconyOffice3D(){
       controls.update();renderer.render(scene,camera)
     }
     animate()
-    return ()=>{
+    return ()=>{interiorScene.dispose();
       cancelAnimationFrame(frame)
       observer.disconnect()
       controls.dispose()

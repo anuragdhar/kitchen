@@ -1,3 +1,4 @@
+import {tagSurfaceMaterial} from './render/surfaceRoles.mjs'
 import * as THREE from 'three'
 import {ENTRY} from './config/entryConfig.js'
 
@@ -6,7 +7,9 @@ export function createEntryRecessStorage(x,z){
   const s=ENTRY.drawingStorage,g=new THREE.Group()
   g.name='Drawing Room northwest recess storage (estimated footprint)'
   const wood=new THREE.MeshStandardMaterial({color:'#ac8967',roughness:.7})
+  tagSurfaceMaterial(wood,'wood','entry')
   const front=new THREE.MeshStandardMaterial({color:'#d3ccc2',roughness:.75})
+  tagSurfaceMaterial(front,'wood','entry')
   const metal=new THREE.MeshStandardMaterial({color:'#8c7657',metalness:.6,roughness:.3})
   const box=(x1,x2,y1,y2,bottom,top,mat)=>{
     const mesh=new THREE.Mesh(new THREE.BoxGeometry(Math.abs(x(x2)-x(x1)),top-bottom,Math.abs(z(y2)-z(y1))),mat)

@@ -1,3 +1,4 @@
+import {tagSurfaceMaterial} from './render/surfaceRoles.mjs'
 import * as THREE from 'three'
 
 export function createPoojaDoorAndInterior(pooja,ceilingHeightMm=2700,floorTopMm=0){
@@ -6,8 +7,11 @@ export function createPoojaDoorAndInterior(pooja,ceilingHeightMm=2700,floorTopMm
   const from=pooja.fromMm/1000,width=pooja.widthMm/1000,depth=pooja.depthMm/1000
   const center=from+width/2,east=from+width,doorHeight=2.24,leafWidth=(width-.15)/2
   const wood=new THREE.MeshStandardMaterial({color:'#4a2e22',roughness:.7})
+  tagSurfaceMaterial(wood,'wood','pooja')
   const edgeWood=new THREE.MeshStandardMaterial({color:'#65402c',roughness:.64})
+  tagSurfaceMaterial(edgeWood,'wood','pooja')
   const warmWall=new THREE.MeshStandardMaterial({color:'#d9b98d',roughness:.88})
+  tagSurfaceMaterial(warmWall,'plaster','pooja')
   const glass=new THREE.MeshPhysicalMaterial({color:'#a9703d',transparent:true,opacity:.58,roughness:.16,metalness:0,side:THREE.DoubleSide,depthWrite:false})
   const cane=new THREE.MeshStandardMaterial({color:'#d2b897',roughness:.96,side:THREE.DoubleSide})
   const weave=new THREE.MeshStandardMaterial({color:'#a98a68',roughness:.95})

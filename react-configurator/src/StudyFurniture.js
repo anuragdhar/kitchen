@@ -1,3 +1,4 @@
+import {tagSurfaceMaterial} from './render/surfaceRoles.mjs'
 import * as THREE from 'three'
 
 export function createStudyFurniture(study){
@@ -7,11 +8,14 @@ export function createStudyFurniture(study){
     const nightBeds=new THREE.Group();kidsGroup.add(nightBeds)
     const daySeats=new THREE.Group();kidsGroup.add(daySeats)
     const oak=new THREE.MeshStandardMaterial({color:'#b98a5d',roughness:.7})
+    tagSurfaceMaterial(oak,'wood','study')
     const bedding=new THREE.MeshStandardMaterial({color:'#e7e9e7',roughness:.95})
     const blue=new THREE.MeshStandardMaterial({color:'#647d91',roughness:.9})
     const rose=new THREE.MeshStandardMaterial({color:'#b68689',roughness:.9})
     const deskTop=new THREE.MeshStandardMaterial({color:'#f3e6cf',roughness:.66})
+    tagSurfaceMaterial(deskTop,'wood','study')
     const deskAccent=new THREE.MeshStandardMaterial({color:'#273b52',roughness:.7})
+    tagSurfaceMaterial(deskAccent,'wood','study')
     const chairFabric=new THREE.MeshStandardMaterial({color:'#6d7884',roughness:.88})
     const metal=new THREE.MeshStandardMaterial({color:'#565c61',roughness:.5,metalness:.35})
     const addBed=(parent,side,zStart,depth,color)=>{

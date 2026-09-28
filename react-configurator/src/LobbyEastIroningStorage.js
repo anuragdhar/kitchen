@@ -1,3 +1,4 @@
+import {tagSurfaceMaterial} from './render/surfaceRoles.mjs'
 import * as THREE from 'three'
 
 // The same room-local group is used by the lobby view and the whole-home view.
@@ -10,7 +11,9 @@ export function createLobbyEastIroningStorage(room){
   const depth=item.depthMm/1000,height=item.heightMm/1000
   const centerZ=from+length/2,centerX=east-depth/2
   const body=new THREE.MeshStandardMaterial({color:'#ad8968',roughness:.7})
+  tagSurfaceMaterial(body,'wood','lobby')
   const door=new THREE.MeshStandardMaterial({color:'#e4dacb',roughness:.62})
+  tagSurfaceMaterial(door,'wood','lobby')
   const metal=new THREE.MeshStandardMaterial({color:'#5e625f',metalness:.6,roughness:.34})
   const board=new THREE.MeshStandardMaterial({color:'#d4c9ba',roughness:.9})
   const box=(w,h,d,x,y,z,material,parent=group)=>{

@@ -1,3 +1,4 @@
+import {tagSurfaceMaterial} from './render/surfaceRoles.mjs'
 import * as THREE from 'three'
 
 export function createLobbyConcealedDoor(room){
@@ -7,6 +8,7 @@ export function createLobbyConcealedDoor(room){
   const W=room.widthMm/1000,H=room.heightMm/1000,L=room.lengthMm/1000
   const a=door.fromMm/1000,b=a+door.widthMm/1000,top=door.heightMm/1000
   const finish=new THREE.MeshStandardMaterial({color:'#c5b49e',roughness:.78})
+  tagSurfaceMaterial(finish,'wood','lobby')
   const shadow=new THREE.MeshStandardMaterial({color:'#746653',roughness:.85})
   const box=(w,h,d,x,y,z,material)=>{
     const mesh=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),material)
