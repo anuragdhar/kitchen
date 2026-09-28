@@ -6,7 +6,8 @@ Paths below are relative to `react-configurator/` unless otherwise stated.
 | --- | --- |
 | Whole-home navigation | src/main.jsx -> src/HomeApp.jsx |
 | Kitchen defaults and named variants | src/config/kitchenConfig.js |
-| Kitchen state, persistence, validation and views | src/App.jsx |
+| Kitchen state, persistence and views | src/App.jsx |
+| Runtime validation and nominal plan measurements | src/domain/kitchenValidation.mjs |
 | Other room defaults | src/config/ |
 | Material settings / creation | src/config/renderConfig.js; src/render/materialFactory.js |
 | Balcony / study / whole-home rendering | src/BalconyOffice3D.jsx; src/StudyRoom3D.jsx; src/WholeHome3D.jsx |
@@ -38,9 +39,13 @@ It deliberately does not claim collision, door-swing, installation, structural,
 electrical, appliance-service, or CAD-export validation. Hidden legacy placeholders
 are excluded from active bounds checks, but their IDs and hidden flag are checked.
 
-The app has NOT yet been migrated to these checks. That is a separate refactor,
-with characterization tests for current special cases and explicit review of
-previously unconditional passes.
+The runtime validator now composes these basic checks with the existing saved-
+variant order rules and all-pair AABB collision checks. summarizeValidation requires
+all eight rule IDs and every row to pass. App.jsx uses that same result for its
+panel, browser API and exported validation. See kitchenValidation.mjs for the
+explicit backing-panel/electrical exclusions and legacy hob collision envelope.
+getPlanDimensions supplies the nominal run measurements to the UI and both plan
+exporters. Broader export-state normalization and migrations are still separate.
 
 ## Refactoring sequence
 

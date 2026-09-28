@@ -17,10 +17,14 @@ function dxfEntities(text) {
 }
 
 (async () => {
-  const url = process.env.KITCHEN_APP_URL || 'http://127.0.0.1:4175';
+  const target = new URL(process.env.KITCHEN_APP_URL || 'http://127.0.0.1:4175');
+  target.searchParams.set('kitchenView', 'top');
+  const url = target.href;
   const out = path.resolve('test-results/correctness');
   fs.mkdirSync(out, {recursive: true});
-  let server, browser, output = '';
+  let server, browser, page, output = '';
+  const errors = [], diagnostics = [];
+  const step = message => { console.log(`[correctness] ${message}`); diagnostics.push(message); };
   try {
     if (!process.env.KITCHEN_APP_URL) {
       server = spawn(process.execPath, ['node_modules/vite/bin/vite.js', '--host', '127.0.0.1', '--port', '4175', '--strictPort'],
@@ -37,11 +41,15 @@ function dxfEntities(text) {
       assert.equal(ready, true, `Vite did not start: ${output}`);
     }
     browser = await chromium.launch({headless: true});
-    const page = await browser.newPage({viewport: {width: 1440, height: 1000}});
-    const errors = [];
-    page.on('pageerror', error => errors.push(error.message));
+    page = await browser.newPage({viewport: {width: 1440, height: 1000}});
+    page.setDefaultTimeout(60000);
+    page.on('pageerror', error => { errors.push(error.message); console.error('PAGE ERROR:', error.message); });
+    page.on('console', message => { if (message.type() === 'error') console.error('BROWSER:', message.text()); });
+    step('Opening kitchen with explicit API readiness');
     await openKitchen(page, url);
     await page.waitForFunction(() => window.kitchenAPI?.validate().all === true);
+    step('Kitchen ready; switching to plan for geometry and export checks');
+    await page.getByRole('button', {name: 'Top View (Plan)', exact: true}).click({noWaitAfter: true});
     const initial = await page.evaluate(() => {
       const api = window.kitchenAPI;
       const layout = api.getLayout();
@@ -72,6 +80,7 @@ function dxfEntities(text) {
     fs.writeFileSync(path.join(out, 'plan.svg'), initial.svg);
     fs.writeFileSync(path.join(out, 'plan.dxf'), initial.dxf);
 
+    step('SVG and DXF geometry checked; injecting non-order failure');
     await page.evaluate(() => window.kitchenAPI.moveItemMM('west', 'sinkUpperDishRack', 1211));
     await page.waitForFunction(() => window.kitchenAPI?.validate().all === false);
     const failed = await page.evaluate(() => ({api: window.kitchenAPI.validate(),
@@ -79,11 +88,15 @@ function dxfEntities(text) {
       panel: window.kitchenAPI.getValidationRows()}));
     assert.equal(failed.api.eastOk, true); assert.equal(failed.api.westOk, true);
     assert.equal(failed.api.rows.find(row => row.id === 'sink-storage').status, 'fail');
+    await page.getByText('Invalid East:OK West:OK', {exact: true}).waitFor({state: 'visible'});
+    const rackLabel = page.getByText('Over-sink storage aligns with sink', {exact: true});
+    assert.match(await rackLabel.locator('..').innerText(), /FAIL/);
     assert.equal(failed.project.all, false); assert.equal(failed.layout.all, false);
     assert.deepEqual(failed.api.rows, failed.panel);
     assert.deepEqual(failed.project.rows, failed.panel);
     await page.evaluate(() => window.kitchenAPI.reset());
     await page.waitForFunction(() => window.kitchenAPI?.validate().all === true);
+    step('Validation propagation checked; testing material-only changes');
     const beforeMaterial = await page.evaluate(() => ({east: window.kitchenAPI.getLayout().east,
       west: window.kitchenAPI.getLayout().west, dimensions: window.kitchenAPI.getDimensions()}));
     await page.evaluate(() => window.kitchenAPI.setMaterial('cabinetBody', '#654321'));
@@ -91,18 +104,27 @@ function dxfEntities(text) {
     const afterMaterial = await page.evaluate(() => ({east: window.kitchenAPI.getLayout().east,
       west: window.kitchenAPI.getLayout().west, dimensions: window.kitchenAPI.getDimensions()}));
     assert.deepEqual(afterMaterial, beforeMaterial);
-    await page.getByRole('button', {name: 'Return to whole home plan', exact: true}).click();
+    step('Material invariance checked; leaving and reopening kitchen');
+    await page.getByRole('button', {name: 'Return to whole home plan', exact: true}).click({noWaitAfter: true});
     await page.waitForFunction(() => window.kitchenAPI === undefined);
-    await page.getByRole('button', {name: 'Open Kitchen', exact: true}).first().click();
+    await page.getByRole('button', {name: 'Open Kitchen', exact: true}).first().click({noWaitAfter: true});
     await page.waitForFunction(() => window.kitchenAPI?.validate().all === true);
     await page.evaluate(() => window.kitchenAPI.reset());
+    await page.getByRole('button', {name: 'Top View (Plan)', exact: true}).click({noWaitAfter: true});
     await page.screenshot({path: path.join(out, 'kitchen.png'), fullPage: true});
+    await page.setViewportSize({width: 390, height: 900});
+    await page.screenshot({path: path.join(out, 'kitchen-mobile.png'), fullPage: true});
+    step('Room lifecycle and plan screenshot complete');
     assert.deepEqual(errors, [], 'No browser page exceptions');
     const result = {passed: ['default runtime validation', 'SVG labels and geometry', 'DXF labels and geometry',
       'non-order failure propagates to API/panel/project', 'material changes preserve geometry', 'API lifecycle'],
       initialValidation: initial.validation, invalidValidation: failed.api, pageErrors: errors};
     fs.writeFileSync(path.join(out, 'result.json'), JSON.stringify(result, null, 2));
     console.log(JSON.stringify(result, null, 2));
+  } catch (error) {
+    fs.writeFileSync(path.join(out, 'failure.json'), JSON.stringify({error: String(error), errors, diagnostics, serverOutput: output}, null, 2));
+    if (page) await page.screenshot({path: path.join(out, 'failure.png'), fullPage: true, timeout: 5000}).catch(() => {});
+    throw error;
   } finally {
     if (browser) await browser.close();
     if (server) { server.kill('SIGTERM'); await new Promise(resolve => {

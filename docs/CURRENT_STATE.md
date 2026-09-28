@@ -46,9 +46,14 @@ The tests freeze the implemented baseline, not every possible valid arrangement.
 - The FreeCAD generator prefers a root React export containing layoutModel, then
   falls back to `freecad/kitchenConfig.json`; it also has legacy fallback dimensions.
   Inspect the actual input and resulting geometry before treating a CAD file as current.
-- App.jsx still owns its legacy validation and migration logic. Its walkway row
-  has a hard-coded pass status. The new dependency-free basic checks do not replace
-  that UI implementation, certify its results, or cover full collision semantics.
+- Runtime validation now lives in src/domain/kitchenValidation.mjs. UI, browser API
+  and exported validation share the same required-row aggregation. Nominal floor
+  aisle, fixed-object bounds/clearances, and all-pair 3D collisions are checked.
+  Backing slider panels and electrical markers are excluded from collisions;
+  the legacy hob collider is retained. No door-swing or installation checks exist.
+- SVG and DXF plan depths and dimension labels now use the same nominal base-run
+  measurements as the UI (600/600, aisle 1124 mm for the implemented baseline).
+  These fixes do not unify all export metadata or change save/load migrations.
 
 A follow-up export/state unification must first capture behavior and migration
 fixtures. Do not resolve disagreements during a cosmetic or structural refactor.
