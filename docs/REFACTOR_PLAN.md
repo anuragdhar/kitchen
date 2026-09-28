@@ -216,8 +216,23 @@ and after (a build is not sufficient per `AGENTS.md` "Completion"):
      occurrences in the separate top-plan SVG JSX section (interactive
      click/drag view, distinct from the `buildPlanSvg` export builder already
      extracted in Phase 4a). Same idea, larger surface area for one pass;
-     left for a follow-up along with actually splitting these components out
-     into their own files (still pending, see below).
+     left for a follow-up.
+   - [x] `WallElevation` (the East/West cabinet-wall drawing, ~280 lines)
+     moved out of `App.jsx` into `src/kitchen/WallElevation.jsx` as its own
+     component (2026-09-28). `KITCHEN`/`PLINTH_HEIGHT`/`HEIGHT_GUIDES` are
+     imported directly in the new file (same module-level singletons
+     App.jsx itself imports); `modules`, `showHeightGuides`, `renderStyle`,
+     `moduleSegmentsFromNorth`, and an `onSelectItem` callback (replacing the
+     old direct `setSelectedId` closure) are now explicit props. App.jsx:
+     2844 -> 2567 lines. Caught and fixed a real bug mid-extraction: the new
+     file was missing `import React from 'react'` (this project uses the
+     classic JSX transform, unlike some newer setups) — a
+     `ReferenceError: React is not defined` on first render, caught by a
+     throwaway Playwright debug script before this was committed, not after.
+     Verified with build + `npm test`, then fresh screenshots of the East
+     Wall, West Wall, and the height-guide overlay toggle (all cabinets,
+     appliances, and height labels render correctly, zero console errors).
+     `NorthSouthElevation` and `ReferencesView` are not extracted yet.
 4. `ThreeDRender` split into scene setup, envelope, cabinets/uppers, appliance
    meshes, and interaction (drag/measure/open-cabinet).
 5. Top-plan SVG and side panels become their own components.
