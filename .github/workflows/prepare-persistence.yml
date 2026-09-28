@@ -1,0 +1,26 @@
+name: Prepare guarded persistence edits
+on:
+  push:
+    branches: [chore/prepare-persistence-20260928]
+permissions:
+  contents: write
+jobs:
+  prepare:
+    if: github.event.head_commit.message == 'chore: prepare guarded persistence edits'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - name: Apply only reviewed source edits (no dependency execution)
+        run: |
+          python .maintenance/patch-app.py
+          python .maintenance/finalize.py
+          git diff --exit-code -- react-configurator/src/config react-configurator/package-lock.json Interior freecad blender
+          git diff --check
+          git add react-configurator/src/App.jsx react-configurator/package.json .github/workflows/check.yml docs/ARCHITECTURE.md docs/CURRENT_STATE.md docs/TESTING.md
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'fix: wire atomic project persistence and regression checks'
+          git push origin HEAD:refs/heads/chore/prepare-persistence-20260928
