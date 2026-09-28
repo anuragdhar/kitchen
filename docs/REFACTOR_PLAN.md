@@ -155,13 +155,34 @@ src/
 - `app/`, `viewer/`, and the `kitchen/` App.jsx split are not started — see
   Phase 4.
 
-## Phase 4 — Split `App.jsx`
+## Phase 4 — Split `App.jsx` (started 2026-09-28)
 
 One piece per commit, each verified against the plan/elevation/3D views before
 and after (a build is not sufficient per `AGENTS.md` "Completion"):
 
-1. Exports to `kitchen/export/`: plan SVG, plan DXF, Coohom guide, BOM, project
-   zip. Pure functions — easiest to give fixture tests to first.
+1. Exports to `kitchen/export/`: plan SVG, plan DXF, BOM, project zip. Pure
+   functions — easiest to give fixture tests to first.
+   - [x] `buildPlanSvg`/`svgY` moved to `src/kitchen/export/planSvg.mjs`,
+     `buildPlanDxf` to `src/kitchen/export/planDxf.mjs`. Copied verbatim, then
+     parameterized (closure variables became an explicit `ctx` argument) —
+     App.jsx now holds a one-line wrapper that assembles `ctx` from its state
+     and calls the pure function. **Not moved: the Coohom guide.** The user
+     flagged it's "not used anymore" while this was in progress, and the code
+     already agreed — its button was commented out in App.jsx with "hidden
+     for now, code preserved" and the project-zip manifest already says
+     "Coohom guide export is currently paused." Left as-is inline in App.jsx;
+     removing it outright is a product decision for the user, not bundled
+     into this refactor.
+   - Verified three ways: (a) `npm run build` passes; (b) a live-browser
+     snapshot of `kitchenAPI.getPlanSvg()`/`getPlanDxf()`/`getBOM()`/
+     `getProjectData()` taken immediately before and after the change is
+     **byte-identical**; (c) added `tests/kitchen-export.test.mjs` (7 cases)
+     giving these two functions their first direct unit coverage — room/
+     opening/run/appliance rendering, filler-module dashed outlines, grid
+     on/off, and that SVG and DXF agree on which wall uses which depth.
+   - BOM and project-zip builders (`buildBOM`, `buildBOMCsv`,
+     `buildBOMMarkdown`, `exportProjectPackage`) not moved yet — same
+     approach, next.
 2. Browser API + named-versions localStorage logic into hooks.
 3. `WallElevation`, `NorthSouthElevation`, `ReferencesView` become their own
    components; replace the hard-coded `2324`/`4746`/`2700` literals (42
