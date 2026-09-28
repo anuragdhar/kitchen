@@ -22,6 +22,14 @@ door clearances, nominal aisle calculations, shaft placement, and module lengths
 Synthetic negative tests verify invalid inputs produce failures rather than silently
 passing. Baseline tests are intentionally changed only for an approved design change.
 
+## Local update control
+
+The local update control can be checked on the whole-home page. It requires a
+clean Git checkout before pulling, so a checkout with working changes should
+display its refusal without modifying files. The isolated `local-update.test.mjs`
+fixture checks a real fast-forward from a temporary local Git remote; it does
+not need access to GitHub.
+
 ## Browser inspection
 
 Start the server in a separate terminal:

@@ -40,6 +40,15 @@ test('updates a clean checkout by fast forward and preserves local edits', async
     assert.equal(result.commit, (await git(checkout, 'rev-parse', 'HEAD')).slice(0, 12))
     assert.equal((await updateFromGitHub(checkout)).updated, false)
 
+    await git(checkout, 'config', 'user.email', 'test@example.com')
+    await git(checkout, 'config', 'user.name', 'Test')
+    await writeFile(path.join(checkout, 'local.txt'), 'ahead\n')
+    await git(checkout, 'add', '.')
+    await git(checkout, 'commit', '-m', 'Local commit')
+    const ahead = await updateFromGitHub(checkout)
+    assert.equal(ahead.updated, false)
+    assert.equal(ahead.commit, (await git(checkout, 'rev-parse', 'HEAD')).slice(0, 12))
+
     await writeFile(path.join(checkout, 'design.txt'), 'my edit\n')
     await assert.rejects(updateFromGitHub(checkout), /Local files have changes/)
     assert.equal(await git(checkout, 'status', '--porcelain'), 'M design.txt')

@@ -25,12 +25,12 @@ export async function updateFromGitHub(repoDir, run = command) {
 
   const before = await run('git', ['rev-parse', 'HEAD'], repoDir)
   await run('git', ['fetch', 'origin', branch], repoDir)
-  const remote = await run('git', ['rev-parse', 'FETCH_HEAD'], repoDir)
   await run('git', ['merge', '--ff-only', 'FETCH_HEAD'], repoDir)
+  const after = await run('git', ['rev-parse', 'HEAD'], repoDir)
 
-  if (before !== remote) {
+  if (before !== after) {
     const dependencyChanges = await run('git', [
-      'diff', '--name-only', before, remote, '--',
+      'diff', '--name-only', before, after, '--',
       'react-configurator/package.json', 'react-configurator/package-lock.json',
     ], repoDir)
     if (dependencyChanges) {
@@ -38,5 +38,5 @@ export async function updateFromGitHub(repoDir, run = command) {
     }
   }
 
-  return { updated: before !== remote, commit: remote.slice(0, 12) }
+  return { updated: before !== after, commit: after.slice(0, 12) }
 }

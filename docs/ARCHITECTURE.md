@@ -22,7 +22,7 @@ Paths below are relative to `react-configurator/` unless otherwise stated.
 
 ## Local updates
 
-The home header's Update from GitHub control is available only on the local Vite
+The home page's Update from GitHub control is available only on the local Vite
 development server. Its loopback-only endpoint fetches the current branch from
 `origin`, requires a clean checkout, fast-forwards, runs `npm ci` if the app's
 package files changed, and restarts Vite. The page reloads after the restart.
