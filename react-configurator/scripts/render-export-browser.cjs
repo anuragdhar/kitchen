@@ -1,0 +1,23 @@
+const assert=require('node:assert/strict');const fs=require('node:fs');const path=require('node:path');const {spawn}=require('node:child_process');const {createHash}=require('node:crypto');const {chromium}=require('playwright');const JSZip=require('jszip');
+(async()=>{
+ const out=path.resolve('test-results/render-export');fs.mkdirSync(out,{recursive:true});let server,browser,page,log='';const errors=[];
+ try{
+  server=spawn(process.execPath,['node_modules/vite/bin/vite.js','--host','127.0.0.1','--port','4184','--strictPort'],{stdio:['ignore','pipe','pipe']});server.stdout.on('data',b=>log+=b);server.stderr.on('data',b=>log+=b);
+  const url='http://127.0.0.1:4184/?kitchenView=top';let ready=false;for(let i=0;i<150;i++){if(server.exitCode!==null)throw Error(log);try{if((await fetch(url)).ok){ready=true;break;}}catch{}await new Promise(r=>setTimeout(r,200));}assert.ok(ready,log);
+  browser=await chromium.launch();page=await browser.newPage({viewport:{width:1280,height:900},acceptDownloads:true});page.setDefaultTimeout(60000);page.on('pageerror',e=>errors.push(e.message));await page.goto(url);
+  await page.getByRole('button',{name:'Open Main entry',exact:true}).first().click({noWaitAfter:true});
+  await page.evaluate(async()=>{window.__rig=await import('/src/render/interiorScene.js');const {lightingStore}=await import('/src/home/lightingStore.mjs');lightingStore.set({...lightingStore.getSnapshot(),mode:'day'});});
+  await page.waitForFunction(()=>window.__rig.getInteriorScene('entry')?.ready);
+  const geometry=()=>page.evaluate(()=>{const r=window.__rig.getInteriorScene('entry'),out=[];r.scene.updateMatrixWorld(true);r.scene.traverse(o=>{if(o.isMesh)out.push({name:o.name,positions:Array.from(o.geometry.getAttribute('position').array),index:o.geometry.index?Array.from(o.geometry.index.array):null,matrix:o.matrixWorld.toArray(),visible:o.visible});});return out;});
+  const before=await geometry();await page.locator('canvas').first().screenshot({path:path.join(out,'source-view.png')});
+  await page.getByRole('button',{name:'Interior studio',exact:true}).click();const d=page.getByRole('dialog');await d.getByRole('button',{name:'Blender render',exact:true}).click();await d.getByLabel('Render quality',{exact:true}).selectOption('draft');
+  const downloadPromise=page.waitForEvent('download');await d.getByRole('button',{name:'Export entry for Blender',exact:true}).click();const download=await downloadPromise;await download.saveAs(path.join(out,'bundle.zip'));await d.getByRole('status').filter({hasText:/Exported \d+ meshes/}).waitFor();
+  const zip=await JSZip.loadAsync(fs.readFileSync(path.join(out,'bundle.zip')));assert.deepEqual(Object.keys(zip.files).sort(),['README.txt','render-job.json','scene.glb']);
+  const job=JSON.parse(await zip.file('render-job.json').async('string')),glb=await zip.file('scene.glb').async('nodebuffer');const {validateRenderJob}=await import('../src/home/renderJob.mjs');validateRenderJob(job);
+  assert.equal(job.room,'entry');assert.equal(job.sceneSha256,createHash('sha256').update(glb).digest('hex'));assert.equal(glb.toString('ascii',0,4),'glTF');assert.equal(glb.readUInt32LE(4),2);assert.equal(glb.readUInt32LE(8),glb.length);
+  const jsonLength=glb.readUInt32LE(12);assert.equal(glb.toString('ascii',16,20),'JSON');const scene=JSON.parse(glb.toString('utf8',20,20+jsonLength).trim());
+  assert.equal(scene.nodes.filter(n=>n.mesh!==undefined).length,job.meshCount);assert.ok(scene.nodes.some(n=>n.name==='HomeInteriorCamera'&&n.camera!==undefined));assert.ok(scene.images.length>=3);assert.ok(scene.images.every(i=>i.bufferView!==undefined&&!i.uri),'Images embedded, no missing external files');assert.ok(scene.materials.some(m=>m.normalTexture&&m.pbrMetallicRoughness.baseColorTexture),'PBR material maps exported');
+  assert.ok(job.fixtures.some(f=>f.layer==='cabinet'&&f.level>0));assert.equal(job.coordinateSystem,'Y_UP');assert.deepEqual(await geometry(),before,'Export does not mutate original scene');assert.deepEqual(errors,[]);
+  fs.writeFileSync(path.join(out,'scene.glb'),glb);fs.writeFileSync(path.join(out,'render-job.json'),JSON.stringify(job,null,2));fs.writeFileSync(path.join(out,'result.json'),JSON.stringify({passed:['actual UI ZIP export','GLB integrity','embedded PBR images','active camera','layered fixture metadata','original geometry invariance'],meshCount:job.meshCount,images:scene.images.length,pageErrors:errors},null,2));
+ }catch(e){fs.writeFileSync(path.join(out,'failure.txt'),String(e)+'\n'+errors.join('\n')+'\n'+log);if(page)await page.screenshot({path:path.join(out,'failure.png'),timeout:5000}).catch(()=>{});throw e;}finally{if(browser)await browser.close();if(server)server.kill('SIGTERM');}
+})().catch(e=>{console.error(e);process.exitCode=1;});
