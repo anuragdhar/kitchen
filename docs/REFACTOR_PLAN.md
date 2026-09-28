@@ -232,7 +232,21 @@ and after (a build is not sufficient per `AGENTS.md` "Completion"):
      Verified with build + `npm test`, then fresh screenshots of the East
      Wall, West Wall, and the height-guide overlay toggle (all cabinets,
      appliances, and height labels render correctly, zero console errors).
-     `NorthSouthElevation` and `ReferencesView` are not extracted yet.
+   - [x] `NorthSouthElevation` moved to
+     `src/kitchen/NorthSouthElevation.jsx`, same pattern (KITCHEN/
+     PLINTH_HEIGHT/HEIGHT_GUIDES/COUNTER_THICKNESS imported directly;
+     `planDimensions`, `showHeightGuides`, `materials`, `renderStyle` as
+     props). `ReferencesView` moved to `src/kitchen/ReferencesView.jsx`
+     along with its `REFERENCE_LINKS` constant, which had no other reader in
+     App.jsx. While moving it, fixed a real stale reference: its "Source
+     file" label still said `docs/references.md`, which Phase 0 had already
+     moved to `docs/archive/references.md`. App.jsx: 2567 -> 2425 lines.
+     Verified with build + `npm test`, then fresh screenshots of North
+     Elevation, South Elevation, and Reference Links (correct rendering,
+     corrected path visible, zero console errors).
+   - The ~15 further `2700`-as-Z-coordinate occurrences inside
+     `NorthSouthElevation`'s JSX body (noted above) are still there, just in
+     the new file now.
 4. `ThreeDRender` split into scene setup, envelope, cabinets/uppers, appliance
    meshes, and interaction (drag/measure/open-cabinet).
 5. Top-plan SVG and side panels become their own components.

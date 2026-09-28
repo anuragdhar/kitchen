@@ -19,6 +19,8 @@ import { buildPlanSvg as buildPlanSvgPure } from './kitchen/export/planSvg.mjs'
 import { buildPlanDxf as buildPlanDxfPure } from './kitchen/export/planDxf.mjs'
 import { buildBOM as buildBOMPure, buildBOMCsv as buildBOMCsvPure, buildBOMMarkdown as buildBOMMarkdownPure } from './kitchen/export/bom.mjs'
 import WallElevation from './kitchen/WallElevation.jsx'
+import NorthSouthElevation from './kitchen/NorthSouthElevation.jsx'
+import ReferencesView from './kitchen/ReferencesView.jsx'
 
 const LS_KEY=KITCHEN_AUTOSAVE_KEY
 const VERSION_KEYS={ current:'kitchen_version_Rule9', A:'kitchen_version_OptionA', B:'kitchen_version_OptionB', C:'kitchen_version_OptionC' }
@@ -36,15 +38,6 @@ const normalizeKitchenMaterials=(m={})=>({
 const PROJECT_DEFAULTS={east:EAST_INIT,west:WEST_INIT,grid:0,materials:normalizeKitchenMaterials(),
   eastModules:autoFillModules(KITCHEN.length),westModules:autoFillModules(KITCHEN.length-KITCHEN.westGap.to),
   eastTopUpperDepth:EAST_TOP_UPPER_DEPTH,westTopUpperDepth:WEST_TOP_UPPER_DEPTH,hide3DObstructions:true}
-
-const REFERENCE_LINKS=[
-  {
-    title:'Galley Kitchen Ideas - SoloTravely',
-    url:'https://solotravely.com/galley-kitchen-ideas/?utm_source=Pinterest&utm_medium=organic',
-    source:'solotravely.com',
-    note:'Primary reference link from docs/references.md.'
-  }
-]
 
 export default function App(){
   const persisted=useKitchenProject(PROJECT_DEFAULTS,KITCHEN,LS_KEY)
@@ -1940,141 +1933,6 @@ ${westRows}
       </div>
   }
 
-  const NorthSouthElevation=({isNorth})=>{
-    const frame={x:72,y:52,w:1060,h:560}
-    // Was hardcoded 2324/2700 (KITCHEN.width/height); see docs/REFACTOR_PLAN.md Phase 4.
-    const xOf=(x)=>frame.x+(x/KITCHEN.width)*frame.w
-    const yOf=(z)=>frame.y+frame.h-(z/KITCHEN.height)*frame.h
-    const wOf=(w)=>Math.max(24,(w/KITCHEN.width)*frame.w)
-    const hOf=(h)=>Math.max(18,(h/KITCHEN.height)*frame.h)
-    const eastX=KITCHEN.width-planDimensions.eastDepthMm, westX=0
-    const heightGuideOverlay=()=>{
-      if(!showHeightGuides) return null
-      const guideX=xOf(isNorth?585:1740)
-      const labelX=guideX+(isNorth?-34:34)
-      const textAnchor=isNorth?'end':'start'
-      return (
-        <g pointerEvents="none">
-          {[0,PLINTH_HEIGHT,900,1350,1850,KITCHEN.height].map(z=>(
-            <line key={`ns-level-${z}`} x1={frame.x} y1={yOf(z)} x2={frame.x+frame.w} y2={yOf(z)} stroke="#4f46e5" strokeWidth="1.2" strokeDasharray="9 8" opacity="0.42"/>
-          ))}
-          <line x1={guideX} y1={yOf(0)} x2={guideX} y2={yOf(KITCHEN.height)} stroke="#c7d2fe" strokeWidth="10" opacity="0.34" filter="url(#nsHeightGlow)"/>
-          {HEIGHT_GUIDES.map(g=>{
-            const yTop=yOf(g.to)
-            const yBottom=yOf(g.from)
-            const mid=(yTop+yBottom)/2
-            return (
-              <g key={`ns-${g.id}`}>
-                <line x1={guideX} y1={yTop+4} x2={guideX} y2={yBottom-4} stroke="#5b5bf7" strokeWidth="5" strokeLinecap="round" filter="url(#nsHeightGlow)"/>
-                <circle cx={guideX} cy={yTop+4} r="4.5" fill="#ffffff" stroke="#4f46e5" strokeWidth="2"/>
-                <circle cx={guideX} cy={yBottom-4} r="4.5" fill="#ffffff" stroke="#4f46e5" strokeWidth="2"/>
-                <text x={labelX} y={mid-5} textAnchor={textAnchor} fontSize="18" fontWeight="900" fill="#ffffff" stroke="#312e81" strokeWidth="4" paintOrder="stroke">{Math.round((g.to-g.from)/10)} cm</text>
-                <text x={labelX} y={mid+15} textAnchor={textAnchor} fontSize="10" fontWeight="900" fill="#312e81">{g.label}</text>
-              </g>
-            )
-          })}
-          <text x={labelX} y={yOf(900)-10} textAnchor={textAnchor} fontSize="10" fontWeight="900" fill="#312e81">counter 90 cm</text>
-        </g>
-      )
-    }
-    return (<svg width="1180" height="560" viewBox="0 0 1180 620" style={{background:'#fffefb',border:'1px solid #ddd4c8',width:'100%',height:'auto',display:'block'}}>
-      <defs>
-        <filter id="nsHeightGlow" x="-80%" y="-20%" width="260%" height="140%">
-          <feGaussianBlur stdDeviation="4" result="blur"/>
-          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
-        </filter>
-      </defs>
-      <rect x={frame.x} y={frame.y} width={frame.w} height={frame.h} fill="#faf6f1" stroke="#111" strokeWidth="2"/>
-      <text x={frame.x} y="31" fontSize="22" fontWeight="900">{isNorth?'North Elevation (looking South)':'South Elevation (looking North)'}</text>
-      <text x={frame.x+frame.w} y="31" textAnchor="end" fontSize="13" fontWeight="700" fill="#61584f">{isNorth?'East (E) right / West (W) left - Window 1100W':`East (E) left / West (W) right - Opening ${KITCHEN.door.w}W`}</text>
-      {/* wall baseline */}
-      <line x1={frame.x} y1={yOf(0)} x2={frame.x+frame.w} y2={yOf(0)} stroke="#111" strokeWidth="4"/>
-      {/* floor */}
-      <rect x={frame.x} y={yOf(0)} width={frame.w} height={hOf(30)} fill={materials.floor||'#ded6cc'} stroke="#111"/>
-      {/* east cabinet silhouette */}
-      <rect x={xOf(eastX)} y={yOf(900)} width={wOf(600)} height={hOf(900 - PLINTH_HEIGHT)} fill={renderStyle.baseCabinet} stroke="#111"/>
-      <rect x={xOf(eastX)} y={yOf(900)} width={wOf(600)} height={hOf(COUNTER_THICKNESS)} fill={renderStyle.counter} stroke="#7d7165"/>
-      <rect x={xOf(eastX)} y={yOf(1350)} width={wOf(320)} height={hOf(500)} fill={renderStyle.middleCabinet} stroke="#111"/>
-      <rect x={xOf(eastX+80)} y={yOf(2700)} width={wOf(470)} height={hOf(800)} fill={renderStyle.topCabinet} stroke="#111"/>
-      {/* west cabinet silhouette */}
-      <rect x={xOf(westX)} y={yOf(900)} width={wOf(400)} height={hOf(900 - PLINTH_HEIGHT)} fill={renderStyle.baseCabinet} stroke="#111"/>
-      <rect x={xOf(westX)} y={yOf(900)} width={wOf(400)} height={hOf(COUNTER_THICKNESS)} fill={renderStyle.counter} stroke="#7d7165"/>
-      <rect x={xOf(westX)} y={yOf(1350)} width={wOf(320)} height={hOf(500)} fill={renderStyle.middleCabinet} stroke="#111"/>
-      <rect x={xOf(westX)} y={yOf(1900)} width={wOf(400)} height={hOf(800)} fill={renderStyle.topCabinet} stroke="#111"/>
-      {/* door / window */}
-      {isNorth? (
-        <g>
-          <rect x={xOf(612)} y={yOf(2700)} width={wOf(1100)} height={hOf(1800)} fill="rgba(126,184,232,0.32)" stroke="#2f8ac6" strokeWidth="2"/>
-          {/* transom at 610 from head (2'-0") */}
-          <line x1={xOf(612)} y1={yOf(2700-610)} x2={xOf(1712)} y2={yOf(2700-610)} stroke="#1a1a18" strokeWidth="3"/>
-          {/* centre vertical mullion - 2 partitions */}
-          <line x1={xOf(612+550)} y1={yOf(2700)} x2={xOf(612+550)} y2={yOf(900)} stroke="#1a1a18" strokeWidth="2.2"/>
-          {/* left-top exhaust fan 300mm - HIGH CONTRAST */}
-          <rect x={xOf(612)+8} y={yOf(2700)-10} width={wOf(550)-16} height={hOf(610)-10} fill="#1a1a18" stroke="#111" strokeWidth="1.4"/>
-          <rect x={xOf(612)+16} y={yOf(2700)-10+6} width={wOf(550)-32} height={hOf(610)-22} fill="#eaf0f4" stroke="#c8d2db" strokeWidth="1"/>
-          {/* louvre lines */}
-          <line x1={xOf(612)+20} y1={yOf(2700-120)} x2={xOf(612+550)-20} y2={yOf(2700-120)} stroke="#b8c7d4" strokeWidth="1"/>
-          <line x1={xOf(612)+20} y1={yOf(2700-200)} x2={xOf(612+550)-20} y2={yOf(2700-200)} stroke="#b8c7d4" strokeWidth="1"/>
-          <line x1={xOf(612)+20} y1={yOf(2700-280)} x2={xOf(612+550)-20} y2={yOf(2700-280)} stroke="#b8c7d4" strokeWidth="1"/>
-          <line x1={xOf(612)+20} y1={yOf(2700-360)} x2={xOf(612+550)-20} y2={yOf(2700-360)} stroke="#b8c7d4" strokeWidth="1"/>
-          <line x1={xOf(612)+20} y1={yOf(2700-440)} x2={xOf(612+550)-20} y2={yOf(2700-440)} stroke="#b8c7d4" strokeWidth="1"/>
-          <circle cx={xOf(612+275)} cy={yOf(2700-305)} r={Math.min(wOf(300)/2, hOf(300)/2)} fill="#ffffff" stroke="#1a1a18" strokeWidth="2.6"/>
-          <circle cx={xOf(612+275)} cy={yOf(2700-305)} r={Math.min(wOf(300)/2, hOf(300)/2)-6} fill="none" stroke="#c05a2b" strokeWidth="1.2"/>
-          <circle cx={xOf(612+275)} cy={yOf(2700-305)} r={7} fill="#c05a2b" stroke="#fff" strokeWidth="1.2"/>
-          <line x1={xOf(612+275)-34} y1={yOf(2700-305)} x2={xOf(612+275)+34} y2={yOf(2700-305)} stroke="#2b2b2b" strokeWidth="2.2"/>
-          <line x1={xOf(612+275)} y1={yOf(2700-305)-34} x2={xOf(612+275)} y2={yOf(2700-305)+34} stroke="#2b2b2b" strokeWidth="2.2"/>
-          <text x={xOf(1162)} y={yOf(2430)} textAnchor="middle" fontSize="10" fontWeight="800" fill="#1a1a18">TOP 610 - LEFT: 12" METAL EXHAUST / RIGHT: FIXED x1</text>
-          <text x={xOf(1162)} y={yOf(1500)} textAnchor="middle" fontSize="10" fontWeight="800" fill="#c05a2b">BOTTOM 1190 - SLIDING x2 (both sides)</text>
-          <text x={xOf(1162)} y={yOf(1800)} textAnchor="middle" fontSize="11" fontWeight="900" fill="#1f5f88">Window 1100x1800 sill 900 - 2 BAYS (centre mullion)</text>
-          <rect x={xOf(KITCHEN.windowBelow?.x||612)} y={yOf(300)} width={wOf(KITCHEN.windowBelow?.w||1100)} height={hOf(300)} fill="#eaf6fd" stroke="#2f8ac6" strokeDasharray="10 8" opacity="0.72"/>
-          <text x={xOf(1162)} y={yOf(150)} textAnchor="middle" fontSize="11" fontWeight="800" fill="#2e6f99">Below window area only - 300 deep</text>
-        </g>
-      ):(
-        <g>
-          <rect x={xOf(KITCHEN.door.x)} y={yOf(2100)} width={wOf(KITCHEN.door.w)} height={hOf(2100)} fill="#fffaf3" stroke="#7b3f21" strokeWidth="2"/>
-          <text x={xOf(KITCHEN.door.x+KITCHEN.door.w/2)} y={yOf(1050)} textAnchor="middle" fontSize="13" fontWeight="900" fill="#7b3f21">South opening {KITCHEN.door.w}W</text>
-          <rect x={xOf(0)} y={yOf(KITCHEN.westGap.to)} width={wOf(KITCHEN.westCounterDepth||600)} height={hOf(KITCHEN.westGap.to)} fill="#fffaf3" stroke="#7b3f21" strokeDasharray="10 8" opacity="0.7"/>
-          <text x={xOf(260)} y={yOf(KITCHEN.westGap.to/2)} textAnchor="middle" fontSize="12" fontWeight="800" fill="#7b3f21">West door clear y0-y{KITCHEN.westGap.to}</text>
-        </g>
-      )}
-      {/* dimension markers vertical on right */}
-      <g fontSize="11" fontWeight="700">
-        <line x1={frame.x+frame.w+14} y1={yOf(0)} x2={frame.x+frame.w+14} y2={yOf(900)} stroke="#111" strokeWidth="2"/>
-        <text x={frame.x+frame.w+22} y={yOf(450)} transform={`rotate(90 ${frame.x+frame.w+22} ${yOf(450)})`} textAnchor="middle">Counter 900</text>
-        <line x1={frame.x+frame.w+30} y1={yOf(900)} x2={frame.x+frame.w+30} y2={yOf(1500)} stroke="#7d7165" strokeWidth="2" strokeDasharray="6 4"/>
-        <text x={frame.x+frame.w+38} y={yOf(1200)} transform={`rotate(90 ${frame.x+frame.w+38} ${yOf(1200)})`} textAnchor="middle" fill="#7d7165">Backsplash 600</text>
-        <line x1={frame.x+frame.w+46} y1={yOf(1350)} x2={frame.x+frame.w+46} y2={yOf(1850)} stroke="#b8ab9a" strokeWidth="2"/>
-        <text x={frame.x+frame.w+54} y={yOf(1600)} transform={`rotate(90 ${frame.x+frame.w+54} ${yOf(1600)})`} textAnchor="middle" fill="#6d6257">Lower upper 1350-1850</text>
-        <line x1={frame.x+frame.w+62} y1={yOf(1900)} x2={frame.x+frame.w+62} y2={yOf(2700)} stroke="#bfa891" strokeWidth="2"/>
-        <text x={frame.x+frame.w+70} y={yOf(2300)} transform={`rotate(90 ${frame.x+frame.w+70} ${yOf(2300)})`} textAnchor="middle" fill="#6d6257">Top upper 1850-2700 no gap</text>
-      </g>
-      <text x={frame.x-10} y={yOf(2700)+4} textAnchor="end" fontSize="12" fontWeight="800">2700</text>
-      <text x={frame.x-10} y={yOf(0)+4} textAnchor="end" fontSize="12" fontWeight="800">0</text>
-      {heightGuideOverlay()}
-    </svg>)
-  }
-
-  const ReferencesView=()=>(
-    <div style={{background:'#fff',borderRadius:14,padding:14,scrollMarginTop:12}}>
-      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',flexWrap:'wrap',gap:10}}>
-        <h3 style={{margin:'0 0 10px 0'}}>Reference Links</h3>
-        <div style={{fontSize:12,color:'#61584f',fontWeight:700}}>Source file: docs/references.md</div>
-      </div>
-      <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(280px,1fr))',gap:12}}>
-        {REFERENCE_LINKS.map(link=>(
-          <div key={link.url} style={{border:'1px solid #ddd4c8',borderRadius:8,padding:12,background:'#fffefb'}}>
-            <div style={{fontWeight:900,fontSize:15,marginBottom:6}}>{link.title}</div>
-            <div style={{fontSize:12,color:'#61584f',marginBottom:8}}>{link.source}</div>
-            <a href={link.url} target="_blank" rel="noreferrer" style={{display:'block',fontSize:13,fontWeight:800,color:'#0c4a6e',overflowWrap:'anywhere',marginBottom:8}}>
-              {link.url}
-            </a>
-            <div style={{fontSize:12,color:'#4b4037',lineHeight:1.45}}>{link.note}</div>
-          </div>
-        ))}
-      </div>
-    </div>
-  )
-
   const pad=200
   const viewBoxTop=`${-pad} ${-pad} ${KITCHEN.width+pad*2} ${KITCHEN.length+pad*2}`
   const planSvgHeight=Math.round(900*(KITCHEN.length+pad*2)/(KITCHEN.width+pad*2))
@@ -2403,8 +2261,8 @@ ${westRows}
     {view==='front'&&(<div ref={activeViewRef} style={{background:'#fff',borderRadius:14,padding:14,scrollMarginTop:12}}><svg width="1000" height="500" viewBox="0 0 800 500" style={{width:'100%'}}><polygon points="0,450 800,450 560,120 240,120" fill="#E8E0D5" stroke="#111"/><polygon points="0,0 800,0 560,80 240,80" fill="#f2ece3" stroke="#111"/><polygon points="0,0 0,450 240,120 240,80" fill={materials.wall||'#faf6f1'} stroke="#111"/><polygon points="800,0 800,450 560,120 560,80" fill={materials.wall||'#faf6f1'} stroke="#111"/><rect x="350" y="95" width="100" height="45" fill="#7EB8E8" stroke="#111"/><text x="400" y="92" textAnchor="middle" fontSize="12" fontWeight="700">N WINDOW</text><rect x="92" y="235" width="68" height="54" fill="#80b5de" stroke="#111"/><text x="126" y="229" textAnchor="middle" fontSize="10" fontWeight="700">PURIFIER</text><rect x="162" y="310" width="70" height="18" fill="#202020" stroke="#111"/><rect x="174" y="313" width="46" height="12" fill="#c9c9c9" stroke="#555"/><text x="197" y="304" textAnchor="middle" fontSize="10" fontWeight="700">SINK</text><rect x="568" y="236" width="86" height="70" fill="#8c7a65" stroke="#111"/><text x="611" y="230" textAnchor="middle" fontSize="10" fontWeight="700">GARAGE</text><rect x="590" y="252" width="42" height="18" fill="#1f1f1f"/><rect x="594" y="276" width="34" height="18" fill="#b9b9b9"/><rect x="640" y="240" width="80" height="20" fill="#2a2a2a"/><text x="680" y="235" textAnchor="middle" fontSize="10" fill="#fff">GAS y2300</text></svg></div>)}
     {view==='east'&&(<div ref={(node)=>{eastSvgRef.current=node; activeViewRef.current=node}} style={{background:'#fff',borderRadius:14,padding:14,scrollMarginTop:12}}><div style={{display:'flex',justifyContent:'space-between',alignItems:'center',flexWrap:'wrap',gap:10}}><h3 style={{margin:'0 0 10px 0'}}>East wall front render: open microwave, open appliance garage, gas and 4in backsplash slider</h3><div style={{display:'flex',gap:6}}><button onClick={()=>downloadSvgFromRef(eastSvgRef,'east-elevation.svg')} style={{padding:'6px 10px',background:'#fff',border:'1px solid #111',borderRadius:8,fontWeight:700}}>Export SVG</button><button onClick={()=>downloadPngFromRef(eastSvgRef,'east-elevation.png')} style={{padding:'6px 10px',background:'#111',color:'#fff',border:'none',borderRadius:8,fontWeight:700}}>Export PNG</button><button onClick={()=>downloadPdfFromRef(eastSvgRef,'east-elevation.pdf')} style={{padding:'6px 10px',background:'#fff',border:'1px solid #111',borderRadius:8,fontWeight:700}}>Export PDF</button></div></div><WallElevation items={activeEast} isEast={true} modules={eastModules} showHeightGuides={showHeightGuides} renderStyle={renderStyle} moduleSegmentsFromNorth={moduleSegmentsFromNorth} onSelectItem={setSelectedId}/></div>)}
     {view==='west'&&(<div ref={(node)=>{westSvgRef.current=node; activeViewRef.current=node}} style={{background:'#fff',borderRadius:14,padding:14,scrollMarginTop:12}}><div style={{display:'flex',justifyContent:'space-between',alignItems:'center',flexWrap:'wrap',gap:10}}><h3 style={{margin:'0 0 10px 0'}}>West wall front render: clear entry, wet appliances and northwest shaft</h3><div style={{display:'flex',gap:6}}><button onClick={()=>downloadSvgFromRef(westSvgRef,'west-elevation.svg')} style={{padding:'6px 10px',background:'#fff',border:'1px solid #111',borderRadius:8,fontWeight:700}}>Export SVG</button><button onClick={()=>downloadPngFromRef(westSvgRef,'west-elevation.png')} style={{padding:'6px 10px',background:'#111',color:'#fff',border:'none',borderRadius:8,fontWeight:700}}>Export PNG</button><button onClick={()=>downloadPdfFromRef(westSvgRef,'west-elevation.pdf')} style={{padding:'6px 10px',background:'#fff',border:'1px solid #111',borderRadius:8,fontWeight:700}}>Export PDF</button></div></div><WallElevation items={activeWest} isEast={false} modules={westModules} showHeightGuides={showHeightGuides} renderStyle={renderStyle} moduleSegmentsFromNorth={moduleSegmentsFromNorth} onSelectItem={setSelectedId}/></div>)}
-    {view==='north'&&(<div ref={(node)=>{northSvgRef.current=node; activeViewRef.current=node}} style={{background:'#fff',borderRadius:14,padding:14,scrollMarginTop:12}}><div style={{display:'flex',justifyContent:'space-between',alignItems:'center',flexWrap:'wrap',gap:10}}><h3 style={{margin:'0 0 10px 0'}}>North elevation (looking South)</h3><div style={{display:'flex',gap:6}}><button onClick={()=>downloadSvgFromRef(northSvgRef,'north-elevation.svg')} style={{padding:'6px 10px',background:'#fff',border:'1px solid #111',borderRadius:8,fontWeight:700}}>Export SVG</button><button onClick={()=>downloadPngFromRef(northSvgRef,'north-elevation.png')} style={{padding:'6px 10px',background:'#111',color:'#fff',border:'none',borderRadius:8,fontWeight:700}}>Export PNG</button><button onClick={()=>downloadPdfFromRef(northSvgRef,'north-elevation.pdf')} style={{padding:'6px 10px',background:'#fff',border:'1px solid #111',borderRadius:8,fontWeight:700}}>Export PDF</button></div></div><NorthSouthElevation isNorth={true}/><div style={{marginTop:8,fontSize:12,color:'#666'}}>Shows north window reference, below-window 300 mm area only, counter 900 mm, backsplash 600 mm, lower upper 1350-1850, top upper 1850-2700 no gap, ceiling 2700 mm.</div></div>)}
-    {view==='south'&&(<div ref={(node)=>{southSvgRef.current=node; activeViewRef.current=node}} style={{background:'#fff',borderRadius:14,padding:14,scrollMarginTop:12}}><div style={{display:'flex',justifyContent:'space-between',alignItems:'center',flexWrap:'wrap',gap:10}}><h3 style={{margin:'0 0 10px 0'}}>South elevation (looking North)</h3><div style={{display:'flex',gap:6}}><button onClick={()=>downloadSvgFromRef(southSvgRef,'south-elevation.svg')} style={{padding:'6px 10px',background:'#fff',border:'1px solid #111',borderRadius:8,fontWeight:700}}>Export SVG</button><button onClick={()=>downloadPngFromRef(southSvgRef,'south-elevation.png')} style={{padding:'6px 10px',background:'#111',color:'#fff',border:'none',borderRadius:8,fontWeight:700}}>Export PNG</button><button onClick={()=>downloadPdfFromRef(southSvgRef,'south-elevation.pdf')} style={{padding:'6px 10px',background:'#fff',border:'1px solid #111',borderRadius:8,fontWeight:700}}>Export PDF</button></div></div><NorthSouthElevation isNorth={false}/><div style={{marginTop:8,fontSize:12,color:'#666'}}>Shows south door, west door clear zone, counter and upper zones, ceiling 2700 mm.</div></div>)}
+    {view==='north'&&(<div ref={(node)=>{northSvgRef.current=node; activeViewRef.current=node}} style={{background:'#fff',borderRadius:14,padding:14,scrollMarginTop:12}}><div style={{display:'flex',justifyContent:'space-between',alignItems:'center',flexWrap:'wrap',gap:10}}><h3 style={{margin:'0 0 10px 0'}}>North elevation (looking South)</h3><div style={{display:'flex',gap:6}}><button onClick={()=>downloadSvgFromRef(northSvgRef,'north-elevation.svg')} style={{padding:'6px 10px',background:'#fff',border:'1px solid #111',borderRadius:8,fontWeight:700}}>Export SVG</button><button onClick={()=>downloadPngFromRef(northSvgRef,'north-elevation.png')} style={{padding:'6px 10px',background:'#111',color:'#fff',border:'none',borderRadius:8,fontWeight:700}}>Export PNG</button><button onClick={()=>downloadPdfFromRef(northSvgRef,'north-elevation.pdf')} style={{padding:'6px 10px',background:'#fff',border:'1px solid #111',borderRadius:8,fontWeight:700}}>Export PDF</button></div></div><NorthSouthElevation isNorth={true} planDimensions={planDimensions} showHeightGuides={showHeightGuides} materials={materials} renderStyle={renderStyle}/><div style={{marginTop:8,fontSize:12,color:'#666'}}>Shows north window reference, below-window 300 mm area only, counter 900 mm, backsplash 600 mm, lower upper 1350-1850, top upper 1850-2700 no gap, ceiling 2700 mm.</div></div>)}
+    {view==='south'&&(<div ref={(node)=>{southSvgRef.current=node; activeViewRef.current=node}} style={{background:'#fff',borderRadius:14,padding:14,scrollMarginTop:12}}><div style={{display:'flex',justifyContent:'space-between',alignItems:'center',flexWrap:'wrap',gap:10}}><h3 style={{margin:'0 0 10px 0'}}>South elevation (looking North)</h3><div style={{display:'flex',gap:6}}><button onClick={()=>downloadSvgFromRef(southSvgRef,'south-elevation.svg')} style={{padding:'6px 10px',background:'#fff',border:'1px solid #111',borderRadius:8,fontWeight:700}}>Export SVG</button><button onClick={()=>downloadPngFromRef(southSvgRef,'south-elevation.png')} style={{padding:'6px 10px',background:'#111',color:'#fff',border:'none',borderRadius:8,fontWeight:700}}>Export PNG</button><button onClick={()=>downloadPdfFromRef(southSvgRef,'south-elevation.pdf')} style={{padding:'6px 10px',background:'#fff',border:'1px solid #111',borderRadius:8,fontWeight:700}}>Export PDF</button></div></div><NorthSouthElevation isNorth={false} planDimensions={planDimensions} showHeightGuides={showHeightGuides} materials={materials} renderStyle={renderStyle}/><div style={{marginTop:8,fontSize:12,color:'#666'}}>Shows south door, west door clear zone, counter and upper zones, ceiling 2700 mm.</div></div>)}
     {view==='references'&&<ReferencesView/>}
 
     {/* Validation Panel */}
