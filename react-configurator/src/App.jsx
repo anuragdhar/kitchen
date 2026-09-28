@@ -18,6 +18,7 @@ import { createPbrMaterial } from './render/materialFactory.js'
 import { buildPlanSvg as buildPlanSvgPure } from './kitchen/export/planSvg.mjs'
 import { buildPlanDxf as buildPlanDxfPure } from './kitchen/export/planDxf.mjs'
 import { buildBOM as buildBOMPure, buildBOMCsv as buildBOMCsvPure, buildBOMMarkdown as buildBOMMarkdownPure } from './kitchen/export/bom.mjs'
+import { deriveKitchenServices } from './kitchen/services.mjs'
 import WallElevation from './kitchen/WallElevation.jsx'
 import NorthSouthElevation from './kitchen/NorthSouthElevation.jsx'
 import ReferencesView from './kitchen/ReferencesView.jsx'
@@ -54,6 +55,7 @@ export default function App(){
   const [showHeightGuides,setShowHeightGuides]=useState(false)
   const [kitchenDaylight,setKitchenDaylight]=useState(false)
   const kitchenDaylightRef=useRef(false)
+  const [showServices,setShowServices]=useState(false)
   const [importWarning,setImportWarning]=useState('')
   const [bomNote,setBomNote]=useState('')
   const threeViewRef=useRef(null)
@@ -83,6 +85,7 @@ export default function App(){
   const activeEast=useMemo(()=>east.filter(isActiveLayoutItem),[east])
   const activeWest=useMemo(()=>west.filter(isActiveLayoutItem),[west])
   const planDimensions = getPlanDimensions(KITCHEN,EAST_BASE_DEPTH,KITCHEN.westCounterDepth)
+  const services=useMemo(()=>deriveKitchenServices({east,west,kitchen:KITCHEN}),[east,west])
   const walkwayFloor = planDimensions.walkwayMm
   const walkwayEye = KITCHEN.walkway?.eye ?? 1004
   const snapVal=(v)=> grid ? Math.round(v/grid)*grid : v
@@ -2017,6 +2020,7 @@ ${westRows}
       <button onClick={()=>loadVersion('current')} style={{padding:'10px 16px',background:'#e8f5ed',color:'#14532d',border:'2px solid #15803d',borderRadius:10,fontWeight:800}}>Restore saved kitchen baseline</button>
       <button onClick={()=>selectView('references')} style={{padding:'10px 16px',background:view==='references'?'#0c4a6e':'#fff',color:view==='references'?'#fff':'#0c4a6e',border:'2px solid #0c4a6e',borderRadius:10,fontWeight:800}}>Reference Links</button>
       <button onClick={()=>setShowHeightGuides(v=>!v)} style={{padding:'10px 16px',background:showHeightGuides?'#4f46e5':'#fff',color:showHeightGuides?'#fff':'#3730a3',border:'2px solid #4f46e5',borderRadius:10,fontWeight:800}}>Height Guide</button>
+      <button onClick={()=>setShowServices(v=>!v)} aria-pressed={showServices} style={{padding:'10px 16px',background:showServices?'#0e7490':'#fff',color:showServices?'#fff':'#0e7490',border:'2px solid #0e7490',borderRadius:10,fontWeight:800}}>Services</button>
       <button onClick={export3DScreenshot} disabled={view!=='three'} style={{padding:'10px 16px',background:view==='three'?'#111':'#ddd',color:view==='three'?'#fff':'#777',border:'none',borderRadius:10,fontWeight:800}}>3D Screenshot</button>
       <button onClick={exportPlanSvg} style={{padding:'8px 12px',background:'#fff',color:'#111',border:'2px solid #7b3f21',borderRadius:10,fontWeight:800}}>Export 2D SVG</button>
       <button onClick={exportPlanPng} style={{padding:'8px 12px',background:'#fff',color:'#111',border:'2px solid #7b3f21',borderRadius:10,fontWeight:800}}>Export 2D PNG</button>
@@ -2273,6 +2277,34 @@ ${westRows}
           <text x={it.d/2} y={svgY(it.y,it.w)+22} textAnchor="middle" fontSize="28" fontWeight="800" fill="#111">{it.w}W y{Math.round(it.y)}mm</text>
           <text x={it.d/2} y={svgY(it.y,it.w)+it.w/2+14} textAnchor="middle" fontSize="34" fontWeight="800" fill={it.id==='sink'?'#fff':'#111'}>{planLabel(it.id)}</text>
         </g>)})}
+        {showServices&&<g pointerEvents="none">
+          {services.routes.map(route=>{
+            const d=route.path.map(([x,y],i)=>`${i?'L':'M'} ${x} ${svgY(y,0)}`).join(' ')
+            return <path key={route.id} d={d} fill="none" stroke={route.type==='gas'?'#d97706':'#1d70b8'} strokeWidth="14" strokeDasharray="46 26" opacity="0.72"><title>{route.label}</title></path>
+          })}
+          {services.points.map(p=>{
+            const x=p.wall==='west'?70:KITCHEN.width-70
+            const y=svgY(p.y,0)
+            const color={water:'#1d70b8',drain:'#5a7d90',gas:'#d97706',power:'#b91c1c'}[p.type]
+            const letter={water:'W',drain:'D',gas:'G',power:'P'}[p.type]
+            return <g key={p.id}>
+              <title>{p.label}</title>
+              {p.type==='gas'?<polygon points={`${x},${y-52} ${x+48},${y+34} ${x-48},${y+34}`} fill={color} stroke="#fff" strokeWidth="6"/>
+                :p.type==='power'?<rect x={x-40} y={y-40} width="80" height="80" rx="12" fill={color} stroke="#fff" strokeWidth="6"/>
+                :<circle cx={x} cy={y} r="46" fill={color} stroke="#fff" strokeWidth="6"/>}
+              <text x={x} y={y+13} textAnchor="middle" fontSize="42" fontWeight="900" fill="#fff">{letter}</text>
+              <text x={p.wall==='west'?x+64:x-64} y={y+9} textAnchor={p.wall==='west'?'start':'end'} fontSize="25" fontWeight="800" fill="#243b53" stroke="#fff" strokeWidth="6" paintOrder="stroke">z{p.z}</text>
+            </g>
+          })}
+          <g transform={`translate(${-pad+22},${-pad+30})`} fontWeight="800">
+            <rect x="-12" y="-26" width="586" height="120" rx="12" fill="#fff" stroke="#243b53" strokeWidth="3" opacity="0.96"/>
+            <circle cx="12" cy="4" r="16" fill="#1d70b8"/><text x="38" y="14" fontSize="26" fill="#243b53">Water</text>
+            <circle cx="152" cy="4" r="16" fill="#5a7d90"/><text x="178" y="14" fontSize="26" fill="#243b53">Drain</text>
+            <polygon points="286,-13 302,18 270,18" fill="#d97706"/><text x="312" y="14" fontSize="26" fill="#243b53">Gas</text>
+            <rect x="392" y="-12" width="32" height="32" rx="6" fill="#b91c1c"/><text x="432" y="14" fontSize="26" fill="#243b53">Power</text>
+            <text x="-2" y="70" fontSize="20" fontWeight="700" fill="#7c4a12">z = height above floor (mm) · indicative design, not an installation drawing</text>
+          </g>
+        </g>}
         <DimH x1={0} x2={KITCHEN.width} y={-110} text={`Room width ${KITCHEN.width} mm`}/>
         <DimV y1={0} y2={KITCHEN.length} x={KITCHEN.width+110} text={`Room length ${KITCHEN.length} mm`}/>
         <DimH x1={KITCHEN.width-600} x2={KITCHEN.width} y={36} text="East 600 mm"/>
@@ -2287,6 +2319,7 @@ ${westRows}
       <div style={{fontSize:13,marginTop:10,display:'flex',flexWrap:'wrap',gap:12,justifyContent:'space-between'}}>
         <span>Drag Y only - snapping {grid?grid+' mm':'Off (free)'} - North top, South bottom - Shaft fixed (not draggable)</span>
         <span style={{color:'#7b3f21',fontWeight:800}}>Walkway {walkwayFloor} mm floor / {walkwayEye} mm eye</span>
+        {showServices&&<span style={{color:'#0e7490',fontWeight:800,width:'100%'}}>{services.disclaimer} Hover any symbol for its full description.</span>}
       </div>
     </div>)}
     {view==='front'&&(<div ref={activeViewRef} style={{background:'#fff',borderRadius:14,padding:14,scrollMarginTop:12}}><svg width="1000" height="500" viewBox="0 0 800 500" style={{width:'100%'}}><polygon points="0,450 800,450 560,120 240,120" fill="#E8E0D5" stroke="#111"/><polygon points="0,0 800,0 560,80 240,80" fill="#f2ece3" stroke="#111"/><polygon points="0,0 0,450 240,120 240,80" fill={materials.wall||'#faf6f1'} stroke="#111"/><polygon points="800,0 800,450 560,120 560,80" fill={materials.wall||'#faf6f1'} stroke="#111"/><rect x="350" y="95" width="100" height="45" fill="#7EB8E8" stroke="#111"/><text x="400" y="92" textAnchor="middle" fontSize="12" fontWeight="700">N WINDOW</text><rect x="92" y="235" width="68" height="54" fill="#80b5de" stroke="#111"/><text x="126" y="229" textAnchor="middle" fontSize="10" fontWeight="700">PURIFIER</text><rect x="162" y="310" width="70" height="18" fill="#202020" stroke="#111"/><rect x="174" y="313" width="46" height="12" fill="#c9c9c9" stroke="#555"/><text x="197" y="304" textAnchor="middle" fontSize="10" fontWeight="700">SINK</text><rect x="568" y="236" width="86" height="70" fill="#8c7a65" stroke="#111"/><text x="611" y="230" textAnchor="middle" fontSize="10" fontWeight="700">GARAGE</text><rect x="590" y="252" width="42" height="18" fill="#1f1f1f"/><rect x="594" y="276" width="34" height="18" fill="#b9b9b9"/><rect x="640" y="240" width="80" height="20" fill="#2a2a2a"/><text x="680" y="235" textAnchor="middle" fontSize="10" fill="#fff">GAS y2300</text></svg></div>)}
