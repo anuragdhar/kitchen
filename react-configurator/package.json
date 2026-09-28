@@ -5,8 +5,10 @@
     "dev": "vite",
     "build": "vite build",
     "visual:qa": "node scripts/visual-qa.cjs",
+    "inspect": "node scripts/headless-query.cjs",
     "test:bolt": "node scripts/validate-3d-bolt.mjs",
-    "test": "npm run test:bolt"
+    "test": "node --test tests/current-layout.test.mjs tests/layout-checks.test.mjs tests/browser-helpers.test.mjs",
+    "check": "npm test && npm run build"
   },
   "dependencies": {
     "dxf-viewer": "^1.0.48",
