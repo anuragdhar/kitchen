@@ -6,6 +6,7 @@ import * as THREE from 'three'
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js'
 import {RoomEnvironment} from 'three/examples/jsm/environments/RoomEnvironment.js'
 import {STUDY_ROOM} from './config/studyRoomConfig.js'
+import {createRug,createPottedPlant,createWallArt,createFloorLamp} from './rooms/shared/RoomDecor.js'
 import {createStudyTerrace} from './rooms/study/StudyTerrace.js'
 
 const mm=value=>value/1000
@@ -172,6 +173,13 @@ export default function StudyRoom3D(){
     rug.rotation.x=-Math.PI/2;rug.position.set(W/2,.006,L/2);rug.receiveShadow=true;room.add(rug)
     const {group:kidsGroup,nightBeds,daySeats}=createStudyFurniture(STUDY_ROOM)
     room.add(kidsGroup)
+    // Decor pass (owner request 2026-09-28): rug, plant, wall art and a floor
+    // lamp, placed clear of the bookshelf, all three openings and the south
+    // cabinet. Decorative only - no layout or opening changes.
+    const decorRug=createRug(1.5,2.0,'#aeb8c2');decorRug.position.set(1.6,0,2.5);room.add(decorRug)
+    const decorPlant=createPottedPlant(1.1);decorPlant.position.set(W-.35,0,1.25);room.add(decorPlant)
+    const decorArt=createWallArt(.9,.62,'#6f7f6a');decorArt.position.set(W-.05,1.55,2.3);decorArt.rotation.y=-Math.PI/2;room.add(decorArt)
+    const decorLamp=createFloorLamp();decorLamp.position.set(.35,0,L-.35);room.add(decorLamp)
     kidsGroup.visible=kidsPreview!=='off';nightBeds.visible=kidsPreview==='night';daySeats.visible=kidsPreview==='day'
     const labels=[]
     const addLabel=(text,x,y,z,color='#2563eb')=>{

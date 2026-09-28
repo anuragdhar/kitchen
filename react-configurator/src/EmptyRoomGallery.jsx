@@ -16,6 +16,7 @@ import {createBedroom3Wardrobe} from './rooms/bedroom3/Bedroom3Wardrobe.js'
 import {createLobbyEastIroningStorage} from './rooms/lobby/LobbyEastIroningStorage.js'
 import {createRoomAirConditioning} from './rooms/shared/RoomAirConditioning.js'
 import {createRoomTaskLighting} from './rooms/shared/RoomTaskLighting.js'
+import {createRug,createPottedPlant,createWallArt,createFloorLamp,createCushion} from './rooms/shared/RoomDecor.js'
 import {createDrawingRoomTelevision} from './rooms/drawing/DrawingRoomTelevision.js'
 import {createEntryRecessStorage} from './rooms/entry/EntryRecessStorage.js'
 import {createLobbyConcealedDoor} from './rooms/lobby/LobbyConcealedDoor.js'
@@ -347,6 +348,22 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
         addBox(.055,.47,.46,x+side*.205,.73,z,oak,furniture)
         for(const dx of [-.16,.16]) for(const dz of [-.17,.17]) addBox(.035,.44,.035,x+dx,.22,z+dz,metal,furniture)
       }
+      // Decor pass (owner request 2026-09-28): rug under the dining set, plant
+      // by the south-west corner, lamp beside the pooja alcove, art on the
+      // south wall. Positions avoid the toilet door, ironing storage and the
+      // open east/west boundaries.
+      const lobbyRug=createRug(1.9,1.5,'#b9c4bb');lobbyRug.position.set(tableX,0,tableZ);furniture.add(lobbyRug)
+      const lobbyPlant=createPottedPlant(1.15);lobbyPlant.position.set(.5,0,L-.5);furniture.add(lobbyPlant)
+      const lobbyLamp=createFloorLamp();lobbyLamp.position.set(3.55,0,.35);furniture.add(lobbyLamp)
+      const lobbyArt=createWallArt(.95,.68,'#87775f');lobbyArt.position.set(2.9,1.5,L-.05);lobbyArt.rotation.y=Math.PI;furniture.add(lobbyArt)
+    }
+    if(roomKey==='bedroom1'&&room.furniture?.bed){
+      // Decor pass (owner request 2026-09-28): rug beside the bed, cushions at
+      // the headboard, art on the east wall, plant clear of doors and recess.
+      const b1Rug=createRug(1.2,1.3,'#c7b9a6');b1Rug.position.set(1.05,0,2.55);furniture.add(b1Rug)
+      for(const dz of [-.28,.28]){const cushion=createCushion(.34,dz<0?'#8d9c8f':'#b48b60');cushion.position.set(3.02,.445,2.478+dz);cushion.rotation.y=Math.PI/2;furniture.add(cushion)}
+      const b1Art=createWallArt(.85,.6,'#7e8b99');b1Art.position.set(W-.05,1.55,2.478);b1Art.rotation.y=-Math.PI/2;furniture.add(b1Art)
+      const b1Plant=createPottedPlant(1);b1Plant.position.set(2.2,0,.32);furniture.add(b1Plant)
     }
     furniture.visible=showFurniture
     southWall.visible=showSouthWall
