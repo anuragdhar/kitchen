@@ -1,0 +1,13 @@
+.....WORKER_RENDER_UNCHANGED bbbbbbbbbbbb
+.WORKER_DEPENDENCIES_REUSED
+..WORKER_PATCH_START lobby-update.zip
+PATCH_APPLIED lobby
+
+WORKER_PATCH_APPLIED lobby-update.zip
+..WORKER_STAGE success
+WORKER_STAGE failure
+.......
+----------------------------------------------------------------------
+Ran 17 tests in 2.016s
+
+OK

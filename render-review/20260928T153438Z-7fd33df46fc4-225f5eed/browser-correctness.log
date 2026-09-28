@@ -1,0 +1,331 @@
+
+> home-interior@1.0.0 test:browser
+> node scripts/correctness-browser.cjs
+
+[correctness] Opening kitchen with explicit API readiness
+[correctness] Kitchen ready; switching to plan for geometry and export checks
+[correctness] SVG and DXF geometry checked; injecting non-order failure
+[correctness] Validation propagation checked; testing material-only changes
+[correctness] Material invariance checked; leaving and reopening kitchen
+[correctness] Room lifecycle and plan screenshot complete
+{
+  "passed": [
+    "default runtime validation",
+    "SVG labels and geometry",
+    "DXF labels and geometry",
+    "non-order failure propagates to API/panel/project",
+    "material changes preserve geometry",
+    "API lifecycle"
+  ],
+  "initialValidation": {
+    "eastOk": true,
+    "westOk": true,
+    "all": true,
+    "passing": 8,
+    "total": 8,
+    "rows": [
+      {
+        "id": "geometry-inputs",
+        "rule": "Geometry inputs and IDs",
+        "status": "pass",
+        "measured": "finite geometry and unique IDs",
+        "expected": "finite millimeter coordinates, positive active dimensions, boolean visibility and unique IDs",
+        "fix": "Correct invalid geometry before checking the layout",
+        "objectIds": []
+      },
+      {
+        "id": "east-order",
+        "rule": "East microwave, appliance garage and hob match a saved layout",
+        "status": "pass",
+        "measured": "microwave y0 garage y0 gas y2400",
+        "expected": "baseline or refined east arrangement",
+        "fix": "Restore the baseline or apply the refined east cooking zone",
+        "objectIds": []
+      },
+      {
+        "id": "west-order",
+        "rule": "West wet appliances match a saved layout",
+        "status": "pass",
+        "measured": "washing y610 sink y1210 dishwasher y1972 shaft y3908",
+        "expected": "baseline or airy kitchen arrangement; shaft at north wall",
+        "fix": "Restore the baseline or apply the airy kitchen arrangement",
+        "objectIds": []
+      },
+      {
+        "id": "sink-storage",
+        "rule": "Over-sink storage aligns with sink",
+        "status": "pass",
+        "measured": "sink y1210 rack y1210 rack width 762 mm",
+        "expected": "rack at the sink position and width",
+        "fix": "Keep dish/utensil storage directly over the west sink",
+        "objectIds": []
+      },
+      {
+        "id": "door-clear-zone",
+        "rule": "West door clear zone y0-y610 empty",
+        "status": "pass",
+        "measured": "0 items in zone",
+        "expected": "full-height west door volume remains clear, including fixed objects",
+        "fix": "Move objects outside the protected volume",
+        "objectIds": []
+      },
+      {
+        "id": "walkway-minimum",
+        "rule": "Nominal base-run walkway minimum",
+        "status": "pass",
+        "measured": "nominal floor 1124 mm",
+        "expected": "nominal floor at least 1124 mm",
+        "fix": "Keep base-run depths within the configured aisle requirement",
+        "objectIds": []
+      },
+      {
+        "id": "collision",
+        "rule": "Cabinet/appliance collision",
+        "status": "pass",
+        "measured": "no checked volumes overlap",
+        "expected": "separate physical volumes in x, y and z; backing slider panels and electrical markers excluded",
+        "fix": "Separate overlapping objects; do not hide a failure by marking an object fixed",
+        "objectIds": []
+      },
+      {
+        "id": "bounds",
+        "rule": "Item outside room bounds",
+        "status": "pass",
+        "measured": "all active items inside",
+        "expected": "inside 2324 x 4746 x 2700 mm, including fixed objects",
+        "fix": "Keep active object bounds inside the room in all three axes",
+        "objectIds": []
+      }
+    ],
+    "detailed": [
+      {
+        "id": "geometry-inputs",
+        "rule": "Geometry inputs and IDs",
+        "status": "pass",
+        "measured": "finite geometry and unique IDs",
+        "expected": "finite millimeter coordinates, positive active dimensions, boolean visibility and unique IDs",
+        "fix": "Correct invalid geometry before checking the layout",
+        "objectIds": []
+      },
+      {
+        "id": "east-order",
+        "rule": "East microwave, appliance garage and hob match a saved layout",
+        "status": "pass",
+        "measured": "microwave y0 garage y0 gas y2400",
+        "expected": "baseline or refined east arrangement",
+        "fix": "Restore the baseline or apply the refined east cooking zone",
+        "objectIds": []
+      },
+      {
+        "id": "west-order",
+        "rule": "West wet appliances match a saved layout",
+        "status": "pass",
+        "measured": "washing y610 sink y1210 dishwasher y1972 shaft y3908",
+        "expected": "baseline or airy kitchen arrangement; shaft at north wall",
+        "fix": "Restore the baseline or apply the airy kitchen arrangement",
+        "objectIds": []
+      },
+      {
+        "id": "sink-storage",
+        "rule": "Over-sink storage aligns with sink",
+        "status": "pass",
+        "measured": "sink y1210 rack y1210 rack width 762 mm",
+        "expected": "rack at the sink position and width",
+        "fix": "Keep dish/utensil storage directly over the west sink",
+        "objectIds": []
+      },
+      {
+        "id": "door-clear-zone",
+        "rule": "West door clear zone y0-y610 empty",
+        "status": "pass",
+        "measured": "0 items in zone",
+        "expected": "full-height west door volume remains clear, including fixed objects",
+        "fix": "Move objects outside the protected volume",
+        "objectIds": []
+      },
+      {
+        "id": "walkway-minimum",
+        "rule": "Nominal base-run walkway minimum",
+        "status": "pass",
+        "measured": "nominal floor 1124 mm",
+        "expected": "nominal floor at least 1124 mm",
+        "fix": "Keep base-run depths within the configured aisle requirement",
+        "objectIds": []
+      },
+      {
+        "id": "collision",
+        "rule": "Cabinet/appliance collision",
+        "status": "pass",
+        "measured": "no checked volumes overlap",
+        "expected": "separate physical volumes in x, y and z; backing slider panels and electrical markers excluded",
+        "fix": "Separate overlapping objects; do not hide a failure by marking an object fixed",
+        "objectIds": []
+      },
+      {
+        "id": "bounds",
+        "rule": "Item outside room bounds",
+        "status": "pass",
+        "measured": "all active items inside",
+        "expected": "inside 2324 x 4746 x 2700 mm, including fixed objects",
+        "fix": "Keep active object bounds inside the room in all three axes",
+        "objectIds": []
+      }
+    ]
+  },
+  "invalidValidation": {
+    "eastOk": true,
+    "westOk": true,
+    "all": false,
+    "passing": 7,
+    "total": 8,
+    "rows": [
+      {
+        "id": "geometry-inputs",
+        "rule": "Geometry inputs and IDs",
+        "status": "pass",
+        "measured": "finite geometry and unique IDs",
+        "expected": "finite millimeter coordinates, positive active dimensions, boolean visibility and unique IDs",
+        "fix": "Correct invalid geometry before checking the layout",
+        "objectIds": []
+      },
+      {
+        "id": "east-order",
+        "rule": "East microwave, appliance garage and hob match a saved layout",
+        "status": "pass",
+        "measured": "microwave y0 garage y0 gas y2400",
+        "expected": "baseline or refined east arrangement",
+        "fix": "Restore the baseline or apply the refined east cooking zone",
+        "objectIds": []
+      },
+      {
+        "id": "west-order",
+        "rule": "West wet appliances match a saved layout",
+        "status": "pass",
+        "measured": "washing y610 sink y1210 dishwasher y1972 shaft y3908",
+        "expected": "baseline or airy kitchen arrangement; shaft at north wall",
+        "fix": "Restore the baseline or apply the airy kitchen arrangement",
+        "objectIds": []
+      },
+      {
+        "id": "sink-storage",
+        "rule": "Over-sink storage aligns with sink",
+        "status": "fail",
+        "measured": "sink y1210 rack y1211 rack width 762 mm",
+        "expected": "rack at the sink position and width",
+        "fix": "Keep dish/utensil storage directly over the west sink",
+        "objectIds": []
+      },
+      {
+        "id": "door-clear-zone",
+        "rule": "West door clear zone y0-y610 empty",
+        "status": "pass",
+        "measured": "0 items in zone",
+        "expected": "full-height west door volume remains clear, including fixed objects",
+        "fix": "Move objects outside the protected volume",
+        "objectIds": []
+      },
+      {
+        "id": "walkway-minimum",
+        "rule": "Nominal base-run walkway minimum",
+        "status": "pass",
+        "measured": "nominal floor 1124 mm",
+        "expected": "nominal floor at least 1124 mm",
+        "fix": "Keep base-run depths within the configured aisle requirement",
+        "objectIds": []
+      },
+      {
+        "id": "collision",
+        "rule": "Cabinet/appliance collision",
+        "status": "pass",
+        "measured": "no checked volumes overlap",
+        "expected": "separate physical volumes in x, y and z; backing slider panels and electrical markers excluded",
+        "fix": "Separate overlapping objects; do not hide a failure by marking an object fixed",
+        "objectIds": []
+      },
+      {
+        "id": "bounds",
+        "rule": "Item outside room bounds",
+        "status": "pass",
+        "measured": "all active items inside",
+        "expected": "inside 2324 x 4746 x 2700 mm, including fixed objects",
+        "fix": "Keep active object bounds inside the room in all three axes",
+        "objectIds": []
+      }
+    ],
+    "detailed": [
+      {
+        "id": "geometry-inputs",
+        "rule": "Geometry inputs and IDs",
+        "status": "pass",
+        "measured": "finite geometry and unique IDs",
+        "expected": "finite millimeter coordinates, positive active dimensions, boolean visibility and unique IDs",
+        "fix": "Correct invalid geometry before checking the layout",
+        "objectIds": []
+      },
+      {
+        "id": "east-order",
+        "rule": "East microwave, appliance garage and hob match a saved layout",
+        "status": "pass",
+        "measured": "microwave y0 garage y0 gas y2400",
+        "expected": "baseline or refined east arrangement",
+        "fix": "Restore the baseline or apply the refined east cooking zone",
+        "objectIds": []
+      },
+      {
+        "id": "west-order",
+        "rule": "West wet appliances match a saved layout",
+        "status": "pass",
+        "measured": "washing y610 sink y1210 dishwasher y1972 shaft y3908",
+        "expected": "baseline or airy kitchen arrangement; shaft at north wall",
+        "fix": "Restore the baseline or apply the airy kitchen arrangement",
+        "objectIds": []
+      },
+      {
+        "id": "sink-storage",
+        "rule": "Over-sink storage aligns with sink",
+        "status": "fail",
+        "measured": "sink y1210 rack y1211 rack width 762 mm",
+        "expected": "rack at the sink position and width",
+        "fix": "Keep dish/utensil storage directly over the west sink",
+        "objectIds": []
+      },
+      {
+        "id": "door-clear-zone",
+        "rule": "West door clear zone y0-y610 empty",
+        "status": "pass",
+        "measured": "0 items in zone",
+        "expected": "full-height west door volume remains clear, including fixed objects",
+        "fix": "Move objects outside the protected volume",
+        "objectIds": []
+      },
+      {
+        "id": "walkway-minimum",
+        "rule": "Nominal base-run walkway minimum",
+        "status": "pass",
+        "measured": "nominal floor 1124 mm",
+        "expected": "nominal floor at least 1124 mm",
+        "fix": "Keep base-run depths within the configured aisle requirement",
+        "objectIds": []
+      },
+      {
+        "id": "collision",
+        "rule": "Cabinet/appliance collision",
+        "status": "pass",
+        "measured": "no checked volumes overlap",
+        "expected": "separate physical volumes in x, y and z; backing slider panels and electrical markers excluded",
+        "fix": "Separate overlapping objects; do not hide a failure by marking an object fixed",
+        "objectIds": []
+      },
+      {
+        "id": "bounds",
+        "rule": "Item outside room bounds",
+        "status": "pass",
+        "measured": "all active items inside",
+        "expected": "inside 2324 x 4746 x 2700 mm, including fixed objects",
+        "fix": "Keep active object bounds inside the room in all three axes",
+        "objectIds": []
+      }
+    ]
+  },
+  "pageErrors": []
+}
