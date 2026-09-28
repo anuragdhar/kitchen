@@ -84,6 +84,8 @@ function LiveWholeHome3D({onOpenRoom}){
   // null = existing studio lighting; a decimal hour drives the daylight sun.
   const [sunHour,setSunHour]=useState(null)
   const sunHourRef=useRef(null)
+  const [measureMode,setMeasureMode]=useState(false)
+  const [measureResult,setMeasureResult]=useState(null)
   const [planMark,setPlanMark]=useState(()=>{try{return JSON.parse(localStorage.getItem(PLAN_MARK_KEY)||'{}')}catch{return {}}})
 
   useEffect(()=>{try{localStorage.setItem(PLAN_MARK_KEY,JSON.stringify(planMark))}catch{}},[planMark])
@@ -576,6 +578,29 @@ function LiveWholeHome3D({onOpenRoom}){
     const raycaster=new THREE.Raycaster(),pointer=new THREE.Vector2()
     let pressedAt=null,markedMesh=null,markedMaterial=null
     const clearMark=()=>{if(markedMesh)markedMesh.material=markedMaterial;markedMesh=null;markedMaterial=null;setWallSelection(null);setWallNote('')}
+    // Two-click tape measure (same idea as the kitchen workspace's measure
+    // mode): click any two surfaces; the straight-line and floor distances
+    // are reported in millimetres. World units here are metres.
+    const measureGroup=new THREE.Group();measureGroup.name='measure overlay';scene.add(measureGroup)
+    let measureActive=false,measureStart=null
+    const measureMarker=point=>{
+      const marker=new THREE.Mesh(new THREE.SphereGeometry(.06,16,16),new THREE.MeshBasicMaterial({color:'#d97706',depthTest:false}))
+      marker.position.copy(point);marker.renderOrder=999;measureGroup.add(marker)
+    }
+    const clearMeasure=()=>{measureStart=null;measureGroup.children.forEach(child=>{child.geometry.dispose();child.material.dispose()});measureGroup.clear();setMeasureResult(null)}
+    const setMeasure=active=>{measureActive=active;renderer.domElement.style.cursor=active?'crosshair':'grab';if(!active)clearMeasure()}
+    const handleMeasureClick=hitPoint=>{
+      if(!measureStart){clearMeasure();measureStart=hitPoint.clone();measureMarker(measureStart);setMeasureResult({pending:true});return}
+      measureMarker(hitPoint)
+      const line=new THREE.Line(new THREE.BufferGeometry().setFromPoints([measureStart,hitPoint]),new THREE.LineBasicMaterial({color:'#d97706',depthTest:false}))
+      line.renderOrder=998;measureGroup.add(line)
+      const mm=v=>`${(Math.round(v*1000/5)*5).toLocaleString()} mm`
+      const direct=measureStart.distanceTo(hitPoint)
+      const floor=Math.hypot(hitPoint.x-measureStart.x,hitPoint.z-measureStart.z)
+      const rise=Math.abs(hitPoint.y-measureStart.y)
+      setMeasureResult({direct:mm(direct),floor:mm(floor),rise:mm(rise)})
+      measureStart=null
+    }
     const onPointerDown=event=>{pressedAt={x:event.clientX,y:event.clientY}}
     const onPointerUp=event=>{
       if(!pressedAt||Math.hypot(event.clientX-pressedAt.x,event.clientY-pressedAt.y)>6){pressedAt=null;return}
@@ -583,6 +608,11 @@ function LiveWholeHome3D({onOpenRoom}){
       const rect=renderer.domElement.getBoundingClientRect()
       pointer.set((event.clientX-rect.left)/rect.width*2-1,-(event.clientY-rect.top)/rect.height*2+1)
       raycaster.setFromCamera(pointer,camera)
+      if(measureActive){
+        const anyHit=raycaster.intersectObjects(scene.children.filter(child=>child!==measureGroup),true).find(h=>h.object.isMesh&&h.object.visible)
+        if(anyHit)handleMeasureClick(anyHit.point)
+        return
+      }
       const hit=raycaster.intersectObjects(wallMeshes.filter(mesh=>mesh.visible&&mesh.parent.visible),false)[0]
       if(!hit)return
       if(markedMesh)markedMesh.material=markedMaterial
@@ -612,7 +642,7 @@ function LiveWholeHome3D({onOpenRoom}){
     const interiorRoomIds=['bedroom3','study','balcony','terrace','kitchen','lobby','drawing','bedroom1','bedroom1-balcony','entry']
     const interiorScene=registerInteriorScene({id:'whole-home',scene,camera,renderer,zones:ROOMS.map((r,index)=>({id:interiorRoomIds[index],min:[X(r.bounds[0]),0,Z(r.bounds[1])],max:[X(r.bounds[2]),HEIGHT,Z(r.bounds[3])]}))})
     let raf=0;const render=()=>{controls.update();renderer.render(scene,camera);raf=requestAnimationFrame(render)};render()
-    sceneRef.current={setStorageCoverOpen:value=>storeStorage.userData.setCoverOpen(value),setMirrorOpen:value=>vanity.userData.setMirrorOpen?.(value),setPartitionOpen:value=>partition.userData.setOpen?.(value),setCamera,setWallsVisible:visible=>{walls.visible=visible},setBoardOpen:value=>{ironingStorage.userData.setBoardOpen(value)},setPoojaPersonVisible:visible=>{seatedPerson.visible=visible},setPoojaDoorsOpen:value=>{poojaDoors.userData.setDoorsOpen(value)},clearMark,setDaylight}
+    sceneRef.current={setStorageCoverOpen:value=>storeStorage.userData.setCoverOpen(value),setMirrorOpen:value=>vanity.userData.setMirrorOpen?.(value),setPartitionOpen:value=>partition.userData.setOpen?.(value),setCamera,setWallsVisible:visible=>{walls.visible=visible},setBoardOpen:value=>{ironingStorage.userData.setBoardOpen(value)},setPoojaPersonVisible:visible=>{seatedPerson.visible=visible},setPoojaDoorsOpen:value=>{poojaDoors.userData.setDoorsOpen(value)},clearMark,setDaylight,setMeasure,clearMeasure}
     setDaylight(sunHourRef.current)
     return()=>{interiorScene.dispose();cancelAnimationFrame(raf);observer.disconnect();renderer.domElement.removeEventListener('pointerdown',onPointerDown);renderer.domElement.removeEventListener('pointerup',onPointerUp);controls.dispose();model.traverse(object=>{object.geometry?.dispose?.();object.material?.dispose?.()});markedWallMaterial.dispose();texture.dispose();environment.dispose();pmrem.dispose();renderer.dispose();renderer.domElement.remove();sceneRef.current=null}
   },[])
@@ -626,6 +656,7 @@ function LiveWholeHome3D({onOpenRoom}){
   useEffect(()=>{sceneRef.current?.setPartitionOpen(partitionOpen)},[partitionOpen])
   useEffect(()=>{sceneRef.current?.setPoojaDoorsOpen(poojaDoorsOpen)},[poojaDoorsOpen])
   useEffect(()=>{sunHourRef.current=sunHour;sceneRef.current?.setDaylight(sunHour)},[sunHour])
+  useEffect(()=>{sceneRef.current?.setMeasure(measureMode)},[measureMode])
 
   return <section style={{background:'#fff',border:'1px solid #dbe3e9',borderRadius:22,overflow:'hidden',boxShadow:'0 16px 42px rgba(23,32,51,.1)'}}>
     <div style={{padding:'14px 16px',display:'flex',justifyContent:'space-between',alignItems:'center',gap:12,flexWrap:'wrap',borderBottom:'1px solid #e2e8f0'}}>
@@ -641,9 +672,22 @@ function LiveWholeHome3D({onOpenRoom}){
         <button onClick={()=>setMirrorOpen(value=>!value)} style={buttonStyle(mirrorOpen)}>{mirrorOpen?'Close vanity mirror':'Open vanity mirror'}</button>
         <button onClick={()=>setPartitionOpen(value=>!value)} style={buttonStyle(partitionOpen)}>{partitionOpen?'Close drawing partition':'Open drawing partition'}</button>
         <button onClick={()=>setPoojaDoorsOpen(value=>!value)} style={buttonStyle(poojaDoorsOpen)}>{poojaDoorsOpen?'Close Pooja doors':'Open Pooja doors'}</button>
+        <button onClick={()=>setMeasureMode(value=>!value)} aria-pressed={measureMode} style={buttonStyle(measureMode)}>{measureMode?'Stop measuring':'Measure'}</button>
         <button onClick={()=>setMarkMode(value=>!value)} style={buttonStyle(markMode)}>{markMode?'Back to 3D':'Mark area on plan'}</button>
       </div>
     </div>
+    {!markMode&&measureMode&&<div role="status" style={{display:'flex',gap:14,alignItems:'center',flexWrap:'wrap',padding:'8px 16px',borderBottom:'1px solid #fcd9a8',background:'#fff7ea',fontSize:13,color:'#7c4a12'}}>
+      <b>Measure:</b>
+      {!measureResult&&<span>click a first point on any surface…</span>}
+      {measureResult?.pending&&<span>first point set — click the second point</span>}
+      {measureResult&&!measureResult.pending&&<>
+        <span><b>{measureResult.direct}</b> direct</span>
+        <span>{measureResult.floor} along floor</span>
+        <span>{measureResult.rise} height difference</span>
+      </>}
+      <button onClick={()=>sceneRef.current?.clearMeasure()} style={{...buttonStyle(false),padding:'4px 10px',fontSize:12}}>Clear</button>
+      <span style={{fontSize:11,color:'#b45309'}}>Readings snap to 5 mm and measure the simplified 3D model, not a site survey.</span>
+    </div>}
     {!markMode&&<div style={{display:'flex',gap:8,alignItems:'center',flexWrap:'wrap',padding:'9px 16px',borderBottom:'1px solid #e2e8f0',background:'#f8fafc'}}>
       <b style={{fontSize:12,color:'#172033'}}>Daylight</b>
       {[['Studio',null],['Sunrise',6.4],['Morning',9],['Noon',12],['Evening',16.5],['Sunset',17.7],['Night',21]].map(([label,hour])=>
