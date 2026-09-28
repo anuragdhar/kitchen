@@ -12,8 +12,15 @@ if not exist "%APP_DIR%\package.json" (
 
 where node >nul 2>nul
 if errorlevel 1 (
-    echo Node.js was not found. Install Node.js 22, then run this file again.
-    goto :failed
+    rem Fall back to the ignored local Node copy used by the patch runner
+    rem (see PatchToApply\permanent-patch-runner.ps1) when Node is not on PATH.
+    set "LOCAL_NODE_DIR=%~dp0tmp\node22\node-v22.23.3-win-x64"
+    if exist "%LOCAL_NODE_DIR%\node.exe" (
+        set "PATH=%LOCAL_NODE_DIR%;%PATH%"
+    ) else (
+        echo Node.js was not found. Install Node.js 22, then run this file again.
+        goto :failed
+    )
 )
 
 where npm >nul 2>nul
