@@ -10,8 +10,10 @@ Run as a normal, preferably dedicated Windows user, not Administrator/SYSTEM.
 `-TrustMain` authorizes new code merged into this repository's main branch to run
 as that user. A separate checkout is **not a security sandbox**. Restrict merge
 access to trusted maintainers. Unreviewed PR branches, issue comments and command
-fields in job JSON are not executed. There is no installed service, scheduled
-task, listener, firewall change or startup persistence. The patch runner starts
+fields in job JSON are not executed. There is no Windows service, listener or
+firewall change. On this machine, the per-user `A501RenderWorker` scheduled task
+starts the worker after sign-in; the current worker also runs as a hidden process.
+The patch runner starts
 PowerShell with a process-only execution policy so the local script can run;
 it does not change machine or user policy.
 
@@ -49,9 +51,11 @@ From the updated repository:
 ```
 
 Add `-BlenderExe 'C:\Program Files\Blender Foundation\Blender 5.2\blender.exe'`
-using your real path when needed. Ctrl+C stops the worker. Keep the terminal open,
-PC awake and network available. No extra root .bat is added; start-server.bat is
-unchanged. Follow organizational PowerShell policy; the Python entry point is:
+using your real path when needed. Ctrl+C stops a manually launched worker. Keep
+the PC awake and network available for continuous work. The per-user logon task
+on this machine runs `$HOME\A501RenderWorker\start-on-logon.ps1`; it does not
+replace a currently running process. No extra root .bat is added;
+start-server.bat is unchanged. The Python entry point is:
 
 ```powershell
 python scripts/render_worker.py --trust-main --publish
