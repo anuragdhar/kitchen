@@ -201,6 +201,23 @@ and after (a build is not sufficient per `AGENTS.md` "Completion"):
    components; replace the hard-coded `2324`/`4746`/`2700` literals (42
    occurrences of `2324` alone) with the `KITCHEN`/`EAST_INIT`/`WEST_INIT`
    constants from `kitchenConfig.js`, with a test asserting the values match.
+   - [x] `NorthSouthElevation`'s scale-conversion functions (`xOf`/`yOf`/
+     `wOf`/`hOf`/`eastX`) replaced their hardcoded `2324`/`2700`/`600` with
+     `KITCHEN.width`/`KITCHEN.height`/`planDimensions.eastDepthMm` (2026-09-28).
+     Numerically identical today; the existing `tests/current-layout.test.mjs`
+     assertion `[KITCHEN.width, KITCHEN.length, KITCHEN.height] ===
+     [2324, 4746, 2700]` is exactly the "test asserting the values match"
+     this step called for, so no new test was needed. Verified with build +
+     `npm test`, and a Playwright screenshot of both the North and South
+     elevation tabs (correct scale/proportions, no console errors).
+   - Not yet touched: the ~15 further `2700` occurrences inside
+     `NorthSouthElevation`'s JSX body (absolute Z-coordinates for specific
+     drawn features, e.g. the ceiling line, window top) and the ~40 `2324`
+     occurrences in the separate top-plan SVG JSX section (interactive
+     click/drag view, distinct from the `buildPlanSvg` export builder already
+     extracted in Phase 4a). Same idea, larger surface area for one pass;
+     left for a follow-up along with actually splitting these components out
+     into their own files (still pending, see below).
 4. `ThreeDRender` split into scene setup, envelope, cabinets/uppers, appliance
    meshes, and interaction (drag/measure/open-cabinet).
 5. Top-plan SVG and side panels become their own components.

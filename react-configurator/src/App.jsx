@@ -2220,11 +2220,12 @@ ${westRows}
 
   const NorthSouthElevation=({isNorth})=>{
     const frame={x:72,y:52,w:1060,h:560}
-    const xOf=(x)=>frame.x+(x/2324)*frame.w
-    const yOf=(z)=>frame.y+frame.h-(z/2700)*frame.h
-    const wOf=(w)=>Math.max(24,(w/2324)*frame.w)
-    const hOf=(h)=>Math.max(18,(h/2700)*frame.h)
-    const eastX=2324-600, westX=0
+    // Was hardcoded 2324/2700 (KITCHEN.width/height); see docs/REFACTOR_PLAN.md Phase 4.
+    const xOf=(x)=>frame.x+(x/KITCHEN.width)*frame.w
+    const yOf=(z)=>frame.y+frame.h-(z/KITCHEN.height)*frame.h
+    const wOf=(w)=>Math.max(24,(w/KITCHEN.width)*frame.w)
+    const hOf=(h)=>Math.max(18,(h/KITCHEN.height)*frame.h)
+    const eastX=KITCHEN.width-planDimensions.eastDepthMm, westX=0
     const heightGuideOverlay=()=>{
       if(!showHeightGuides) return null
       const guideX=xOf(isNorth?585:1740)
