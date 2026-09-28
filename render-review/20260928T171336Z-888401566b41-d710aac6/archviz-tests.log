@@ -1,0 +1,124 @@
+TAP version 13
+# Subtest: capture validation preserves measured values and source identity
+ok 1 - capture validation preserves measured values and source identity
+  ---
+  duration_ms: 1.6913
+  type: 'test'
+  ...
+# Subtest: refuses wrong units, axes, versions and nonfinite scale
+ok 2 - refuses wrong units, axes, versions and nonfinite scale
+  ---
+  duration_ms: 0.27
+  type: 'test'
+  ...
+# Subtest: refuses missing, duplicate or corrupt geometry evidence
+ok 3 - refuses missing, duplicate or corrupt geometry evidence
+  ---
+  duration_ms: 0.2111
+  type: 'test'
+  ...
+# Subtest: requires a reconstructable source camera
+ok 4 - requires a reconstructable source camera
+  ---
+  duration_ms: 0.111
+  type: 'test'
+  ...
+# Subtest: gallery accepts only immutable local PNG paths
+ok 5 - gallery accepts only immutable local PNG paths
+  ---
+  duration_ms: 0.2544
+  type: 'test'
+  ...
+# Subtest: every room has a measured-scene-independent photographic profile
+ok 6 - every room has a measured-scene-independent photographic profile
+  ---
+  duration_ms: 2.232
+  type: 'test'
+  ...
+# Subtest: affected rooms require their own editable scene identity
+ok 7 - affected rooms require their own editable scene identity
+  ---
+  duration_ms: 0.3091
+  type: 'test'
+  ...
+# Subtest: v1 to independently owned v2 round trip preserves every profile setting
+ok 8 - v1 to independently owned v2 round trip preserves every profile setting
+  ---
+  duration_ms: 2.5803
+  type: 'test'
+  ...
+# Subtest: production profiles retain supported rooms and source routing
+ok 9 - production profiles retain supported rooms and source routing
+  ---
+  duration_ms: 1.4966
+  type: 'test'
+  ...
+# Subtest: editing one room never mutates another room or the source documents
+ok 10 - editing one room never mutates another room or the source documents
+  ---
+  duration_ms: 2.0333
+  type: 'test'
+  ...
+# Subtest: missing files and path traversal fail instead of using historical defaults
+ok 11 - missing files and path traversal fail instead of using historical defaults
+  ---
+  duration_ms: 1.1074
+  type: 'test'
+  ...
+# Subtest: malformed camera, native source and quality settings are rejected
+ok 12 - malformed camera, native source and quality settings are rejected
+  ---
+  duration_ms: 1.0741
+  type: 'test'
+  ...
+# Subtest: exports the existing plan directions into Blender metres without mutation
+ok 13 - exports the existing plan directions into Blender metres without mutation
+  ---
+  duration_ms: 1.06
+  type: 'test'
+  ...
+# Subtest: supports all preset and quality combinations
+ok 14 - supports all preset and quality combinations
+  ---
+  duration_ms: 0.1561
+  type: 'test'
+  ...
+# Subtest: exports a selected artifact and its exact support ID
+ok 15 - exports a selected artifact and its exact support ID
+  ---
+  duration_ms: 0.5551
+  type: 'test'
+  ...
+# Subtest: refuses invalid presets, scales, dimensions and output IDs
+ok 16 - refuses invalid presets, scales, dimensions and output IDs
+  ---
+  duration_ms: 0.3069
+  type: 'test'
+  ...
+# Subtest: refuses floating, unknown and overlapping artifact selections
+ok 17 - refuses floating, unknown and overlapping artifact selections
+  ---
+  duration_ms: 0.1142
+  type: 'test'
+  ...
+# Subtest: accepts only generated same-origin PNG paths
+ok 18 - accepts only generated same-origin PNG paths
+  ---
+  duration_ms: 0.1906
+  type: 'test'
+  ...
+# Subtest: refuses shared support across room boundaries
+ok 19 - refuses shared support across room boundaries
+  ---
+  duration_ms: 0.1484
+  type: 'test'
+  ...
+1..19
+# tests 19
+# suites 0
+# pass 19
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 69.384
