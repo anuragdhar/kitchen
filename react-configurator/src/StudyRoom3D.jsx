@@ -1,3 +1,5 @@
+import {registerInteriorScene} from './render/interiorScene.js'
+import {tagSurfaceMaterial} from './render/surfaceRoles.mjs'
 import {createStudyFurniture} from './StudyFurniture.js'
 import React,{useEffect,useRef,useState} from 'react'
 import * as THREE from 'three'
@@ -48,6 +50,7 @@ export default function StudyRoom3D(){
     addDirection('S',W/2,L-.28,true);addDirection('SW',.3,L-.3);addDirection('W',.28,L/2,true);addDirection('NW',.3,.3)
     directionGroup.visible=showDirections
     const wallMaterial=new THREE.MeshStandardMaterial({color:'#cfc7bb',roughness:.84})
+    tagSurfaceMaterial(wallMaterial,'plaster')
     const floorMaterial=new THREE.MeshStandardMaterial({color:'#866447',roughness:.78})
     const trimMaterial=new THREE.MeshStandardMaterial({color:'#f8fafc',roughness:.62})
     const addBox=(w,h,d,x,y,z,material=wallMaterial,parent=room)=>{const mesh=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),material);mesh.position.set(x,y,z);mesh.castShadow=true;mesh.receiveShadow=true;parent.add(mesh);return mesh}
@@ -61,8 +64,11 @@ export default function StudyRoom3D(){
     const bookshelfStart=mm(bookshelf.offsetFromWestMm),bookshelfCenterX=bookshelfStart+bookshelfW/2
     const bookshelfGroup=new THREE.Group();room.add(bookshelfGroup)
     const shelfTimberMaterial=new THREE.MeshStandardMaterial({color:'#69452f',roughness:.58})
+    tagSurfaceMaterial(shelfTimberMaterial,'wood')
     const shelfPanelMaterial=new THREE.MeshStandardMaterial({color:'#d8d9c5',roughness:.7})
+    tagSurfaceMaterial(shelfPanelMaterial,'wood')
     const shelfInteriorMaterial=new THREE.MeshStandardMaterial({color:'#d5c8b7',roughness:.78})
+    tagSurfaceMaterial(shelfInteriorMaterial,'wood')
     const shelfGlassMaterial=new THREE.MeshPhysicalMaterial({color:'#6d7880',transparent:true,opacity:.34,roughness:.16,transmission:.32,metalness:.04})
     const shelfHandleMaterial=new THREE.MeshStandardMaterial({color:'#5f625d',roughness:.32,metalness:.62})
     const footH=.085,carcassBottom=footH,frontZ=bookshelfD+.064,bayW=bookshelfW/3
@@ -120,8 +126,11 @@ export default function StudyRoom3D(){
     glass.position.set((terraceStart+terraceEnd)/2,terraceH/2,L-.025);southGroup.add(glass)
     const cabinetDepth=mm(southCabinet.depthMm)
     const cabinetMaterial=new THREE.MeshStandardMaterial({color:'#c8a97e',roughness:.62})
+    tagSurfaceMaterial(cabinetMaterial,'wood')
     const cabinetInteriorMaterial=new THREE.MeshStandardMaterial({color:'#eadcc7',roughness:.78})
+    tagSurfaceMaterial(cabinetInteriorMaterial,'wood')
     const cabinetDoorMaterial=new THREE.MeshStandardMaterial({color:'#d7bb91',roughness:.52})
+    tagSurfaceMaterial(cabinetDoorMaterial,'wood')
     const southCabinetGroup=new THREE.Group();room.add(southCabinetGroup)
     const cabinetCenterX=(cabinetStart+cabinetEnd)/2
     const cabinetCenterZ=L+cabinetDepth/2-.04
@@ -153,6 +162,7 @@ export default function StudyRoom3D(){
     addBox(wallT,H-mainH,mm(main.widthMm),W,mainH+(H-mainH)/2,(mainStart+mainEnd)/2,wallMaterial,eastGroup)
     const mainDoor=new THREE.Group();mainDoor.position.set(W-.055,0,mainStart);eastGroup.add(mainDoor)
     const mainLeaf=addBox(.035,mainH,mm(main.widthMm),0,mainH/2,mm(main.widthMm)/2,new THREE.MeshStandardMaterial({color:'#8b6747',roughness:.62}),mainDoor);mainDoor.rotation.y=-Math.PI*.38
+    tagSurfaceMaterial(mainLeaf.material,'wood','study')
     const former=STUDY_ROOM.openings.formerToiletDoor
     const patch=new THREE.Mesh(new THREE.BoxGeometry(.018,mm(former.heightMm),mm(former.widthMm)),new THREE.MeshStandardMaterial({color:'#d7d0c5',roughness:.88}))
     patch.position.set(W-.061,mm(former.heightMm)/2,mm(former.offsetFromNorthMm)+mm(former.widthMm)/2);eastGroup.add(patch)
@@ -191,10 +201,11 @@ export default function StudyRoom3D(){
     setCamera('kids')
     const resize=()=>{const width=mount.clientWidth,height=mount.clientHeight;renderer.setSize(width,height,false);camera.aspect=width/height;camera.updateProjectionMatrix()}
     const observer=new ResizeObserver(resize);observer.observe(mount);resize()
+    const interiorScene=registerInteriorScene({id:'study',scene,camera,renderer,zones:[{id:'study',min:[0,0,0],max:[W,H,L]}]})
     let raf=0;const render=()=>{controls.update();renderer.render(scene,camera);raf=requestAnimationFrame(render)};render()
     eastGroup.visible=showEastWall;northGroup.visible=showNorthWall
     sceneRef.current={setCamera,setEastVisible:value=>{eastGroup.visible=value},setNorthVisible:value=>{northGroup.visible=value},setKidsPreview:value=>{kidsGroup.visible=value!=='off';nightBeds.visible=value==='night';daySeats.visible=value==='day'},setLabelsVisible:value=>{labels.forEach(({sprite})=>{sprite.visible=value})},setDirectionsVisible:value=>{directionGroup.visible=value}}
-    return()=>{cancelAnimationFrame(raf);observer.disconnect();controls.dispose();labels.forEach(({texture})=>texture.dispose());directionTextures.forEach(texture=>texture.dispose());room.traverse(object=>{object.geometry?.dispose?.();if(Array.isArray(object.material))object.material.forEach(m=>m.dispose());else object.material?.dispose?.()});environment.dispose();pmrem.dispose();renderer.dispose();renderer.domElement.remove();sceneRef.current=null}
+    return()=>{interiorScene.dispose();cancelAnimationFrame(raf);observer.disconnect();controls.dispose();labels.forEach(({texture})=>texture.dispose());directionTextures.forEach(texture=>texture.dispose());room.traverse(object=>{object.geometry?.dispose?.();if(Array.isArray(object.material))object.material.forEach(m=>m.dispose());else object.material?.dispose?.()});environment.dispose();pmrem.dispose();renderer.dispose();renderer.domElement.remove();sceneRef.current=null}
   },[])
   useEffect(()=>{sceneRef.current?.setCamera(preset)},[preset])
   useEffect(()=>{sceneRef.current?.setEastVisible(showEastWall)},[showEastWall])

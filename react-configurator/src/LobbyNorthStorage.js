@@ -1,3 +1,4 @@
+import {tagSurfaceMaterial} from './render/surfaceRoles.mjs'
 import * as THREE from 'three'
 
 export function createLobbyNorthStorage(room){
@@ -8,8 +9,11 @@ export function createLobbyNorthStorage(room){
   const start=storage.fromWestMm/1000,width=storage.widthMm/1000,depth=storage.depthMm/1000,height=storage.heightMm/1000
   const centerX=start+width/2
   const wood=new THREE.MeshStandardMaterial({color:'#ad8968',roughness:.7})
+  tagSurfaceMaterial(wood,'wood','lobby')
   const door=new THREE.MeshStandardMaterial({color:'#e4dacb',roughness:.62})
+  tagSurfaceMaterial(door,'wood','lobby')
   const top=new THREE.MeshStandardMaterial({color:'#c9ae8c',roughness:.58})
+  tagSurfaceMaterial(top,'wood','lobby')
   const metal=new THREE.MeshStandardMaterial({color:'#5e625f',metalness:.6,roughness:.34})
   const box=(w,h,d,x,y,z,material)=>{
     const mesh=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),material)

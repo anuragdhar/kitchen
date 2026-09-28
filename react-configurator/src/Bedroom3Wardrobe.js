@@ -1,3 +1,4 @@
+import {tagSurfaceMaterial} from './render/surfaceRoles.mjs'
 import * as THREE from 'three'
 import {createBedroom3OakMaterial} from './Bedroom3OakMaterial.js'
 
@@ -11,6 +12,7 @@ export function createBedroom3Wardrobe(room){
   const carcass=createBedroom3OakMaterial({base:'#96633d',roughness:.6})
   const door=createBedroom3OakMaterial({base:'#b27d4c',roughness:.42})
   const edge=new THREE.MeshStandardMaterial({color:'#6c482f',roughness:.55})
+  tagSurfaceMaterial(edge,'wood','bedroom3')
   const pull=new THREE.MeshStandardMaterial({color:'#856b49',metalness:.55,roughness:.34})
   const box=(w,h,d,x,y,z,material)=>{
     const mesh=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),material)

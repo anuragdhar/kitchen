@@ -1,3 +1,4 @@
+import {tagSurfaceMaterial} from './render/surfaceRoles.mjs'
 import * as THREE from 'three'
 
 export function createDrawingLobbyPartition(room,key){
@@ -8,6 +9,7 @@ export function createDrawingLobbyPartition(room,key){
   const end=room.lengthMm/1000,span=end-start
   const height=(room.heightMm-305)/1000,panels=[]
   const finish=new THREE.MeshStandardMaterial({color:'#c8b49a',roughness:.72})
+  tagSurfaceMaterial(finish,'wood','drawing')
   const metal=new THREE.MeshStandardMaterial({color:'#635d54',metalness:.45,roughness:.4})
   const box=(w,h,d,cx,cy,cz,mat,parent=group)=>{
     const mesh=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat);mesh.position.set(cx,cy,cz);mesh.castShadow=true;mesh.receiveShadow=true;parent.add(mesh);return mesh

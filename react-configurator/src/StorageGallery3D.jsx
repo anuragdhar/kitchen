@@ -1,3 +1,4 @@
+import {registerInteriorScene} from './render/interiorScene.js'
 import React,{useEffect,useRef,useState} from 'react'
 import * as THREE from 'three'
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js'
@@ -22,9 +23,10 @@ export default function StorageGallery3D(){
   const setView=view=>{controls.target.set(1.25,.9,1.2);camera.up.set(0,1,0);if(view==='top'){camera.position.set(1.25,6,1.2);camera.up.set(0,0,1)}else if(view==='front')camera.position.set(-3,1.5,1.2);else camera.position.set(-2.5,3.2,3.9);camera.lookAt(controls.target);controls.update()}
   setView('overview')
   const resize=()=>{renderer.setSize(mount.clientWidth,mount.clientHeight);camera.aspect=mount.clientWidth/mount.clientHeight;camera.updateProjectionMatrix()};const observer=new ResizeObserver(resize);observer.observe(mount);resize()
+  const interiorScene=registerInteriorScene({id:'storage',scene,camera,renderer,zones:[{id:'storage',min:[0,0,0],max:[3,2.7,2.5]}]})
   let raf;const render=()=>{controls.update();renderer.render(scene,camera);raf=requestAnimationFrame(render)};render()
   sceneRef.current={setView,setOpen:model.userData.setCoverOpen}
-  return()=>{cancelAnimationFrame(raf);observer.disconnect();controls.dispose();scene.traverse(o=>{o.geometry?.dispose();o.material?.dispose?.()});renderer.dispose();renderer.domElement.remove();sceneRef.current=null}
+  return()=>{interiorScene.dispose();cancelAnimationFrame(raf);observer.disconnect();controls.dispose();scene.traverse(o=>{o.geometry?.dispose();o.material?.dispose?.()});renderer.dispose();renderer.domElement.remove();sceneRef.current=null}
  },[])
  useEffect(()=>{sceneRef.current?.setOpen(open)},[open])
  const style={padding:'9px 14px',borderRadius:8,border:'1px solid #b6a793',background:'#fff',cursor:'pointer'}

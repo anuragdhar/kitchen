@@ -1,3 +1,4 @@
+import {tagSurfaceMaterial} from './render/surfaceRoles.mjs'
 import * as THREE from 'three'
 
 // The cabinet projects through Bedroom 3's south wall; the balcony sits beside it.
@@ -7,7 +8,9 @@ export function createBedroom3SouthExtension(room){
   const wallZ=room.lengthMm/1000
   const {cabinet,balcony}=room.southExtension
   const wood=new THREE.MeshStandardMaterial({color:'#bfa98d',roughness:.69})
+  tagSurfaceMaterial(wood,'wood','bedroom3')
   const front=new THREE.MeshStandardMaterial({color:'#e4dacb',roughness:.6})
+  tagSurfaceMaterial(front,'wood','bedroom3')
   const metal=new THREE.MeshStandardMaterial({color:'#333c42',metalness:.62,roughness:.34})
   const floor=new THREE.MeshStandardMaterial({color:'#c7c4ba',roughness:.86})
   const addBox=(w,h,d,x,y,z,material)=>{

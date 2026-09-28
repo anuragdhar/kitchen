@@ -1,3 +1,5 @@
+import {registerInteriorScene} from './render/interiorScene.js'
+import {tagSurfaceMaterial} from './render/surfaceRoles.mjs'
 import {createDrawingLobbyPartition} from './DrawingLobbyPartition.js'
 import React,{useEffect,useRef,useState} from 'react'
 import * as THREE from 'three'
@@ -55,9 +57,11 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
     const controls=new OrbitControls(camera,renderer.domElement);controls.enableDamping=true
     const shell=new THREE.Group();scene.add(shell)
     const wallMaterial=new THREE.MeshStandardMaterial({color:roomKey==='drawing'?'#dfd2c4':'#d6d1c9',roughness:.86})
+    tagSurfaceMaterial(wallMaterial,'plaster')
     const floorMaterial=new THREE.MeshStandardMaterial({color:room.color,roughness:.82})
     const trimMaterial=new THREE.MeshStandardMaterial({color:'#f8fafc',roughness:.65})
     const doorMaterial=new THREE.MeshStandardMaterial({color:'#a47149',roughness:.68})
+    tagSurfaceMaterial(doorMaterial,'wood')
     const frameMaterial=new THREE.MeshStandardMaterial({color:'#f1ede6',roughness:.6})
     const darkFrameMaterial=new THREE.MeshStandardMaterial({color:'#171a1e',metalness:.55,roughness:.28})
     const handleMaterial=new THREE.MeshStandardMaterial({color:'#b89a5c',metalness:.75,roughness:.25})
@@ -142,7 +146,9 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
       const width=mm(northEastWardrobe.widthMm),depth=mm(northEastWardrobe.depthMm),height=mm(northEastWardrobe.heightMm)
       const start=W-mm(northEastWardrobe.fromEastMm)-width
       const body=new THREE.MeshStandardMaterial({color:'#c9b9a3',roughness:.72})
+      tagSurfaceMaterial(body,'wood')
       const door=new THREE.MeshStandardMaterial({color:'#eee8df',roughness:.58})
+      tagSurfaceMaterial(door,'wood')
       const pull=new THREE.MeshStandardMaterial({color:'#464b4b',metalness:.58,roughness:.34})
       addBox(width,height,depth,start+width/2,height/2,-depth/2,body)
       for(let i=0;i<northEastWardrobe.doorCount;i++){
@@ -177,7 +183,9 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
         const cabinetWidth=mm(wardrobe.widthMm),cabinetDepth=mm(wardrobe.depthMm),cabinetHeight=mm(wardrobe.heightMm)
         const cabinetZ=length-mm(wardrobe.northShiftMm||0),frontZ=cabinetZ+.018
         const body=new THREE.MeshStandardMaterial({color:'#a78059',roughness:.7})
+        tagSurfaceMaterial(body,'wood')
         const doors=new THREE.MeshStandardMaterial({color:'#dce6dd',roughness:.55})
+        tagSurfaceMaterial(doors,'wood')
         const pulls=new THREE.MeshStandardMaterial({color:'#384f49',metalness:.45,roughness:.38})
         addBox(cabinetWidth,cabinetHeight,cabinetDepth,W+cabinetWidth/2,cabinetHeight/2,cabinetZ+cabinetDepth/2,body)
         for(let i=0;i<wardrobe.doorCount;i++){
@@ -195,6 +203,7 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
     if(room.poojaAlcove){
       const alcove=room.poojaAlcove,from=mm(alcove.fromMm),width=mm(alcove.widthMm),depth=mm(alcove.depthMm),center=from+width/2
       const oak=new THREE.MeshStandardMaterial({color:'#a98259',roughness:.68})
+      tagSurfaceMaterial(oak,'wood')
       const stone=new THREE.MeshStandardMaterial({color:'#f2e9d9',roughness:.8})
       const brass=new THREE.MeshStandardMaterial({color:'#b99955',metalness:.68,roughness:.28})
       // Recess the prayer niche one metre into the balcony, beyond the former window line.
@@ -241,6 +250,7 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
       const upholstery=new THREE.MeshStandardMaterial({color:'#ddd4c7',roughness:.94})
       const cushion=new THREE.MeshStandardMaterial({color:'#eee6d9',roughness:.98})
       const wood=new THREE.MeshStandardMaterial({color:'#9c714e',roughness:.62})
+      tagSurfaceMaterial(wood,'wood')
       const rug=new THREE.MeshStandardMaterial({color:'#e8dfcf',roughness:1})
       const metal=new THREE.MeshStandardMaterial({color:'#363b40',metalness:.55,roughness:.38})
       // West-facing seating leaves the northeast entry and east opening unobstructed.
@@ -262,10 +272,12 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
       const bedWest=mm(bed.fromWestMm),bedSouth=L-mm(bed.fromSouthMm),bedLength=mm(bed.lengthMm),bedWidth=mm(bed.widthMm)
       const bedCenterX=bedWest+bedLength/2,bedCenterZ=bedSouth-bedWidth/2
       const bedFrame=new THREE.MeshStandardMaterial({color:'#806047',roughness:.68})
+      tagSurfaceMaterial(bedFrame,'wood')
       const bedUpholstery=new THREE.MeshStandardMaterial({color:'#efe8dc',roughness:.94})
       const bedCover=new THREE.MeshStandardMaterial({color:'#b7c7bd',roughness:.96})
       const pillowMaterial=new THREE.MeshStandardMaterial({color:'#fbf8f1',roughness:.98})
       const headboardMaterial=new THREE.MeshStandardMaterial({color:'#9a7656',roughness:.74})
+      tagSurfaceMaterial(headboardMaterial,'wood')
       const baseHeight=.25,mattressThickness=.19
       // Bed head is at the east/south end; its 1829 mm length follows the south wall westward.
       addBox(bedLength,baseHeight,bedWidth,bedCenterX,baseHeight/2,bedCenterZ,bedFrame,furniture)
@@ -280,7 +292,9 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
         const depth=mm(wardrobe.depthMm),length=mm(wardrobe.lengthMm),height=mm(wardrobe.heightMm)
         const start=mm(wardrobe.fromNorthMm),center=start+length/2,doors=wardrobe.doorCount||3
         const body=new THREE.MeshStandardMaterial({color:'#d0c0aa',roughness:.76})
+        tagSurfaceMaterial(body,'wood')
         const front=new THREE.MeshStandardMaterial({color:'#e9e1d4',roughness:.66})
+        tagSurfaceMaterial(front,'wood')
         const handle=new THREE.MeshStandardMaterial({color:'#373b3c',metalness:.62,roughness:.31})
         addBox(depth,height,length,depth/2,height/2,center,body,furniture)
         for(let i=0;i<doors;i++){
@@ -296,6 +310,7 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
         const tableX=W+mm(table.centerFromBedroomWallMm),tableZ=mm(table.centerFromNorthMm)
         const chairX=W+mm(chair.centerFromBedroomWallMm),chairZ=mm(chair.centerFromNorthMm)
         const tabletop=new THREE.MeshStandardMaterial({color:'#b28a60',roughness:.67})
+        tagSurfaceMaterial(tabletop,'wood')
         const frame=new THREE.MeshStandardMaterial({color:'#353b3d',metalness:.58,roughness:.34})
         const seat=new THREE.MeshStandardMaterial({color:'#d9cec1',roughness:.92})
         const tw=mm(table.widthMm),td=mm(table.depthMm),th=mm(table.heightMm)
@@ -315,6 +330,7 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
       const {diningTable,chairRowsZmm,chairOffsetXmm}=room.furniture
       const tableX=mm(diningTable.centerXmm),tableZ=mm(diningTable.centerZmm)
       const oak=new THREE.MeshStandardMaterial({color:'#a98259',roughness:.66})
+      tagSurfaceMaterial(oak,'wood')
       const upholstery=new THREE.MeshStandardMaterial({color:'#ded2bd',roughness:.96})
       const metal=new THREE.MeshStandardMaterial({color:'#393b38',metalness:.45,roughness:.42})
       // A 1200 x 700 mm table sits west of the pooja alcove, leaving its east-side approach open.
@@ -384,9 +400,10 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
     }
     renderer.domElement.addEventListener('pointerdown',onPointerDown)
     renderer.domElement.addEventListener('pointerup',onPointerUp)
+    const interiorScene=registerInteriorScene({id:roomKey,scene,camera,renderer,zones:[{id:roomKey,min:[0,0,0],max:[W,H,L]}]})
     let raf=0;const render=()=>{controls.update();renderer.render(scene,camera);raf=requestAnimationFrame(render)};render()
     sceneRef.current={setMirrorOpen:value=>vanity.userData.setMirrorOpen?.(value),setPartitionOpen:value=>partition.userData.setOpen?.(value),setCamera,setSouthVisible:value=>{southWall.visible=value},setFurnitureVisible:value=>{furniture.visible=value},setBoardOpen:value=>{ironingStorage?.userData.setBoardOpen(value)},setPoojaDoorsOpen:value=>{poojaDoors?.userData.setDoorsOpen(value)},clearMark}
-    return()=>{cancelAnimationFrame(raf);observer.disconnect();renderer.domElement.removeEventListener('pointerdown',onPointerDown);renderer.domElement.removeEventListener('pointerup',onPointerUp);controls.dispose();labelTextures.forEach(texture=>texture.dispose());shell.traverse(object=>{object.geometry?.dispose?.();if(Array.isArray(object.material))object.material.forEach(material=>material.dispose());else object.material?.dispose?.()});markedWallMaterial.dispose();environment.dispose();pmrem.dispose();renderer.dispose();renderer.domElement.remove();sceneRef.current=null}
+    return()=>{interiorScene.dispose();cancelAnimationFrame(raf);observer.disconnect();renderer.domElement.removeEventListener('pointerdown',onPointerDown);renderer.domElement.removeEventListener('pointerup',onPointerUp);controls.dispose();labelTextures.forEach(texture=>texture.dispose());shell.traverse(object=>{object.geometry?.dispose?.();if(Array.isArray(object.material))object.material.forEach(material=>material.dispose());else object.material?.dispose?.()});markedWallMaterial.dispose();environment.dispose();pmrem.dispose();renderer.dispose();renderer.domElement.remove();sceneRef.current=null}
   },[roomKey,initialView])
 
   useEffect(()=>{sceneRef.current?.setCamera(view)},[view,roomKey])

@@ -1,3 +1,4 @@
+import {tagSurfaceMaterial} from './render/surfaceRoles.mjs'
 import * as THREE from 'three'
 import {KITCHEN_STORE_STORAGE} from './config/kitchenConfig.js'
 
@@ -36,6 +37,7 @@ export function createStoreStorage(){
   const sliding=[]
   for(const p of storeStorageParts()){
     const mesh=new THREE.Mesh(new THREE.BoxGeometry(p.w/1000,p.h/1000,p.d/1000),new THREE.MeshStandardMaterial({color:p.color,roughness:.72}))
+    if(p.name==='storage sliding cover front')tagSurfaceMaterial(mesh.material,'wood','storage')
     mesh.name=p.name;mesh.position.set((p.x+p.w/2)/1000,(p.y+p.h/2)/1000,(p.z+p.d/2)/1000)
     mesh.castShadow=true;mesh.receiveShadow=true;group.add(mesh)
     if(p.sliding)sliding.push({mesh,z:mesh.position.z})

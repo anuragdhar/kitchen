@@ -1,3 +1,5 @@
+import {registerInteriorScene} from './render/interiorScene.js'
+import {tagSurfaceMaterial} from './render/surfaceRoles.mjs'
 import {exportCoohomPackage} from './CoohomExport.js'
 import {createDrawingLobbyPartition} from './DrawingLobbyPartition.js'
 import {createStudyFurniture} from './StudyFurniture.js'
@@ -108,10 +110,13 @@ export default function WholeHome3D({onOpenRoom}){
     const model=new THREE.Group();scene.add(model)
     const walls=new THREE.Group();model.add(walls)
     const wallMaterial=new THREE.MeshStandardMaterial({color:'#ece8e0',roughness:.87,side:THREE.DoubleSide})
+    tagSurfaceMaterial(wallMaterial,'plaster')
     const drawingWallMaterial=new THREE.MeshStandardMaterial({color:'#dfd2c4',roughness:.87,side:THREE.DoubleSide})
+    tagSurfaceMaterial(drawingWallMaterial,'plaster')
     const aluminium=new THREE.MeshStandardMaterial({color:'#303b45',metalness:.65,roughness:.31})
     const glass=new THREE.MeshStandardMaterial({color:'#a5dbe9',transparent:true,opacity:.35,metalness:.08,roughness:.12,side:THREE.DoubleSide,depthWrite:false})
     const wood=new THREE.MeshStandardMaterial({color:'#b18b67',roughness:.7})
+    tagSurfaceMaterial(wood,'wood')
     const markedWallMaterial=new THREE.MeshStandardMaterial({color:'#f5ad34',roughness:.72,emissive:'#623600',emissiveIntensity:.15})
     const wallMeshes=[]
     const addBox=(width,height,depth,x,y,z,material=wallMaterial,parent=walls)=>{
@@ -197,15 +202,19 @@ export default function WholeHome3D({onOpenRoom}){
     const fabric=new THREE.MeshStandardMaterial({color:'#d6c8b9',roughness:.95})
     const cushion=new THREE.MeshStandardMaterial({color:'#eee5d9',roughness:.98})
     const paleWood=new THREE.MeshStandardMaterial({color:'#c8a981',roughness:.72})
+    tagSurfaceMaterial(paleWood,'wood')
     const stone=new THREE.MeshStandardMaterial({color:'#e7dfd3',roughness:.48})
     const cabinet=new THREE.MeshStandardMaterial({color:'#d4d1c9',roughness:.65})
+    tagSurfaceMaterial(cabinet,'wood')
     const screen=new THREE.MeshStandardMaterial({color:'#192c3b',metalness:.16,roughness:.32})
 
     const entryRack=ENTRY.shoeRack
     const rackWidth=entryRack.widthMm/1000,rackDepth=entryRack.projectionMm/1000,rackHeight=entryRack.heightMm/1000
     const rackX=X((entryRack.planX1+entryRack.planX2)/2),rackFrontZ=Z(entryRack.planNorthY)-.005,rackBackZ=rackFrontZ+rackDepth
     const rackBody=new THREE.MeshStandardMaterial({color:'#ab805e',roughness:.72})
+    tagSurfaceMaterial(rackBody,'wood')
     const rackDoors=new THREE.MeshStandardMaterial({color:'#d8c4ad',roughness:.59})
+    tagSurfaceMaterial(rackDoors,'wood')
     const rackPulls=new THREE.MeshStandardMaterial({color:'#3f4242',metalness:.54,roughness:.34})
     addBox(rackWidth,rackHeight,rackDepth,rackX,rackHeight/2,(rackBackZ+rackFrontZ)/2,rackBody,model)
     for(let i=0;i<entryRack.doorCount;i++){
@@ -341,7 +350,9 @@ export default function WholeHome3D({onOpenRoom}){
     if(poojaWardrobe){
       const {widthMm:width,depthMm:depth,heightMm:height,doorCount}=poojaWardrobe
       const cabinetBody=new THREE.MeshStandardMaterial({color:'#a78059',roughness:.7})
+      tagSurfaceMaterial(cabinetBody,'wood')
       const cabinetFront=new THREE.MeshStandardMaterial({color:'#dce6dd',roughness:.55})
+      tagSurfaceMaterial(cabinetFront,'wood')
       const cabinetPull=new THREE.MeshStandardMaterial({color:'#384f49',metalness:.45,roughness:.38})
       const x=bedroom.widthMm+width/2,z=bedroom.balconyExtension.lengthMm-(poojaWardrobe.northShiftMm||0)
       localBox(bg,width,height,depth,x,height/2,z+depth/2,cabinetBody)
@@ -363,7 +374,9 @@ export default function WholeHome3D({onOpenRoom}){
       const {widthMm:width,depthMm:depth,heightMm:height,doorCount}=northEastWardrobe
       const start=bedroom.widthMm-northEastWardrobe.fromEastMm-width
       const body=new THREE.MeshStandardMaterial({color:'#c9b9a3',roughness:.72})
+      tagSurfaceMaterial(body,'wood')
       const front=new THREE.MeshStandardMaterial({color:'#eee8df',roughness:.58})
+      tagSurfaceMaterial(front,'wood')
       const pull=new THREE.MeshStandardMaterial({color:'#464b4b',metalness:.58,roughness:.34})
       localBox(bg,width,height,depth,start+width/2,height/2,-depth/2,body)
       for(let i=0;i<doorCount;i++){
@@ -379,9 +392,11 @@ export default function WholeHome3D({onOpenRoom}){
       const bedLength=bed.lengthMm,bedWidth=bed.widthMm,bedWest=bed.fromWestMm,bedSouth=bed.fromSouthMm
       const bedCenterX=bedWest+bedLength/2,bedCenterZ=bedroom.lengthMm-bedSouth-bedWidth/2
       const bedFrame=new THREE.MeshStandardMaterial({color:'#806047',roughness:.68})
+      tagSurfaceMaterial(bedFrame,'wood')
       const bedUpholstery=new THREE.MeshStandardMaterial({color:'#efe8dc',roughness:.94})
       const bedCover=new THREE.MeshStandardMaterial({color:'#b7c7bd',roughness:.96})
       const headboardMaterial=new THREE.MeshStandardMaterial({color:'#9a7656',roughness:.74})
+      tagSurfaceMaterial(headboardMaterial,'wood')
       const pillowMaterial=new THREE.MeshStandardMaterial({color:'#fbf8f1',roughness:.98})
       const baseHeight=250,mattressThickness=190
       // In room-local coordinates x grows west-to-east and z grows north-to-south.
@@ -398,7 +413,9 @@ export default function WholeHome3D({onOpenRoom}){
     if(wardrobe){
       const {depthMm:depth,lengthMm:length,heightMm:height,fromNorthMm:start}=wardrobe
       const body=new THREE.MeshStandardMaterial({color:'#d0c0aa',roughness:.76})
+      tagSurfaceMaterial(body,'wood')
       const front=new THREE.MeshStandardMaterial({color:'#e9e1d4',roughness:.66})
+      tagSurfaceMaterial(front,'wood')
       const handle=new THREE.MeshStandardMaterial({color:'#373b3c',metalness:.62,roughness:.31})
       localBox(bg,depth,height,length,depth/2,height/2,start+length/2,body)
       const doorCount=wardrobe.doorCount||3
@@ -415,6 +432,7 @@ export default function WholeHome3D({onOpenRoom}){
       const tableX=bedroom.widthMm+table.centerFromBedroomWallMm,tableZ=table.centerFromNorthMm
       const chairX=bedroom.widthMm+chair.centerFromBedroomWallMm,chairZ=chair.centerFromNorthMm
       const tableMat=new THREE.MeshStandardMaterial({color:'#b28a60',roughness:.67})
+      tagSurfaceMaterial(tableMat,'wood')
       const frame=new THREE.MeshStandardMaterial({color:'#353b3d',metalness:.58,roughness:.34})
       const seatMat=new THREE.MeshStandardMaterial({color:'#d9cec1',roughness:.92})
       localBox(bg,table.depthMm,40,table.widthMm,tableX,table.heightMm,tableZ,tableMat)
@@ -451,6 +469,7 @@ export default function WholeHome3D({onOpenRoom}){
     try{savedKitchen=JSON.parse(localStorage.getItem(KITCHEN_AUTOSAVE_KEY)||'{}')}catch{}
     const kitchenItems=[...(Array.isArray(savedKitchen.east)?savedKitchen.east:EAST_INIT),...(Array.isArray(savedKitchen.west)?savedKitchen.west:WEST_INIT)].map(item=>item.id==='shaft'?{...item,y:KITCHEN.shaft.y,w:KITCHEN.shaft.l,d:KITCHEN.shaft.w}:item.id==='gas'&&item.y===1350?{...item,y:NORTH_HOB_OPTION_Y_MM}:item)
     const kitchenCabinet=new THREE.MeshStandardMaterial({color:savedKitchen.materials?.cabinetBody||'#efe9df',roughness:.72})
+    tagSurfaceMaterial(kitchenCabinet,'wood')
     const counterMaterial=new THREE.MeshStandardMaterial({color:savedKitchen.materials?.counter||'#ddd8cf',roughness:.4})
     const darkAppliance=new THREE.MeshStandardMaterial({color:'#22282c',roughness:.28,metalness:.5})
     const steelAppliance=new THREE.MeshStandardMaterial({color:'#afb5b8',roughness:.32,metalness:.65})
@@ -500,6 +519,7 @@ export default function WholeHome3D({onOpenRoom}){
     for(const item of kitchenItems){
       if(item.hidden||item.powerPoint||!item.w||!item.d||!item.h)continue
       const itemMaterial=new THREE.MeshStandardMaterial({color:item.color||'#c4b5a5',roughness:.72})
+      if(['applianceGarage','eastBacksplashSlider','westSixInchSlider','sinkUpperDishRack'].includes(item.id))tagSurfaceMaterial(itemMaterial,'wood','kitchen')
       const cx=(item.x||0)+item.d/2,cz=KITCHEN.length-(item.y||0)-item.w/2,cy=(item.z||0)+item.h/2
       if(item.id==='sink'){
         localBox(kg,item.d,25,item.w,cx,885,cz,steelAppliance)
@@ -578,9 +598,11 @@ export default function WholeHome3D({onOpenRoom}){
     }
     renderer.domElement.addEventListener('pointerdown',onPointerDown)
     renderer.domElement.addEventListener('pointerup',onPointerUp)
+    const interiorRoomIds=['bedroom3','study','balcony','terrace','kitchen','lobby','drawing','bedroom1','bedroom1-balcony','entry']
+    const interiorScene=registerInteriorScene({id:'whole-home',scene,camera,renderer,zones:ROOMS.map((r,index)=>({id:interiorRoomIds[index],min:[X(r.bounds[0]),0,Z(r.bounds[1])],max:[X(r.bounds[2]),HEIGHT,Z(r.bounds[3])]}))})
     let raf=0;const render=()=>{controls.update();renderer.render(scene,camera);raf=requestAnimationFrame(render)};render()
     sceneRef.current={exportCoohom:()=>exportCoohomPackage({model,wallMeshes,rooms:ROOMS,scaleX:X_METRES_PER_PIXEL,scaleZ:Z_METRES_PER_PIXEL,kitchenSnapshot:Object.keys(savedKitchen).length?savedKitchen:null}),setStorageCoverOpen:value=>storeStorage.userData.setCoverOpen(value),setMirrorOpen:value=>vanity.userData.setMirrorOpen?.(value),setPartitionOpen:value=>partition.userData.setOpen?.(value),setCamera,setWallsVisible:visible=>{walls.visible=visible},setBoardOpen:value=>{ironingStorage.userData.setBoardOpen(value)},setPoojaPersonVisible:visible=>{seatedPerson.visible=visible},setPoojaDoorsOpen:value=>{poojaDoors.userData.setDoorsOpen(value)},clearMark}
-    return()=>{cancelAnimationFrame(raf);observer.disconnect();renderer.domElement.removeEventListener('pointerdown',onPointerDown);renderer.domElement.removeEventListener('pointerup',onPointerUp);controls.dispose();model.traverse(object=>{object.geometry?.dispose?.();object.material?.dispose?.()});markedWallMaterial.dispose();texture.dispose();environment.dispose();pmrem.dispose();renderer.dispose();renderer.domElement.remove();sceneRef.current=null}
+    return()=>{interiorScene.dispose();cancelAnimationFrame(raf);observer.disconnect();renderer.domElement.removeEventListener('pointerdown',onPointerDown);renderer.domElement.removeEventListener('pointerup',onPointerUp);controls.dispose();model.traverse(object=>{object.geometry?.dispose?.();object.material?.dispose?.()});markedWallMaterial.dispose();texture.dispose();environment.dispose();pmrem.dispose();renderer.dispose();renderer.domElement.remove();sceneRef.current=null}
   },[])
 
   useEffect(()=>{sceneRef.current?.setCamera(view)},[view])
