@@ -5,8 +5,8 @@ import * as THREE from 'three'
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js'
 import {RoomEnvironment} from 'three/examples/jsm/environments/RoomEnvironment.js'
 import {ENTRY,ENTRY_WALL_SEGMENTS} from './config/entryConfig.js'
-import {createEntryArrivalDoor} from './EntryArrivalDoor.js'
-import {createEntryRecessStorage} from './EntryRecessStorage.js'
+import {createEntryArrivalDoor} from './rooms/entry/EntryArrivalDoor.js'
+import {createEntryRecessStorage} from './rooms/entry/EntryRecessStorage.js'
 
 const buttonStyle=active=>({padding:'7px 11px',borderRadius:9,border:'1px solid #cbd5e1',background:active?'#172033':'#fff',color:active?'#fff':'#172033',fontWeight:800,cursor:'pointer'})
 

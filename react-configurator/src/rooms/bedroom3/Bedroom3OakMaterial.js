@@ -1,4 +1,4 @@
-import {tagSurfaceMaterial} from './render/surfaceRoles.mjs'
+import {tagSurfaceMaterial} from '../../render/surfaceRoles.mjs'
 import * as THREE from 'three'
 
 // A small, deterministic wood map keeps the room and whole-home views in sync.

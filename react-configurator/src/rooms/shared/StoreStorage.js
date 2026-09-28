@@ -1,6 +1,6 @@
-import {tagSurfaceMaterial} from './render/surfaceRoles.mjs'
+import {tagSurfaceMaterial} from '../../render/surfaceRoles.mjs'
 import * as THREE from 'three'
-import {KITCHEN_STORE_STORAGE} from './config/kitchenConfig.js'
+import {KITCHEN_STORE_STORAGE} from '../../config/kitchenConfig.js'
 
 // Shared millimetre boxes: kitchen west-to-east X, southward Z, vertical Y.
 export function storeStorageParts(){

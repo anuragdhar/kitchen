@@ -1,6 +1,6 @@
-import {tagSurfaceMaterial} from './render/surfaceRoles.mjs'
+import {tagSurfaceMaterial} from '../../render/surfaceRoles.mjs'
 import * as THREE from 'three'
-import {ENTRY} from './config/entryConfig.js'
+import {ENTRY} from '../../config/entryConfig.js'
 
 // Plan axes: +X points west, +Z points north. Accept the view's plan converters.
 export function createEntryArrivalDoor(x,z){

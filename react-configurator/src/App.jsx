@@ -6,7 +6,7 @@ import {loadNamedProject, saveNamedProject} from './persistence/projectStorage.m
 import {getInitialKitchenView} from './app/kitchenNavigation.mjs'
 import {buildKitchenValidationRows, summarizeValidation, getPlanDimensions} from './domain/kitchenValidation.mjs'
 import {EAST_BASE_DEPTH} from './config/kitchenConfig.js'
-import {storeStorageParts} from './StoreStorage.js'
+import {storeStorageParts} from './rooms/shared/StoreStorage.js'
 import React,{useState,useEffect,useRef,useMemo} from 'react'
 import {KITCHEN,KITCHEN_REFRIGERATOR,KITCHEN_STORE_STORAGE,EAST_INIT,WEST_INIT,AIRY_WEST_INIT,EAST_TOP_UPPER_DEPTH,WEST_TOP_UPPER_DEPTH,KITCHEN_AUTOSAVE_KEY,NORTH_HOB_OPTION_Y_MM, LAYOUT_MODEL, MODULE_WIDTHS, MODULE_DEFS, PLINTH_HEIGHT, COUNTER_THICKNESS, BACKSPLASH_HEIGHT, autoFillModules} from './config/kitchenConfig.js'
 import { DEFAULT_MATERIALS, VIEW_STYLE, HEIGHT_GUIDES, RENDER_CONFIG } from './config/renderConfig.js'

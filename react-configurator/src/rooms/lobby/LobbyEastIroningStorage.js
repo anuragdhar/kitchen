@@ -1,4 +1,4 @@
-import {tagSurfaceMaterial} from './render/surfaceRoles.mjs'
+import {tagSurfaceMaterial} from '../../render/surfaceRoles.mjs'
 import * as THREE from 'three'
 
 // The same room-local group is used by the lobby view and the whole-home view.

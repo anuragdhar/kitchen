@@ -1,12 +1,12 @@
 import {registerInteriorScene} from './render/interiorScene.js'
 import {tagSurfaceMaterial} from './render/surfaceRoles.mjs'
-import {createStudyFurniture} from './StudyFurniture.js'
+import {createStudyFurniture} from './rooms/study/StudyFurniture.js'
 import React,{useEffect,useRef,useState} from 'react'
 import * as THREE from 'three'
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js'
 import {RoomEnvironment} from 'three/examples/jsm/environments/RoomEnvironment.js'
 import {STUDY_ROOM} from './config/studyRoomConfig.js'
-import {createStudyTerrace} from './StudyTerrace.js'
+import {createStudyTerrace} from './rooms/study/StudyTerrace.js'
 
 const mm=value=>value/1000
 

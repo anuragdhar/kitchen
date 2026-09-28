@@ -1,4 +1,4 @@
-import {tagSurfaceMaterial} from './render/surfaceRoles.mjs'
+import {tagSurfaceMaterial} from '../../render/surfaceRoles.mjs'
 import * as THREE from 'three'
 
 export function createPoojaDoorAndInterior(pooja,ceilingHeightMm=2700,floorTopMm=0){

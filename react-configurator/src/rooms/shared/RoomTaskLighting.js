@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import {DRAWING_LIGHTING} from './config/drawingLightingConfig.js'
+import {DRAWING_LIGHTING} from '../../config/drawingLightingConfig.js'
 
 export function createRoomTaskLighting(room){
   const group=new THREE.Group();group.name=`${room.name} task lighting`

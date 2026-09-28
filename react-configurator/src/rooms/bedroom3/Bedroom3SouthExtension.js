@@ -1,4 +1,4 @@
-import {tagSurfaceMaterial} from './render/surfaceRoles.mjs'
+import {tagSurfaceMaterial} from '../../render/surfaceRoles.mjs'
 import * as THREE from 'three'
 
 // The cabinet projects through Bedroom 3's south wall; the balcony sits beside it.

@@ -1,4 +1,4 @@
-import {tagSurfaceMaterial} from './render/surfaceRoles.mjs'
+import {tagSurfaceMaterial} from '../../render/surfaceRoles.mjs'
 import * as THREE from 'three'
 
 // Shared north-wall entry and toilet doors for both room and whole-home views.

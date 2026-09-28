@@ -2,7 +2,7 @@ import {registerInteriorScene} from './render/interiorScene.js'
 import React,{useEffect,useRef,useState} from 'react'
 import * as THREE from 'three'
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js'
-import {createStoreStorage} from './StoreStorage.js'
+import {createStoreStorage} from './rooms/shared/StoreStorage.js'
 import {KITCHEN_REFRIGERATOR as FRIDGE} from './config/kitchenConfig.js'
 
 export default function StorageGallery3D(){

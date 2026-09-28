@@ -1,6 +1,6 @@
-import {tagSurfaceMaterial} from './render/surfaceRoles.mjs'
+import {tagSurfaceMaterial} from '../../render/surfaceRoles.mjs'
 import * as THREE from 'three'
-import {ENTRY} from './config/entryConfig.js'
+import {ENTRY} from '../../config/entryConfig.js'
 
 // Shared plan coordinates keep the cupboard and access aligned in all three views.
 export function createEntryRecessStorage(x,z){

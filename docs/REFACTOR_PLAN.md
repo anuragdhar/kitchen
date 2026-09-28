@@ -120,19 +120,40 @@ The repo is scattered in three ways:
   attempted yet. Same caution applies — needs a fixture/visual check per
   component, one at a time.
 
-## Phase 3 — Folder structure for `src/`
+## Phase 3 — Folder structure for `src/` (partly done 2026-09-28)
 
-Pure file moves, one room per commit, imports updated, no logic changes:
+Pure file moves, imports updated, no logic changes:
 
 ```
 src/
-  app/        HomeApp, main, navigation
-  kitchen/    App.jsx split into its parts (Phase 4)
-  rooms/      bedroom3/, lobby/, pooja/, study/, balcony/, drawing/, entry/
-  viewer/     shared Three.js viewer + materials (from render/)
-  home/       archviz, lighting, materials panels
+  app/        HomeApp, main, navigation                          (not done)
+  kitchen/    App.jsx split into its parts (Phase 4)               (not started)
+  rooms/      bedroom3/, lobby/, pooja/, study/, drawing/, entry/,
+              shared/ (cross-room factories)                       [x] done
+  viewer/     shared Three.js viewer + materials (from render/)   (not done)
+  home/       archviz, lighting, materials panels                 (already exists)
   config/  domain/  persistence/  hooks/   (unchanged locations)
 ```
+
+- [x] Moved the ~21 flat room-part factory files (`Bedroom3*.js`, `Lobby*.js`,
+      `Pooja*.js`, `DrawingLobbyPartition.js`, `DrawingRoomTelevision.js`,
+      `EntryArrivalDoor.js`, `EntryRecessStorage.js`, `StudyFurniture.js`,
+      `StudyTerrace.js`, `RoomAirConditioning.js`, `RoomTaskLighting.js`,
+      `StoreStorage.js`) into `src/rooms/{bedroom3,lobby,pooja,drawing,entry,
+      study,shared}/`, with import paths in the 6 importers
+      (`App.jsx`, `EmptyRoomGallery.jsx`, `EntryGallery3D.jsx`,
+      `StorageGallery3D.jsx`, `StudyRoom3D.jsx`, `WholeHome3D.jsx`) and the
+      files' own relative imports of `render/`/`config/` fixed to match the
+      new depth. `LobbyNorthStorage.js` (already-known dead code, no
+      importers) moved as-is rather than deleted.
+  - Verified: `npm test`/`npm run build` pass. Also visually verified with the
+    dev server + Playwright screenshots (no console/page errors) across every
+    consumer, both the "Editable workspace"/"Editable 3D" tab and the
+    room-gallery selector for each affected room: Bedroom 1, Bedroom 3,
+    Lobby/Dining, Drawing Room, Main entry, Study, Storage, Kitchen, and the
+    whole-home 3D overview.
+- `app/`, `viewer/`, and the `kitchen/` App.jsx split are not started — see
+  Phase 4.
 
 ## Phase 4 — Split `App.jsx`
 
