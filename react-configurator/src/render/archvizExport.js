@@ -8,6 +8,31 @@ const MATERIAL_KEYS=['interiorRole','interiorRoom','interiorMaterialId'];
 const excluded=o=>o.userData?.interiorFixture || o.userData?.archvizExclude || o.isSprite || o.isLine || o.isPoints || o.isLight || o.isCamera || o.isHelper;
 const digest=async bytes=>Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',bytes)),b=>b.toString(16).padStart(2,'0')).join('');
 const cleanMetadata=data=>Object.fromEntries(MATERIAL_KEYS.filter(key=>typeof data?.[key]==='string').map(key=>[key,data[key]]));
+const imageIds=new WeakMap();let nextImageId=0;
+function imageKey(image){
+  const url=typeof image?.currentSrc==='string'&&image.currentSrc||image?.src;
+  if(typeof url==='string'&&url)return url;
+  if(!image||typeof image!=='object')throw Error('Texture has no image.');
+  if(!imageIds.has(image))imageIds.set(image,++nextImageId);
+  return imageIds.get(image);
+}
+function textureKey(texture){
+  if(!texture)return null;
+  return [imageKey(texture.image),texture.channel,texture.wrapS,texture.wrapT,texture.magFilter,texture.minFilter,texture.format,texture.type,texture.flipY,texture.colorSpace,texture.offset.toArray(),texture.repeat.toArray(),texture.center.toArray(),texture.rotation];
+}
+// GLTFExporter derives normal and metal/rough canvases per material. Memoize only
+// equivalent inputs so repeated kitchen finishes are encoded once per export.
+function reuseDerivedTextures(writer){
+  for(const method of ['buildMetalRoughTextureAsync','buildNormalMapTextureAsync']){
+    const build=writer[method].bind(writer),cache=new Map();
+    writer[method]=(...args)=>{
+      const key=JSON.stringify(args.map(arg=>arg?.isTexture?textureKey(arg):arg));
+      if(!cache.has(key))cache.set(key,build(...args).catch(error=>{cache.delete(key);throw error;}));
+      return cache.get(key);
+    };
+  }
+  return {name:'A501_reused_derived_textures'};
+}
 
 /** Snapshot actual visible meshes, never rebuild a room from a second set of dimensions.
  * Stand-ins, labels and the proposed-lighting overlay are not architecture.
@@ -20,7 +45,19 @@ export function captureInteriorScene(record,room){
   const source=record.scene,unit=record.metresPerUnit;
   source.updateMatrixWorld(true);record.camera.updateMatrixWorld(true);
   const scene=new THREE.Scene();scene.name=`A501 current design - ${room}`;
-  const meshes=[],geometries=[],materials=[],warnings=[];
+  const meshes=[],geometries=[],materials=[],exportTextures=[],warnings=[];
+  const imageSources=new Map();
+  const shareExportImage=texture=>{
+    const image=texture?.image;
+    if(!image)return texture;
+    const key=imageKey(image),source=imageSources.get(key);
+    if(!source){imageSources.set(key,texture.source);return texture;}
+    if(source===texture.source)return texture;
+    // Keep each texture's sampler/UV transform, but encode a loaded image URL once.
+    // Cloning avoids changing the live renderer's texture ownership.
+    const shared=texture.clone();shared.source=source;exportTextures.push(shared);
+    return shared;
+  };
   const scale=new THREE.Matrix4().makeScale(unit,unit,unit);
   let skipped=0;
   const walk=(object,path,visible=true)=>{
@@ -42,6 +79,7 @@ export function captureInteriorScene(record,room){
       }
       const copied=original.map(material=>{
         const copy=material.clone();materials.push(copy);copy.userData=cleanMetadata(material.userData);
+        for(const key of Object.keys(copy))if(copy[key]?.isTexture)copy[key]=shareExportImage(copy[key]);
         return copy;
       });
       const mesh=new THREE.Mesh(geometry,Array.isArray(object.material)?copied:copied[0]);
@@ -58,7 +96,7 @@ export function captureInteriorScene(record,room){
     object.children.forEach((child,index)=>walk(child,`${path}-${index}`,visible));
   };
   try{walk(source,'0');if(!meshes.length) throw Error('No visible editable meshes found.');}
-  catch(error){geometries.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());throw error;}
+  catch(error){geometries.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());exportTextures.forEach(t=>t.dispose());throw error;}
   const camera=record.camera;
   const cameraInfo={type:camera.isOrthographicCamera?'orthographic':'perspective',
     position:camera.getWorldPosition(new THREE.Vector3()).multiplyScalar(unit).toArray(),
@@ -67,7 +105,7 @@ export function captureInteriorScene(record,room){
     verticalSpan:camera.isOrthographicCamera?(camera.top-camera.bottom)/camera.zoom*unit:null};
   warnings.push('Visibility is the current editable view: hidden walls/doors remain hidden. Set the intended view before exporting.');
   warnings.push('Browser environment lighting is not transported by glTF. The Blender studio uses a separate documented lighting treatment.');
-  return {scene,meshes,camera:cameraInfo,warnings,skipped,dispose(){geometries.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());}};
+  return {scene,meshes,camera:cameraInfo,warnings,skipped,dispose(){geometries.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());exportTextures.forEach(t=>t.dispose());}};
 }
 
 export async function exportArchvizBundle(sceneId,room){
@@ -81,7 +119,7 @@ export async function exportArchvizBundle(sceneId,room){
     // Capture before asynchronous export so the photograph corresponds to the snapshot.
     record.renderer.render(record.scene,record.camera);
     const reference=await new Promise(resolve=>record.renderer.domElement.toBlob(resolve,'image/png'));
-    const buffer=await new GLTFExporter().parseAsync(capture.scene,{binary:true,onlyVisible:true,trs:false,includeCustomExtensions:false,maxTextureSize:4096});
+    const buffer=await new GLTFExporter().register(reuseDerivedTextures).parseAsync(capture.scene,{binary:true,onlyVisible:true,trs:false,includeCustomExtensions:false,maxTextureSize:4096});
     if(getInteriorScene(sceneId)!==record || record.revision!==revision || !record.ready) throw Error('The room or finishes changed during export. Export again.');
     if(!(buffer instanceof ArrayBuffer)) throw Error('The exporter did not produce a binary glTF.');
     const manifest=validateCapture({schema:'a501.archviz-source',version:1,room,sceneId,units:'metres',axes:'GLTF_Y_UP',

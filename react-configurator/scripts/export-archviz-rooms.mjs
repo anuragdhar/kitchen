@@ -34,7 +34,9 @@ try{
     await page.getByRole('button',{name:`Open ${routes[room]}`,exact:true}).first().click({noWaitAfter:true});
     await page.getByRole('button',{name:'Editable workspace',exact:true}).click({noWaitAfter:true});
     await page.evaluate(async()=>{window.__archvizScenes=await import('/src/render/interiorScene.js');});
-    await page.waitForFunction(()=>window.__archvizScenes.getInteriorScenes().some(r=>r.ready));
+    await page.waitForFunction(room=>window.__archvizScenes.getInteriorScenes().some(r=>r.id===room&&(r.ready||r.errors.length)),room);
+    const sceneState=await page.evaluate(room=>{const r=window.__archvizScenes.getInteriorScene(room);return {ready:r?.ready,errors:r?.errors};},room);
+    if(!sceneState.ready)throw Error(`${room} editable scene failed: ${sceneState.errors?.join('; ')||'scene did not mount'}`);
     // Keep a source screenshot, and export through the SAME UI path a user will use.
     await page.screenshot({path:path.join(output,`${room}-workspace.png`)});
     await page.getByRole('button',{name:'Interior studio',exact:true}).click();
@@ -52,5 +54,13 @@ try{
   assert.deepEqual(errors,[],'Browser errors during real-room exports');
   await fs.writeFile(path.join(output,'export-session.json'),JSON.stringify({input:'repository defaults; isolated browser; not user browser saves',rooms,pageErrors:errors},null,2));
   await context.close();
-}catch(error){console.error(serverLog);throw error;}
+}catch(error){
+  const page=browser?.contexts()[0]?.pages()[0];
+  if(page){
+    const state=await page.evaluate(()=>({url:location.href,scenes:window.__archvizScenes?.getInteriorScenes().map(r=>({id:r.id,ready:r.ready,errors:r.errors}))})).catch(()=>null);
+    console.error('ARCHVIZ_BROWSER_STATE',state);
+    await page.screenshot({path:path.join(output,'export-failure.png'),timeout:5000}).catch(()=>{});
+  }
+  console.error(serverLog);throw error;
+}
 finally{await browser?.close();server?.kill('SIGTERM');}
