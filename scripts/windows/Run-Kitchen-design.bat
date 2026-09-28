@@ -1,7 +1,7 @@
 @echo off
 setlocal
 
-set "SCRIPT_DIR=%~dp0"
+set "SCRIPT_DIR=%~dp0..\..\"
 pushd "%SCRIPT_DIR%"
 set "SCRIPT_PS1=Kitchen-design-2D-layout.ps1"
 set "SCRIPT_POWERSHELL=Kitchen-design-2D-layout.powershell"

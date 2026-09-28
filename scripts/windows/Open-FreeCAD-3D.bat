@@ -1,7 +1,7 @@
 @echo off
 setlocal
 
-set "ROOT_DIR=%~dp0"
+set "ROOT_DIR=%~dp0..\..\"
 set "FREECAD_EXE=C:\Users\anurdhar\Downloads\FreeCAD_1.1.3-Windows-x86_64-py311\FreeCAD_1.1.3-Windows-x86_64-py311\FreeCAD.exe"
 set "MODEL=%ROOT_DIR%freecad\kitchen_rule9.FCStd"
 
@@ -15,7 +15,7 @@ if not exist "%FREECAD_EXE%" (
 
 if not exist "%MODEL%" (
     echo FreeCAD model not found. Generating it first...
-    "%ROOT_DIR%Generate-FreeCAD-3D.bat"
+    call "%~dp0Generate-FreeCAD-3D.bat"
 )
 
 if not exist "%MODEL%" (

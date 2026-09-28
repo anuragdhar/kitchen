@@ -2,7 +2,7 @@
 setlocal
 
 set "WSL_DISTRO=Ubuntu"
-set "WINDOWS_WORKSPACE=%~dp0."
+for %%I in ("%~dp0..\..") do set "WINDOWS_WORKSPACE=%%~fI"
 
 where wsl.exe >nul 2>nul
 if errorlevel 1 (
