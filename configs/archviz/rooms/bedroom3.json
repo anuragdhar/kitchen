@@ -10,6 +10,5 @@
     0.65,
     0.65
   ],
-  "native": "blender/bedroom3/daylight/A501-bedroom3-realistic.blend",
-  "note": "Retain the authored bedding, dressing unit and furniture; do not substitute the shared scene."
+  "note": "Export the Bedroom 3 editable workspace, including the south cabinet projection, balcony door and window. The historical native Blender scene is not a geometry source for this room."
 }
