@@ -22,9 +22,11 @@ function parseArgs(argv) {
 async function openKitchen(page, url) {
   await page.goto(url, {waitUntil: 'domcontentloaded', timeout: 30000});
   if (!(await page.evaluate(() => Boolean(window.kitchenAPI)))) {
-    await page.getByRole('button', {name: 'Open Kitchen', exact: true}).first().click({timeout: 15000});
+    await page.getByRole('button', {name: 'Open Kitchen', exact: true}).first().click({timeout: 30000, noWaitAfter: true});
   }
-  await page.waitForFunction(() => Boolean(window.kitchenAPI), null, {timeout: 15000});
+  // Room switching is a React state change, not a document navigation.
+  // Wait for its actual API; cold software-WebGL initialization can be expensive.
+  await page.waitForFunction(() => Boolean(window.kitchenAPI), null, {timeout: 60000});
 }
 
 // This function is serialized into the page by Playwright; keep it self-contained.

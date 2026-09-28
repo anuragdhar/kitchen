@@ -1,3 +1,6 @@
+import {getInitialKitchenView} from './app/kitchenNavigation.mjs'
+import {buildKitchenValidationRows, summarizeValidation, getPlanDimensions} from './domain/kitchenValidation.mjs'
+import {EAST_BASE_DEPTH} from './config/kitchenConfig.js'
 import {storeStorageParts} from './StoreStorage.js'
 import React,{useState,useEffect,useRef,useMemo} from 'react'
 import {KITCHEN,KITCHEN_REFRIGERATOR,KITCHEN_STORE_STORAGE,EAST_INIT,WEST_INIT,AIRY_WEST_INIT,EAST_TOP_UPPER_DEPTH,WEST_TOP_UPPER_DEPTH,KITCHEN_AUTOSAVE_KEY,NORTH_HOB_OPTION_Y_MM, LAYOUT_MODEL, MODULE_WIDTHS, MODULE_DEFS, PLINTH_HEIGHT, COUNTER_THICKNESS, BACKSPLASH_HEIGHT, autoFillModules} from './config/kitchenConfig.js'
@@ -55,7 +58,7 @@ export default function App(){
   const eastRunLength=KITCHEN.length
   const westRunLength=KITCHEN.length-KITCHEN.westGap.to
   const [east,setEast]=useState(()=>migrateEastItems(EAST_INIT)); const [west,setWest]=useState(()=>migrateWestItems(WEST_INIT))
-  const [view,setView]=useState('three'); const [drag,setDrag]=useState(null)
+  const [view,setView]=useState(()=>getInitialKitchenView(typeof window==='undefined'?'':window.location.search)); const [drag,setDrag]=useState(null)
   const [grid,setGrid]=useState(0)
   const [hide3DObstructions,setHide3DObstructions]=useState(true)
   const [unit,setUnit]=useState('mm')
@@ -96,7 +99,8 @@ export default function App(){
   }
   const activeEast=useMemo(()=>east.filter(isActiveLayoutItem),[east])
   const activeWest=useMemo(()=>west.filter(isActiveLayoutItem),[west])
-  const walkwayFloor = KITCHEN.width - 600 - 600
+  const planDimensions = getPlanDimensions(KITCHEN,EAST_BASE_DEPTH,KITCHEN.westCounterDepth)
+  const walkwayFloor = planDimensions.walkwayMm
   const walkwayEye = KITCHEN.walkway?.eye ?? 1004
   const snapVal=(v)=> grid ? Math.round(v/grid)*grid : v
   const fmt=(v)=> unit==='mm' ? `${Math.round(v)} mm` : `${(v/25.4).toFixed(1)}"` 
@@ -123,66 +127,11 @@ export default function App(){
     return item
   }))
 
-  // detailed validation
-  const buildValidationRows=()=>{
-    const rows=[]
-    const e=[...east].sort((a,b)=>a.y-b.y)
-    const mw=e.find(x=>x.id==='microwave'), ag=e.find(x=>x.id==='applianceGarage'), gasE=e.find(x=>x.id==='gas'), eastSlider=e.find(x=>x.id==='eastBacksplashSlider')
-    const baselineEast=ag?.w===850&&ag?.d===600&&[1200,NORTH_HOB_OPTION_Y_MM].includes(gasE?.y)
-    const refinedEast=ag?.w===600&&ag?.d===500&&ag?.h===420&&[1350,NORTH_HOB_OPTION_Y_MM].includes(gasE?.y)
-    const eastOrderPass=!!(mw&&ag&&gasE&&eastSlider&&mw.y===0&&ag.y===0&&(baselineEast||refinedEast)&&eastSlider.d===102&&mw.open&&ag.open)
-    rows.push({id:'east-order', rule:'East microwave, appliance garage and hob match a saved layout', status:eastOrderPass?'pass':'fail', measured:`mw y${mw?.y??'?'} garage ${ag?.w??'?'}W × ${ag?.d??'?'}D at y${ag?.y??'?'} gas y${gasE?.y??'?'} clear ${gasE&&ag?gasE.y-(ag.y+ag.w):'?'} mm`, expected:'baseline or refined east arrangement', fix:'Restore the baseline or apply the refined east cooking zone'})
-
-    const w=[...west].sort((a,b)=>a.y-b.y)
-    const sh2=w.find(x=>x.id==='shaft'), wm2=w.find(x=>x.id==='washing'), sk2=w.find(x=>x.id==='sink'), dw2=w.find(x=>x.id==='dishwasher'), westSlider=w.find(x=>x.id==='westSixInchSlider')
-    const baselineOrder=wm2?.y===610&&sk2?.y===1210&&dw2?.y===1972&&westSlider?.y===2572
-    const airyOrder=wm2?.y===3308&&sk2?.y===2546&&dw2?.y===1946&&westSlider?.y===1200
-    const westOrderPass=!!(wm2&&sk2&&dw2&&westSlider&&sh2&&(baselineOrder||airyOrder)&&westSlider.d===152&&sh2.y===KITCHEN.shaft.y&&wm2.open&&dw2.open)
-    rows.push({id:'west-order', rule:'West wet appliances match a saved layout', status:westOrderPass?'pass':'fail', measured:`washing y${wm2?.y??'?'} sink y${sk2?.y??'?'} dw y${dw2?.y??'?'} slider y${westSlider?.y??'?'} ${westSlider?.d??'?'}D shaft y${sh2?.y??'?'}`, expected:'baseline or airy kitchen arrangement; shaft at north wall', fix:'Restore the baseline or apply the airy kitchen arrangement'})
-
-    const rack2=w.find(x=>x.id==='sinkUpperDishRack')
-    rows.push({id:'sink-storage', rule:'Over-sink storage aligns with sink', status:(rack2 && rack2.y===sk2?.y && rack2.w===sk2?.w)?'pass':'fail', measured:`sink y${sk2?.y??'?'} rack y${rack2?.y??'?'} rack ${rack2?.w??'?'}W`, expected:'rack at the sink position, 762 mm wide', fix:'Keep dish/utensil storage directly over west sink'})
-
-    const doorViolations= west.filter(it=> isCabinetLikeItem(it) && !it.fixed && it.y < KITCHEN.westGap.to && (it.y+it.w) > KITCHEN.westGap.from)
-    const doorPass=doorViolations.length===0
-    rows.push({id:'door-clear-zone', rule:`West door clear zone y${KITCHEN.westGap.from}-y${KITCHEN.westGap.to} empty (2ft)`, status:doorPass?'pass':'fail', measured: doorPass?'0 items in zone':`${doorViolations.map(i=>i.id).join(', ')} overlap`, expected:`no item with y in [${KITCHEN.westGap.from},${KITCHEN.westGap.to})`, fix:`Move any west object overlapping y${KITCHEN.westGap.from}-y${KITCHEN.westGap.to} beyond y${KITCHEN.westGap.to}`})
-
-    rows.push({id:'walkway-minimum', rule:'Walkway minimum', status:'pass', measured:`floor ${walkwayFloor} mm / eye ${walkwayEye} mm`, expected:'floor 1124 mm / eye 1004 mm', fix:'Do not widen depths beyond 600D east / 600D west'})
-
-    const zRange=(it)=>{
-      if(it.backsplashSlider) return {base: it.z ?? 900, h: it.h||450}
-      if(it.id==='waterpurifier') return {base: it.z ?? 900, h: it.h||550}
-      if(it.id==='gas') return {base:900,h:120}
-      return {base: it.z ?? 0, h:it.h||880}
-    }
-    const checkCollisions=(arr)=>{
-      const sorted=[...arr].filter(it=>isCabinetLikeItem(it) && !it.fixed && !it.backsplashSlider && it.id!=='shaft' && it.id!=='garage_NE' && it.id!=='trashCan').sort((a,b)=>a.y-b.y)
-      const overlaps=[]
-      for(let i=0;i<sorted.length-1;i++){
-        const a=sorted[i], b=sorted[i+1]
-        const za=zRange(a), zb=zRange(b)
-        const yOverlap=a.y + a.w > b.y
-        const zOverlap=za.base < zb.base + zb.h && zb.base < za.base + za.h
-        if(yOverlap && zOverlap){ overlaps.push(`${a.id}<->${b.id}`) }
-      }
-      return overlaps
-    }
-    const eastColl=checkCollisions(east)
-    const westColl=checkCollisions(west)
-    const collPass=eastColl.length===0 && westColl.length===0
-    rows.push({id:'collision', rule:'Cabinet/appliance collision', status:collPass?'pass':'fail', measured: collPass?'no overlap':`overlaps: ${[...eastColl,...westColl].join(', ')}`, expected:'separate items along y, except intentional contents inside tall cabinets', fix:'Separate overlapping items along y'})
-
-    const outOfBounds=[...east,...west].filter(it=> isCabinetLikeItem(it) && !it.fixed && it.id!=='shaft' && (it.y<0 || it.y+it.w>KITCHEN.length || it.x<0 || it.x+it.d>KITCHEN.width))
-    const boundsPass=outOfBounds.length===0
-    rows.push({id:'bounds', rule:'Item outside room bounds', status:boundsPass?'pass':'fail', measured: boundsPass?'all inside':`${outOfBounds.map(i=>i.id).join(', ')} out of ${KITCHEN.width}x${KITCHEN.length}`, expected:`inside ${KITCHEN.width} x ${KITCHEN.length} x ${KITCHEN.height}`, fix:'Keep items inside room'})
-    return rows
-  }
-  const validationRows=useMemo(()=>buildValidationRows(),[east,west])
-  const vSimple=useMemo(()=>{
-    const eastOk=validationRows.find(r=>r.id==='east-order')?.status==='pass'
-    const westOk=validationRows.find(r=>r.id==='west-order')?.status==='pass'
-    return {eastOk,westOk,all:eastOk&&westOk, rows:validationRows}
-  },[validationRows])
+  // Shared executable rules; all required rows contribute to overall validity.
+  const validationRows=useMemo(()=>buildKitchenValidationRows({
+    east,west,kitchen:KITCHEN,eastDepthMm:EAST_BASE_DEPTH,northHobOptionY:NORTH_HOB_OPTION_Y_MM
+  }),[east,west])
+  const vSimple=useMemo(()=>summarizeValidation(validationRows),[validationRows])
   useEffect(()=>{
     hide3DObstructionsRef.current=hide3DObstructions
     threeViewRef.current?.updateCutawayVisibility?.()
@@ -237,15 +186,17 @@ export default function App(){
     kitchenHydratedRef.current=true
   },[])
 
-  useEffect(()=>{window.kitchenAPI={
+  useEffect(()=>{const api={
     moveItem:(wall,id,ycm)=>{const y=snapVal(ycm*10); if(wall==='east')setEast(p=>p.map(it=>it.id===id?{...it,y}:it)); else setWest(p=>p.map(it=>it.id===id&&!it.fixed?{...it,y}:it))},
     moveItemMM:(wall,id,yMM)=>{const y=snapVal(yMM); if(wall==='east')setEast(p=>p.map(it=>it.id===id?{...it,y}:it)); else setWest(p=>p.map(it=>it.id===id&&!it.fixed?{...it,y}:it))},
     getLayout:()=>({kitchen:KITCHEN,east,west,eastTopUpperDepth,westTopUpperDepth,validation:{...vSimple, detailed:validationRows}, rule:LAYOUT_MODEL.rule, layoutModel:getLayoutModel(), grid, walkway:{floor:walkwayFloor,eye:walkwayEye}, materials:renderMaterials, modules:{east:eastModules,west:westModules}, viewOptions:{hide3DObstructions}}), validate:()=>({ ...vSimple, detailed:validationRows, rows:validationRows }), reset:()=>{setEast(EAST_INIT);setWest(WEST_INIT); setEastModules(autoFillModules(eastRunLength)); setWestModules(autoFillModules(westRunLength)); setMaterials(normalizeKitchenMaterials()); setEastTopUpperDepth(EAST_TOP_UPPER_DEPTH); setWestTopUpperDepth(WEST_TOP_UPPER_DEPTH); setGrid(0); setHide3DObstructions(true); localStorage.removeItem(LS_KEY)}, getLayoutModel,
     getGrid:()=>grid, setGrid:(g)=>setGrid(g===50||g===100?g:0), getWalkway:()=>({floor:walkwayFloor,eye:walkwayEye}),
-    getDimensions:()=>({roomWidth:KITCHEN.width,roomLength:KITCHEN.length,eastBaseDepth:600,eastTopUpperDepth,westTopUpperDepth,westCounterDepth:KITCHEN.westCounterDepth||600,walkwayWidth:walkwayFloor,northClear:0,windowBelowDepth:KITCHEN.windowBelow?.depth||300,westDoorClear:{from:KITCHEN.westGap.from,to:KITCHEN.westGap.to},eastBacksplashSliderDepth:102,westSliderDepth:152}),
+    getDimensions:()=>({roomWidth:KITCHEN.width,roomLength:KITCHEN.length,eastBaseDepth:planDimensions.eastDepthMm,eastTopUpperDepth,westTopUpperDepth,westCounterDepth:planDimensions.westDepthMm,walkwayWidth:walkwayFloor,northClear:0,windowBelowDepth:KITCHEN.windowBelow?.depth||300,westDoorClear:{from:KITCHEN.westGap.from,to:KITCHEN.westGap.to},eastBacksplashSliderDepth:102,westSliderDepth:152}),
     getMaterials:()=>renderMaterials, setMaterial:(k,v)=>setMaterials(p=>normalizeKitchenMaterials({...p,[k]:v})),
     getModules:()=>({east:eastModules,west:westModules}), setModules:(wall,mods)=>{ if(wall==='east')setEastModules(mods); else setWestModules(mods)},
     getBOM:()=>buildBOM(),
+    getPlanSvg:()=>buildPlanSvg(), getPlanDxf:()=>buildPlanDxf(),
+    getProjectData:()=>buildProjectData(),
     getValidationRows:()=>validationRows,
     get3DOptions:()=>({hideObstructions:hide3DObstructions}),
     getGpuInfo:()=>threeViewRef.current?.gpuInfo||null,
@@ -268,7 +219,7 @@ export default function App(){
       }
     },
     set3DHideObstructions:(value)=>setHide3DObstructions(!!value)
-  }},[east,west,grid,materials,eastModules,westModules,eastTopUpperDepth,westTopUpperDepth,validationRows,vSimple,hide3DObstructions])
+  }; window.kitchenAPI=api; return()=>{if(window.kitchenAPI===api)delete window.kitchenAPI}},[east,west,grid,materials,eastModules,westModules,eastTopUpperDepth,westTopUpperDepth,validationRows,vSimple,hide3DObstructions])
 
   const onDown=(e,wall,id)=>{if(e.button!==0) return; const it=[...east,...west].find(x=>x.id===id); if(interactionMode==='dimension'){ setSelectedId(id); return; } if(interactionMode==='measure'){ setSelectedId(id); const cx = (it.x||0)+(it.d||400)/2, cy = it.y + (it.w||600)/2; setMeasurePoints(prev=> prev.length>=2 ? [{x:cx,y:cy}] : [...prev,{x:cx,y:cy}]); return; } if(interactionMode==='transparent'){ setSelectedId(id); // transparent preview - no drag, just selection with transparent hint
     return; } // cabinet mode: allow drag
@@ -276,7 +227,7 @@ export default function App(){
   const onMove=(e)=>{if(!drag)return; const dy=(e.clientY-drag.startY)/scale; const raw=drag.startItemY+dy; const snapped=snapVal(raw); const cur=[...east,...west].find(x=>x.id===drag.id); const wAlong=cur?.w ?? 600; const ny=Math.max(0,Math.min(KITCHEN.length-wAlong,snapped)); if(drag.wall==='east')setEast(p=>p.map(it=>it.id===drag.id?{...it,y:ny}:it)); else setWest(p=>p.map(it=>it.id===drag.id&&!it.fixed?{...it,y:ny}:it))}
   const onUp=()=>setDrag(null)
   const downloadText=(filename,text,type='text/plain')=>{const blob=new Blob([text],{type}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=filename; a.click(); URL.revokeObjectURL(url)}
-  const buildProjectData=()=>{const layoutModel=getLayoutModel(); return {kitchen:KITCHEN,east,west,eastTopUpperDepth,westTopUpperDepth,validation:{...vSimple,detailed:validationRows}, rule:LAYOUT_MODEL.rule, layoutModel, grid, dimensions:{roomWidth:KITCHEN.width,roomLength:KITCHEN.length,eastBaseDepth:600,eastTopUpperDepth,westTopUpperDepth,westCounterDepth:KITCHEN.westCounterDepth||600,walkwayWidth:walkwayFloor,northClear:0,windowBelowDepth:KITCHEN.windowBelow?.depth||300,westDoorClear:{from:KITCHEN.westGap.from,to:KITCHEN.westGap.to},eastBacksplashSliderDepth:102,westSliderDepth:152}, materials, modules:{east:eastModules,west:westModules}, viewOptions:{hide3DObstructions}, exportedAt:new Date().toISOString()}}
+  const buildProjectData=()=>{const layoutModel=getLayoutModel(); return {kitchen:KITCHEN,east,west,eastTopUpperDepth,westTopUpperDepth,validation:{...vSimple,detailed:validationRows}, rule:LAYOUT_MODEL.rule, layoutModel, grid, dimensions:{roomWidth:KITCHEN.width,roomLength:KITCHEN.length,eastBaseDepth:planDimensions.eastDepthMm,eastTopUpperDepth,westTopUpperDepth,westCounterDepth:planDimensions.westDepthMm,walkwayWidth:walkwayFloor,northClear:0,windowBelowDepth:KITCHEN.windowBelow?.depth||300,westDoorClear:{from:KITCHEN.westGap.from,to:KITCHEN.westGap.to},eastBacksplashSliderDepth:102,westSliderDepth:152}, materials, modules:{east:eastModules,west:westModules}, viewOptions:{hide3DObstructions}, exportedAt:new Date().toISOString()}}
   const exportJSON=()=>{const data=buildProjectData(); const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='Galley_2324x4746_Rule9_Current.json'; a.click()}
   const saveVersion=(key)=>{ try{ const data={kitchen:KITCHEN,east,west,eastTopUpperDepth,westTopUpperDepth,grid,materials,eastModules,westModules, hide3DObstructions, validationRows, exportedAt:new Date().toISOString(), rule:LAYOUT_MODEL.rule}; localStorage.setItem(VERSION_KEYS[key], JSON.stringify(data)); setBomNote(`Saved ${key}`); setTimeout(()=>setBomNote(''),1500)}catch(e){ setImportWarning('Save failed: '+e.message)}}
   const loadVersion=(key)=>{
@@ -349,7 +300,7 @@ export default function App(){
     const windowBelow=KITCHEN.windowBelow||{x:KITCHEN.window.x,w:KITCHEN.window.w,depth:300}
     const outerPad=220
     const vbX=-outerPad; const vbY=-outerPad; const vbW=KITCHEN.width+outerPad*2; const vbH=KITCHEN.length+outerPad*2
-    const walkway= KITCHEN.width-600-400
+    const {eastDepthMm:eastDepth,westDepthMm:westDepth,walkwayMm:walkway}=planDimensions
     const parts=[
       `<?xml version="1.0" encoding="UTF-8"?>`,
       `<svg xmlns="http://www.w3.org/2000/svg" width="${KITCHEN.width}mm" height="${KITCHEN.length}mm" viewBox="${vbX} ${vbY} ${vbW} ${vbH}">`,
@@ -360,11 +311,11 @@ export default function App(){
       label(KITCHEN.width/2,78,'NORTH WINDOW',72,'#114f78'),
       rect(KITCHEN.door.x,KITCHEN.length-100,KITCHEN.door.w,100,'#fffefb','#111'),
       label(KITCHEN.door.x+KITCHEN.door.w/2,KITCHEN.length-32,'SOUTH OPENING',72,'#7b3f21'),
-      rect(KITCHEN.width-600,svgY(0,usableLen),600,usableLen,renderStyle.baseCabinet),
-      label(KITCHEN.width-300,svgY(0,usableLen)+180,'EAST 600D RUN',70),
-      rect(0,svgY(KITCHEN.westGap.to,usableLen-KITCHEN.westGap.to),600,usableLen-KITCHEN.westGap.to,renderStyle.baseCabinet),
-      label(200,svgY(KITCHEN.westGap.to,usableLen-KITCHEN.westGap.to)+180,'WEST 600D RUN',70),
-      rect(0,svgY(0,KITCHEN.westGap.to),600,KITCHEN.westGap.to,'#fffaf3','#7b3f21','45 28'),
+      rect(KITCHEN.width-eastDepth,svgY(0,usableLen),eastDepth,usableLen,renderStyle.baseCabinet),
+      label(KITCHEN.width-eastDepth/2,svgY(0,usableLen)+180,`EAST ${eastDepth}D RUN`,70),
+      rect(0,svgY(KITCHEN.westGap.to,usableLen-KITCHEN.westGap.to),westDepth,usableLen-KITCHEN.westGap.to,renderStyle.baseCabinet),
+      label(200,svgY(KITCHEN.westGap.to,usableLen-KITCHEN.westGap.to)+180,`WEST ${westDepth}D RUN`,70),
+      rect(0,svgY(0,KITCHEN.westGap.to),westDepth,KITCHEN.westGap.to,'#fffaf3','#7b3f21','45 28'),
       label(210,svgY(0,KITCHEN.westGap.to)+KITCHEN.westGap.to/2,'DOOR CLEAR ZONE',58,'#7b3f21'),
       rect(windowBelow.x,svgY(KITCHEN.length-windowBelow.depth,windowBelow.depth),windowBelow.w,windowBelow.depth,'#eaf6fd','#2f8ac6','45 28'),
       label(windowBelow.x+windowBelow.w/2,svgY(KITCHEN.length-windowBelow.depth,windowBelow.depth)+120,'BELOW WINDOW AREA',54,'#1f5f88')
@@ -376,17 +327,17 @@ export default function App(){
     // module splits in plan
     moduleSegmentsFromNorth(eastModules,0,usableLen).forEach((m,i)=>{
       const y0=m.y
-      const x=KITCHEN.width-600
+      const x=KITCHEN.width-eastDepth
       const yy=svgY(y0,m.width)
       // split line at module boundary
-      if(i>0) parts.push(`<line x1="${x}" y1="${svgY(y0,0)}" x2="${x+600}" y2="${svgY(y0,0)}" stroke="#111" stroke-width="4" />`)
-      if(m.type==='filler') parts.push(`<rect x="${x}" y="${yy}" width="600" height="${m.width}" fill="none" stroke="#7b3f21" stroke-width="5" stroke-dasharray="18 12"/>`)
+      if(i>0) parts.push(`<line x1="${x}" y1="${svgY(y0,0)}" x2="${x+eastDepth}" y2="${svgY(y0,0)}" stroke="#111" stroke-width="4" />`)
+      if(m.type==='filler') parts.push(`<rect x="${x}" y="${yy}" width="${eastDepth}" height="${m.width}" fill="none" stroke="#7b3f21" stroke-width="5" stroke-dasharray="18 12"/>`)
     })
     moduleSegmentsFromNorth(westModules,KITCHEN.westGap.to,usableLen).forEach((m,i)=>{
       const y0=m.y
       const x=0
-      if(i>0) parts.push(`<line x1="${x}" y1="${svgY(y0,0)}" x2="${x+400}" y2="${svgY(y0,0)}" stroke="#111" stroke-width="4" />`)
-      if(m.type==='filler') parts.push(`<rect x="${x}" y="${svgY(y0,m.width)}" width="400" height="${m.width}" fill="none" stroke="#7b3f21" stroke-width="5" stroke-dasharray="18 12"/>`)
+      if(i>0) parts.push(`<line x1="${x}" y1="${svgY(y0,0)}" x2="${x+westDepth}" y2="${svgY(y0,0)}" stroke="#111" stroke-width="4" />`)
+      if(m.type==='filler') parts.push(`<rect x="${x}" y="${svgY(y0,m.width)}" width="${westDepth}" height="${m.width}" fill="none" stroke="#7b3f21" stroke-width="5" stroke-dasharray="18 12"/>`)
     })
     activeEast.forEach(it=>{
       const x=KITCHEN.width-it.d, y=svgY(it.y,it.w)
@@ -405,14 +356,14 @@ export default function App(){
     const dimOuterY = -120
     const dimOuterXEast = KITCHEN.width + 120
     const dimOuterXWest = -120
-    parts.push(dimLineH(0,KITCHEN.width,dimOuterY,'Room width 2324 mm'))
+    parts.push(dimLineH(0,KITCHEN.width,dimOuterY,`Room width ${KITCHEN.width} mm`))
     parts.push(dimLineV(0,KITCHEN.length,dimOuterXEast,`Room length ${KITCHEN.length} mm`))
-    parts.push(dimLineH(KITCHEN.width-600,KITCHEN.width, 36,'East 600 mm'))
-    parts.push(dimLineH(0,600, 36,'West 600 mm'))
-    parts.push(dimLineH(600, KITCHEN.width-600, KITCHEN.length/2,'Walkway '+walkway+' mm'))
+    parts.push(dimLineH(KITCHEN.width-eastDepth,KITCHEN.width, 36,`East ${eastDepth} mm`))
+    parts.push(dimLineH(0,westDepth, 36,`West ${westDepth} mm`))
+    parts.push(dimLineH(westDepth, KITCHEN.width-eastDepth, KITCHEN.length/2,'Walkway '+walkway+' mm'))
     parts.push(dimLineV(svgY(0,KITCHEN.westGap.to), KITCHEN.length, dimOuterXWest,`Door clear y0-y${KITCHEN.westGap.to} (${KITCHEN.westGap.to} mm)`))
     parts.push(`<rect x="${vbX+10}" y="${vbY+vbH-62}" width="980" height="48" fill="#111" rx="8"/>`)
-    parts.push(`<text x="${vbX+22}" y="${vbY+vbH-30}" font-family="Arial,sans-serif" font-size="28" font-weight="800" fill="#fff">Scale 1:1 mm  |  ${KITCHEN.width}W x ${KITCHEN.length}L x ${KITCHEN.height}H  |  Walkway ${walkway} mm  |  Grid ${grid?grid+' mm':'Off'}  |  East 600D  West 600D</text>`)
+    parts.push(`<text x="${vbX+22}" y="${vbY+vbH-30}" font-family="Arial,sans-serif" font-size="28" font-weight="800" fill="#fff">Scale 1:1 mm  |  ${KITCHEN.width}W x ${KITCHEN.length}L x ${KITCHEN.height}H  |  Walkway ${walkway} mm  |  Grid ${grid?grid+' mm':'Off'}  |  East ${eastDepth}D  West ${westDepth}D</text>`)
     parts.push(`</svg>`)
     return parts.join('\n')
   }
@@ -445,13 +396,14 @@ export default function App(){
     const addText=(x,y,text,height=90,layer='TEXT')=>lines.push('0','TEXT','8',layer,'10',String(x),'20',String(y),'30','0','40',String(height),'1',text)
     const addRect=(x,y,w,h,layer)=>{addLine(x,y,x+w,y,layer); addLine(x+w,y,x+w,y+h,layer); addLine(x+w,y+h,x,y+h,layer); addLine(x,y+h,x,y,layer)}
     const usableLen=KITCHEN.length
+    const {eastDepthMm:eastDepth,westDepthMm:westDepth,walkwayMm:walkway}=planDimensions
     const windowBelow=KITCHEN.windowBelow||{x:KITCHEN.window.x,w:KITCHEN.window.w,depth:300}
     addRect(0,0,KITCHEN.width,KITCHEN.length,'ROOM')
     addRect(KITCHEN.door.x,0,KITCHEN.door.w,110,'DOOR')
     addRect((KITCHEN.width-KITCHEN.window.w)/2,KITCHEN.length-110,KITCHEN.window.w,110,'WINDOW')
-    addRect(KITCHEN.width-600,0,600,usableLen,'EAST_CABINETS')
-    addRect(0,KITCHEN.westGap.to,400,usableLen-KITCHEN.westGap.to,'WEST_CABINETS')
-    addRect(0,0,400,KITCHEN.westGap.to,'WEST_DOOR_CLEAR')
+    addRect(KITCHEN.width-eastDepth,0,eastDepth,usableLen,'EAST_CABINETS')
+    addRect(0,KITCHEN.westGap.to,westDepth,usableLen-KITCHEN.westGap.to,'WEST_CABINETS')
+    addRect(0,0,westDepth,KITCHEN.westGap.to,'WEST_DOOR_CLEAR')
     addRect(windowBelow.x,KITCHEN.length-windowBelow.depth,windowBelow.w,windowBelow.depth,'WINDOW_BELOW_REFERENCE')
     activeEast.forEach(it=>{addRect(KITCHEN.width-it.d,it.y,it.d,it.w,`EAST_${it.id.toUpperCase()}`); addText(KITCHEN.width-it.d+35,it.y+it.w/2,`EAST ${it.id} y${it.y}mm`,70)})
     activeWest.forEach(it=>{addRect(0,it.y,it.d,it.w,`WEST_${it.id.toUpperCase()}`); addText(35,it.y+it.w/2,`WEST ${it.id} y${it.y}mm`,70)})
@@ -459,21 +411,20 @@ export default function App(){
     addText(KITCHEN.width/2,120,'SOUTH (S)',120)
     addText(120,KITCHEN.length/2,'WEST (W)',100)
     addText(KITCHEN.width-360,KITCHEN.length/2,'EAST (E)',100)
-    addText(KITCHEN.width/2, -90, 'Room width 2324 mm', 90, 'DIM')
+    addText(KITCHEN.width/2, -90, `Room width ${KITCHEN.width} mm`, 90, 'DIM')
     addLine(0,-60,KITCHEN.width,-60,'DIM')
     addText(KITCHEN.width+160, KITCHEN.length/2, `Room length ${KITCHEN.length} mm`, 90, 'DIM')
     addLine(KITCHEN.width+90,0,KITCHEN.width+90,KITCHEN.length,'DIM')
-    addText(KITCHEN.width-300, 220, 'East base depth 600 mm', 70, 'DIM')
-    addLine(KITCHEN.width-600,160,KITCHEN.width,160,'DIM')
-    addText(200, 220, 'West counter depth 400 mm', 70, 'DIM')
-    addLine(0,160,400,160,'DIM')
-    const walkway= KITCHEN.width-600-400
+    addText(KITCHEN.width-eastDepth/2, 220, `East base depth ${eastDepth} mm`, 70, 'DIM')
+    addLine(KITCHEN.width-eastDepth,160,KITCHEN.width,160,'DIM')
+    addText(200, 220, `West counter depth ${westDepth} mm`, 70, 'DIM')
+    addLine(0,160,westDepth,160,'DIM')
     addText(KITCHEN.width/2, KITCHEN.length/2, 'Walkway width '+walkway+' mm', 80, 'DIM')
-    addLine(400,KITCHEN.length/2-180,KITCHEN.width-600,KITCHEN.length/2-180,'DIM')
+    addLine(westDepth,KITCHEN.length/2-180,KITCHEN.width-eastDepth,KITCHEN.length/2-180,'DIM')
     addText(windowBelow.x+80, KITCHEN.length-150, 'Below window area 300 mm only', 70, 'DIM')
     addText(-60, KITCHEN.westGap.to/2, `West door clear zone y0-y${KITCHEN.westGap.to} (${KITCHEN.westGap.to} mm)`, 70, 'DIM')
     addLine(-90,0,-90,KITCHEN.westGap.to,'DIM')
-    addText(20, -170, `Scale 1:1 mm | ${KITCHEN.width}W x ${KITCHEN.length}L x ${KITCHEN.height}H | Walkway ${walkway} mm | Grid ${grid?grid+'mm':'Off'} | East 600D West 600D`, 60, 'DIM')
+    addText(20, -170, `Scale 1:1 mm | ${KITCHEN.width}W x ${KITCHEN.length}L x ${KITCHEN.height}H | Walkway ${walkway} mm | Grid ${grid?grid+'mm':'Off'} | East ${eastDepth}D West ${westDepth}D`, 60, 'DIM')
     if(grid===50||grid===100){
       for(let x=0;x<=KITCHEN.width;x+=grid) addLine(x,0,x,KITCHEN.length,'GRID')
       for(let y=0;y<=KITCHEN.length;y+=grid) addLine(0,y,KITCHEN.width,y,'GRID')

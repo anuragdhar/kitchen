@@ -7,8 +7,9 @@
     "visual:qa": "node scripts/visual-qa.cjs",
     "inspect": "node scripts/headless-query.cjs",
     "test:bolt": "node scripts/validate-3d-bolt.mjs",
-    "test": "node --test tests/current-layout.test.mjs tests/layout-checks.test.mjs tests/browser-helpers.test.mjs",
-    "check": "npm test && npm run build"
+    "test": "node --test tests/current-layout.test.mjs tests/layout-checks.test.mjs tests/browser-helpers.test.mjs tests/kitchen-validation.test.mjs tests/current-validation.test.mjs tests/kitchen-navigation.test.mjs",
+    "check": "npm test && npm run build",
+    "test:browser": "node scripts/correctness-browser.cjs"
   },
   "dependencies": {
     "dxf-viewer": "^1.0.48",

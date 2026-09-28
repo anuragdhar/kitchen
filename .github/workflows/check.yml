@@ -33,3 +33,14 @@ jobs:
         run: npm ci
       - name: Production build
         run: npm run build
+      - name: Install Chromium for behavior and export regressions
+        run: npx playwright install --with-deps chromium
+      - name: Browser correctness checks
+        run: npm run test:browser
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: correctness-verification
+          path: react-configurator/test-results/correctness/
+          if-no-files-found: ignore
+          retention-days: 7
