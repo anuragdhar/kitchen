@@ -9,6 +9,8 @@ import EmptyRoomGallery from './EmptyRoomGallery.jsx'
 import EntryGallery3D from './EntryGallery3D.jsx'
 import WholeHome3D from './WholeHome3D.jsx'
 import BlenderHomeView from './BlenderHomeView.jsx'
+import CurrentRoomBlenderView from './home/CurrentRoomBlenderView.jsx'
+import {usesEditableRoomSource} from './render/roomParity.mjs'
 import {BLENDER_ROOM_VIEWS} from './config/homeRoomViews.js'
 import {BALCONY_OFFICE} from './config/balconyOfficeConfig.js'
 import {STUDY_ROOM} from './config/studyRoomConfig.js'
@@ -315,14 +317,14 @@ function RoomPresentation({section,children}){
     </nav>
     {view==='blender-model'&&<main className="room-presentation-blender" style={{background:'#eef3f6',padding:'0 clamp(14px,2vw,28px) 28px'}}><BlenderHomeView room={room}/></main>}
     {view==='blender-render'&&<main className="room-presentation-blender" style={{background:'#eef3f6',padding:'0 clamp(14px,2vw,28px) 28px'}}>
-      <section style={{background:'#fff',border:'1px solid #dbe3e9',borderRadius:22,padding:16,boxShadow:'0 16px 42px rgba(23,32,51,.1)'}}>
+      {usesEditableRoomSource(section)?<CurrentRoomBlenderView room={room} mode="render"/>:<section style={{background:'#fff',border:'1px solid #dbe3e9',borderRadius:22,padding:16,boxShadow:'0 16px 42px rgba(23,32,51,.1)'}}>
         <h1 style={{fontSize:22,margin:'0 0 6px',color:'#172033'}}>{room.name} Blender render</h1>
         <p style={{fontSize:13,color:'#64748b',margin:'0 0 12px'}}>Lighting and finish preview from the saved Blender scene.</p>
         <img src={`/renders/home-lighting/${room.render}.png`} alt={`${room.name} Blender lighting and finish render`} style={{display:'block',width:'100%',maxWidth:1200,height:'auto',borderRadius:12,margin:'0 auto'}}/>
         {room.extraRenders?.length>0&&<div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(min(100%,320px),1fr))',gap:14,marginTop:16}}>
           {room.extraRenders.map(([file,label])=><figure key={file} style={{margin:0}}><img loading="lazy" src={`/renders/${file}`} alt={label} style={{display:'block',width:'100%',height:'auto',borderRadius:12}}/><figcaption style={{fontSize:12,color:'#64748b',marginTop:5}}>{label}</figcaption></figure>)}
         </div>}
-      </section>
+      </section>}
     </main>}
     {view==='editable'&&children}
     <style>{`@media(min-width:1500px){.room-presentation-navigation,.room-presentation-blender{padding-left:280px!important}}`}</style>
