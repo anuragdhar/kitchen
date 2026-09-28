@@ -36,28 +36,64 @@ function UpdateButton(){
   const [phase,setPhase]=useState('idle')
   const [message,setMessage]=useState('')
 
+  async function serverInstance(){
+    const response=await fetch('/__local_update/status',{cache:'no-store'})
+    if(!response.ok||!response.headers.get('content-type')?.includes('application/json'))throw new Error('Update service is unavailable. Restart the app server and try again.')
+    const body=await response.text()
+    let status
+    try{status=JSON.parse(body)}catch{throw new Error('Update service returned an empty or invalid status. Restart the app server and try again.')}
+    if(typeof status.instance!=='string')throw new Error('Update service returned an invalid status. Restart the app server and try again.')
+    return status.instance
+  }
+
+  async function waitForRestart(instance){
+    const deadline=Date.now()+60000
+    while(Date.now()<deadline){
+      await new Promise(resolve=>setTimeout(resolve,800))
+      try{if(await serverInstance()!==instance)return}catch{/* The server may be restarting. */}
+    }
+    throw new Error('The server did not restart. Check its terminal output, then reload the page.')
+  }
+
   async function update(){
     setPhase('updating')
     setMessage('Fetching from GitHub…')
     try{
-      const response=await fetch('/__local_update/',{method:'POST',cache:'no-store'})
+      const instance=await serverInstance()
+      let response
+      try{response=await fetch('/__local_update/',{method:'POST',cache:'no-store'})}
+      catch{
+        setPhase('restarting')
+        setMessage('Connection interrupted. Waiting for the server to restart…')
+        await waitForRestart(instance)
+        window.location.reload()
+        return
+      }
+      let body
+      try{body=await response.text()}
+      catch{
+        setPhase('restarting')
+        setMessage('Connection interrupted. Waiting for the server to restart…')
+        await waitForRestart(instance)
+        window.location.reload()
+        return
+      }
+      if(!body.trim()){
+        if(!response.ok)throw new Error(`Update failed (HTTP ${response.status}) with an empty response. Check the server terminal.`)
+        setPhase('restarting')
+        setMessage('Server response was interrupted. Waiting for restart…')
+        await waitForRestart(instance)
+        window.location.reload()
+        return
+      }
       if(!response.headers.get('content-type')?.includes('application/json'))throw new Error('Update service is unavailable. Restart the app server and try again.')
-      const result=await response.json()
+      let result
+      try{result=JSON.parse(body)}catch{throw new Error('Update service returned invalid JSON. Check the server terminal.')}
       if(!response.ok)throw new Error(result.error||'Update failed.')
       setPhase('restarting')
       setMessage(result.updated?`Updated to ${result.commit}. Restarting…`:'Already up to date. Restarting…')
-      const deadline=Date.now()+60000
-      while(Date.now()<deadline){
-        await new Promise(resolve=>setTimeout(resolve,800))
-        try{
-          const status=await fetch('/__local_update/status',{cache:'no-store'})
-          if(status.ok&&(await status.json()).instance!==result.instance){
-            window.location.reload()
-            return
-          }
-        }catch{/* The server may be between shutdown and restart. */}
-      }
-      throw new Error('The server did not restart. Check its terminal output, then reload the page.')
+      await waitForRestart(instance)
+      window.location.reload()
     }catch(error){
       setPhase('error')
       setMessage(error.message)

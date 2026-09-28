@@ -53,10 +53,11 @@ export function localUpdatePlugin() {
         busy = true
         try {
           const result = await updateFromGitHub(repoDir)
-          res.end(JSON.stringify({ ...result, instance }))
-          setTimeout(() => {
-            server.restart(true).catch(error => server.config.logger.error(`Restart failed: ${error.message}`))
-          }, 100)
+          res.end(JSON.stringify({ ...result, instance }), () => {
+            setTimeout(() => {
+              server.restart(true).catch(error => server.config.logger.error(`Restart failed: ${error.message}`))
+            }, 300)
+          })
         } catch (error) {
           const detail = error.stderr?.trim() || error.message
           res.writeHead(409).end(JSON.stringify({ error: detail }))
