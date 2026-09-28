@@ -1,0 +1,80 @@
+name: Current-design archviz
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source-and-render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: react-configurator/package-lock.json
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: node --test react-configurator/tests/archviz.test.mjs
+      - run: python -m unittest discover -s blender -p 'test_archviz.py' -v
+      - run: python -m py_compile blender/archviz_contract.py blender/render_archviz.py blender/validate_archviz_outputs.py scripts/render_archviz_rooms.py
+      - run: npm ci
+        working-directory: react-configurator
+      - run: npm run check
+        working-directory: react-configurator
+      - run: npx playwright install --with-deps chromium
+        working-directory: react-configurator
+      - name: Browser geometry, units, visibility and export fixture
+        run: node scripts/archviz-fixture-browser.mjs
+        working-directory: react-configurator
+      - name: Export actual kitchen and balcony default workspaces through the UI
+        run: node scripts/export-archviz-rooms.mjs --rooms kitchen,balcony --output test-results/archviz/live
+        working-directory: react-configurator
+      - name: Install Blender for CPU import and render checks
+        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y blender
+      - name: Validate both real-room imports without rendering full images
+        run: |
+          blender --version
+          for room in kitchen balcony; do
+            blender --background --python-exit-code 1 --python blender/render_archviz.py -- --bundle "react-configurator/test-results/archviz/live/A501-${room}-archviz.zip" --check-only
+          done
+      - name: Real Cycles smoke render from the exported fixture
+        run: |
+          blender --background --python-exit-code 1 --python blender/render_archviz.py -- --bundle react-configurator/test-results/archviz/fixture.zip --device CPU --quality test --shots current --public react-configurator/test-results/archviz/public
+          python blender/validate_archviz_outputs.py --public react-configurator/test-results/archviz/public
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: current-design-archviz-evidence
+          path: react-configurator/test-results/archviz/
+          retention-days: 7
+  worker-contracts:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m unittest discover -s scripts/tests -p test_render_worker.py -v
+      - run: python -m py_compile scripts/render_worker.py scripts/render_archviz_rooms.py
+      - name: Parse Windows launcher without running the worker
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $tokens = $null
+          $errors = $null
+          [System.Management.Automation.Language.Parser]::ParseFile((Join-Path $PWD 'scripts/windows/Start-RenderWorker.ps1'), [ref]$tokens, [ref]$errors) | Out-Null
+          if ($errors.Count) { $errors | ForEach-Object { Write-Error $_ }; exit 1 }

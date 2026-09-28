@@ -16,3 +16,6 @@ playwright-report/
 test-results/
 *.blend1
 *.blend2
+
+# Local current-design exports; completed PNGs/provenance remain versionable.
+blender/archviz-input/

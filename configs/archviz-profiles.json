@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "quality": {
+    "draft": {"width": 960, "height": 640, "samples": 48, "noiseThreshold": 0.08},
+    "final": {"width": 1920, "height": 1280, "samples": 256, "noiseThreshold": 0.01},
+    "portfolio": {"width": 2560, "height": 1706, "samples": 512, "noiseThreshold": 0.005},
+    "test": {"width": 192, "height": 128, "samples": 2, "noiseThreshold": 0.2}
+  },
+  "rooms": {
+    "kitchen": {"label": "Kitchen", "lens": 24, "eyeHeight": 1.55, "corner": [0.55, 0.08], "target": [0.5, 0.72], "note": "Preserve both cabinet runs, appliances, shaft and openings from the editable kitchen."},
+    "balcony": {"label": "Balcony home office", "lens": 21, "eyeHeight": 1.45, "corner": [0.92, 0.9], "target": [0.35, 0.22], "note": "Use the detailed balcony workspace, including actual desk height, cabinet state and dual monitors."},
+    "drawing": {"label": "Drawing Room", "lens": 28, "eyeHeight": 1.48, "corner": [0.1, 0.85], "target": [0.65, 0.3], "native": "blender/drawing_room/elegant/A501-drawing-elegant.blend", "cameras": ["Drawing room interior", "Drawing room seating detail"], "note": "Use the detailed authored room, not the simplified whole-home copy. A live export takes precedence."},
+    "bedroom3": {"label": "Bedroom 3", "lens": 27, "eyeHeight": 1.5, "corner": [0.12, 0.12], "target": [0.65, 0.65], "native": "blender/bedroom3/daylight/A501-bedroom3-realistic.blend", "note": "Retain the authored bedding, dressing unit and furniture; do not substitute the shared scene."},
+    "study": {"label": "Study", "lens": 26, "eyeHeight": 1.5, "corner": [0.88, 0.88], "target": [0.3, 0.32]},
+    "bedroom1": {"label": "Bedroom 1", "lens": 27, "eyeHeight": 1.5, "corner": [0.12, 0.86], "target": [0.65, 0.35]},
+    "lobby": {"label": "Lobby / Dining", "lens": 28, "eyeHeight": 1.5, "corner": [0.12, 0.88], "target": [0.65, 0.32]},
+    "pooja": {"label": "Pooja Ghar", "lens": 25, "eyeHeight": 1.35, "corner": [0.5, 0.9], "target": [0.5, 0.15]},
+    "entry": {"label": "Main entry", "lens": 24, "eyeHeight": 1.55, "corner": [0.5, 0.9], "target": [0.5, 0.2]},
+    "storage": {"label": "Storage", "lens": 24, "eyeHeight": 1.5, "corner": [0.85, 0.9], "target": [0.3, 0.25]},
+    "terrace": {"label": "Terrace", "lens": 27, "eyeHeight": 1.5, "corner": [0.15, 0.88], "target": [0.65, 0.3]},
+    "bedroom1-balcony": {"label": "Bedroom 1 balcony", "lens": 22, "eyeHeight": 1.45, "corner": [0.85, 0.9], "target": [0.35, 0.2]}
+  }
+}

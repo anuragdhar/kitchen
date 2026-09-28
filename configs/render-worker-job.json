@@ -1,0 +1,8 @@
+{
+  "version": 1,
+  "enabled": true,
+  "request": "initial-room-review",
+  "rooms": ["kitchen", "balcony", "drawing"],
+  "quality": "draft",
+  "device": "AUTO"
+}
