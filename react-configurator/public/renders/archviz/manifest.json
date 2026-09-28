@@ -1,0 +1,126 @@
+{
+  "schema": "a501.archviz-gallery",
+  "version": 1,
+  "renders": [
+    {
+      "room": "kitchen",
+      "job": "0d0253886bd34888",
+      "sourceKind": "editable-snapshot",
+      "quality": "draft",
+      "lighting": "day",
+      "images": [
+        {
+          "label": "Current editable camera",
+          "url": "/renders/archviz/0d0253886bd34888/current.png",
+          "sha256": "862a027b61662d664a3d274d39933e41fd24aebe191413fd73979c27955dd6a0",
+          "size": [
+            960,
+            595
+          ]
+        },
+        {
+          "label": "Room composition",
+          "url": "/renders/archviz/0d0253886bd34888/hero.png",
+          "sha256": "a603062c0b7360968e8556f5a5efede9ab336dee5eaf1c499f633c943687280a",
+          "size": [
+            960,
+            640
+          ]
+        },
+        {
+          "label": "Reverse room view",
+          "url": "/renders/archviz/0d0253886bd34888/reverse.png",
+          "sha256": "119b8f7decf321262a62893f75f072eb1143967bc655b372d374f8a26da013c5",
+          "size": [
+            960,
+            640
+          ]
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "room": "drawing",
+      "job": "1c0bb52a316c49ce",
+      "sourceKind": "detailed-native-snapshot",
+      "quality": "draft",
+      "lighting": "authored",
+      "images": [
+        {
+          "label": "Drawing room interior",
+          "url": "/renders/archviz/1c0bb52a316c49ce/authored-1.png",
+          "sha256": "2185204412b5550c0305f9f43da3f24388a8a2d79f8dd1775790464ed4969be6",
+          "size": [
+            960,
+            660
+          ]
+        },
+        {
+          "label": "Drawing room seating detail",
+          "url": "/renders/archviz/1c0bb52a316c49ce/authored-2.png",
+          "sha256": "96677ee96638520bebd935c1e255260788190067c1e3a87dbaa448a5b4c0fb43",
+          "size": [
+            960,
+            660
+          ]
+        },
+        {
+          "label": "Room composition",
+          "url": "/renders/archviz/1c0bb52a316c49ce/hero.png",
+          "sha256": "1be0054a8966f8b75e0cea42ef8198efa2ab3e00cd77b330f11217aa16180344",
+          "size": [
+            960,
+            640
+          ]
+        },
+        {
+          "label": "Reverse room view",
+          "url": "/renders/archviz/1c0bb52a316c49ce/reverse.png",
+          "sha256": "a87994401a2cddbc56e3c913a50c4b86ef976c784314d91121443f6f060c897d",
+          "size": [
+            960,
+            640
+          ]
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "room": "balcony",
+      "job": "967d0a27a9504118",
+      "sourceKind": "editable-snapshot",
+      "quality": "draft",
+      "lighting": "day",
+      "images": [
+        {
+          "label": "Current editable camera",
+          "url": "/renders/archviz/967d0a27a9504118/current.png",
+          "sha256": "a13f28abc49b3e23cb10068ccbb229746604a73102e9caafef861f351e86084a",
+          "size": [
+            960,
+            547
+          ]
+        },
+        {
+          "label": "Room composition",
+          "url": "/renders/archviz/967d0a27a9504118/hero.png",
+          "sha256": "bf574ac05f1be73a40bd46b575832f507eb34a72a3c11727afb3f16a8c29eb1c",
+          "size": [
+            960,
+            640
+          ]
+        },
+        {
+          "label": "Reverse room view",
+          "url": "/renders/archviz/967d0a27a9504118/reverse.png",
+          "sha256": "3ccf8018e61d24607572634995d03a39b72d433364fc24ad5af9aad6dd2952d5",
+          "size": [
+            960,
+            640
+          ]
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    }
+  ]
+}
