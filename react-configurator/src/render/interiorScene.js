@@ -1,3 +1,4 @@
+import {bindInteriorLighting} from './interiorLighting.js';
 import * as THREE from 'three';
 import {appearanceStore} from '../home/appearanceStore.mjs';
 import {effectiveMaterials} from '../home/appearance.mjs';
@@ -101,7 +102,9 @@ export function registerInteriorScene({id,scene,camera,renderer,metresPerUnit=1,
   };
   const refresh=()=>{record.whenReady=update();};
   const unsubscribe=appearanceStore.subscribe(refresh);
+  const lighting=bindInteriorLighting(record,notify);
   record.dispose=()=>{
+    lighting.dispose();
     alive=false;generation++;unsubscribe();
     for(const entry of entries){entry.mesh.material=entry.original;entry.mesh.geometry=entry.geometry;entry.projected?.dispose();}
     generated.forEach(material=>material.dispose());
