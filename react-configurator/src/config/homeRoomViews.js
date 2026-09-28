@@ -3,10 +3,12 @@ import {KITCHEN} from './kitchenConfig.js'
 // A501 plan pixels: south is up, east is left. The Blender GLB uses metres,
 // Y up, and the same plan directions after the export transform.
 export const HOME_ROOM_LAYOUTS=[
-  {key:'bedroom3',name:'Bedroom 3',bounds:[50,198,255,390],color:'#db8b47',render:'bedroom-three',extraRenders:[['bedroom3-overview.png','Bedroom 3 furnished overview'],['bedroom3-vanity.png','Bedroom 3 vanity']],
-    bakedModel:'/models/A501-bedroom3-baked.glb',
-    // Dedicated bedroom source: Blender (x,y,z) metres -> glTF (x,z,-y).
-    bakedView:{center:[2.93,1.1,5.91],span:3.94,interiorPosition:[2.8,1.45,4.10],interiorTarget:[2.8,1.1,6.25]}},
+  // Bedroom 3 is a single-source (parity) room: its Blender views regenerate
+  // from the editable workspace, so the retired whole-home-era bake
+  // (A501-bedroom3-baked.glb + bakedView framing) was removed 2026-09-28 on
+  // the owner's request. Regenerate from blender/bake_web_lighting.py only
+  // if that design decision is explicitly reversed.
+  {key:'bedroom3',name:'Bedroom 3',bounds:[50,198,255,390],color:'#db8b47',render:'bedroom-three',extraRenders:[['bedroom3-overview.png','Bedroom 3 furnished overview'],['bedroom3-vanity.png','Bedroom 3 vanity']]},
   {key:'study',name:'Study',bounds:[255,198,424,444],color:'#7c93b8',render:'study-bedroom-two'},
   {key:'balcony',name:'Balcony office',bounds:[424,188,496,316],color:'#ac91c3',render:'balcony-office',camera:[.3,1.8,.4]},
   {key:'terrace',name:'Terrace',bounds:[255,69,424,188],color:'#b7bb8b',render:'terrace'},

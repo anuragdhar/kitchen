@@ -62,6 +62,13 @@ From the repository root (Blender 5.2.2 on this machine):
 ```
 
 Outputs are `public/models/A501-bedroom3-baked.glb`, `A501-drawing-baked.glb` and `A501-home-baked.glb`.
+
+> 2026-09-28: Bedroom 3 became a single-source (parity) room whose Blender
+> views regenerate from its editable workspace, so its dedicated bake
+> `A501-bedroom3-baked.glb` and the `bakedModel`/`bakedView` fields in
+> `homeRoomViews.js` were deleted on the owner's request. The bake command
+> above still works if that decision is ever explicitly reversed; the drawing
+> and whole-home bakes are unaffected.
 Atlases and provenance (source/generator/output hashes, parameters and preserved
 mesh counts) are under `blender/web-lighting/`. The old GLB remains available for
 the Studio option. Regenerate the bedroom source using `photoreal_bedroom3.py`

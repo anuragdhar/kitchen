@@ -316,14 +316,18 @@ function BalconyWorkspace(){
 
 function RoomPresentation({section,children}){
   const room=BLENDER_ROOM_VIEWS[section]
-  const [view,setView]=useState('blender-model')
+  // Rooms whose editable workspace is the single source of truth no longer
+  // offer the separate "Blender model" tab (owner request 2026-09-28): their
+  // model IS the editable workspace, and the Blender render is regenerated
+  // from it. Other rooms keep the historical whole-home previews.
+  const singleSource=usesEditableRoomSource(section)
+  const [view,setView]=useState(singleSource?'editable':'blender-model')
+  const tabs=singleSource
+    ?[['editable','Editable workspace'],['blender-render','Blender render']]
+    :[['blender-model','Blender model'],['blender-render','Blender render'],['editable','Editable workspace']]
   return <>
     <nav className="room-presentation-navigation" aria-label={`${room.name} 3D source`} style={{display:'flex',gap:8,flexWrap:'wrap',padding:'12px clamp(14px,2vw,28px)',background:'#eef3f6'}}>
-      {[
-        ['blender-model','Blender model'],
-        ['blender-render','Blender render'],
-        ['editable','Editable workspace'],
-      ].map(([value,label])=><button key={value} aria-pressed={view===value} onClick={()=>setView(value)} style={{...buttonStyle,border:'1px solid #cbd5e1',borderRadius:9,padding:'8px 12px',background:view===value?'#172033':'#fff',color:view===value?'#fff':'#172033'}}>{label}</button>)}
+      {tabs.map(([value,label])=><button key={value} aria-pressed={view===value} onClick={()=>setView(value)} style={{...buttonStyle,border:'1px solid #cbd5e1',borderRadius:9,padding:'8px 12px',background:view===value?'#172033':'#fff',color:view===value?'#fff':'#172033'}}>{label}</button>)}
     </nav>
     {view==='blender-model'&&<main className="room-presentation-blender" style={{background:'#eef3f6',padding:'0 clamp(14px,2vw,28px) 28px'}}><BlenderHomeView room={room}/></main>}
     {view==='blender-render'&&<main className="room-presentation-blender" style={{background:'#eef3f6',padding:'0 clamp(14px,2vw,28px) 28px'}}>

@@ -18,7 +18,10 @@ test('every individual room has a Blender model region and a rendered preview', 
 })
 
 test('interactive lighting exports contain embedded atlases with usable UVs and linear range metadata',()=>{
-  for(const file of ['A501-home-baked.glb','A501-bedroom3-baked.glb','A501-drawing-baked.glb']){
+  // Bedroom 3 is a single-source (parity) room since 2026-09-28: its retired
+  // whole-home-era bake was deleted on the owner's request, so only the
+  // whole-home and drawing bakes remain as historical previews.
+  for(const file of ['A501-home-baked.glb','A501-drawing-baked.glb']){
     const bytes=readFileSync(new URL(`../public/models/${file}`,import.meta.url))
     assert.equal(bytes.toString('ascii',0,4),'glTF')
     assert.equal(bytes.readUInt32LE(4),2)
@@ -44,9 +47,15 @@ test('interactive lighting exports contain embedded atlases with usable UVs and 
     }
     assert.equal(new Set(gltf.nodes.map(node=>node.name)).size,gltf.nodes.length,'object IDs stay unique')
   }
-  for(const key of ['bedroom3','drawing']){
+  for(const key of ['drawing']){
     const room=BLENDER_ROOM_VIEWS[key]
     assert.equal(room.bakedModel,`/models/A501-${key}-baked.glb`)
     assert.ok(room.bakedView.interiorPosition.every(Number.isFinite))
   }
+  // Parity rooms regenerate from their editable workspace and must not carry
+  // a stale dedicated bake that could silently shadow saved edits.
+  for(const key of ['bedroom3','kitchen','balcony']){
+    assert.equal(BLENDER_ROOM_VIEWS[key].bakedModel,undefined,`${key} has no retired bake`)
+  }
+  assert.ok(!existsSync(fileURLToPath(new URL('../public/models/A501-bedroom3-baked.glb',import.meta.url))),'retired bedroom3 bake stays deleted')
 })
