@@ -11,7 +11,7 @@ from types import SimpleNamespace
 from unittest.mock import patch
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
 from render_worker import (Worker, Lock, atomic, read_json, validate_job, relevant, fingerprint,
-                           sanitize, safe_file, publication_paths, merge_ready, control, sha256)
+                           sanitize, safe_file, publication_paths, merge_ready, control, sha256, dependency_key)
 
 
 def job():
@@ -41,6 +41,38 @@ class WorkerContracts(unittest.TestCase):
     def test_render_sources_trigger(self):
         for name in ['scripts/render_archviz_rooms.py','configs/archviz-profiles.json','react-configurator/package-lock.json','blender/render_archviz.py','blender/drawing_room/elegant/A501-drawing-elegant.blend']:
             self.assertTrue(relevant(name))
+        for name in ['scripts/render_worker.py','scripts/patch_pipeline.py','scripts/tests/test_patch_pipeline.py',
+                     'react-configurator/tests/parallel-profiles.test.mjs','PatchToApply/permanent-patch-runner.ps1']:
+            self.assertFalse(relevant(name))
+
+    def test_locked_dependencies_are_reused_until_inputs_change(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);app=root/'app';app.mkdir();(app/'node_modules').mkdir()
+            (app/'package.json').write_text('{"name":"fixture"}')
+            (app/'package-lock.json').write_text('{"lockfileVersion":3}')
+            key=dependency_key(app,'v22.1.0')
+            worker=self.make_worker(root);worker.node_version='v22.1.0'
+            atomic(root/'dependencies.json',{'key':key})
+            folder=root/'run';(folder/'review').mkdir(parents=True);result={'steps':[]}
+            with patch.object(worker,'stage',side_effect=AssertionError('npm ci must be skipped')):
+                worker.dependencies(app,folder,result)
+            self.assertTrue(result['steps'][0]['cached'])
+            (app/'package-lock.json').write_text('{"lockfileVersion":3,"changed":true}')
+            self.assertNotEqual(dependency_key(app,'v22.1.0'),key)
+            self.assertNotEqual(dependency_key(app,'v22.2.0'),key)
+
+    def test_infrastructure_commit_reuses_last_render(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);run='20260928T120000Z-aaaaaaaaaaaa-12345678'
+            result=root/'runs'/run/'review/result.json';result.parent.mkdir(parents=True)
+            atomic(result,{'job':job(),'inputMode':'repository-defaults','sourceCommit':'a'*40})
+            worker=self.make_worker(root);worker.inputs=None
+            worker.state['done']={'old':{'run':run,'status':'passed'}}
+            worker.gitrun=lambda *args: 'scripts/render_worker.py\0' if args[0]=='diff' else ''
+            self.assertTrue(worker.reuse_unchanged_render('b'*40,job(),'new'))
+            self.assertEqual(worker.state['done']['new']['run'],run)
+            worker.gitrun=lambda *args: 'react-configurator/src/WholeHome3D.jsx\0' if args[0]=='diff' else ''
+            self.assertFalse(worker.reuse_unchanged_render('c'*40,job(),'changed'))
 
     def test_redacts_tokens_paths_signed_queries_and_private_keys(self):
         text='Authorization: Bearer abc123\npassword="secretword"\nghp_abcdefghijklmnopqrstuvwxyz\nC:\\Users\\someone\\private\nhttps://x/?sig=12345&z=1\n-----BEGIN RSA PRIVATE KEY-----\nprivatebytes\n-----END RSA PRIVATE KEY-----\nnormal'
@@ -127,6 +159,25 @@ class WorkerContracts(unittest.TestCase):
             self.assertEqual((pinned/'app.txt').read_text(),'one')
             self.assertEqual((source/'personal.txt').read_text(),'untouched')
             self.assertNotEqual(git('rev-parse','refs/remotes/origin/main',cwd=mirror),first)
+
+    @unittest.skipUnless(shutil.which('git'),'Git required')
+    def test_build_checkout_keeps_dependencies_across_source_commits(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);source=root/'source';source.mkdir()
+            git=lambda *args:control(['git',*args],source)
+            git('init','-b','main');git('config','user.name','Fixture');git('config','user.email','fixture@example.invalid')
+            (source/'.gitignore').write_text('node_modules/\n')
+            (source/'app.txt').write_text('first')
+            git('add','-A');git('commit','-m','first');first=git('rev-parse','HEAD')
+            worker=Worker.__new__(Worker);worker.home=root/'worker';worker.home.mkdir()
+            worker.repo=source;worker.git='git'
+            work=worker.build_checkout(first)
+            modules=work/'node_modules';modules.mkdir();(modules/'cached.txt').write_text('kept')
+            (source/'app.txt').write_text('second')
+            git('add','-A');git('commit','-m','second');second=git('rev-parse','HEAD')
+            self.assertEqual(worker.build_checkout(second),work)
+            self.assertEqual((work/'app.txt').read_text(),'second')
+            self.assertEqual((modules/'cached.txt').read_text(),'kept')
 
 
 if __name__=='__main__':unittest.main()

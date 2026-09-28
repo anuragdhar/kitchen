@@ -19,3 +19,9 @@ test-results/
 
 # Local current-design exports; completed PNGs/provenance remain versionable.
 blender/archviz-input/
+
+# Local patch inbox and processing records; keep the runner scripts versioned.
+PatchToApply/*.zip
+PatchApplied/
+PatchFailed/
+patch-log.txt

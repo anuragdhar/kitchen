@@ -11,7 +11,9 @@ Run as a normal, preferably dedicated Windows user, not Administrator/SYSTEM.
 as that user. A separate checkout is **not a security sandbox**. Restrict merge
 access to trusted maintainers. Unreviewed PR branches, issue comments and command
 fields in job JSON are not executed. There is no installed service, scheduled
-task, listener, firewall change, policy bypass or startup persistence.
+task, listener, firewall change or startup persistence. The patch runner starts
+PowerShell with a process-only execution policy so the local script can run;
+it does not change machine or user policy.
 
 `-Publish` authorizes PUBLIC uploads to anuragdhar/kitchen: selected room/reference
 PNGs, whitelisted provenance, result.json and bounded sanitized stage logs.
@@ -58,16 +60,40 @@ python scripts/render_worker.py --trust-main --publish
 ## Execution and polling
 
 Default folder: `$HOME\A501RenderWorker`, outside the development repository.
-Each job gets a detached worktree at its exact source SHA. Normal local changes,
-browser saves, branches and the existing app server are not modified by worker
-Git operations. Code on trusted main still runs with your user's permissions.
+The worker reuses a dedicated detached build worktree, pinning it to the exact
+source SHA for each job. Its `node_modules` is retained between jobs and `npm ci`
+runs again only when package.json, package-lock.json or the Node version changes.
+Normal local changes, browser saves, branches and the existing app server are not
+modified by worker Git operations. Code on trusted main still runs with your
+user's permissions.
 
 A separate thread fetches main every 60 seconds, including during rendering;
 network delays can extend a poll. Active jobs keep their revision. The newest
 source is used next and intermediate queued revisions are coalesced. Long stages
 print 30-second progress heartbeats and write logs.
 
-The fixed sequence is npm ci, npm run check, JavaScript/Python contracts,
+## Room patch inbox
+
+Place one trusted room ZIP at a time in `PatchToApply/`. The running Windows
+worker sees the same stable file on two polls, invokes
+`PatchToApply/permanent-patch-runner.ps1`, and applies it in a separate Git
+worktree. The ZIP needs a root `patch-manifest.json` with `"room": "lobby"`
+(substitute the room key); a unique room name in the ZIP filename also works.
+Overlay files are copied into the worktree before any `patch-*.js` scripts run,
+so scripts resolve repository paths correctly. These scripts are trusted code
+and execute locally as your Windows user. A patch must modify an existing active
+room source; adding an unreferenced component alone is rejected.
+
+The patch runner runs `npm ci` and `npm run check` locally before committing and
+pushing the patch to main. It updates `configs/render-worker-job.json` to request
+only the patched room, then the worker runs the local checks and renders that
+room. Successful ZIPs move to `PatchApplied/`; rejected ZIPs and their reason
+move to `PatchFailed/`. Neither folder nor dropped ZIPs are committed. Use the
+PowerShell runner directly for a manual pass; its `.bat` file is a shortcut.
+Patches cannot be applied while another patch is still in progress, and a failed
+patch does not alter main or start a render.
+
+The fixed sequence is cached dependency preparation, npm run check, JavaScript/Python contracts,
 browser fixture/correctness/persistence/interior/material/lighting checks,
 and sequential room export/render/output validation. All commands execute on
 this Windows machine in the worker's isolated checkout.
@@ -76,7 +102,8 @@ Images are always **unreviewed**; process success is not artistic approval.
 
 A source/input fingerprint avoids repeated renders across restarts and ignores
 `render-review/` and generated render folders. Evidence merges cannot themselves
-start another render. Failed fingerprints are recorded once too. Change the
+start another render. Worker/controller and test-only changes are also ignored.
+Failed fingerprints are recorded once too. Change the
 request ID to intentionally retry. Interrupted jobs can be retried on restart.
 Fresh output roots prevent old gallery images being mistaken for new evidence.
 
@@ -89,7 +116,8 @@ Merge changes to `configs/render-worker-job.json` through normal code review:
  "rooms":["kitchen","balcony","drawing"],"quality":"draft","device":"AUTO"}
 ```
 
-Only these fields are accepted: no command, path or custom remote. Changing
+Only these fields are accepted: no command, path or custom remote. Patch runs
+set `rooms` to their single target. Changing
 request repeats otherwise unchanged inputs. enabled=false pauses new work, not
 an active render. Supported room routes: kitchen, balcony, drawing, bedroom3,
 study, bedroom1, lobby, pooja, storage, entry. Terrace/Bedroom 1 balcony need
@@ -127,7 +155,9 @@ the review PR; it does not run tests or provide a merge check. Repository rules
 still apply; no admin bypass is used. Reviews for a superseded main commit stay
 open for manual review. Manually closed PRs are respected. A one-shot run does
 not wait indefinitely for auto-merge;
-remaining publication/merge work resumes on the next worker invocation.
+remaining publication/merge work resumes on the next worker invocation. A
+successful local render can merge its evidence PR as soon as the PR exists;
+GitHub does not run tests. The 60-second worker loop can delay a retry.
 
 Limits: 20 MiB per published file, 80 MiB per review, 2 MiB published text per
 stage log, 5 GiB minimum free disk before starting. Oversized reviews stay local

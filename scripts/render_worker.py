@@ -62,6 +62,8 @@ def validate_job(job):
 
 def relevant(path):
     if path.startswith(('render-review/','react-configurator/public/renders/')): return False
+    if path in ('scripts/render_worker.py','scripts/patch_pipeline.py') or path.startswith(('scripts/tests/','react-configurator/tests/','PatchToApply/')): return False
+    if path.startswith('react-configurator/scripts/') and path!='react-configurator/scripts/export-archviz-rooms.mjs': return False
     if path.startswith('blender/'):
         return path.endswith('.py') or path in ('blender/drawing_room/elegant/A501-drawing-elegant.blend','blender/bedroom3/daylight/A501-bedroom3-realistic.blend')
     return path.startswith(('react-configurator/src/','react-configurator/scripts/','react-configurator/tests/',
@@ -77,6 +79,13 @@ def fingerprint(tree, job, inputs):
         info,path = entry.split('\t',1)
         if relevant(path): rows.append((info,path))
     return hashlib.sha256(json.dumps([sorted(rows),validate_job(job),inputs],sort_keys=True).encode()).hexdigest()
+
+
+def dependency_key(app, node_version):
+    digest=hashlib.sha256(node_version.encode())
+    for name in ('package.json','package-lock.json'):
+        digest.update(name.encode());digest.update((Path(app)/name).read_bytes())
+    return digest.hexdigest()
 
 
 def sanitize(text, paths=(), secrets=()):
@@ -150,6 +159,7 @@ class Worker:
         if marker.exists() and read_json(marker)!={'repository':REPO,'version':1}: raise ValueError('Worker ownership mismatch')
         atomic(marker,{'repository':REPO,'version':1})
         self.repo=self.home/'source'; self.stop=threading.Event();self.latest=None;self.guard=threading.Lock()
+        self.patch_seen={}
         self.state_path=self.home/'state.json'
         self.state=read_json(self.state_path) if self.state_path.exists() else {'done':{},'outbox':[]}
         self.inputs=Path(args.inputs).expanduser().resolve() if args.inputs else None
@@ -157,7 +167,8 @@ class Worker:
         self.paths=[self.home,Path.home(),ROOT,self.inputs]
         self.node=shutil.which('node');self.git=shutil.which('git');self.gh=shutil.which('gh')
         if not self.git or not self.node: raise RuntimeError('Install Git and Node 22 first')
-        if not control([self.node,'--version'],self.home).startswith('v22.'): raise RuntimeError('Node 22 is required')
+        self.node_version=control([self.node,'--version'],self.home)
+        if not self.node_version.startswith('v22.'): raise RuntimeError('Node 22 is required')
         # Invoke npm through Node, not a Windows .cmd command string.
         candidates=[Path(self.node).parent/'node_modules/npm/bin/npm-cli.js']
         npm=shutil.which('npm')
@@ -170,6 +181,34 @@ class Worker:
     def save(self): atomic(self.state_path,self.state)
     def gitrun(self,*args,cwd=None): return control([self.git,*args],cwd or self.repo)
 
+    def build_checkout(self, sha):
+        work=self.home/'build-checkout'
+        if work.is_symlink() or not work.resolve().is_relative_to(self.home):
+            raise ValueError('Invalid worker build checkout')
+        if not work.exists(): self.gitrun('worktree','add','--detach',work,sha)
+        else:
+            if Path(self.gitrun('rev-parse','--show-toplevel',cwd=work)).resolve()!=work.resolve():
+                raise ValueError('Worker build checkout ownership mismatch')
+            self.gitrun('reset','--hard','HEAD',cwd=work)
+            self.gitrun('clean','-fd',cwd=work)
+            self.gitrun('checkout','--detach',sha,cwd=work)
+        return work
+
+    def dependencies(self, app, folder, result):
+        marker=self.home/'dependencies.json'
+        key=dependency_key(app,self.node_version)
+        try: cached=read_json(marker).get('key')==key
+        except (FileNotFoundError,ValueError,KeyError,TypeError): cached=False
+        if cached and (app/'node_modules').is_dir():
+            print('WORKER_DEPENDENCIES_REUSED',flush=True)
+            message='Reused local node_modules; package files and Node version match.\n'
+            (folder/'dependencies.local.log').write_text(message,encoding='utf-8')
+            (folder/'review/dependencies.log').write_text(message,encoding='utf-8')
+            result['steps'].append({'name':'dependencies','exitCode':0,'seconds':0,'cached':True})
+            return
+        self.stage('dependencies',[self.node,self.npm,'ci','--no-audit','--no-fund'],app,folder,result)
+        atomic(marker,{'key':key,'nodeVersion':self.node_version})
+
     def fetch(self):
         self.gitrun('fetch','--no-tags','origin','refs/heads/main:refs/remotes/origin/main')
         sha=self.gitrun('rev-parse','refs/remotes/origin/main')
@@ -181,6 +220,31 @@ class Worker:
         while not self.stop.wait(self.args.interval):
             try: self.fetch()
             except Exception as e: print('WORKER_FETCH_ERROR',self.clean(e),flush=True)
+
+    def process_patch(self):
+        patch_dir=ROOT/'PatchToApply'
+        if not patch_dir.is_dir(): return
+        current={}
+        for archive in sorted(patch_dir.glob('*.zip')):
+            if not archive.is_file() or archive.is_symlink(): continue
+            stat=archive.stat();signature=(stat.st_size,stat.st_mtime_ns)
+            current[archive.name]=signature
+            # See the same complete file on two polls before opening it.
+            if self.patch_seen.get(archive.name)!=signature: continue
+            powershell=shutil.which('powershell') or shutil.which('pwsh')
+            if not powershell: raise RuntimeError('PowerShell is required for PatchToApply')
+            command=[powershell,'-NoProfile','-NonInteractive','-ExecutionPolicy','Bypass','-File',str(patch_dir/'permanent-patch-runner.ps1'),
+                     '-ZipPath',str(archive),'-SourceRepo',str(self.repo),
+                     '-Workspace',str(self.home/'patches'),'-NodePath',str(self.node),'-PythonPath',sys.executable]
+            print('WORKER_PATCH_START',archive.name,flush=True)
+            result=subprocess.run(command,cwd=ROOT,capture_output=True,text=True,encoding='utf-8',errors='replace',timeout=self.args.timeout*60)
+            print(self.clean((result.stdout+'\n'+result.stderr)[-4000:]),flush=True)
+            if result.returncode: print('WORKER_PATCH_FAILED',archive.name,flush=True)
+            else:
+                print('WORKER_PATCH_APPLIED',archive.name,flush=True)
+                self.fetch()
+            break
+        self.patch_seen=current
 
     def stage(self,name,argv,cwd,folder,result):
         print('WORKER_STAGE',name,flush=True)
@@ -230,6 +294,26 @@ class Worker:
         key=fingerprint(self.gitrun('ls-tree','-rz',sha),job,inputs)
         return job,key,inputs
 
+    def reuse_unchanged_render(self,sha,job,key):
+        if self.inputs: return False
+        prior=sorted((entry for entry in self.state['done'].values() if entry['status']=='passed'),
+                     key=lambda entry:entry['run'],reverse=True)
+        if not prior: return False
+        result_file=self.home/'runs'/prior[0]['run']/'review/result.json'
+        try: previous=read_json(result_file)
+        except (FileNotFoundError,ValueError,KeyError,TypeError): return False
+        if previous.get('job')!=job or previous.get('inputMode')!='repository-defaults': return False
+        source=previous.get('sourceCommit')
+        if not isinstance(source,str) or not re.fullmatch('[a-f0-9]{40}',source): return False
+        try:
+            self.gitrun('merge-base','--is-ancestor',source,sha)
+            changed=[path for path in self.gitrun('diff','--name-only','-z',source,sha).split('\0') if path]
+        except RuntimeError: return False
+        if any(relevant(path) for path in changed): return False
+        self.state['done'][key]={'run':prior[0]['run'],'status':'passed','reusedFor':sha}
+        self.save();print('WORKER_RENDER_UNCHANGED',sha[:12],flush=True)
+        return True
+
     def collect(self,folder,result):
         public=folder/'public';review=folder/'review';index=public/'renders/archviz/manifest.json'
         if not index.exists(): return
@@ -265,24 +349,26 @@ class Worker:
     def execute(self,sha,job,key,inputs):
         run=datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')+f'-{sha[:12]}-{uuid.uuid4().hex[:8]}'
         folder=self.home/'runs'/run;review=folder/'review';review.mkdir(parents=True)
-        work=folder/'checkout'
+        work=self.home/'build-checkout'
         result={'run':run,'sourceCommit':sha,'job':job,'inputMode':'saved-exports' if self.inputs else 'repository-defaults',
                 'status':'failed','visualReview':'unreviewed','steps':[],'rooms':[]}
         try:
             if shutil.disk_usage(self.home).free<5*1024**3: raise RuntimeError('Less than 5 GiB free; clean old worker runs manually')
-            self.gitrun('worktree','add','--detach',work,sha)
+            work=self.build_checkout(sha)
             (folder/'inputs').mkdir()
             for room,expected in inputs.items():
                 target=folder/'inputs'/f'A501-{room}-archviz.zip';shutil.copyfile(safe_file(self.inputs,target.name),target)
                 if sha256(target)!=expected: raise ValueError('Input changed during copy; retry after saving it completely')
             app=work/'react-configurator';npm=[self.node,self.npm]
-            stages=[('dependencies',npm+['ci','--no-audit','--no-fund'],app),('build-tests',npm+['run','check'],app),
+            self.dependencies(app,folder,result)
+            stages=[('build-tests',npm+['run','check'],app),
                     ('archviz-tests',[self.node,'--test','tests/archviz.test.mjs','tests/parallel-profiles.test.mjs','tests/whole-home-render.test.mjs'],app),
                     ('python-archviz',[sys.executable,'-m','unittest','discover','-s','blender','-p','test_archviz.py'],work),
                     ('python-profiles',[sys.executable,'-m','unittest','discover','-s','blender','-p','test_parallel_profiles.py'],work),
                     ('python-whole-home',[sys.executable,'-m','unittest','discover','-s','blender','-p','test_whole_home_render.py'],work),
                     ('python-worker',[sys.executable,'-m','unittest','discover','-s','scripts/tests','-p','test_render_worker.py'],work),
                     ('python-parallel',[sys.executable,'-m','unittest','discover','-s','scripts/tests','-p','test_parallel_rooms.py'],work),
+                    ('python-patches',[sys.executable,'-m','unittest','discover','-s','scripts/tests','-p','test_patch_pipeline.py'],work),
                     ('python-compile',[sys.executable,'-m','compileall','-q','blender','scripts'],work),
                     ('chromium',[self.node,'node_modules/playwright/cli.js','install','chromium'],app),
                     ('browser-fixture',[self.node,'scripts/archviz-fixture-browser.mjs'],app),
@@ -348,10 +434,9 @@ class Worker:
             if not self.args.auto_merge_evidence or item['status']!='passed': item['phase']='done';return
             with self.guard: latest=self.latest
             if item['source']!=latest: item['phase']='done';return
-            pr=json.loads(control([self.gh,'pr','view',str(item['pr']),'--repo',REPO,'--json','state,isDraft,baseRefName,headRefName,headRefOid,files,createdAt'],self.home))
+            pr=json.loads(control([self.gh,'pr','view',str(item['pr']),'--repo',REPO,'--json','state,isDraft,baseRefName,headRefName,headRefOid,files'],self.home))
             if pr['state'] in ('MERGED','CLOSED'): item['phase']='done';return
-            age=(datetime.now(timezone.utc)-datetime.fromisoformat(pr['createdAt'].replace('Z','+00:00'))).total_seconds()
-            if age<120 or not merge_ready(pr,item['head'],branch): return
+            if not merge_ready(pr,item['head'],branch): return
             publication_paths([f['path'] for f in pr['files']],run)
             control([self.gh,'pr','merge',str(item['pr']),'--repo',REPO,'--squash','--match-head-commit',item['head']],self.home)
             state=control([self.gh,'pr','view',str(item['pr']),'--repo',REPO,'--json','state','--jq','.state'],self.home)
@@ -366,9 +451,13 @@ class Worker:
             try:
                 while True:
                     with self.guard: sha=self.latest
+                    try: self.process_patch()
+                    except Exception as e: print('WORKER_PATCH_ERROR',self.clean(e),flush=True)
+                    with self.guard: sha=self.latest
                     try:
                         job,key,inputs=self.job(sha)
-                        if job['enabled'] and key not in self.state['done']: self.execute(sha,job,key,inputs)
+                        if job['enabled'] and key not in self.state['done'] and not self.reuse_unchanged_render(sha,job,key):
+                            self.execute(sha,job,key,inputs)
                     except Exception as e: print('WORKER_ERROR',self.clean(e),flush=True)
                     for item in self.state['outbox']:
                         if item['phase']=='done': continue
