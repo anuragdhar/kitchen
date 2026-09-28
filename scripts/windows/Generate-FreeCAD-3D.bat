@@ -1,7 +1,7 @@
 @echo off
 setlocal
 
-set "ROOT_DIR=%~dp0"
+set "ROOT_DIR=%~dp0..\..\"
 set "FREECAD_CMD=C:\Users\anurdhar\Downloads\FreeCAD_1.1.3-Windows-x86_64-py311\FreeCAD_1.1.3-Windows-x86_64-py311\FreeCADCmd.exe"
 set "GENERATOR=%ROOT_DIR%freecad\generate_kitchen_rule9.py"
 

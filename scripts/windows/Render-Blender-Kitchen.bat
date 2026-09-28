@@ -1,7 +1,7 @@
 @echo off
 setlocal
 
-set "ROOT_DIR=%~dp0"
+set "ROOT_DIR=%~dp0..\..\"
 set "BLENDER_EXE=blender.exe"
 set "SCRIPT=%ROOT_DIR%blender\render_kitchen.py"
 

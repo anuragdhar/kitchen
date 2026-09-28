@@ -20,7 +20,15 @@ must not be used as current requirements.
 
 ## Run
 
-Use Node 22 (also recorded in `.nvmrc`) and npm. From the repository root:
+**Windows: double-click `start-server.bat` in the repository root.** This is the
+only root batch file. Install Node 22 (with npm) first. The launcher installs locked
+dependencies with `npm ci` when Vite is missing, starts Home Interior on loopback,
+and opens the browser when the server is ready. It prefers port 5173; Vite selects
+the next free port when necessary and prints the actual URL. Keep the terminal
+open while using the app; press Ctrl+C to stop it.
+
+For explicit setup on any platform, use Node 22 (also recorded in `.nvmrc`) and
+npm. From the repository root:
 
 ```sh
 cd react-configurator
@@ -28,10 +36,13 @@ npm ci
 npm run dev -- --host 127.0.0.1 --port 5173 --strictPort
 ```
 
-Open `http://127.0.0.1:5173/` and choose a room. On Windows,
-`Run-Kitchen-React-App.bat` is also available; the commands above are the explicit
-reproducible setup. Do not replace the committed lockfile with another package
+Open `http://127.0.0.1:5173/` and choose a room. Run `npm ci` again after dependency
+or lockfile changes. Do not replace the committed lockfile with another package
 manager's lockfile as part of an unrelated task.
+
+Optional CAD, rendering, 2D-layout and WSL launchers are preserved under
+[`scripts/windows/`](scripts/windows/README.md), not in the repository root.
+They are not needed to start the web application.
 
 ## Verify
 
@@ -43,8 +54,10 @@ npm run check
 ```
 
 `npm test` uses Node's built-in test runner without third-party dependencies.
-It checks the current kitchen baseline, pure geometry checks, and inspection
-helpers. `npm run check` additionally builds the application and needs `npm ci`.
+It checks the current kitchen baseline, pure geometry checks, inspection helpers,
+and Windows launcher organization. Launcher execution checks run on Windows and
+are explicitly skipped on other platforms. `npm run check` additionally builds
+the application and needs `npm ci`.
 GitHub Actions runs the same tests and production build on pull requests.
 Neither command is a full visual or construction-safety assessment.
 

@@ -53,3 +53,14 @@ jobs:
           path: react-configurator/test-results/persistence/
           if-no-files-found: ignore
           retention-days: 7
+
+  windows-launcher:
+    runs-on: windows-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - name: Windows launcher behavior (no dependencies required)
+        run: node --test scripts/windows/launchers.test.mjs
