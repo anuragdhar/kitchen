@@ -1,4 +1,94 @@
 {
   "schemaVersion": 1,
-  "items": []
+  "items": [
+    {
+      "id": "pinterest-10133167907344307",
+      "room": "drawing",
+      "title": "Living room look without a false ceiling - reference 1",
+      "url": "https://in.pinterest.com/pin/10133167907344307/",
+      "tags": [
+        "living-room",
+        "avoid-false-ceiling",
+        "rendering-reference"
+      ],
+      "notes": "Use this as a look and rendering reference for the living/drawing room. Try to achieve the look without a false ceiling.",
+      "status": "idea"
+    },
+    {
+      "id": "pinterest-1124422231981618360",
+      "room": "drawing",
+      "title": "Living room look without a false ceiling - reference 2",
+      "url": "https://in.pinterest.com/pin/1124422231981618360/",
+      "tags": [
+        "living-room",
+        "avoid-false-ceiling",
+        "rendering-reference"
+      ],
+      "notes": "Use this as an alternative look and rendering reference for the living/drawing room. Try to achieve the look without a false ceiling.",
+      "status": "idea"
+    },
+    {
+      "id": "pinterest-10133167907411816",
+      "room": "kitchen",
+      "title": "Kitchen shaft wall treatment",
+      "url": "https://in.pinterest.com/pin/10133167907411816/",
+      "tags": [
+        "shaft-wall",
+        "wall-treatment",
+        "rendering-reference"
+      ],
+      "notes": "Apply this idea to the kitchen shaft wall. Use the pin as a visual reference for the wall treatment.",
+      "status": "idea"
+    },
+    {
+      "id": "pinterest-10133167907317939",
+      "room": "kitchen",
+      "title": "Kitchen appliance garage",
+      "url": "https://in.pinterest.com/pin/10133167907317939/",
+      "tags": [
+        "appliance-garage",
+        "concealed-storage"
+      ],
+      "notes": "Explore this appliance-garage idea for the kitchen. Use the pin as a reference for the look and concealed appliance storage; exact placement is not yet decided.",
+      "status": "idea"
+    },
+    {
+      "id": "pinterest-10133167907322682",
+      "room": "kitchen",
+      "title": "Kitchen wood texture and finish",
+      "url": "https://in.pinterest.com/pin/10133167907322682/",
+      "tags": [
+        "wood-texture",
+        "finish",
+        "material-reference"
+      ],
+      "notes": "Use this pin as a reference for the kitchen wood texture and finish.",
+      "status": "idea"
+    },
+    {
+      "id": "pinterest-10133167907311153",
+      "room": "kitchen",
+      "title": "Hidden spice rack in the kitchen",
+      "url": "https://in.pinterest.com/pin/10133167907311153/",
+      "tags": [
+        "hidden-spice-rack",
+        "concealed-storage"
+      ],
+      "notes": "Explore a hidden spice rack in the kitchen using this pin as an idea reference.",
+      "status": "idea"
+    },
+    {
+      "id": "pinterest-10133167907020356",
+      "room": "bedroom3",
+      "title": "Cabinet beside the bed",
+      "url": "https://in.pinterest.com/pin/10133167907020356/",
+      "tags": [
+        "bedside-cabinet",
+        "storage",
+        "layout-idea"
+      ],
+      "notes": "Consider a cabinet on the side of the bed. This may make sense because the bed area is not used throughout the day. Explore the idea before changing the layout.",
+      "status": "idea"
+    }
+  ]
 }

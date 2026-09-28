@@ -18,3 +18,30 @@ export function parseInspiration(raw) {
   if(typeof raw!=='string'||raw.length>2_000_000)throw new Error('Inspiration JSON exceeds the 2 MB limit.');
   return validateInspiration(JSON.parse(raw));
 }
+
+// A pin may have a regional host or tracking query. Deduplicate within a room,
+// while allowing the same reference to inspire more than one room.
+function referenceKey(item) {
+  const url=new URL(item.url);
+  const pin=(url.hostname==='pinterest.com'||url.hostname.endsWith('.pinterest.com'))
+    &&url.pathname.match(/^\/pin\/(\d+)\/?$/);
+  return JSON.stringify([item.room,pin?`pinterest:${pin[1]}`:url.href]);
+}
+
+// Explicit, additive merge: browser notes/decisions win and neither input mutates.
+// Do not call automatically on load: that would resurrect references users removed.
+export function mergeInspiration(current,incoming) {
+  const clean=validateInspiration(current);
+  const additions=validateInspiration(incoming);
+  const ids=new Set(clean.items.map(item=>item.id));
+  const references=new Set(clean.items.map(referenceKey));
+  for(const item of additions.items){
+    const key=referenceKey(item);
+    if(ids.has(item.id)||references.has(key))continue;
+    clean.items.push(item);
+    ids.add(item.id);
+    references.add(key);
+  }
+  // Apply the existing combined-library limit before the caller saves anything.
+  return validateInspiration(clean);
+}
