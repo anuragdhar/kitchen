@@ -32,6 +32,45 @@ const rooms={
 
 const buttonStyle={border:0,borderRadius:999,padding:'10px 16px',fontWeight:800,cursor:'pointer'}
 
+function UpdateButton(){
+  const [phase,setPhase]=useState('idle')
+  const [message,setMessage]=useState('')
+
+  async function update(){
+    setPhase('updating')
+    setMessage('Fetching from GitHub…')
+    try{
+      const response=await fetch('/__local_update/',{method:'POST',cache:'no-store'})
+      const result=await response.json()
+      if(!response.ok)throw new Error(result.error||'Update failed.')
+      setPhase('restarting')
+      setMessage(result.updated?`Updated to ${result.commit}. Restarting…`:'Already up to date. Restarting…')
+      const deadline=Date.now()+60000
+      while(Date.now()<deadline){
+        await new Promise(resolve=>setTimeout(resolve,800))
+        try{
+          const status=await fetch('/__local_update/status',{cache:'no-store'})
+          if(status.ok&&(await status.json()).instance!==result.instance){
+            window.location.reload()
+            return
+          }
+        }catch{/* The server may be between shutdown and restart. */}
+      }
+      throw new Error('The server did not restart. Check its terminal output, then reload the page.')
+    }catch(error){
+      setPhase('error')
+      setMessage(error.message)
+    }
+  }
+
+  return <div style={{display:'flex',alignItems:'center',gap:8,flexWrap:'wrap'}}>
+    <button onClick={update} disabled={phase==='updating'||phase==='restarting'} style={{...buttonStyle,background:'#241f1a',color:'#fff',opacity:(phase==='updating'||phase==='restarting') ? 0.65 : 1}}>
+      {phase==='updating'||phase==='restarting'?'Updating…':'Update from GitHub'}
+    </button>
+    {message&&<span role="status" style={{fontSize:12,color:phase==='error'?'#b91c1c':'#554a40',maxWidth:320}}>{message}</span>}
+  </div>
+}
+
 function HomeHeader({section,onHome,onOpen3D}){
   return <header style={{position:'sticky',top:0,zIndex:50,background:'rgba(252,250,247,.94)',backdropFilter:'blur(14px)',borderBottom:'1px solid #e7e0d7'}}>
     <div style={{maxWidth:1920,margin:'0 auto',minHeight:68,padding:'0 clamp(18px,3vw,48px)',display:'flex',alignItems:'center',justifyContent:'space-between',gap:16}}>
@@ -90,6 +129,7 @@ function WholeHome({onOpen}){
         <div style={{fontSize:12,fontWeight:900,letterSpacing:'.16em',textTransform:'uppercase',color:'#9a5b1d'}}>A501 home</div>
         <h1 style={{fontSize:'clamp(32px,5vw,62px)',lineHeight:1.02,letterSpacing:'-.04em',margin:'10px 0 14px',color:'#241f1a'}}>See your whole home, then explore each room.</h1>
         <p style={{fontSize:'clamp(16px,2vw,20px)',lineHeight:1.55,color:'#655c54',margin:0}}>Open the whole-home 3D view or choose a highlighted room for its dedicated design workspace.</p>
+        {import.meta.env.DEV&&<div style={{marginTop:18}}><UpdateButton/></div>}
       </div>
 
       <div style={{display:'grid',gridTemplateColumns:'minmax(0,2fr) minmax(360px,.9fr)',gap:'clamp(20px,2vw,34px)',alignItems:'start'}} className="home-plan-grid">
