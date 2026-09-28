@@ -1,0 +1,25 @@
+name: Prepare Home Interior stage one
+on:
+  push:
+    branches: [automation/interior-stage-1-20260928]
+permissions:
+  contents: write
+jobs:
+  prepare:
+    if: startsWith(github.event.head_commit.message, 'prepare-stage-one')
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - name: Apply guarded source edits
+        run: |
+          python .maintenance/interior-stage.py
+          git diff --exit-code -- react-configurator/src/config react-configurator/src/App.jsx react-configurator/src/persistence Interior blender freecad
+          git diff --check
+          git add README.md react-configurator/index.html react-configurator/package.json react-configurator/package-lock.json react-configurator/src/HomeApp.jsx
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'feat: integrate Home Interior branding and reference library'
+          git push origin HEAD:refs/heads/automation/interior-stage-1-20260928
