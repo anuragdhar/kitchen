@@ -1,0 +1,55 @@
+name: Blender export and render checks
+on:
+  pull_request:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+concurrency:
+  group: blender-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  blender:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: react-configurator
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - name: Export the actual authored entry through the browser UI
+        run: npm run test:render-export
+      - name: Install the independent Blender renderer
+        run: sudo apt-get update && sudo apt-get install -y blender python3-pil
+      - name: Render the exported scene with Cycles CPU
+        run: node scripts/blender-render.cjs --job test-results/render-export/render-job.json --output test-results/blender --quality smoke --device cpu
+      - name: Check render output and report
+        run: |
+          /usr/bin/python3 - <<'PY'
+          import json, pathlib
+          from PIL import Image, ImageStat
+          root=pathlib.Path('test-results/blender')
+          report=json.loads((root/'render-report.json').read_text())
+          assert report['status']=='rendered' and report['engine']=='CYCLES'
+          assert report['device']=='CPU' and report['meshObjects']>0 and report['lights']>0
+          image=Image.open(root/'render.png').convert('RGB')
+          assert image.width==480 and image.height>=64
+          assert max(ImageStat.Stat(image).stddev)>3, 'Rendered image is blank or uniform'
+          assert (root/'scene.blend').stat().st_size>1000
+          print(json.dumps(report,indent=2))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: blender-verification
+          path: |
+            react-configurator/test-results/render-export/
+            react-configurator/test-results/blender/
+          retention-days: 7

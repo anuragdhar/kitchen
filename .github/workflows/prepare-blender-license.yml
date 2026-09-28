@@ -1,0 +1,22 @@
+name: Prepare Blender adapter license text
+on:
+  push:
+    branches: [automation/blender-license-20260928]
+permissions:
+  contents: write
+jobs:
+  prepare:
+    if: startsWith(github.event.head_commit.message, 'prepare-blender-license')
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - run: |
+          cp /usr/share/common-licenses/GPL-3 blender/COPYING-home-adapter.txt
+          git add blender/COPYING-home-adapter.txt
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'docs: include GPL-3 license for the independent Blender adapter'
+          git push origin HEAD:refs/heads/automation/blender-license-20260928
