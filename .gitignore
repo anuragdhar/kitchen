@@ -9,3 +9,10 @@ freecad/*.FCBak
 __pycache__/
 tmp/
 react-configurator/public/textures/wood008/
+
+# Dependency backups and new transient verification output, not source assets.
+node_modules.bak/
+playwright-report/
+test-results/
+*.blend1
+*.blend2
