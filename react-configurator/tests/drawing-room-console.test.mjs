@@ -11,8 +11,7 @@ const doorOnly = issues => issues.filter(m => !/inward-opening entry door/.test(
 
 test('the 18-inch low console fits east of the coffee table with a walkway of at least 800 mm', () => {
   const r = checkCornerConsole(room)
-  assert.deepEqual(doorOnly(r.issues), [], 'only the north sofa vs door swing problem remains')
-  assert.ok(r.issues.every(m => /north sofa stops/.test(m)), 'the console itself never stops the door before 85 degrees')
+  assert.deepEqual(r.issues, [])
   assert.ok(r.lane >= 800)
   assert.equal(room.cornerLayout.console.depthMm, 457)
 })

@@ -132,6 +132,8 @@ layouts use a 600 mm coffee table (was 650) so the walkway beside the 457 mm con
 ## Drawing Room entry door opens inward (2026-09-30)
 
 Owner: the entry door opens INTO the Drawing Room (the floor-plan drawing shows the swing on the entry side, so it is not
-trusted here). `drawing.doors[0]` now records `opensInto`, `leafMm` and an assumed hinge side; every check tests both hinge
-sides. Layout A is clear. The north-wall sofa in B, B2 and B3 stops the door after 3-16 degrees; both corner sofas at
-2100 mm clear it. The layouts are unchanged pending the owner's choice; details in `docs/DRAWING_ROOM_TV_WALL.md`.
+trusted here) and the north-wall sofa does not touch it. `drawing.doors[0]` records `opensInto`, `hinge: 'east'`,
+`hingeKnown: true` and a working `leafMm: 850`. That is the only combination that lets the 2250 mm north sofa clear the swing
+(east hinge, leaf up to about 855 mm), so the hinge side is inferred, not measured; measure the leaf on site. If `hingeKnown`
+is false every check tests both hinge sides. The sofas stay full size; shortening them to 2100 mm is only a fallback if the
+real door is wider. Details: `docs/DRAWING_ROOM_TV_WALL.md`.

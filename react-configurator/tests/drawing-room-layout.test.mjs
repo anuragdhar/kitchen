@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import {checkDrawingRoomLayout, checkCornerLayout, checkCornerConsole, checkCornerProjector, doorBlockedAt, doorSwingIssues, tvWallGeometry} from '../src/domain/drawingRoomLayout.mjs'
+import {checkDrawingRoomLayout, checkCornerLayout, checkCornerConsole, checkCornerProjector, doorBlockedAt, doorSwingIssues, maxLeafThatClears, tvWallGeometry} from '../src/domain/drawingRoomLayout.mjs'
 import {EMPTY_ROOM_SHELLS} from '../src/config/roomShellConfig.js'
 
 const room = EMPTY_ROOM_SHELLS.drawing
@@ -52,25 +52,40 @@ test('the checker catches an oversized TV, a blocked door, a bass module that do
   assert.ok(checkDrawingRoomLayout(table).issues.some(m => /coffee table/.test(m)))
 })
 
-// Both corner sofas cut to a common 2100 mm: the longest that stays clear of the inward-opening door.
+test('layout B as drawn fits with the owner-confirmed door (the north sofa does not touch it)', () => {
+  const result = checkCornerLayout(room)
+  assert.deepEqual(result.issues, [])
+  assert.equal(result.clearances.sofaToSofa, 100)
+})
+
+test('that only holds for an east hinge and a leaf up to about 855 mm: the sofa is the limit', () => {
+  const northSofa = {x1: 30, z1: 60, x2: 2280, z2: 940}
+  const east = maxLeafThatClears(room, northSofa, 'east')
+  assert.ok(east >= 850 && east <= 860, `widest leaf that clears is ${east}`)
+  assert.ok(room.doors[0].leafMm <= east, 'the recorded leaf is within that limit')
+  assert.equal(maxLeafThatClears(room, northSofa, 'west'), null, 'a west hinge is stopped by the sofa for any leaf')
+  assert.equal(room.doors[0].hinge, 'east')
+  assert.equal(room.doors[0].hingeKnown, true)
+})
+
+test('if the real leaf is wider, or the hinge is not settled, the north sofa stops the door', () => {
+  const wide = structuredClone(room); wide.doors[0].leafMm = 950
+  assert.ok(checkCornerLayout(wide).issues.some(m => /north sofa stops the inward-opening entry door/.test(m)))
+  const unsure = structuredClone(room); unsure.doors[0].hingeKnown = false
+  const issues = checkCornerLayout(unsure).issues
+  assert.ok(issues.some(m => /west hinge: \d+/.test(m)), issues.join(' | '))
+})
+
+// Fallback if the real door proves wider or hinged the other way: both corner sofas cut to a common 2100 mm.
 const withShorterSofas = () => {
   const r = structuredClone(room), f = r.cornerLayout.furniture
   f.northSofa.lengthMm = 2100; f.northSofa.centerXmm = 30 + 1050
   f.westSofa.lengthMm = 2100; f.westSofa.centerZmm = 1040 + 1050
+  r.doors[0].leafMm = 950; r.doors[0].hingeKnown = false
   return r
 }
 
-test('layout B as drawn has exactly one problem: the north sofa stops the inward-opening door', () => {
-  const result = checkCornerLayout(room)
-  assert.equal(result.issues.length, 1, result.issues.join(' | '))
-  assert.match(result.issues[0], /north sofa stops the inward-opening entry door at \d+ degrees/)
-  assert.equal(result.clearances.sofaToSofa, 100)
-})
-
-test('the door problem holds for either hinge side, and clears once both sofas are 2100 mm long', () => {
-  const northSofa = {x1: 30, z1: 60, x2: 2280, z2: 940}
-  assert.ok(doorBlockedAt(room, northSofa, 'east') < 10)
-  assert.ok(doorBlockedAt(room, northSofa, 'west') < 30)
+test('shortening both corner sofas to 2100 mm clears the door whatever the leaf or hinge', () => {
   const fixed = withShorterSofas()
   assert.deepEqual(checkCornerLayout(fixed).issues, [])
   assert.deepEqual(checkCornerConsole(fixed).issues, [])

@@ -9,7 +9,7 @@ test('drawing room review carries orientation, openings, layout, measurements an
   const r = buildRoomReview({roomKey: 'drawing', room: EMPTY_ROOM_SHELLS.drawing, layoutKey: 'cornerSofas', date})
   assert.match(r.title, /Drawing Room - Layout B/)
   assert.equal(r.iso, '2026-09-29')
-  for (const needle of ['3353 x 5335 x 2700', 'NORTH wall', 'Door on the north wall', 'Window on the south wall', 'Open (no wall) on the east side', 'Bass Module 500', 'degrees off', 'It opens INTO this room', 'stops the inward-opening entry door']) {
+  for (const needle of ['3353 x 5335 x 2700', 'NORTH wall', 'Door on the north wall', 'Window on the south wall', 'Open (no wall) on the east side', 'Bass Module 500', 'degrees off', 'It opens INTO this room', 'from the east jamb']) {
     assert.ok(r.text.includes(needle), `text should mention "${needle}"`)
   }
   assert.ok(r.text.includes(FRAME_NOTE.slice(0, 40)))

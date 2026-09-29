@@ -346,13 +346,26 @@ export function doorBlockedAt(room, rectangle, hinge) {
   return null
 }
 
+/** Widest door leaf (mm) for which the rectangle never stops the door before DOOR_MIN_OPEN_DEG; null if no leaf width clears it. */
+export function maxLeafThatClears(room, rectangle, hinge) {
+  let widest = null
+  for (let leaf = 100; leaf <= room.doors.find(door => door.wall === 'north').widthMm; leaf += 5) {
+    const test = {...room, doors: room.doors.map(door => (door.wall === 'north' ? {...door, leafMm: leaf} : door))}
+    const stopped = doorBlockedAt(test, rectangle, hinge)
+    if (stopped === null || stopped >= DOOR_MIN_OPEN_DEG) widest = leaf
+    else break
+  }
+  return widest
+}
+
 /** Issues for every item (name -> {x1,z1,x2,z2}) that stops the inward-opening entry door before DOOR_MIN_OPEN_DEG. */
 export function doorSwingIssues(room, items) {
   const d = room.doors.find(door => door.wall === 'north')
   if (d.opensInto !== room.name) return []
+  const hinges = d.hingeKnown ? [d.hinge] : ['east', 'west']
   const issues = []
   for (const [name, rectangle] of Object.entries(items)) {
-    const blocks = ['east', 'west'].map(hinge => ({hinge, deg: doorBlockedAt(room, rectangle, hinge)})).filter(b => b.deg !== null && b.deg < DOOR_MIN_OPEN_DEG)
+    const blocks = hinges.map(hinge => ({hinge, deg: doorBlockedAt(room, rectangle, hinge)})).filter(b => b.deg !== null && b.deg < DOOR_MIN_OPEN_DEG)
     if (blocks.length) issues.push(`the ${name} stops the inward-opening entry door at ${Math.min(...blocks.map(b => b.deg))} degrees (${blocks.map(b => `${b.hinge} hinge: ${b.deg}`).join(', ')}); it must open ${DOOR_MIN_OPEN_DEG}+`)
   }
   return issues
