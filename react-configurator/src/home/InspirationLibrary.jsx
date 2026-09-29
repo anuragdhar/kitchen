@@ -2,7 +2,7 @@ import React,{useEffect,useRef,useState} from 'react';
 import seed from '../../../inspiration/library.json';
 import {HOME_ROOMS} from './rooms.mjs';
 import {MAX_PHOTOS,mergeInspiration,parseInspiration,validateInspiration} from './inspiration.mjs';
-import {exportPhotoLibrary,prepareLibraryImport,preparePhotos,storePhotos} from './inspirationMedia.mjs';
+import {exportPhotoLibrary,prepareLibraryImport,preparePhotos,projectSyncAvailable,storePhotos,syncPhotosToProject} from './inspirationMedia.mjs';
 import InspirationPhotos,{PhotoPicker} from './InspirationPhotos.jsx';
 const KEY='home-interior.inspiration.v1';
 const photoCount=data=>data.items.reduce((sum,item)=>sum+(item.photos?.length??0),0);
@@ -13,9 +13,9 @@ export default function InspirationLibrary(){
   const [data,setData]=useState(loaded.data),[error,setError]=useState(loaded.error||''),[blocked,setBlocked]=useState(!!loaded.error);
   const [notice,setNotice]=useState(''),[busy,setBusy]=useState('');
   const [room,setRoom]=useState('entry'),[title,setTitle]=useState(''),[url,setUrl]=useState(''),[tags,setTags]=useState(''),[notes,setNotes]=useState(''),[pending,setPending]=useState([]);
-  const [filter,setFilter]=useState('all');
+  const [filter,setFilter]=useState('all'),[canSync,setCanSync]=useState(false);
   const current=useRef(data),rawRef=useRef(loaded.raw),working=useRef(false),alive=useRef(true);
-  useEffect(()=>{alive.current=true;return()=>{alive.current=false;};},[]);
+  useEffect(()=>{alive.current=true;projectSyncAvailable().then(ok=>{if(alive.current)setCanSync(ok);});return()=>{alive.current=false;};},[]);
   const assertCurrent=()=>{
     if(!alive.current)throw new Error('The inspiration view was closed; the edit was cancelled.');
     if(localStorage.getItem(KEY)!==rawRef.current)throw new Error('This library changed in another tab. Export your current library, then reopen this view before editing.');
@@ -43,6 +43,10 @@ export default function InspirationLibrary(){
     if(blocked){download(new Blob([localStorage.getItem(KEY)||''],{type:'application/json'}),'inspiration-recovery.json');return;}
     const blob=await exportPhotoLibrary(current.current);
     if(alive.current){download(blob,'inspiration-library-with-photos.zip');setNotice('Backup includes the reference library and every photo. Keep it before clearing browser data.');}
+  });
+  const saveToProject=()=>run('Saving photos to the project folder…',async()=>{
+    const result=await syncPhotosToProject(current.current);
+    if(alive.current)setNotice(result.photos?`Saved ${result.photos} photos for ${result.references} references to react-configurator/public/inspiration-media and inspiration/library.json. Commit them to keep them in the repository.`:'No browser-only photos to save: every photo is already in the project folder.');
   });
   const exportMetadata=()=>{try{download(new Blob([JSON.stringify(current.current,null,2)],{type:'application/json'}),'inspiration-library.json');setNotice('Metadata JSON only: uploaded photo bytes are NOT included. Use the ZIP backup to move or preserve uploads.');}catch(error){setError(error.message);}};
   const importFile=event=>{
@@ -85,7 +89,7 @@ export default function InspirationLibrary(){
     <p>Keep the original reference link, photos, video screenshots and what you like together in each room. Upload several images to explain a mechanism or compare details.</p>
     <p className="interior-muted">Uploads are local to this browser, not automatically pushed to GitHub. Export library + photos for a portable backup. After a GitHub update, Add project references merges newly captured photos without replacing your notes or decisions.</p>
     {error&&<p role="alert">{error}</p>}{notice&&<p role="status">{notice}</p>}{busy&&<p className="inspiration-busy" role="status">{busy}</p>}
-    <div className="interior-row"><button disabled={disabled} onClick={addProjectReferences}>Add project references</button><button disabled={!!busy} onClick={exportData}>{blocked?'Export recovery backup':'Export library + photos'}</button><button disabled={disabled} onClick={exportMetadata}>Export metadata JSON</button><label>Import library<input aria-label="Import inspiration library" type="file" accept=".json,.zip" disabled={!!busy} onChange={importFile}/></label></div>
+    <div className="interior-row"><button disabled={disabled} onClick={addProjectReferences}>Add project references</button><button disabled={!!busy} onClick={exportData}>{blocked?'Export recovery backup':'Export library + photos'}</button><button disabled={disabled} onClick={exportMetadata}>Export metadata JSON</button>{canSync&&<button disabled={disabled} onClick={saveToProject} title="Local dev server only: copies your browser photos into the repository folders so they can be reviewed and committed.">Save photos to project folder</button>}<label>Import library<input aria-label="Import inspiration library" type="file" accept=".json,.zip" disabled={!!busy} onChange={importFile}/></label></div>
     <form onSubmit={add}><fieldset disabled={disabled} style={{border:0,padding:0,margin:0}}>
       <legend><strong>Add an inspiration</strong></legend>
       <div className="interior-grid"><label>Room<select value={room} onChange={event=>setRoom(event.target.value)}>{HOME_ROOMS.map(room=><option key={room.id} value={room.id}>{room.label}</option>)}</select></label><label>Title<input required maxLength={200} value={title} onChange={event=>setTitle(event.target.value)}/></label></div>

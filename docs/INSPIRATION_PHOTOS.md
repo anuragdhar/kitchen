@@ -12,6 +12,12 @@ Browser uploads are stored in IndexedDB, not automatically pushed to GitHub. Ref
 
 Project-owned images live under `react-configurator/public/inspiration-media/`; their relative URLs work with the configured Vite base path. After updating the app, **Add project references** explicitly merges new project links and photos. Existing browser notes, decisions, photo captions and cover order win. Removed references/photos are not automatically restored on load. This feature does not change room geometry, render settings or kitchen project files.
 
+## Save browser photos into the project folder (local dev server only)
+
+Uploaded and pasted photos live in the browser, so nobody reading the repository can see them. When the app runs from `npm run dev` on this machine (or a private Codespace), the Inspiration screen shows **Save photos to project folder**. It copies every browser-only photo to `react-configurator/public/inspiration-media/<photo-id>.<ext>` and upserts the affected references into `inspiration/library.json` by reference id (existing references are never removed; the photo ids are kept, so **Add project references** will not duplicate them). Commit those files to keep them.
+
+The endpoint (`scripts/inspiration-sync-plugin.mjs`, `/__inspiration_sync`) exists only under the Vite dev server, accepts same-origin local requests only, sniffs JPG/PNG/WebP bytes, caps each image at 2 MiB and takes file names only from validated photo ids. The production build and GitHub Pages do not have it, so the button is hidden there. Tested with a real browser against a temporary folder; `tests/inspiration-sync.test.mjs` covers the pure checks.
+
 ## Existing Pinterest references: capture is NOT completed
 
 On 2026-09-29, all seven URLs in `inspiration/library.json` were inaccessible through the editing environment's web access tools. **Zero original photos or video frames were imported.** The seven reference entries, IDs, room assignments, URLs and notes remain unchanged. No generated pictures, unrelated pins or synthetic test fixtures have been placed in the inspiration library.

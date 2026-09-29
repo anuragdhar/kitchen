@@ -43,6 +43,32 @@ export async function readPhoto(photo){
   return blob;
 }
 
+// Dev-server only (scripts/inspiration-sync-plugin.mjs): copies browser-stored
+// photos into the repository so they can be reviewed and committed.
+export async function projectSyncAvailable(){
+  try{return (await fetch('/__inspiration_sync/status')).ok;}catch{return false;}
+}
+async function syncRequest(path,init){
+  const response=await fetch(`/__inspiration_sync${path}`,{method:'POST',...init});
+  const body=await response.json().catch(()=>({}));
+  if(!response.ok)throw new Error(body.error||`Project folder save failed (${response.status}).`);
+  return body;
+}
+export async function syncPhotosToProject(input){
+  const data=validateInspiration(input);let saved=0;const sources=new Map();
+  for(const item of data.items)for(const photo of item.photos??[]){
+    if(!photo.src.startsWith('asset:'))continue;
+    if(!sources.has(photo.src)){
+      const blob=await readPhoto(photo);
+      sources.set(photo.src,(await syncRequest(`/photo?id=${encodeURIComponent(photo.id)}`,{body:blob,headers:{'Content-Type':blob.type||'application/octet-stream'}})).src);saved++;
+    }
+    photo.src=sources.get(photo.src);
+  }
+  const items=data.items.filter(item=>item.photos?.some(photo=>photo.src.startsWith('/inspiration-media/')));
+  if(items.length)await syncRequest('/library',{body:JSON.stringify({schemaVersion:1,items}),headers:{'Content-Type':'application/json'}});
+  return {photos:saved,references:items.length};
+}
+
 export async function compressPhoto(file){
   if(!['image/jpeg','image/png','image/webp'].includes(file.type))throw new Error('Use JPG, PNG or WebP. Export HEIC photos as JPG; capture video screenshots as images.');
   if(!file.size||file.size>20*1024*1024)throw new Error('Each source photo must be between 1 byte and 20 MiB.');
