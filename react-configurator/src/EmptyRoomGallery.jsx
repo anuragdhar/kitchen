@@ -482,7 +482,7 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
         // Near-orthographic top plan (narrow lens, far away) so tall walls do not smear the floor outline; no 3D labels here
         // because the plan gets its own dimension labels.
         drawingLayouts?.setLabels(false)
-        const topCamera=shoot('top',1000,1000,()=>{setCamera('top');camera.fov=20;camera.position.y*=2.41*1.3;camera.updateProjectionMatrix()}),point=new THREE.Vector3()
+        const topCamera=shoot('top',1000,1000,()=>{setCamera('top');camera.fov=20;camera.position.y=((Math.max(W+extensionDepth,L+southDepth))/2+1.05)/Math.tan(10*Math.PI/180);camera.updateProjectionMatrix()}),point=new THREE.Vector3()
         drawingLayouts?.setLabels(true)
         project=(xMm,zMm)=>{point.set(xMm/1000,.02,zMm/1000).project(topCamera);return [(point.x+1)/2*1000,(1-point.y)/2*1000]}
         // Wall views are all shot from the room centre at eye height: near a wall the camera can end up inside a cabinet or sofa.
@@ -514,6 +514,7 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
   useEffect(()=>{sceneRef.current?.setPoojaDoorsOpen(poojaDoorsOpen)},[poojaDoorsOpen,roomKey])
   useEffect(()=>{daylightRef.current=daylightOn;sceneRef.current?.setDaylight(daylightOn)},[daylightOn,roomKey])
 
+  useEffect(()=>{setReview(previous=>{if(previous)URL.revokeObjectURL(previous.url);return null});setReviewNote('')},[roomKey,drawingLayout])
   const makeReview=async()=>{
     setReviewBusy(true);setReviewNote('')
     try{
@@ -529,7 +530,7 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
     try{
       if(kind==='image')await navigator.clipboard.write([new ClipboardItem({'image/png':review.blob})])
       else await navigator.clipboard.writeText(review.text)
-      setReviewNote(kind==='image'?'Image copied. Paste it into the AI chat, then paste the text brief as well.':'Text brief copied. Paste it together with the image.')
+      setReviewNote(kind==='image'?'Image copied: "'+review.title+'". Paste it into the AI chat, then paste the text brief as well.':'Text brief copied for "'+review.title+'". Paste it together with the image.')
     }catch{setReviewNote('The browser blocked clipboard access. Use the download buttons instead.')}
   }
   const saveFile=(blobOrText,name,type)=>{

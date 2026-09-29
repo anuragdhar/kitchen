@@ -32,9 +32,11 @@ function fit(ctx, image, x, y, w, h, caption) {
   return {scale, ox, oy}
 }
 
+let tagBounds = null // {x1, x2}: keep tags inside the tile they annotate
 function tag(ctx, text, x, y, color = INK, size = 22) {
   ctx.font = `bold ${size}px ${FONT}`
   const w = ctx.measureText(text).width + 14, h = size + 10
+  if (tagBounds) x = Math.min(Math.max(x, tagBounds.x1 + w / 2 + 3), tagBounds.x2 - w / 2 - 3)
   ctx.fillStyle = 'rgba(255,255,255,.92)'; ctx.fillRect(x - w / 2, y - h / 2, w, h)
   ctx.strokeStyle = color; ctx.lineWidth = 2; ctx.strokeRect(x - w / 2, y - h / 2, w, h)
   ctx.fillStyle = color; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(text, x, y + 1); ctx.textAlign = 'left'
@@ -133,7 +135,7 @@ export function composeReviewSheet({review, room, views, project}) {
   ctx.fillText(`Interior ${review.dims}  |  all sizes in millimetres  |  generated ${review.iso}  |  concept model, not a survey`, 24, 76)
 
   const top = fit(ctx, views.top, 20, 120, 740, 740, 'TOP PLAN (south is at the top of this picture)')
-  if (project) { ctx.save(); ctx.beginPath(); ctx.rect(20, 120, 740, 740); ctx.clip(); drawPlanOverlay(ctx, room, review.planItems, project, top); ctx.restore() }
+  if (project) { ctx.save(); ctx.beginPath(); ctx.rect(20, 120, 740, 740); ctx.clip(); tagBounds = {x1: 20, x2: 760}; drawPlanOverlay(ctx, room, review.planItems, project, top); tagBounds = null; ctx.restore() }
   fit(ctx, views.overview, 780, 120, 900, 740, 'PERSPECTIVE OVERVIEW')
 
   const walls = [['north', 'NORTH wall, from the room centre'], ['east', 'EAST wall, from the room centre'], ['south', 'SOUTH wall, from the room centre'], ['west', 'WEST wall, from the room centre']]
@@ -142,7 +144,9 @@ export function composeReviewSheet({review, room, views, project}) {
   // Bottom-left: measurements, problems, reference titles and limits. Right: the room facts and the asks.
   const shortRefs = review.sections.filter(x => x.heading.startsWith('Style references')).map(x => ({heading: 'Style references (links are in the text brief)', lines: x.lines.map(l => l.split(': http')[0])}))
   const limits = review.sections.filter(x => x.heading === 'Honest limits').map(x => ({heading: x.heading, lines: [x.lines[0]]}))
-  const lower = review.sections.filter(x => ['Measured from the model', 'Known problems'].includes(x.heading))
+  // Rooms with measurements (the Drawing Room) keep this panel for them; other rooms show the exact plan-box ranges here.
+  const hasMeasured = review.sections.some(y => y.heading === 'Measured from the model')
+  const lower = review.sections.filter(x => ['Measured from the model', 'Known problems'].includes(x.heading) || (!hasMeasured && x.heading.startsWith('Plan boxes')))
   panel(ctx, 20, 1200, 1660, 380, [...lower, ...shortRefs, ...limits])
   const right = review.sections.filter(x => ['Room', 'Openings and structure', 'This layout', 'Furniture and fixtures'].includes(x.heading))
   panel(ctx, 1700, 120, 680, 1460, [...right, {heading: 'What I would like from you', lines: review.tasks}])

@@ -41,3 +41,30 @@ test('references are listed as links with tags and notes, and the limits are sta
   assert.match(r.text, /Warm living room \[living-room\]: https:\/\/example.com\/p - cream sofa/)
   assert.match(r.text, /not a survey/)
 })
+
+test('the text names the picture it belongs with, so a stale image is easy to spot', () => {
+  const r = buildRoomReview({roomKey: 'lobby', room: EMPTY_ROOM_SHELLS.lobby, date})
+  assert.match(r.text, /The attached image should have the title "Lobby \/ Dining" in its top-left corner/)
+})
+
+test('the lobby and bedrooms get labelled plan boxes and their exact ranges in the text', () => {
+  const lobby = buildRoomReview({roomKey: 'lobby', room: EMPTY_ROOM_SHELLS.lobby, date})
+  assert.ok(lobby.planItems.some(i => /Table/.test(i.label)) && lobby.planItems.some(i => /Ironing/.test(i.label)))
+  assert.match(lobby.text, /Table 1200x700: x 1850-2550, z 20-1220/)
+  assert.match(lobby.text, /chairRowsZmm: 290, 950/)
+  assert.match(lobby.text, /Pooja alcove on the north wall: 1200 mm wide starting 3793 mm/)
+  for (const key of ['bedroom1', 'bedroom3']) {
+    const r = buildRoomReview({roomKey: key, room: EMPTY_ROOM_SHELLS[key], date})
+    assert.ok(r.planItems.length >= 2, `${key} has plan boxes`)
+    for (const i of r.planItems) {
+      assert.ok(i.x1 >= 0 && i.z1 >= 0 && i.x2 <= EMPTY_ROOM_SHELLS[key].widthMm && i.z2 <= EMPTY_ROOM_SHELLS[key].lengthMm && i.x2 > i.x1 && i.z2 > i.z1, `${key} ${i.label} stays inside the room`)
+    }
+  }
+})
+
+test('the lobby brief mentions the closed old Bedroom 1 door as plain wall', () => {
+  const r = buildRoomReview({roomKey: 'lobby', room: EMPTY_ROOM_SHELLS.lobby, date})
+  assert.match(r.text, /Closed old door on the north wall to Bedroom 1, x 2400-3226/)
+  assert.match(r.text, /fibre-cement sheet/)
+  assert.match(r.text, /100 mm from the west end/)
+})

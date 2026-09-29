@@ -26,11 +26,26 @@ openings are and which way the entry door swings, the size and position of every
 and instructions for a new render: keep proportions, openings and furniture sizes; change only materials, colour,
 lighting and styling.
 
+## If the AI says it cannot see your room (2026-09-30)
+
+A reviewer once answered "the attached image is still Drawing Room Layout B" for a Lobby brief: the text brief had been
+pasted for the Lobby but an older picture was still attached. The app now:
+
+- names the expected picture in the first lines of the text brief (`The attached image should have the title "..." in its
+  top-left corner`), so a mismatch is obvious to the AI and to you;
+- says which sheet was copied ("Image copied: "Lobby / Dining"") and clears the sheet when you switch room or layout, so
+  an old sheet cannot be copied for the wrong room;
+- lists every plan box with its exact x and z range in the text, and draws boxes for the Lobby and both bedrooms too.
+
+Check the title in the top-left of the picture before you send it. When in doubt, download the image and attach the file
+instead of pasting, and start a fresh chat for each room.
+
 ## Limits
 
 - Only the room workspace is covered; Whole home 3D has no sheet yet.
-- The top plan boxes are drawn for the Drawing Room's two layouts. Other rooms get overall dimensions, walls and openings
-  only; their furniture is listed in text from `roomShellConfig.js`.
+- Labelled plan boxes exist for the Drawing Room (all layouts), the Lobby and Bedrooms 1 and 3. Any other room gets overall
+  dimensions, walls and openings only, with its furniture listed in text from `roomShellConfig.js`. Items outside the room
+  outline (the Pooja alcove, recess wardrobes) are described in text, not drawn.
 - Reference photos are not embedded (size and other people's rights); their links are in the text brief.
 - Views come from the simplified 3D model in the browser's software or GPU renderer, not from the Blender renders.
 - Pixel-level output was reviewed by eye for the Drawing Room (both layouts) and Bedroom 1; there is no automated

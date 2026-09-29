@@ -1,5 +1,7 @@
 // Builds the facts an outside reviewer (a person or an online AI) needs about a room, from the same
 // config the 3D scenes use. Pure: no React, Three.js or DOM. Units are millimetres unless stated.
+import {BEDROOM1_CLOSED_DOOR, closedDoorSpanMm} from '../config/bedroom1ClosedDoor.js'
+import {HOME_ROOM_LAYOUTS} from '../config/homeRoomViews.js'
 import {checkDrawingRoomLayout, checkCornerLayout, checkCornerConsole, checkCornerProjector, consoleGeometry, projectorPlacement, tvWallGeometry, cornerTvFrontX, WALL_FACE_MM} from './drawingRoomLayout.mjs'
 
 const mm = v => `${Math.round(v)} mm`
@@ -28,6 +30,7 @@ for (const d of room.doors ?? []) {
 }
 
 function describeItem(key, item) {
+  if (Array.isArray(item)) return `${key}: ${item.join(', ')}`
   if (!item || typeof item !== 'object') return null
   const parts = Object.entries(item).filter(([, v]) => typeof v === 'number' || typeof v === 'string').map(([k, v]) => `${k.replace(/Mm$/, '')}=${typeof v === 'number' ? Math.round(v) : v}`)
   return parts.length ? `${key}: ${parts.join(', ')}` : null
@@ -160,6 +163,46 @@ function drawingCornerProjector(room) {
   }
 }
 
+// Labelled boxes for the top plan of rooms without a hand-written layout description. Rectangles are room-frame mm
+// (x from the west wall, z from the north wall). Items outside the room outline (recess wardrobes, the Pooja alcove) are
+// described in text only.
+function genericPlanItems(roomKey, room) {
+  const f = room.furniture ?? {}, W = room.widthMm, L = room.lengthMm, items = []
+  const add = (label, x1, z1, x2, z2, kind) => items.push({label, x1: Math.max(0, x1), z1: Math.max(0, z1), x2: Math.min(W, x2), z2: Math.min(L, z2), kind})
+  if (roomKey === 'lobby') {
+    const t = f.diningTable, s = f.eastIroningStorage
+    if (t) add(`Table ${t.lengthMm}x${t.widthMm}`, t.centerXmm - t.widthMm / 2, t.centerZmm - t.lengthMm / 2, t.centerXmm + t.widthMm / 2, t.centerZmm + t.lengthMm / 2, 'table')
+    if (s) add(`Ironing unit ${s.lengthMm}x${s.depthMm}`, W - s.depthMm, s.fromNorthMm, W, s.fromNorthMm + s.lengthMm, 'fixed')
+  }
+  if (roomKey === 'bedroom1') {
+    const b = f.bed, w = f.wardrobe
+    if (b) add(`Bed ${b.lengthMm}x${b.widthMm}`, b.fromWestMm, L - b.fromSouthMm - b.widthMm, b.fromWestMm + b.lengthMm, L - b.fromSouthMm, 'seat')
+    if (w) add(`Wardrobe ${w.lengthMm}x${w.depthMm}`, 0, w.fromNorthMm, w.depthMm, w.fromNorthMm + w.lengthMm, 'fixed')
+  }
+  if (roomKey === 'bedroom3') {
+    const b = f.bed, w = f.westWardrobe
+    if (b) add(`Bed ${b.lengthMm}x${b.widthMm}`, W - b.lengthMm, b.centerFromNorthMm - b.widthMm / 2, W, b.centerFromNorthMm + b.widthMm / 2, 'seat')
+    if (w) add(`Wardrobe run ${w.lengthMm}x${w.depthMm}`, 0, w.fromNorthMm, w.depthMm, w.fromNorthMm + w.lengthMm, 'fixed')
+  }
+  return items
+}
+
+function describeExtras(room) {
+  const lines = []
+  if (room.openSide) lines.push(`This room is drawn open on its ${room.openSide} side.`)
+  if (room.poojaAlcove) { const a = room.poojaAlcove; lines.push(`Pooja alcove on the ${a.wall} wall: ${mm(a.widthMm)} wide starting ${mm(a.fromMm)} from the west end, ${mm(a.depthMm)} deep beyond the wall (outside this room's outline), ${a.templeDepthMm ? `temple ${mm(a.templeDepthMm)} deep, ` : ''}seated-person platform ${mm(a.platformHeightMm)} high.`) }
+  if (room.balconyExtension) { const b = room.balconyExtension; lines.push(`Enclosed balcony on the ${b.wall} side: ${mm(b.depthMm)} deep, ${mm(b.lengthMm)} long, railing ${mm(b.railingHeightMm)} (outside the main outline in the top plan).`) }
+  if (room.southExtension) lines.push('The south side has a projecting cabinet and balcony (see the furniture list).')
+  if (room.name === 'Lobby / Dining') {
+    const bounds = HOME_ROOM_LAYOUTS.find(r => r.name === room.name).bounds
+    const span = closedDoorSpanMm(BEDROOM1_CLOSED_DOOR, bounds, room.widthMm)
+    lines.push(`Closed old door on the north wall to Bedroom 1, x ${Math.round(span.start)}-${Math.round(span.end)} (about ${Math.round(span.end - span.start)} mm wide): sealed with a ${BEDROOM1_CLOSED_DOOR.sheet.thicknessMm} mm fibre-cement sheet flush with the lobby wall, with a shallow medicine cabinet in the cavity on the Bedroom 1 side. It reads as plain wall from the lobby. The working door to Bedroom 1 is the one 100 mm from the west end.`)
+  }
+  return lines
+}
+
+const FURNITURE_AXES = 'Furniture sizes: "width" runs along x (west-east) and "length" along z (north-south) unless a note says otherwise; sofas are the exception (width is the seat depth, length is the seat run). The "plan boxes" list gives the exact x and z range of each drawn box.'
+
 // "2.7-3.2 m, 7-35 degrees" from a list of {distanceMm, angleDeg}
 const spread = views => {
   const d = views.map(v => v.distanceMm / 1000), a = views.map(v => v.angleDeg)
@@ -179,11 +222,13 @@ export function buildRoomReview({roomKey, room, layoutKey = null, references = [
   let layout = null
   if (roomKey === 'drawing') layout = {northTv: drawingLayoutA, cornerSofas: drawingLayoutB, cornerConsole: drawingCornerConsole, cornerProjector: drawingCornerProjector}[layoutKey ?? 'cornerConsole'](room)
   const dims = `${room.widthMm} x ${room.lengthMm} x ${room.heightMm} mm (width x length x ceiling)`
+  const planItems = layout?.items ?? genericPlanItems(roomKey, room)
   const sections = [
-    {heading: 'Room', lines: [`${room.name}, interior ${dims}. Source: ${room.source ?? 'app config'}.`, FRAME_NOTE]},
-    {heading: 'Openings and structure', lines: describeOpenings(room)},
+    {heading: 'Room', lines: [`${room.name}, interior ${dims}. Source: ${room.source ?? 'app config'}.`, FRAME_NOTE, FURNITURE_AXES]},
+    {heading: 'Openings and structure', lines: [...describeOpenings(room), ...describeExtras(room)]},
     {heading: layout ? 'This layout' : 'Furniture and fixtures', lines: layout ? layout.lines : describeGeneric(room)},
   ]
+  if (planItems.length) sections.push({heading: 'Plan boxes (x range, z range in mm)', lines: planItems.map(i => `${i.label}: x ${Math.round(i.x1)}-${Math.round(i.x2)}, z ${Math.round(i.z1)}-${Math.round(i.z2)}`)})
   if (layout) sections.push({heading: 'Measured from the model', lines: layout.measured})
   if (layout?.issues.length) sections.push({heading: 'Known problems', lines: layout.issues})
   if (references.length) sections.push({heading: 'Style references (links)', lines: references.map(r => `${r.title}${r.tags?.length ? ` [${r.tags.join(', ')}]` : ''}: ${r.url}${r.notes ? ` - ${r.notes}` : ''}`)})
@@ -194,9 +239,10 @@ export function buildRoomReview({roomKey, room, layoutKey = null, references = [
   // Local calendar date: toISOString() is UTC and reads a day behind for part of the day in time zones ahead of UTC.
   const iso = [date.getFullYear(), String(date.getMonth() + 1).padStart(2, '0'), String(date.getDate()).padStart(2, '0')].join('-')
   const title = `${room.name}${layoutLabel ? ` - ${layoutLabel}` : ''}`
-  const text = [`# ${title}`, `Generated ${iso} by the Home Interior app. Units: millimetres.`, '',
+  const text = [`# ${title}`, `Generated ${iso} by the Home Interior app. Units: millimetres.`,
+    `The attached image should have the title "${title}" in its top-left corner. If it shows a different room or layout, say so before reviewing anything.`, '',
     ...sections.flatMap(s => [`## ${s.heading}`, ...s.lines.map(l => `- ${l}`), '']),
     '## What I would like from you', ...REVIEW_TASKS.map((t, i) => `${i + 1}. ${t}`), '',
     'The attached image has: a top plan with dimensions (south is at the top), a perspective overview, and the four walls seen from inside.'].join('\n')
-  return {title, layoutLabel, iso, dims, sections, planItems: layout?.items ?? [], tasks: REVIEW_TASKS, text}
+  return {title, layoutLabel, iso, dims, sections, planItems, tasks: REVIEW_TASKS, text}
 }
