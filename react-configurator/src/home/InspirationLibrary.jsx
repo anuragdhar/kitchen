@@ -1,30 +1,109 @@
-import React,{useState} from 'react';
+import React,{useEffect,useRef,useState} from 'react';
 import seed from '../../../inspiration/library.json';
 import {HOME_ROOMS} from './rooms.mjs';
-import {mergeInspiration,parseInspiration,validateInspiration} from './inspiration.mjs';
+import {MAX_PHOTOS,mergeInspiration,parseInspiration,validateInspiration} from './inspiration.mjs';
+import {exportPhotoLibrary,prepareLibraryImport,preparePhotos,storePhotos} from './inspirationMedia.mjs';
+import InspirationPhotos,{PhotoPicker} from './InspirationPhotos.jsx';
 const KEY='home-interior.inspiration.v1';
+const photoCount=data=>data.items.reduce((sum,item)=>sum+(item.photos?.length??0),0);
+function download(blob,name){const link=document.createElement('a'),url=URL.createObjectURL(blob);link.href=url;link.download=name;link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
+
 export default function InspirationLibrary(){
-  const [loaded]=useState(()=>{try{const raw=localStorage.getItem(KEY);return {data:raw?parseInspiration(raw):validateInspiration(seed)};}catch(e){return {data:validateInspiration(seed),error:String(e.message)};}});
+  const [loaded]=useState(()=>{try{const raw=localStorage.getItem(KEY);return {raw,data:raw?parseInspiration(raw):validateInspiration(seed)};}catch(error){return {raw:null,data:validateInspiration(seed),error:error.message};}});
   const [data,setData]=useState(loaded.data),[error,setError]=useState(loaded.error||''),[blocked,setBlocked]=useState(!!loaded.error);
-  const [notice,setNotice]=useState('');
-  const [room,setRoom]=useState('entry'),[title,setTitle]=useState(''),[url,setUrl]=useState(''),[tags,setTags]=useState(''),[notes,setNotes]=useState('');
+  const [notice,setNotice]=useState(''),[busy,setBusy]=useState('');
+  const [room,setRoom]=useState('entry'),[title,setTitle]=useState(''),[url,setUrl]=useState(''),[tags,setTags]=useState(''),[notes,setNotes]=useState(''),[pending,setPending]=useState([]);
   const [filter,setFilter]=useState('all');
-  const save=next=>{if(blocked)throw new Error('Stored references could not be read. Export a backup and import a valid library before editing.');const clean=validateInspiration(next);localStorage.setItem(KEY,JSON.stringify(clean));setData(clean);setError('');setNotice('');};
-  const addProjectReferences=()=>{try{const next=mergeInspiration(data,seed);const added=next.items.length-data.items.length;if(added)save(next);setNotice(added?`Added ${added} project reference${added===1?'':'s'}. Your existing notes and decisions were kept.`:'All project references are already in this browser library.');}catch(e){setError(e.message);}};
-  const exportData=()=>{const raw=blocked?localStorage.getItem(KEY):JSON.stringify(data,null,2);const link=document.createElement('a');const objectUrl=URL.createObjectURL(new Blob([raw||''],{type:'application/json'}));link.href=objectUrl;link.download=blocked?'inspiration-recovery.json':'inspiration-library.json';link.click();setTimeout(()=>URL.revokeObjectURL(objectUrl),1000);};
-  const importFile=async event=>{const file=event.target.files?.[0];event.target.value='';if(!file)return;try{if(file.size>2_000_000)throw new Error('File too large.');const clean=parseInspiration(await file.text());if(!window.confirm('Replace this browser’s inspiration library with the selected file? A backup will be retained.'))return;const old=localStorage.getItem(KEY);if(old!==null)localStorage.setItem(`${KEY}.previous`,old);localStorage.setItem(KEY,JSON.stringify(clean));setData(clean);setBlocked(false);setError('');setNotice('');}catch(e){setError(e.message);}};
-  return <section aria-label="Inspiration library">
-    <h3>Inspiration, from entry to balcony</h3><p>Save Pinterest pins or other reference links, what you like, and the room they belong to. Images are not scraped. Browser edits are local; export the JSON to commit it to <code>inspiration/library.json</code>.</p>
-    <p>After updating from GitHub, use Add project references to merge new links without replacing your saved notes or decisions. Removed references stay removed until you explicitly add project references again.</p>
-    {error&&<p role="alert">{error}</p>}
-    {notice&&<p role="status">{notice}</p>}
-    <div className="interior-row"><button disabled={blocked} onClick={addProjectReferences}>Add project references</button><button onClick={exportData}>Export reference library</button><label>Import library <input aria-label="Import inspiration library" type="file" accept=".json" onChange={importFile}/></label></div>
-    <form onSubmit={event=>{event.preventDefault();try{save({...data,items:[...data.items,{id:crypto.randomUUID(),room,title,url,tags:tags.split(',').map(x=>x.trim()).filter(Boolean),notes,status:'idea'}]});setTitle('');setUrl('');setNotes('');setTags('');}catch(e){setError(e.message);}}}>
-      <div className="interior-grid"><label>Room<select value={room} onChange={e=>setRoom(e.target.value)}>{HOME_ROOMS.map(r=><option key={r.id} value={r.id}>{r.label}</option>)}</select></label><label>Title<input required maxLength={200} value={title} onChange={e=>setTitle(e.target.value)}/></label></div>
-      <label>Reference URL<input required type="url" placeholder="https://www.pinterest.com/pin/..." value={url} onChange={e=>setUrl(e.target.value)}/></label>
-      <label>Tags, comma separated<input value={tags} onChange={e=>setTags(e.target.value)}/></label><label>What should we borrow from this idea?<textarea maxLength={4000} value={notes} onChange={e=>setNotes(e.target.value)}/></label><button disabled={blocked} type="submit">Save inspiration</button>
-    </form>
-    <label>Filter references<select value={filter} onChange={e=>setFilter(e.target.value)}><option value="all">All rooms, in tour order</option>{HOME_ROOMS.map(r=><option key={r.id} value={r.id}>{r.label}</option>)}</select></label>
-    {HOME_ROOMS.filter(r=>filter==='all'||filter===r.id).map(r=>{const items=data.items.filter(i=>i.room===r.id);return <section key={r.id}><h4>{r.label} <small>({items.length})</small></h4>{!items.length&&<p className="interior-muted">No references saved yet.</p>}{items.map(item=><article className="interior-card" key={item.id}><a href={item.url} target="_blank" rel="noopener noreferrer">{item.title} ↗</a><p>{item.notes}</p><small>{item.tags.join(' · ')}</small><label>Decision<select value={item.status} onChange={e=>{try{save({...data,items:data.items.map(i=>i.id===item.id?{...i,status:e.target.value}:i)});}catch(err){setError(err.message);}}}>{['idea','selected','rejected'].map(s=><option key={s}>{s}</option>)}</select></label><button onClick={()=>{if(window.confirm('Remove this reference?'))try{save({...data,items:data.items.filter(i=>i.id!==item.id)});}catch(err){setError(err.message);}}}>Remove reference</button></article>)}</section>})}
+  const current=useRef(data),rawRef=useRef(loaded.raw),working=useRef(false),alive=useRef(true);
+  useEffect(()=>{alive.current=true;return()=>{alive.current=false;};},[]);
+  const assertCurrent=()=>{
+    if(!alive.current)throw new Error('The inspiration view was closed; the edit was cancelled.');
+    if(localStorage.getItem(KEY)!==rawRef.current)throw new Error('This library changed in another tab. Export your current library, then reopen this view before editing.');
+  };
+  const save=next=>{
+    if(blocked)throw new Error('Stored references could not be read. Export a recovery backup and import a valid library before editing.');
+    assertCurrent();
+    const clean=parseInspiration(JSON.stringify(next)),raw=JSON.stringify(clean);
+    localStorage.setItem(KEY,raw);rawRef.current=raw;current.current=clean;setData(clean);setError('');setNotice('');
+  };
+  const run=async(label,operation)=>{
+    if(working.current)return;working.current=true;setBusy(label);setError('');setNotice('');
+    try{await operation();}catch(error){if(alive.current)setError(error.message||String(error));}
+    finally{working.current=false;if(alive.current)setBusy('');}
+  };
+  const changeItem=(id,patch)=>{try{save({...current.current,items:current.current.items.map(item=>item.id===id?{...item,...patch}:item)});}catch(error){setError(error.message);}};
+  const addProjectReferences=()=>{
+    try{
+      const before=current.current,next=mergeInspiration(before,seed),added=next.items.length-before.items.length,photos=photoCount(next)-photoCount(before);
+      if(added||photos)save(next);
+      setNotice(added||photos?`Added ${added} references and ${photos} photos. Your notes, decisions and existing cover order were kept.`:'All available project references and photos are already in this library.');
+    }catch(error){setError(error.message);}
+  };
+  const exportData=()=>run('Preparing library backup…',async()=>{
+    if(blocked){download(new Blob([localStorage.getItem(KEY)||''],{type:'application/json'}),'inspiration-recovery.json');return;}
+    const blob=await exportPhotoLibrary(current.current);
+    if(alive.current){download(blob,'inspiration-library-with-photos.zip');setNotice('Backup includes the reference library and every photo. Keep it before clearing browser data.');}
+  });
+  const exportMetadata=()=>{try{download(new Blob([JSON.stringify(current.current,null,2)],{type:'application/json'}),'inspiration-library.json');setNotice('Metadata JSON only: uploaded photo bytes are NOT included. Use the ZIP backup to move or preserve uploads.');}catch(error){setError(error.message);}};
+  const importFile=event=>{
+    const file=event.target.files?.[0];event.target.value='';if(!file)return;
+    run('Validating library and photos…',async()=>{
+      const expected=localStorage.getItem(KEY),prepared=await prepareLibraryImport(file);
+      if(!alive.current)return;
+      if(localStorage.getItem(KEY)!==expected)throw new Error('The library changed while the file was being read. Import cancelled; retry after reopening the view.');
+      if(!window.confirm('Replace this browser’s inspiration library? Previous metadata and stored photos are retained for recovery. Export a ZIP first to keep an independent backup.'))return;
+      await storePhotos(prepared.assets);
+      if(!alive.current)return;
+      if(localStorage.getItem(KEY)!==expected)throw new Error('The library changed while photos were being stored. Import cancelled.');
+      if(expected!==null)localStorage.setItem(`${KEY}.previous`,expected);
+      const raw=JSON.stringify(prepared.library);localStorage.setItem(KEY,raw);
+      current.current=prepared.library;rawRef.current=raw;setData(prepared.library);setBlocked(false);setError('');setPending([]);setNotice('Library imported with its photos.');
+    });
+  };
+  const upload=(id,files)=>run('Preparing and saving photos…',async()=>{
+    const item=current.current.items.find(item=>item.id===id);if(!item)return;
+    if((item.photos?.length??0)+files.length>MAX_PHOTOS)throw new Error(`A reference can contain at most ${MAX_PHOTOS} photos.`);
+    const prepared=await preparePhotos(files,item.url);assertCurrent();
+    const latest=current.current.items.find(item=>item.id===id);if(!latest)throw new Error('The reference was removed.');
+    const next={...current.current,items:current.current.items.map(item=>item.id===id?{...item,photos:[...(item.photos??[]),...prepared.photos]}:item)};
+    parseInspiration(JSON.stringify(next));await storePhotos(prepared.assets);save(next);
+    setNotice(`Saved ${prepared.photos.length} photos in this browser. Export library + photos to back them up.`);
+  });
+  const add=event=>{
+    event.preventDefault();run('Saving inspiration…',async()=>{
+      const item={id:crypto.randomUUID(),room,title,url,tags:tags.split(',').map(x=>x.trim()).filter(Boolean),notes,status:'idea'};
+      validateInspiration({schemaVersion:1,items:[item]});
+      const prepared=await preparePhotos(pending,url);assertCurrent();
+      if(prepared.photos.length)item.photos=prepared.photos;
+      const next={...current.current,items:[...current.current.items,item]};parseInspiration(JSON.stringify(next));
+      await storePhotos(prepared.assets);save(next);setTitle('');setUrl('');setNotes('');setTags('');setPending([]);setNotice('Inspiration saved.');
+    });
+  };
+  const disabled=blocked||!!busy;
+  return <section aria-label="Inspiration library" aria-busy={!!busy}>
+    <h3>Inspiration, from entry to balcony</h3>
+    <p>Keep the original reference link, photos, video screenshots and what you like together in each room. Upload several images to explain a mechanism or compare details.</p>
+    <p className="interior-muted">Uploads are local to this browser, not automatically pushed to GitHub. Export library + photos for a portable backup. After a GitHub update, Add project references merges newly captured photos without replacing your notes or decisions.</p>
+    {error&&<p role="alert">{error}</p>}{notice&&<p role="status">{notice}</p>}{busy&&<p className="inspiration-busy" role="status">{busy}</p>}
+    <div className="interior-row"><button disabled={disabled} onClick={addProjectReferences}>Add project references</button><button disabled={!!busy} onClick={exportData}>{blocked?'Export recovery backup':'Export library + photos'}</button><button disabled={disabled} onClick={exportMetadata}>Export metadata JSON</button><label>Import library<input aria-label="Import inspiration library" type="file" accept=".json,.zip" disabled={!!busy} onChange={importFile}/></label></div>
+    <form onSubmit={add}><fieldset disabled={disabled} style={{border:0,padding:0,margin:0}}>
+      <legend><strong>Add an inspiration</strong></legend>
+      <div className="interior-grid"><label>Room<select value={room} onChange={event=>setRoom(event.target.value)}>{HOME_ROOMS.map(room=><option key={room.id} value={room.id}>{room.label}</option>)}</select></label><label>Title<input required maxLength={200} value={title} onChange={event=>setTitle(event.target.value)}/></label></div>
+      <label>Reference URL<input required type="url" placeholder="https://www.pinterest.com/pin/..." value={url} onChange={event=>setUrl(event.target.value)}/></label>
+      <label>Tags, comma separated<input value={tags} onChange={event=>setTags(event.target.value)}/></label><label>What should we borrow from this idea?<textarea maxLength={4000} value={notes} onChange={event=>setNotes(event.target.value)}/></label>
+      <PhotoPicker label="Photos / screenshots for the new idea (optional)" disabled={disabled} onFiles={files=>{if(pending.length+files.length>MAX_PHOTOS){setError(`Choose at most ${MAX_PHOTOS} photos.`);return;}setPending(previous=>[...previous,...files]);}}/>
+      {pending.length>0&&<div className="inspiration-pending"><p>{pending.length} selected: {pending.map(file=>file.name).join(', ')}</p><button type="button" onClick={()=>setPending([])}>Clear selected photos</button></div>}
+      <button type="submit">Save inspiration</button>
+    </fieldset></form>
+    <label>Filter references<select value={filter} onChange={event=>setFilter(event.target.value)}><option value="all">All rooms, in tour order</option>{HOME_ROOMS.map(room=><option key={room.id} value={room.id}>{room.label}</option>)}</select></label>
+    {HOME_ROOMS.filter(room=>filter==='all'||filter===room.id).map(room=>{
+      const items=data.items.filter(item=>item.room===room.id);
+      return <section key={room.id}><h4>{room.label} <small>({items.length})</small></h4>{!items.length&&<p className="interior-muted">No references saved yet.</p>}{items.map(item=><article className="interior-card" key={item.id} data-inspiration-id={item.id}>
+        <a href={item.url} target="_blank" rel="noopener noreferrer"><strong>{item.title} ↗</strong></a><p>{item.notes}</p><small>{item.tags.join(' · ')}</small>
+        <InspirationPhotos item={item} disabled={disabled} onUpload={files=>upload(item.id,files)} onChange={photos=>changeItem(item.id,{photos})}/>
+        <label>Decision<select disabled={disabled} value={item.status} onChange={event=>changeItem(item.id,{status:event.target.value})}>{['idea','selected','rejected'].map(status=><option key={status}>{status}</option>)}</select></label>
+        <button disabled={disabled} onClick={()=>{if(window.confirm('Remove this reference?'))try{save({...current.current,items:current.current.items.filter(reference=>reference.id!==item.id)});}catch(error){setError(error.message);}}}>Remove reference</button>
+      </article>)}</section>;
+    })}
   </section>;
 }
