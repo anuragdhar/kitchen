@@ -9,31 +9,32 @@ const drawingPlan = HOME_ROOM_LAYOUTS.find(room => room.name === 'Drawing Room')
 const drawing = {bounds: drawingPlan.bounds, widthMm: EMPTY_ROOM_SHELLS.drawing.widthMm}
 const geometry = cavityGeometry(ENTRY, drawing)
 
-test('the owner-marked area lies inside the entry cabinet outline and the cabinet is 3 ft deep', () => {
-  const m = ENTRY.ownerMark, k = ENTRY.entryCabinet
-  assert.ok(m.planX1 >= k.planX1 - 5 && m.planX2 <= k.planX2 && m.planY1 === k.planY1 && m.planY2 === k.planY2)
-  assert.ok(Math.abs(geometry.cabinetDepthMm - 914.4) < 30, `cabinet depth ${geometry.cabinetDepthMm}`)
+test('the owner-marked area lies inside the pocket and the pocket is 3 ft deep', () => {
+  const m = ENTRY.ownerMark, c = ENTRY.wallCavity
+  assert.ok(m.planX1 >= c.planX1 - 5 && m.planX2 <= c.planX2 && m.planY1 === c.planY1 && m.planY2 === c.planY2)
+  assert.ok(Math.abs(geometry.depthMm - 914.4) < 30, `pocket depth ${geometry.depthMm}`)
+  assert.ok(geometry.widthMm > 1900 && geometry.widthMm < 2100, `pocket width ${geometry.widthMm}`)
 })
 
-test('the band behind the cabinet is about 220 mm deep, the size of a 9-inch wall, and runs floor to ceiling', () => {
-  assert.ok(geometry.depthMm > 200 && geometry.depthMm < 240, `depth ${geometry.depthMm}`)
+test('the wall between the pocket and the Drawing Room is about 220 mm, the size of a 9-inch wall, and the pocket runs floor to ceiling', () => {
+  assert.ok(geometry.wallMm > 200 && geometry.wallMm < 240, `wall ${geometry.wallMm}`)
   assert.equal(geometry.nearNineInchWall, true)
   assert.equal(geometry.heightMm, 2700)
 })
 
-test('the cavity lines up with the free north wall of the Drawing Room, left of the entry door', () => {
+test('the pocket lines up with the free north wall of the Drawing Room, left of the entry door', () => {
   const door = EMPTY_ROOM_SHELLS.drawing.doors[0]
-  assert.ok(geometry.roomX1Mm > 100 && geometry.roomX1Mm < 220, `starts ${geometry.roomX1Mm}`)
+  assert.ok(geometry.roomX1Mm > 80 && geometry.roomX1Mm < 220, `starts ${geometry.roomX1Mm}`)
   assert.ok(geometry.roomX2Mm > 2100 && geometry.roomX2Mm <= door.fromMm + 50, `ends ${geometry.roomX2Mm}`)
 })
 
-test('usable depth: about 180 mm if it is a real void, about 110 mm if it is solid brickwork', () => {
+test('usable depth: about 1.1 m if the wall may be opened into the pocket, about 110 mm if the wall must stay', () => {
   const use = usableDepth(geometry)
-  assert.ok(use.ifHollowMm >= 170 && use.ifHollowMm <= 190, `hollow ${use.ifHollowMm}`)
-  assert.ok(use.ifSolidMm >= 100 && use.ifSolidMm <= 120, `solid ${use.ifSolidMm}`)
+  assert.ok(use.ifOpenedMm >= 1090 && use.ifOpenedMm <= 1130, `opened ${use.ifOpenedMm}`)
+  assert.ok(use.ifKeptMm >= 100 && use.ifKeptMm <= 120, `kept ${use.ifKeptMm}`)
 })
 
-test('recess options: the TV bay and the router cabinet fit the cavity, the whole 2100 mm cabinet does not', () => {
+test('recess options: the TV bay and the router cabinet fit the pocket completely, the whole 2100 mm cabinet does not', () => {
   const t = EMPTY_ROOM_SHELLS.drawing.tvWall, c = EMPTY_ROOM_SHELLS.drawing.cornerLayout.routerCabinet
   const [bay, router, whole, deep] = recessOptions(geometry, [
     {name: 'TV bay', x1: t.fromWestMm + t.columnWidthMm, x2: t.fromWestMm + t.widthMm - t.columnWidthMm, depthMm: t.depthMm},
@@ -43,8 +44,9 @@ test('recess options: the TV bay and the router cabinet fit the cavity, the whol
   ])
   assert.equal(bay.fits, true)
   assert.equal(router.fits, true)
-  assert.equal(whole.fits, false, 'the west end of the cabinet (x 0-155) is outside the cavity')
-  assert.equal(whole.ifHollow.recessMm, 0)
-  assert.ok(router.ifHollow.protrudesMm <= 80, 'a recessed router cabinet sticks out under 80 mm')
-  assert.ok(deep.ifHollow.protrudesMm < 305, 'an 18-inch bay recessed into a void sticks out less than todays one-foot cabinet')
+  assert.equal(whole.fits, false, 'the west end of the cabinet (x 0-116) is outside the pocket')
+  assert.equal(whole.ifOpened.recessMm, 0)
+  assert.equal(router.ifOpened.protrudesMm, 0, 'the router cabinet disappears into the pocket when the wall is opened')
+  assert.equal(deep.ifOpened.protrudesMm, 0, 'an 18-inch bay fits entirely in the pocket')
+  assert.ok(deep.ifKept.protrudesMm > 340, 'if the wall must stay, an 18-inch bay still sticks out about 350 mm')
 })

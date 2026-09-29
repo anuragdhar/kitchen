@@ -175,11 +175,12 @@ function LiveWholeHome3D({onOpenRoom}){
     WALLS.forEach(segment=>{const mesh=addSpan(segment);if(mesh)mesh.userData={planWall:segment}})
     model.add(createEntryArrivalDoor(X,Z))
     model.add(createEntryFoldSeat(X,Z))
-    // Entry wall cavity (owner mark 2026-09-30): translucent volumes for the empty band behind the 3-ft Entry cabinet and for
-    // the cabinet itself. They are never hit by the measure tool (userData.noMeasure). Sizes come from ENTRY.wallCavity.
+    // Entry wall cavity (owner mark 2026-09-30): translucent volumes for the empty 3-ft pocket on the Entry side of the Drawing
+    // Room's north wall and for the 9-inch wall between them. Never hit by the measure tool (userData.noMeasure). Sizes come
+    // from ENTRY.wallCavity.
     const cavityGroup=new THREE.Group();cavityGroup.name='Entry wall cavity';model.add(cavityGroup)
     {
-      const c=ENTRY.wallCavity,k=ENTRY.entryCabinet
+      const c=ENTRY.wallCavity,wall={planX1:c.planX1,planX2:c.planX2,planY1:c.wallPlanY1,planY2:c.wallPlanY2}
       const ghost=(box,heightMm,color,opacity)=>{
         const w=X(box.planX2-box.planX1),d=Z(box.planY2-box.planY1),h=heightMm/1000
         const mesh=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),new THREE.MeshBasicMaterial({color,transparent:true,opacity,depthWrite:false}))
@@ -196,10 +197,10 @@ function LiveWholeHome3D({onOpenRoom}){
         sprite.scale.set(1.5,.225,1);sprite.position.set(x,y,z);sprite.renderOrder=10;cavityGroup.add(sprite)
       }
       ghost(c,c.heightMm,'#0d9488',.34)
-      ghost(k,k.heightMm,'#f59e0b',.15)
-      const depthMm=Math.round(Z(c.planY2-c.planY1)*1000/5)*5,cabinetMm=Math.round(Z(k.planY2-k.planY1)*1000/5)*5
-      cavityLabel(`Wall cavity ~${depthMm} mm deep, floor to ceiling`,X((c.planX1+c.planX2)/2),c.heightMm/1000+.25,Z(c.planY1)-.15)
-      cavityLabel(`3 ft Entry cabinet, ${cabinetMm} mm deep`,X((k.planX1+k.planX2)/2),k.heightMm/1000+.25,Z((k.planY1+k.planY2)/2)+.4)
+      ghost(wall,c.heightMm,'#f59e0b',.15)
+      const depthMm=Math.round(Z(c.planY2-c.planY1)*1000/5)*5,wallMm=Math.round(Z(wall.planY2-wall.planY1)*1000/5)*5
+      cavityLabel(`Empty cavity ~${depthMm} mm deep`,X((c.planX1+c.planX2)/2),c.heightMm/1000+.25,Z((c.planY1+c.planY2)/2)+.4)
+      cavityLabel(`Drawing Room wall ~${wallMm} mm`,X((wall.planX1+wall.planX2)/2),c.heightMm/1000+.25,Z(wall.planY1)-.25)
     }
     const entryOpening=ENTRY.outerEntryOpening
     addSpan([entryOpening.wallPlanX,entryOpening.fromPlanY,entryOpening.wallPlanX,entryOpening.toPlanY],entryOpening.heightMm/1000,HEIGHT)
@@ -838,7 +839,7 @@ function LiveWholeHome3D({onOpenRoom}){
         <button onClick={()=>setTvLabels(value=>!value)} aria-pressed={tvLabels} style={buttonStyle(tvLabels)}>{tvLabels?'Hide TV wall labels':'Show TV wall labels'}</button>
         <button onClick={()=>setPartitionOpen(value=>!value)} style={buttonStyle(partitionOpen)}>{partitionOpen?'Close drawing partition':'Open drawing partition'}</button>
         <button onClick={()=>setPoojaDoorsOpen(value=>!value)} style={buttonStyle(poojaDoorsOpen)}>{poojaDoorsOpen?'Close Pooja doors':'Open Pooja doors'}</button>
-        <button onClick={()=>setShowCavity(value=>!value)} aria-pressed={showCavity} style={buttonStyle(showCavity)} title="The empty band in the wall between the Drawing Room and the Main Entry, behind the 3 ft Entry cabinet">{showCavity?'Hide entry wall cavity':'Show entry wall cavity'}</button>
+        <button onClick={()=>setShowCavity(value=>!value)} aria-pressed={showCavity} style={buttonStyle(showCavity)} title="The empty 3 ft deep cavity on the Main Entry side of the Drawing Room north wall, and the wall between them">{showCavity?'Hide entry wall cavity':'Show entry wall cavity'}</button>
         <button onClick={()=>setMeasureMode(value=>!value)} aria-pressed={measureMode} style={buttonStyle(measureMode)}>{measureMode?'Stop measuring':'Measure'}</button>
         <button onClick={()=>setMarkMode(value=>!value)} style={buttonStyle(markMode)}>{markMode?'Back to 3D':'Mark area on plan'}</button>
       </div>

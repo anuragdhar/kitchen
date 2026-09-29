@@ -1,52 +1,52 @@
-# Entry wall cavity behind the 3 ft cabinet
+# Empty cavity behind the Drawing Room north wall
 
-Owner mark, 2026-09-30: plan x 573-643, y 726-772, near the Main Entry. A cabinet 3 ft deep stands there, and the
-band of wall behind it is empty, floor to ceiling. This note records what the plan shows, how deep the unused space is
-and what the Drawing Room can do with it. The model shows it (**Hide/Show entry wall cavity** in Whole home 3D).
+Owner mark, 2026-09-30: plan x 573-643, y 726-772, near the Main Entry. The owner reads the closed rectangle there as an
+empty cavity from floor to ceiling, and sent a screenshot of the dark pocket in the 3D model to show which one. The model
+shows it (**Hide/Show entry wall cavity** in Whole home 3D). Commit 77a227f first drew only the thin wall band as the
+cavity; that was wrong and is corrected here.
 
 ## What the plan shows
 
 | Item | Plan pixels | Size |
 | --- | --- | --- |
-| Wall between the Drawing Room and the Main Entry (the "band") | x 577-680, y 715-726 | about **221 mm** deep x 1978 mm wide x 2700 mm high |
-| Entry cabinet on the Entry side of the band | x 577-680, y 726-772 | about **925 mm** (3 ft) deep x 1978 mm wide |
-| Your mark | x 573-643, y 726-772 | the southern 70 px of that cabinet |
+| The cavity: a closed rectangle on the Entry side, nothing drawn in it, no door onto the Entry | x 577-680, y 726-772 | about **925 mm (3 ft)** deep x about **2,000 mm** wide x 2,700 mm high |
+| Wall between the Drawing Room and the cavity | y 715-726 | about **221 mm** (a 9-inch wall) |
+| Shaft box (the crossed rectangle) south of the cavity | x 575-688, y 775-810 | services shaft; keep clear |
+| Your mark | x 573-643, y 726-772 | the western 70 px of the cavity |
 
-Along the Drawing Room's north wall (measured from its west wall, the same frame as the layouts) the band runs from
-**x 155 to x 2151 mm**. That is almost exactly the free wall west of the entry door (the door starts at x 2150), so it sits
-directly behind the layout A TV cabinet (x 0-2100), the layout B north sofa and the small router cabinet.
+Along the Drawing Room's north wall (measured from its west wall, the same frame as the layouts) the cavity runs from
+**x 116 to x 2149 mm**, almost exactly the free wall west of the entry door (the door starts at x 2150). It sits directly
+behind the layout A TV cabinet, the layout B/B2/B3 north sofa and the small router cabinet.
 
 ## How deep is the unused space?
 
-- **Gross: about 220 mm** (plus or minus one plan pixel, 20 mm), floor to ceiling, about 2000 mm wide.
-- **If it is a real void:** about **180 mm** is usable, keeping 40 mm of finish and backing on the Entry side.
-- **If it is solid brickwork:** about **110 mm** (half the wall) is the most a niche should take.
+- **Cavity: about 925 mm**, floor to ceiling, about 2 m wide.
+- **If the 221 mm wall may be opened** from the Drawing Room: about **1,105 mm** reach from the Drawing Room face (wall + cavity, keeping 40 mm of finish on the far side).
+- **If the wall must stay**: only about **110 mm** (half the wall) as a shallow niche.
 
-The drawing cannot tell these apart. 221 mm is almost exactly a standard 9-inch (229 mm) brick wall, which the plan draws as
-two lines with nothing between them, so it may simply be the wall. Check on site before designing around the 180 mm:
-drill a small test hole from the Drawing Room side, look for cables, pipes or a beam above, and ask whether the wall is
-load-bearing. Any niche in it needs the builder or engineer to agree.
+The drawing cannot say whether the cavity is really hollow, nor whether that 9-inch wall is load-bearing. Check on site
+(test-drill from the Drawing Room side, look for the shaft services and a beam above) and get the builder or engineer to
+agree before any opening.
 
-## What the Drawing Room can do with it
+## What the Drawing Room can do with it (opened wall)
 
 All figures come from `src/domain/entryCavity.mjs` (`recessOptions`), tested in `tests/entry-cavity.test.mjs`.
 
-| Idea | Fits the band? | Result |
+| Idea | Fits? | Result |
 | --- | --- | --- |
-| **Recess the layout A TV bay** (bay x 280-1820, 1540 wide) so the TV sits in the wall | yes | with a 305 mm cabinet it sticks out 125 mm (void) or 195 mm (brick) instead of 305 |
-| **Keep the 18-inch (457 mm) deep unit you wanted** and recess it | yes | it sticks out 277 mm (void) or 347 mm (brick), less than today's one-foot cabinet |
-| **Recess the small router, landline and intercom cabinet** in layout B, B2 or B3 (x 500-1600, 250 deep) | yes | it sticks out 70 mm (void) or 140 mm (brick): nearly flush above the north sofa |
-| **Cable and power chase**, floor to ceiling, to hide the TV, soundbar and projector cabling you asked about | yes | about 180 mm of duct: room for conduit, sockets and a network cable, with no visible wiring |
-| **Slim full-height storage** (books, games) with doors, flush with the wall | yes | 180 mm deep by about 1945 mm wide, x 155-2100 |
-| **Recess the whole 2100 mm cabinet** | no | its west end (x 0-155) is outside the band |
+| **Recess the layout A TV bay** (x 280-1820) so the TV sits in the wall | yes | a 305 mm or the 18-inch (457 mm) unit sits fully inside; the wall face stays flat |
+| **Hidden AV closet** behind a door in the wall: router, landline, intercom, Bass Module 500, cable box, with a vent | yes | 925 mm deep gives room to stand the Bass Module and route all cabling; doors face the Drawing Room |
+| **Recess the small router and phone cabinet** in layout B/B2/B3 (x 500-1600) | yes | disappears into the wall; the north sofa can sit against a flat wall |
+| **Full-height storage** flush with the wall | yes | up to about 1 m deep by 2 m wide |
+| **Recess the whole 2100 mm cabinet** | no | its west 116 mm is outside the cavity |
+| **Keep the wall** | shallow only | about 110 mm: a slim shelf or cable chase |
 
-The Entry cabinet on the other side blocks any access from the Entry, so the Drawing Room is the only way in.
+The pocket has no door to the Entry, so the Drawing Room is the only way in.
 
 ## What the model does and does not show
 
-- Shown: the band as a teal translucent volume, the Entry cabinet as an amber ghost box (its height is not confirmed; it is
-  drawn as tall as the shoe rack, 2134 mm), with labels. Neither can be measured through: the measure tool ignores them.
-- Not shown: an actual niche cut into the Drawing Room wall. That needs the void-or-brick answer first; then a recessed
-  version of the layout A cabinet or the router cabinet can be added.
+- Shown: the cavity as a teal translucent volume and the wall as an amber ghost, with labels. The measure tool ignores both.
+- Not shown: an opening cut into the Drawing Room wall. That needs the answers above; then a recessed version of the layout A
+  cabinet or an AV closet can be added.
 - The Drawing Room's north wall is still drawn 85 mm thick like every other wall in the model, so the real 221 mm thickness
-  is only visible through the cavity volume.
+  is only visible through the amber ghost.
