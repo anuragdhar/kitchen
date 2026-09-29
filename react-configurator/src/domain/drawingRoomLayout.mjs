@@ -93,6 +93,10 @@ export function checkDrawingRoomLayout(room) {
   // Same size, as asked: the second sofa matches the first.
   need(f.southSofa.widthMm === f.sofa.widthMm && f.southSofa.lengthMm === f.sofa.lengthMm, 'south sofa must match the west sofa size')
 
+  issues.push(...doorSwingIssues(room, {
+    'TV cabinet': cabinet, 'west sofa': items.westSofa, 'south sofa': items.southSofa, 'coffee table': items.table,
+  }))
+
   const views = {
     westSofa: viewingFrom(room, f.sofa, 'east', [-750, 0, 750]),
     southSofa: viewingFrom(room, f.southSofa, 'north', [-750, 0, 750]),
@@ -172,6 +176,9 @@ export function checkCornerLayout(room) {
   need(rc.router.widthMm + 20 <= compartment && rc.router.depthMm + 20 <= rc.depthMm, 'router does not fit its compartment')
   need(rc.router.heightMm + rc.router.antennaMm + 40 <= rc.heightMm - 2 * rc.panelMm, 'router antennas do not fit')
 
+  issues.push(...doorSwingIssues(room, {
+    'north sofa': northSofa, 'west sofa': westSofa, 'coffee table': table, 'wall-mounted TV': {x1: tvFront, z1: tvZ1, x2: room.widthMm, z2: tvZ2}, 'north cabinet': {x1: rc.fromWestMm, z1: 0, x2: rc.fromWestMm + rc.widthMm, z2: rc.depthMm},
+  }))
   const seats = [-750, 0, 750]
   const views = {
     westSofa: seats.map(o => viewingToCornerTv(room, f.westSofa.centerXmm, f.westSofa.centerZmm + o, [1, 0])),
@@ -244,6 +251,9 @@ export function checkCornerConsole(room) {
   const lane = g.frontX - Math.max(0, ...[northSofa, westSofa, table].filter(overlapsZ).map(r => r.x2))
   need(lane >= 800, `the walkway beside the console is ${lane} mm (needs 800)`)
 
+  issues.push(...doorSwingIssues(room, {
+    'north sofa': northSofa, 'west sofa': westSofa, 'coffee table': table, 'console': {x1: g.frontX, z1: g.z1, x2: g.face, z2: g.z2},
+  }))
   const bm = c.bassModule, sb = c.soundbar
   need(bm.widthMm + 100 <= k.moduleBayMm, 'the bass module does not fit its bay')
   need(bm.depthMm + 30 <= k.depthMm - k.backMm - 20, 'the bass module is too deep for the console')
@@ -279,6 +289,8 @@ export function checkCornerConsole(room) {
       }
     }
     result.fullReachLaneToTable = Math.round(full.frontX - table.x2)
+    const tvBox = pose => ({x1: pose.frontX, z1: pose.z - k.tvs[key].widthMm / 2, x2: pose.frontX + k.tvs[key].depthMm + 60, z2: pose.z + k.tvs[key].widthMm / 2})
+    result.doorBlockedByTvAtDeg = {parked: doorBlockedAt(room, tvBox(parked), 'east'), watch: doorBlockedAt(room, tvBox(watch), 'east')}
     poses[key] = result
     need(result.parked.laneToTable >= 800, `with the ${key}-inch TV flat, the walkway to the coffee table is ${result.parked.laneToTable} mm`)
     need(result.watch.laneToTable >= 700, `with the ${key}-inch TV pulled out for watching, the walkway is ${result.watch.laneToTable} mm`)
@@ -305,8 +317,43 @@ export function checkCornerProjector(room) {
   need(p.bottomMm >= k.heightMm + sb.heightMm + 50, 'the screen bottom edge would sit on the soundbar')
   need(Math.abs(Math.hypot(p.widthMm, p.heightMm) / 25.4 - p.screenDiagonalInches) < 0.6, 'screen width and height do not match the stated diagonal')
   need(Math.abs(p.widthMm / p.heightMm - 16 / 9) < 0.02, 'the screen is not 16:9')
+  const f = c.furniture, sofaRect = (item, alongX) => alongX ? {x1: item.centerXmm - item.lengthMm / 2, z1: item.centerZmm - item.widthMm / 2, x2: item.centerXmm + item.lengthMm / 2, z2: item.centerZmm + item.widthMm / 2} : {x1: item.centerXmm - item.widthMm / 2, z1: item.centerZmm - item.lengthMm / 2, x2: item.centerXmm + item.widthMm / 2, z2: item.centerZmm + item.lengthMm / 2}
+  issues.push(...doorSwingIssues(room, {'north sofa': sofaRect(f.northSofa, true), 'west sofa': sofaRect(f.westSofa, false)}))
   const place = projectorPlacement(room)
   need(place.x > 300 && place.x < faceX(room), 'the projector would be outside the room')
   need(room.heightMm - p.ceilingDropMm - p.body.heightMm >= 2300, 'the projector hangs lower than 2300 mm')
   return {ok: issues.length === 0, issues, placement: place, screen: {zRange: [z1, z2]}}
+}
+
+// ---- Entry door swing (the door opens INTO the room) ----
+
+export const DOOR_MIN_OPEN_DEG = 85 // a door that cannot open at least this far is treated as blocked
+const LEAF_THICKNESS_MM = 40
+
+/** Smallest opening angle (degrees) at which the door leaf touches the rectangle, or null if it never does. */
+export function doorBlockedAt(room, rectangle, hinge) {
+  const d = room.doors.find(door => door.wall === 'north')
+  const hingeX = hinge === 'east' ? d.fromMm + d.widthMm : d.fromMm
+  const direction = hinge === 'east' ? -1 : 1
+  const half = LEAF_THICKNESS_MM / 2
+  for (let deg = 0; deg <= 90; deg += 1) {
+    const a = deg * Math.PI / 180
+    for (let t = 0; t <= 1; t += 0.01) {
+      const x = hingeX + direction * d.leafMm * t * Math.cos(a), z = d.leafMm * t * Math.sin(a)
+      if (x > rectangle.x1 - half && x < rectangle.x2 + half && z > rectangle.z1 - half && z < rectangle.z2 + half) return deg
+    }
+  }
+  return null
+}
+
+/** Issues for every item (name -> {x1,z1,x2,z2}) that stops the inward-opening entry door before DOOR_MIN_OPEN_DEG. */
+export function doorSwingIssues(room, items) {
+  const d = room.doors.find(door => door.wall === 'north')
+  if (d.opensInto !== room.name) return []
+  const issues = []
+  for (const [name, rectangle] of Object.entries(items)) {
+    const blocks = ['east', 'west'].map(hinge => ({hinge, deg: doorBlockedAt(room, rectangle, hinge)})).filter(b => b.deg !== null && b.deg < DOOR_MIN_OPEN_DEG)
+    if (blocks.length) issues.push(`the ${name} stops the inward-opening entry door at ${Math.min(...blocks.map(b => b.deg))} degrees (${blocks.map(b => `${b.hinge} hinge: ${b.deg}`).join(', ')}); it must open ${DOOR_MIN_OPEN_DEG}+`)
+  }
+  return issues
 }

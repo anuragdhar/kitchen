@@ -128,3 +128,10 @@ Layout list now has A (north-wall cabinet), B (65-inch TV flat on the east wall)
 55 or 65-inch arm-mounted TV; shown first) and **B3** (future ceiling projector with an 80-inch drop-down screen). The corner
 layouts use a 600 mm coffee table (was 650) so the walkway beside the 457 mm console stays at 811 mm. A floor-to-ceiling
 18-inch unit was checked and rejected (576 mm walkway beside the north sofa). Analysis: `docs/DRAWING_ROOM_TV_WALL.md`.
+
+## Drawing Room entry door opens inward (2026-09-30)
+
+Owner: the entry door opens INTO the Drawing Room (the floor-plan drawing shows the swing on the entry side, so it is not
+trusted here). `drawing.doors[0]` now records `opensInto`, `leafMm` and an assumed hinge side; every check tests both hinge
+sides. Layout A is clear. The north-wall sofa in B, B2 and B3 stops the door after 3-16 degrees; both corner sofas at
+2100 mm clear it. The layouts are unchanged pending the owner's choice; details in `docs/DRAWING_ROOM_TV_WALL.md`.

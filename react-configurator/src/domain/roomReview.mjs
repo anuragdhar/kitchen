@@ -17,7 +17,10 @@ export const FRAME_NOTE = 'Room frame: x runs from the WEST wall (x=0) to the EA
 
 function describeOpenings(room) {
   const lines = []
-  for (const d of room.doors ?? []) lines.push(`Door on the ${d.wall} wall: ${mm(d.widthMm)} wide x ${mm(d.heightMm)} high, starting ${mm(d.fromMm)} from the ${d.wall === 'north' || d.wall === 'south' ? 'west' : 'north'} end, leads to ${d.leadsTo}.`)
+for (const d of room.doors ?? []) {
+    const swing = d.opensInto ? ` It opens INTO ${d.opensInto === room.name ? 'this room' : d.opensInto} (leaf ${mm(d.leafMm)}); the swing sweeps a quarter circle of that radius from the ${d.hingeAssumed ?? 'unknown'} jamb (hinge side not confirmed, both sides were checked), so nothing may stand in it.` : ''
+    lines.push(`Door on the ${d.wall} wall: ${mm(d.widthMm)} wide x ${mm(d.heightMm)} high, starting ${mm(d.fromMm)} from the ${d.wall === 'north' || d.wall === 'south' ? 'west' : 'north'} end, leads to ${d.leadsTo}.${swing}`)
+  }
   for (const w of room.windows ?? []) lines.push(`Window on the ${w.wall} wall: ${mm(w.widthMm)} wide, sill ${mm(w.bottomMm)}, head ${mm(w.topMm)}, starting ${mm(w.fromMm)} from the west end.`)
   for (const [wall, o] of Object.entries(room.wallOpenings ?? {})) lines.push(`Open (no wall) on the ${wall} side from ${mm(o.fromMm)} to ${mm(o.toMm)}.`)
   for (const b of room.hangingBeams ?? []) lines.push(`Ceiling beam along the ${b.wall} side from ${mm(b.fromMm)} to ${mm(b.toMm)}, drops ${mm(b.dropMm)}.`)
@@ -86,7 +89,7 @@ function drawingLayoutB(room) {
       `West sofa seats: ${spread(check.views.westSofa)}.`,
       `North sofa seats: ${spread(check.views.northSofa)}.`,
       `Walking lane between the north sofa end and the TV: ${mm(check.clearances.laneNorthSofaToTv)}; table to TV: ${mm(check.clearances.laneTableToTv)}; at the bass module: ${mm(check.clearances.laneBassModule)}.`,
-      `Entry door: ${mm(check.clearances.doorClearPastNorthSofa)} still clear past the north sofa; the TV front is ${mm(check.clearances.tvFrontBeyondDoorEastJamb)} beyond the door's east edge line. The door swings OUT into the Main Entry, not into this room.`,
+      `Entry door: ${mm(check.clearances.doorClearPastNorthSofa)} still clear past the north sofa; the TV front is ${mm(check.clearances.tvFrontBeyondDoorEastJamb)} beyond the door's east edge line.`,
     ],
     issues: check.issues,
   }

@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import {checkDrawingRoomLayout, checkCornerLayout, tvWallGeometry} from '../src/domain/drawingRoomLayout.mjs'
+import {checkDrawingRoomLayout, checkCornerLayout, checkCornerConsole, checkCornerProjector, doorBlockedAt, doorSwingIssues, tvWallGeometry} from '../src/domain/drawingRoomLayout.mjs'
 import {EMPTY_ROOM_SHELLS} from '../src/config/roomShellConfig.js'
 
 const room = EMPTY_ROOM_SHELLS.drawing
@@ -22,8 +22,12 @@ test('the brief is encoded: 65-inch TV, one-foot cabinet, two same-size 3-seater
   assert.deepEqual(sofa, {centerXmm: 580, centerZmm: 2420, widthMm: 880, lengthMm: 2250}, 'west sofa is unchanged')
 })
 
-test('the entry door and its opening are untouched', () => {
-  assert.deepEqual(room.doors, [{wall: 'north', fromMm: 2150, widthMm: 1000, heightMm: 2100, leadsTo: 'Main entry'}])
+test('the entry door has not moved, and it opens INTO the room (owner, 2026-09-30)', () => {
+  const [door] = room.doors
+  assert.equal(room.doors.length, 1)
+  assert.deepEqual([door.wall, door.fromMm, door.widthMm, door.heightMm, door.leadsTo], ['north', 2150, 1000, 2100, 'Main entry'])
+  assert.equal(door.opensInto, 'Drawing Room')
+  assert.ok(door.leafMm > 0 && door.leafMm < door.widthMm)
 })
 
 test('every device sits where the brief put it', () => {
@@ -48,10 +52,36 @@ test('the checker catches an oversized TV, a blocked door, a bass module that do
   assert.ok(checkDrawingRoomLayout(table).issues.some(m => /coffee table/.test(m)))
 })
 
-test('layout B (corner sofas, east-wall TV) fits with no issues', () => {
+// Both corner sofas cut to a common 2100 mm: the longest that stays clear of the inward-opening door.
+const withShorterSofas = () => {
+  const r = structuredClone(room), f = r.cornerLayout.furniture
+  f.northSofa.lengthMm = 2100; f.northSofa.centerXmm = 30 + 1050
+  f.westSofa.lengthMm = 2100; f.westSofa.centerZmm = 1040 + 1050
+  return r
+}
+
+test('layout B as drawn has exactly one problem: the north sofa stops the inward-opening door', () => {
   const result = checkCornerLayout(room)
-  assert.deepEqual(result.issues, [])
+  assert.equal(result.issues.length, 1, result.issues.join(' | '))
+  assert.match(result.issues[0], /north sofa stops the inward-opening entry door at \d+ degrees/)
   assert.equal(result.clearances.sofaToSofa, 100)
+})
+
+test('the door problem holds for either hinge side, and clears once both sofas are 2100 mm long', () => {
+  const northSofa = {x1: 30, z1: 60, x2: 2280, z2: 940}
+  assert.ok(doorBlockedAt(room, northSofa, 'east') < 10)
+  assert.ok(doorBlockedAt(room, northSofa, 'west') < 30)
+  const fixed = withShorterSofas()
+  assert.deepEqual(checkCornerLayout(fixed).issues, [])
+  assert.deepEqual(checkCornerConsole(fixed).issues, [])
+  assert.deepEqual(checkCornerProjector(fixed).issues, [])
+  assert.equal(doorBlockedAt(fixed, {x1: 30, z1: 60, x2: 2130, z2: 940}, 'east'), null)
+  assert.equal(doorBlockedAt(fixed, {x1: 30, z1: 60, x2: 2130, z2: 940}, 'west'), null)
+})
+
+test('layout A is clear of the door swing on either hinge side', () => {
+  assert.deepEqual(doorSwingIssues(room, {cabinet: {x1: 0, z1: 0, x2: 2100, z2: 305}}), [])
+  assert.deepEqual(checkDrawingRoomLayout(room).issues.filter(m => /door/.test(m)), [])
 })
 
 test('layout B keeps the two sofas the same size as each other and as layout A', () => {

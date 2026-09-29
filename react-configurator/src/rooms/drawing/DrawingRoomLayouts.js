@@ -3,6 +3,7 @@ import {createDrawingRoomTvWall} from './DrawingRoomTvWall.js'
 import {createDrawingRoomCornerTv} from './DrawingRoomCornerTv.js'
 import {createDrawingRoomSeating, createDrawingRoomCornerSeating} from './DrawingRoomSeating.js'
 import {createDrawingLayoutLights} from './DrawingRoomLighting.js'
+import {createDrawingRoomDoorSwing} from './DrawingRoomDoorSwing.js'
 
 export const DRAWING_LAYOUTS = [
   {key: 'northTv', label: 'A: TV on the north wall (cabinet, recessed)'},
@@ -27,6 +28,7 @@ export function createDrawingRoomLayouts(room, {wallFaceMm = 0, initial = 'corne
     cornerProjector: createDrawingRoomCornerTv(room, {wallFaceMm, variant: 'projector'}),
   }
   const CORNER = Object.keys(corner)
+  const doorSwing = createDrawingRoomDoorSwing(room, {wallFaceMm})
   const registry = [
     {part: tvNorth, layouts: ['northTv'], into: built},
     {part: createDrawingLayoutLights(room, 'northTv'), layouts: ['northTv'], into: built},
@@ -35,6 +37,7 @@ export function createDrawingRoomLayouts(room, {wallFaceMm = 0, initial = 'corne
     {part: createDrawingLayoutLights(room, 'cornerSofas'), layouts: CORNER, into: built},
     {part: createDrawingRoomCornerSeating(room, {wallFaceMm}), layouts: CORNER, into: furniture},
   ]
+  built.add(doorSwing)
   registry.forEach(({part, into}) => into.add(part))
   let current = initial
   const setLayout = key => {
@@ -46,6 +49,7 @@ export function createDrawingRoomLayouts(room, {wallFaceMm = 0, initial = 'corne
   setLayout(initial)
   return {
     built, furniture, setLayout, setLabels, layout: () => current,
+    setDoorSwing: visible => { doorSwing.visible = visible },
     setArm: pulled => corner.cornerConsole.userData.setArm(pulled),
     setTvSize: key => corner.cornerConsole.userData.setTvSize(key),
   }

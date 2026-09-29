@@ -114,20 +114,22 @@ and 253 mm to the end of the solid wall.
 | Best-placed sofa | south sofa, 4.62-4.70 m, 1-10 degrees off straight | west sofa, 2.7-3.2 m, 7-35 degrees off (centre seat 2.9 m, 22) |
 | Other sofa | west sofa, 1.6-3.0 m but 72-81 degrees off | north sofa, 1.4-2.9 m but 66-78 degrees off |
 | Distance for a 65-inch | too far (aim for about 2-3.5 m) | right |
-| Entry door | untouched, out of the way | the walking lane passes the TV |
+| Entry door (opens INTO the room) | swing zone is clear | **the north sofa blocks it** (see "Entry door swing" below); the walking lane also passes the TV |
 | Walking lane past the TV | not applicable | 943 mm (north sofa to TV), 1153 mm (table to TV), 902 mm at the Bass Module |
-| Sofa vs entry door | clear | north sofa end passes the door jamb line by 130 mm; 870 mm of the door stays clear |
+| Sofa vs entry door | clear | north sofa end passes the door jamb line by 130 mm and stops the door after 3-16 degrees |
 | TV vs door edge | not applicable | TV front is only 73 mm beyond the door's east edge line |
 | Soundbar and Bass Module | in the cabinet, beside each other | soundbar on the wall, module on the floor below |
 | Router and phones | in the cabinet | in the small cabinet above the north sofa |
 
 What to know about B:
 
-- **The entry door itself is not blocked.** On the plan the door swings out into the Main Entry, so its leaf never
-  reaches the TV. The trade-off is the walking route: everyone who comes in walks down the strip between the north
-  sofa and the east wall, past the TV and across the west sofa's line of sight.
-- **The 2250 mm north sofa is 130 mm longer than the wall it sits on** (the free stretch is 2150 mm to the door edge).
-  It still leaves 870 mm of door clear, which is enough to pass, but the sofa arm ends in the doorway line.
+- **Correction (2026-09-30):** an earlier version of this note said the entry door swings out into the Main Entry, taken
+  from the floor-plan drawing. The owner says it opens INTO the Drawing Room, so the sofa placement in B was wrong; see
+  "Entry door swing" below.
+- **The walking route** is unchanged: everyone who comes in walks down the strip between the north sofa and the east
+  wall, past the TV and across the west sofa's line of sight.
+- **The 2250 mm north sofa is 130 mm longer than the wall it sits on** (the free stretch is 2150 mm to the door edge), and
+  with an inward-opening door that is a real conflict, not just a tight fit.
 - **The small cabinet is above sofa-back height.** Its bottom edge is 1450 mm so seated heads clear it; the phones
   and intercom are therefore standing-height, not sit-and-reach.
 - **Only one sofa can face the TV in either layout**; two sofas at right angles cannot both point at one screen.
@@ -199,6 +201,33 @@ not modelled).
 Nothing has to be replaced now. Build B2 with the 55-inch on the arm; when the TV wears out, choose a 65-inch on the same
 arm (the bay already allows it) or move to the projector. The console, the soundbar spot, the Bass Module bay and the router
 cabinet serve all three.
+
+## Entry door swing (the door opens INTO the room)
+
+The door is 1000 mm wide with a leaf of about 950 mm, in the north wall at x 2150-3150. Opening inward, the leaf sweeps a
+quarter circle of that radius over the doorway span (x about 2150-3150, z 0-950). The hinge side is not confirmed (the plan
+draws it at the east jamb), so every check runs for both sides. The red zone in the model shows the sweep
+(**Hide/Show entry door swing**); the fainter amber zone is the other possible hinge.
+
+| Layout | Result (door must open at least 85 degrees) |
+| --- | --- |
+| A: TV cabinet on the north wall | clear on either hinge side; the cabinet ends at x 2100, 50 mm short of the leaf |
+| B, B2, B3: north-wall sofa (x 30-2280) | **blocked**: the sofa arm stops the door after 3 degrees (east hinge) or 16 degrees (west hinge) |
+| B2 console (x 2856-3313, z 960-2040) | clear: the fully open leaf ends 10 mm short of its north face (89 degrees) |
+| B2 with the TV arm pulled out | the TV stops the door at 63-70 degrees: fold the arm flat before opening the door |
+| B, wall-mounted TV | the fully open leaf ends 73 mm from the TV front |
+
+Ways to make B work (all checked with `checkCornerLayout`, `checkCornerConsole` and `checkCornerProjector`):
+
+1. **Shorten both corner sofas to 2100 mm** (a common 3-seater length; they stay the same size as each other). The north sofa
+   then ends at x 2130, just clear of the leaf on either hinge side, and the walkway beside it grows from 943 to 1093 mm.
+   The west sofa also shortens (z 1040-3140). This is the smallest change and keeps the plan.
+2. **Re-hang the door to open outward**, as the floor-plan drawing shows (not what the owner says the house has).
+3. **A sliding or pocket door** for this opening.
+4. **Move the north sofa away from the door**: not possible here, because the free wall is only 2150 mm.
+
+Until one of these is chosen, the model still shows the 2250 mm sofas, and the checks list the door conflict as a known
+problem for B, B2 and B3.
 
 ## Things to confirm before building
 

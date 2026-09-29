@@ -126,7 +126,10 @@ export const EMPTY_ROOM_SHELLS={
     // The northeast corner of this wall backs Bedroom 1's northEastRecessWardrobe
     // (roomShellConfig.js bedroom1.furniture), not a door into Drawing Room -
     // confirmed against the owner's own floor-plan mark (owner feedback 2026-09-29).
-    doors:[{wall:'north',fromMm:2150,widthMm:1000,heightMm:2100,leadsTo:'Main entry'}],
+    // The owner says this door opens INTO the Drawing Room (2026-09-30); the floor-plan drawing shows the swing on the entry side,
+    // so the drawing is not trusted for this. The hinge side is NOT known: the plan draws it at the east jamb, and every check
+    // below tests both hinge sides. leafMm is the door leaf width (opening less frame).
+    doors:[{wall:'north',fromMm:2150,widthMm:1000,heightMm:2100,leadsTo:'Main entry',opensInto:'Drawing Room',hingeAssumed:'east',leafMm:950}],
     windows:[{wall:'south',fromMm:471,widthMm:2298,bottomMm:550,topMm:2100,frameStyle:'dark',mullionFractions:[.62],source:'clipboard screenshot'}],
   },
   kitchenShell:{name:'Kitchen shell',widthMm:2324,lengthMm:3070,heightMm:2700,color:'#b45309',source:'A501 floor plan'},

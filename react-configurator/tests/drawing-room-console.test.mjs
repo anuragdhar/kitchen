@@ -7,9 +7,12 @@ import {EMPTY_ROOM_SHELLS} from '../src/config/roomShellConfig.js'
 const room = EMPTY_ROOM_SHELLS.drawing
 const clone = () => structuredClone(room)
 
+const doorOnly = issues => issues.filter(m => !/inward-opening entry door/.test(m))
+
 test('the 18-inch low console fits east of the coffee table with a walkway of at least 800 mm', () => {
   const r = checkCornerConsole(room)
-  assert.deepEqual(r.issues, [])
+  assert.deepEqual(doorOnly(r.issues), [], 'only the north sofa vs door swing problem remains')
+  assert.ok(r.issues.every(m => /north sofa stops/.test(m)), 'the console itself never stops the door before 85 degrees')
   assert.ok(r.lane >= 800)
   assert.equal(room.cornerLayout.console.depthMm, 457)
 })
@@ -63,7 +66,7 @@ test('the console checker catches a console too close to the sofa, too deep, or 
 
 test('the ceiling projector option fits: an 80-inch 16:9 screen, projector over open floor, hung above head height', () => {
   const r = checkCornerProjector(room)
-  assert.deepEqual(r.issues, [])
+  assert.deepEqual(doorOnly(r.issues), [])
   assert.equal(projectorPlacement(room).over, 'open floor')
   assert.ok(room.cornerLayout.projector.screenDiagonalInches === 80)
   const big = clone(); big.cornerLayout.projector.widthMm = 2037; big.cornerLayout.projector.heightMm = 1146; big.cornerLayout.projector.screenDiagonalInches = 92
@@ -88,4 +91,10 @@ test('review briefs describe each corner option and state the full-height reject
   assert.match(b3.text, /Ceiling projector/)
   assert.match(b3.text, /Drop-down screen/)
   assert.ok(b3.planItems.some(i => /Projector/.test(i.label)))
+})
+
+test('with the door opening inward, a pulled-out arm TV stops the door; a flat one does not', () => {
+  const p = checkCornerConsole(room).poses['55']
+  assert.equal(p.doorBlockedByTvAtDeg.parked, null)
+  assert.ok(p.doorBlockedByTvAtDeg.watch < 85, 'fold the arm flat before opening the door')
 })
