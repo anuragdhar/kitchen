@@ -43,10 +43,34 @@ All figures come from `src/domain/entryCavity.mjs` (`recessOptions`), tested in 
 
 The pocket has no door to the Entry, so the Drawing Room is the only way in.
 
+## Wall storage (built in the model, 2026-09-30)
+
+Owner decision: open the wall and use the depth for storage, with the router and phones at the front. Corner layouts B, B2 and
+B3 only; layout A keeps the wall closed behind its cabinet (a plug fills the opening).
+
+| Part | Size (Drawing Room frame: x from the west wall, height from the floor) |
+| --- | --- |
+| Opening through the north wall | x 200-2050 (1,850 wide), 1,000-2,350 high (1,350), **1,105 deep** from the room face, i.e. through the 221 mm wall and into the cavity |
+| Router, landline and intercom bay, **in front** | x 500-1600, 1,450-2,100 high, 250 deep, recessed so its face is flush with the wall; open lattice so the router's signal is not blocked |
+| Storage either side and behind | left bay 300 wide, right bay 450 wide, both 1,105 deep; the space behind the router bay is reached from the sides; shelves at 1,350, 1,700 and 2,050 |
+| Doors | flush panels either side of the router bay and above and below it |
+| Gross volume | about 2,600 litres (2.6 m3) |
+
+Limits, stated plainly:
+- The opening starts at 1,000 mm because the north sofa back is about 900 mm; you reach it by kneeling on the sofa or with a
+  step, so it suits things used a few times a year (bedding, luggage, festival items), not daily storage.
+- Both side bays are narrow (300 and 450 mm) but very deep; use deep shelves or boxes on runners.
+- The router bay is at eye level with no door; the router's antennas and cables sit at the back, with power from the cavity side.
+- Not confirmed on site: that the cavity is hollow and that the 9-inch wall may be opened. Do not cut until the builder or
+  engineer agrees. Checks live in `src/domain/wallStorage.mjs`, tests in `tests/wall-storage.test.mjs`.
+
+In the app: "Open wall storage doors" (Whole home 3D and the Drawing Room page) hides the doors to show the shelves, and the
+Drawing Room page has a "North wall view" button.
+
 ## What the model does and does not show
 
 - Shown: the cavity as a teal translucent volume and the wall as an amber ghost, with labels. The measure tool ignores both.
-- Not shown: an opening cut into the Drawing Room wall. That needs the answers above; then a recessed version of the layout A
-  cabinet or an AV closet can be added.
+  In the corner layouts the opening is cut through the Drawing Room wall and the shared Entry wall, and the storage stands in the cavity.
+- Layout A still has no opening; recessing its TV bay into the cavity is possible (see the table above) but not modelled.
 - The Drawing Room's north wall is still drawn 85 mm thick like every other wall in the model, so the real 221 mm thickness
   is only visible through the amber ghost.

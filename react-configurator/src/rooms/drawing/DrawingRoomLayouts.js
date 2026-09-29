@@ -4,6 +4,7 @@ import {createDrawingRoomCornerTv} from './DrawingRoomCornerTv.js'
 import {createDrawingRoomSeating, createDrawingRoomCornerSeating} from './DrawingRoomSeating.js'
 import {createDrawingLayoutLights} from './DrawingRoomLighting.js'
 import {createDrawingRoomDoorSwing} from './DrawingRoomDoorSwing.js'
+import {createDrawingRoomWallStorage} from './DrawingRoomWallStorage.js'
 
 export const DRAWING_LAYOUTS = [
   {key: 'northTv', label: 'A: TV on the north wall (cabinet, recessed)'},
@@ -18,7 +19,7 @@ export const DRAWING_LAYOUTS = [
  * Add both groups to the scene; setLayout switches which layout is visible.
  * The three corner-sofa layouts share one seating group and one set of ceiling fixtures.
  */
-export function createDrawingRoomLayouts(room, {wallFaceMm = 0, initial = 'cornerConsole'} = {}) {
+export function createDrawingRoomLayouts(room, {wallFaceMm = 0, initial = 'cornerConsole', wallMaterial, wallThicknessMm} = {}) {
   const built = new THREE.Group(); built.name = 'Drawing Room fixed pieces'
   const furniture = new THREE.Group(); furniture.name = 'Drawing Room furniture'
   const tvNorth = createDrawingRoomTvWall(room, {insetMm: wallFaceMm})
@@ -29,6 +30,7 @@ export function createDrawingRoomLayouts(room, {wallFaceMm = 0, initial = 'corne
   }
   const CORNER = Object.keys(corner)
   const doorSwing = createDrawingRoomDoorSwing(room, {wallFaceMm})
+  const wallStorage = createDrawingRoomWallStorage(room, {wallFaceMm, wallMaterial, wallThicknessMm})
   const registry = [
     {part: tvNorth, layouts: ['northTv'], into: built},
     {part: createDrawingLayoutLights(room, 'northTv'), layouts: ['northTv'], into: built},
@@ -36,6 +38,8 @@ export function createDrawingRoomLayouts(room, {wallFaceMm = 0, initial = 'corne
     ...Object.entries(corner).map(([key, part]) => ({part, layouts: [key], into: built})),
     {part: createDrawingLayoutLights(room, 'cornerSofas'), layouts: CORNER, into: built},
     {part: createDrawingRoomCornerSeating(room, {wallFaceMm}), layouts: CORNER, into: furniture},
+    {part: wallStorage.storage, layouts: room.wallStorage.layouts, into: built},
+    {part: wallStorage.plug, layouts: DRAWING_LAYOUTS.map(l => l.key).filter(key => !room.wallStorage.layouts.includes(key)), into: built},
   ]
   built.add(doorSwing)
   registry.forEach(({part, into}) => into.add(part))
@@ -45,11 +49,12 @@ export function createDrawingRoomLayouts(room, {wallFaceMm = 0, initial = 'corne
     current = key
     registry.forEach(({part, layouts}) => { part.visible = layouts.includes(key) })
   }
-  const setLabels = visible => { for (const part of [tvNorth, ...Object.values(corner)]) part.userData.setLabels(visible) }
+  const setLabels = visible => { for (const part of [tvNorth, wallStorage.storage, ...Object.values(corner)]) part.userData.setLabels(visible) }
   setLayout(initial)
   return {
     built, furniture, setLayout, setLabels, layout: () => current,
     setDoorSwing: visible => { doorSwing.visible = visible },
+    setStorageOpen: open => wallStorage.storage.userData.setOpen(open),
     setArm: pulled => corner.cornerConsole.userData.setArm(pulled),
     setTvSize: key => corner.cornerConsole.userData.setTvSize(key),
   }

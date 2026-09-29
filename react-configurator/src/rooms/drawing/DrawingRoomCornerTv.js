@@ -39,9 +39,10 @@ export function createDrawingRoomCornerTv(room, {wallFaceMm = 0, variant = 'wall
     labels.add(sprite)
   }
 
-  // ---- Small cabinet on the north wall above the north sofa: router | landline | intercom ----
+  // ---- Router | landline | intercom bay, recessed into the north-wall storage opening above the north sofa ----
   {
-    const p = rc.panelMm, z0 = wallFaceMm, x0 = rc.fromWestMm, W = rc.widthMm, H = rc.heightMm, D = rc.depthMm, y0 = rc.bottomMm
+    const p = rc.panelMm, z0 = wallFaceMm - rc.depthMm, // recessed: the front stays flush with the wall face (room.wallStorage)
+       x0 = rc.fromWestMm, W = rc.widthMm, H = rc.heightMm, D = rc.depthMm, y0 = rc.bottomMm
     box(W, H, 12, x0 + W / 2, y0 + H / 2, z0 + 6, inside)
     for (const y of [y0 + p / 2, y0 + H - p / 2]) box(W, p, D, x0 + W / 2, y, z0 + D / 2, carcass)
     const inner = (W - 4 * p) / 3

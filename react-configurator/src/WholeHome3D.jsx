@@ -87,7 +87,7 @@ function LiveWholeHome3D({onOpenRoom}){
   const tvLabelsRef=useRef(false)
   // Drawing Room seating layout: 'cornerSofas' (B, requested 2026-09-29) or 'northTv' (A, default TV wall).
   const [drawingLayout,setDrawingLayout]=useState('cornerConsole'),drawingLayoutRef=useRef('cornerConsole')
-  const [armOut,setArmOut]=useState(false),[tvSize,setTvSize]=useState('55'),[doorSwing,setDoorSwing]=useState(true)
+  const [armOut,setArmOut]=useState(false),[tvSize,setTvSize]=useState('55'),[doorSwing,setDoorSwing]=useState(true),[storageOpen,setStorageOpen]=useState(false)
   const [storageCoverOpen,setStorageCoverOpen]=useState(false)
   const [wallSelection,setWallSelection]=useState(null)
   const [wallNote,setWallNote]=useState('')
@@ -172,7 +172,23 @@ function LiveWholeHome3D({onOpenRoom}){
       wallMeshes.push(beam)
       return beam
     }
-    WALLS.forEach(segment=>{const mesh=addSpan(segment);if(mesh)mesh.userData={planWall:segment}})
+    // The wall shared with the Drawing Room has the storage opening cut through it (the Drawing Room's own north edge is cut in roomEdge).
+    const storageCut=(()=>{
+      const b=ROOMS.find(room=>room.name==='Drawing Room').bounds,d=EMPTY_ROOM_SHELLS.drawing,st=d.wallStorage
+      const planX=mm=>b[2]-(mm/d.widthMm)*(b[2]-b[0])
+      return {y:b[3],x1:planX(st.fromWestMm+st.widthMm),x2:planX(st.fromWestMm),bottom:st.bottomMm/1000,top:(st.bottomMm+st.heightMm)/1000}
+    })()
+    WALLS.forEach(segment=>{
+      const [ax,ay,bx,by]=segment
+      if(ay===storageCut.y&&by===storageCut.y&&Math.min(ax,bx)<storageCut.x1&&Math.max(ax,bx)>storageCut.x2){
+        const lo=Math.min(ax,bx),hi=Math.max(ax,bx)
+        for(const [pieceA,pieceB,bottom,top] of [[lo,storageCut.x1,0,HEIGHT],[storageCut.x1,storageCut.x2,0,storageCut.bottom],[storageCut.x1,storageCut.x2,storageCut.top,HEIGHT],[storageCut.x2,hi,0,HEIGHT]]){
+          const mesh=addSpan([pieceA,ay,pieceB,by],bottom,top);if(mesh)mesh.userData={planWall:segment}
+        }
+        return
+      }
+      const mesh=addSpan(segment);if(mesh)mesh.userData={planWall:segment}
+    })
     model.add(createEntryArrivalDoor(X,Z))
     model.add(createEntryFoldSeat(X,Z))
     // Entry wall cavity (owner mark 2026-09-30): translucent volumes for the empty 3-ft pocket on the Entry side of the Drawing
@@ -286,13 +302,13 @@ function LiveWholeHome3D({onOpenRoom}){
     const drawing=EMPTY_ROOM_SHELLS.drawing,db=boundsFor('Drawing Room')
     const dg=roomGroup(db,drawing.widthMm,drawing.lengthMm)
     dg.add(createRoomAirConditioning(drawing))
-    const drawingLayouts=createDrawingRoomLayouts(drawing,{wallFaceMm:WALL_THICKNESS_M*500,initial:drawingLayoutRef.current});dg.add(drawingLayouts.built,drawingLayouts.furniture)
+    const drawingLayouts=createDrawingRoomLayouts(drawing,{wallFaceMm:WALL_THICKNESS_M*500,wallThicknessMm:WALL_THICKNESS_M*1000,wallMaterial:drawingWallMaterial,initial:drawingLayoutRef.current});dg.add(drawingLayouts.built,drawingLayouts.furniture)
     drawingLayouts.setLabels(tvLabelsRef.current)
     const partition=createDrawingLobbyPartition(drawing,'drawing');dg.add(partition)
     partition.userData.setOpen(partitionOpen)
     const dw=drawing.windows[0],dd=drawing.doors[0],open=drawing.wallOpenings.east
     roomEdge(db,drawing.widthMm,drawing.lengthMm,'south',[{start:dw.fromMm,end:dw.fromMm+dw.widthMm,bottom:dw.bottomMm/1000,top:dw.topMm/1000,glass:true}])
-    roomEdge(db,drawing.widthMm,drawing.lengthMm,'north',drawing.doors.filter(door=>door.wall==='north').map(door=>({start:door.fromMm,end:door.fromMm+door.widthMm,top:door.heightMm/1000})))
+    roomEdge(db,drawing.widthMm,drawing.lengthMm,'north',[{start:drawing.wallStorage.fromWestMm,end:drawing.wallStorage.fromWestMm+drawing.wallStorage.widthMm,bottom:drawing.wallStorage.bottomMm/1000,top:(drawing.wallStorage.bottomMm+drawing.wallStorage.heightMm)/1000},...drawing.doors.filter(door=>door.wall==='north').map(door=>({start:door.fromMm,end:door.fromMm+door.widthMm,top:door.heightMm/1000}))])
     roomEdge(db,drawing.widthMm,drawing.lengthMm,'east',[{start:open.fromMm,end:open.toMm,top:HEIGHT}])
     roomEdge(db,drawing.widthMm,drawing.lengthMm,'west')
     const beam=drawing.hangingBeams[0]
@@ -790,7 +806,7 @@ function LiveWholeHome3D({onOpenRoom}){
     const interiorRoomIds=['bedroom3','study','balcony','terrace','kitchen','lobby','drawing','bedroom1','bedroom1-balcony','entry']
     const interiorScene=registerInteriorScene({id:'whole-home',scene,camera,renderer,zones:ROOMS.map((r,index)=>({id:interiorRoomIds[index],min:[X(r.bounds[0]),0,Z(r.bounds[1])],max:[X(r.bounds[2]),HEIGHT,Z(r.bounds[3])]}))})
     let raf=0;const render=()=>{controls.update();renderer.render(scene,camera);raf=requestAnimationFrame(render)};render()
-    sceneRef.current={setCavity:visible=>{cavityGroup.visible=visible},setRoomLight,setTvLabels:visible=>drawingLayouts.setLabels(visible),setDrawingLayout:key=>drawingLayouts.setLayout(key),setDrawingArm:pulled=>drawingLayouts.setArm(pulled),setDoorSwing:visible=>drawingLayouts.setDoorSwing(visible),setDrawingTv:key=>drawingLayouts.setTvSize(key),setMedicineCabinetOpen:value=>doorInfill.userData.setOpen(value),setStorageCoverOpen:value=>storeStorage.userData.setCoverOpen(value),setMirrorOpen:value=>vanity.userData.setMirrorOpen?.(value),setPartitionOpen:value=>partition.userData.setOpen?.(value),setCamera,setWallsVisible:visible=>{walls.visible=visible},setBoardOpen:value=>{ironingStorage.userData.setBoardOpen(value)},setPoojaPersonVisible:visible=>{seatedPerson.visible=visible},setPoojaDoorsOpen:value=>{poojaDoors.userData.setDoorsOpen(value)},clearMark,setDaylight,setMeasure,clearMeasure}
+    sceneRef.current={setCavity:visible=>{cavityGroup.visible=visible},setRoomLight,setTvLabels:visible=>drawingLayouts.setLabels(visible),setDrawingLayout:key=>drawingLayouts.setLayout(key),setDrawingArm:pulled=>drawingLayouts.setArm(pulled),setDoorSwing:visible=>drawingLayouts.setDoorSwing(visible),setStorageOpen:open=>drawingLayouts.setStorageOpen(open),setDrawingTv:key=>drawingLayouts.setTvSize(key),setMedicineCabinetOpen:value=>doorInfill.userData.setOpen(value),setStorageCoverOpen:value=>storeStorage.userData.setCoverOpen(value),setMirrorOpen:value=>vanity.userData.setMirrorOpen?.(value),setPartitionOpen:value=>partition.userData.setOpen?.(value),setCamera,setWallsVisible:visible=>{walls.visible=visible},setBoardOpen:value=>{ironingStorage.userData.setBoardOpen(value)},setPoojaPersonVisible:visible=>{seatedPerson.visible=visible},setPoojaDoorsOpen:value=>{poojaDoors.userData.setDoorsOpen(value)},clearMark,setDaylight,setMeasure,clearMeasure}
     setRoomLight(roomLightRef.current/100)
     setDaylight(sunHourRef.current)
     return()=>{interiorScene.dispose();cancelAnimationFrame(raf);observer.disconnect();renderer.domElement.removeEventListener('pointerdown',onPointerDown);renderer.domElement.removeEventListener('pointerup',onPointerUp);renderer.domElement.removeEventListener('pointermove',onPointerMove);window.removeEventListener('keydown',onMeasureKey);cancelAnimationFrame(moveFrame);tip.remove();controls.dispose();model.traverse(object=>{object.geometry?.dispose?.();object.material?.dispose?.()});markedWallMaterial.dispose();texture.dispose();environment.dispose();pmrem.dispose();renderer.dispose();renderer.domElement.remove();sceneRef.current=null}
@@ -807,6 +823,7 @@ function LiveWholeHome3D({onOpenRoom}){
   useEffect(()=>{drawingLayoutRef.current=drawingLayout;sceneRef.current?.setDrawingLayout(drawingLayout)},[drawingLayout])
   useEffect(()=>{sceneRef.current?.setDrawingArm(armOut)},[armOut])
   useEffect(()=>{sceneRef.current?.setDoorSwing(doorSwing)},[doorSwing])
+  useEffect(()=>{sceneRef.current?.setStorageOpen(storageOpen)},[storageOpen])
   useEffect(()=>{sceneRef.current?.setDrawingTv(tvSize)},[tvSize])
   useEffect(()=>{sceneRef.current?.setPartitionOpen(partitionOpen)},[partitionOpen])
   useEffect(()=>{sceneRef.current?.setPoojaDoorsOpen(poojaDoorsOpen)},[poojaDoorsOpen])
@@ -832,6 +849,7 @@ function LiveWholeHome3D({onOpenRoom}){
           <select value={drawingLayout} onChange={event=>setDrawingLayout(event.target.value)} style={{padding:'7px 8px',borderRadius:9,border:'1px solid #cbd5e1',maxWidth:340}}>{DRAWING_LAYOUTS.map(layout=><option key={layout.key} value={layout.key}>{layout.label}</option>)}</select>
         </label>
         <button onClick={()=>setDoorSwing(value=>!value)} aria-pressed={doorSwing} style={buttonStyle(doorSwing)} title="The Drawing Room entry door opens into the room: red is the area its leaf sweeps">{doorSwing?'Hide entry door swing':'Show entry door swing'}</button>
+        <button onClick={()=>setStorageOpen(value=>!value)} aria-pressed={storageOpen} style={buttonStyle(storageOpen)} title="The deep storage cut into the cavity behind the Drawing Room north wall (corner layouts): doors hidden to show the shelves">{storageOpen?'Close wall storage doors':'Open wall storage doors'}</button>
         {drawingLayout==='cornerConsole'&&<>
           <button onClick={()=>setArmOut(value=>!value)} aria-pressed={armOut} style={buttonStyle(armOut)}>{armOut?'Park TV flat on the wall':'Pull TV out and turn it toward the north sofa'}</button>
           <button onClick={()=>setTvSize(value=>value==='55'?'65':'55')} style={buttonStyle(tvSize==='65')}>TV size: {tvSize} inch (click for {tvSize==='55'?'65':'55'})</button>

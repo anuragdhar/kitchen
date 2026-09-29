@@ -132,6 +132,12 @@ export const EMPTY_ROOM_SHELLS={
     // leaf is about 855 mm wide or less, so those are recorded here. hingeKnown means the hinge side is settled (inferred, not
     // measured); leafMm is a working value: measure the real leaf on site. With hingeKnown false every check tests both sides.
     doors:[{wall:'north',fromMm:2150,widthMm:1000,heightMm:2100,leadsTo:'Main entry',opensInto:'Drawing Room',hinge:'east',hingeKnown:true,leafMm:850}],
+    // Owner decision 2026-09-30: open the north wall into the empty 3 ft cavity on the Entry side (docs/ENTRY_WALL_CAVITY.md) for deep
+    // storage, with the router, landline and intercom (cornerLayout.routerCabinet) recessed in the front of it. depthMm is measured
+    // from the Drawing Room face: the 221 mm wall plus the 925 mm cavity less a 40 mm skin. The opening sits above the north sofa
+    // (its back is about 900 mm high), so it is for things reached rarely. Used by the corner-sofa layouts only; layout A keeps
+    // the wall closed behind its cabinet. Not yet confirmed on site: that the cavity is hollow and the wall may be opened.
+    wallStorage:{layouts:['cornerSofas','cornerConsole','cornerProjector'],fromWestMm:200,widthMm:1850,bottomMm:1000,heightMm:1350,depthMm:1105,panelMm:18,shelves:[1350,1700,2050]},
     windows:[{wall:'south',fromMm:471,widthMm:2298,bottomMm:550,topMm:2100,frameStyle:'dark',mullionFractions:[.62],source:'clipboard screenshot'}],
   },
   kitchenShell:{name:'Kitchen shell',widthMm:2324,lengthMm:3070,heightMm:2700,color:'#b45309',source:'A501 floor plan'},
