@@ -25,10 +25,16 @@ export function PhotoPicker({label,disabled,onFiles}){
 }
 
 export default function InspirationPhotos({item,disabled,onUpload,onChange}){
-  const photos=item.photos??[],dialog=useRef(null),[active,setActive]=useState(0);
-  const show=index=>{setActive(index);dialog.current?.showModal();};
+  const photos=item.photos??[],dialog=useRef(null),[active,setActive]=useState(0),[viewerOpen,setViewerOpen]=useState(false);
+  const show=index=>{setActive(index);setViewerOpen(true);dialog.current?.showModal();};
   const close=()=>dialog.current?.close();
   const selected=photos[active];
+  const handleKey=event=>{
+    if(event.key==='Escape')event.stopPropagation();
+    if(!photos.length)return;
+    if(event.key==='ArrowRight'){event.preventDefault();setActive(index=>(index+1)%photos.length);}
+    if(event.key==='ArrowLeft'){event.preventDefault();setActive(index=>(index+photos.length-1)%photos.length);}
+  };
   return <section className="inspiration-photos" aria-label={`Photos for ${item.title}`}>
     <div className="interior-row"><strong>Photos & video screenshots <small>({photos.length}/{MAX_PHOTOS})</small></strong><span className="interior-muted">First photo is the cover</span></div>
     {!photos.length&&<p className="inspiration-empty">No photos saved yet. Upload original photos or screenshots from the reference link. Missing Pinterest media is never replaced with a different idea.</p>}
@@ -43,10 +49,10 @@ export default function InspirationPhotos({item,disabled,onUpload,onChange}){
     </figure>)}</div>
     <PhotoPicker label="Upload photos / screenshots" disabled={disabled||photos.length>=MAX_PHOTOS} onFiles={onUpload}/>
     <small className="interior-muted">Select several JPG, PNG or WebP files. Up to 20 MiB each; stored copies are resized to 1600 px. Uploads stay in this browser until exported.</small>
-    <dialog className="inspiration-lightbox" ref={dialog} aria-label={`Full-size photos for ${item.title}`} onKeyDown={event=>{if(event.key==='Escape')event.stopPropagation();if(event.key==='ArrowRight'){event.preventDefault();setActive(i=>(i+1)%photos.length);}if(event.key==='ArrowLeft'){event.preventDefault();setActive(i=>(i+photos.length-1)%photos.length);}}>
+    <dialog className="inspiration-lightbox" ref={dialog} aria-label={`Full-size photos for ${item.title}`} onKeyDown={handleKey} onClose={()=>setViewerOpen(false)}>
       <header className="interior-row"><strong>{item.title} · {active+1} / {photos.length}</strong><button type="button" onClick={close} autoFocus>Close photo ✕</button></header>
-      {selected&&<><Photo photo={selected}/><p>{selected.caption}</p>{selected.kind==='video-frame'&&<p>Original video frame{selected.timeSeconds!==undefined?` at ${selected.timeSeconds} seconds`:''}</p>}</>}
-      {photos.length>1&&<div className="interior-row"><button type="button" onClick={()=>setActive(i=>(i+photos.length-1)%photos.length)}>← Previous photo</button><button type="button" onClick={()=>setActive(i=>(i+1)%photos.length)}>Next photo →</button></div>}
+      {viewerOpen&&selected&&<><Photo photo={selected}/><p>{selected.caption}</p>{selected.kind==='video-frame'&&<p>Original video frame{selected.timeSeconds!==undefined?` at ${selected.timeSeconds} seconds`:''}</p>}</>}
+      {photos.length>1&&<div className="interior-row"><button type="button" onClick={()=>setActive(index=>(index+photos.length-1)%photos.length)}>← Previous photo</button><button type="button" onClick={()=>setActive(index=>(index+1)%photos.length)}>Next photo →</button></div>}
     </dialog>
   </section>;
 }
