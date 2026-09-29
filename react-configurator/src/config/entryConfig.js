@@ -20,6 +20,14 @@ export const ENTRY = {
   arrivalDoor: {wallPlanX:575,fromPlanY:810,toPlanY:874,heightMm:2200,openAngleDegrees:80,hinge:'north',opens:'west-outside'},
   outerEntryOpening: {wallPlanX: 688, fromPlanY: 822, toPlanY: 867, heightMm: 2200},
   innerOpening: {wallPlanY: 715, fromPlanX: 515, toPlanX: 570, heightMm: 2100},
+  // Owner mark 2026-09-30 (plan x 573-643, y 726-772): a cabinet 3 ft deep stands on the Main Entry side of the wall it
+  // shares with the Drawing Room. On the A501 plan the wall itself is drawn as a band about 11 px (roughly 220 mm, the
+  // usual 9-inch wall) between plan y 715 and y 726, running the width of that cabinet (plan x 577-680), and the owner
+  // reads the band behind the cabinet as an empty cavity from floor to ceiling. The plan alone cannot tell a hollow void
+  // from plain 9-inch brickwork, so the depth below is the drawn thickness and its use needs checking on site.
+  wallCavity: {planX1: 577, planX2: 680, planY1: 715, planY2: 726, heightMm: 2700, status: 'owner says hollow; the drawing shows only a 9-inch wall band'},
+  entryCabinet: {planX1: 577, planX2: 680, planY1: 726, planY2: 772, heightMm: 2134, heightStatus: 'not confirmed: assumed as tall as the shoe rack (7 ft)'},
+  ownerMark: {planX1: 573, planX2: 643, planY1: 726, planY2: 772},
   source: 'A501 floor plan entry and shoe-area dimensions',
 }
 

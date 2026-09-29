@@ -137,3 +137,7 @@ trusted here) and the north-wall sofa does not touch it. `drawing.doors[0]` reco
 (east hinge, leaf up to about 855 mm), so the hinge side is inferred, not measured; measure the leaf on site. If `hingeKnown`
 is false every check tests both hinge sides. The sofas stay full size; shortening them to 2100 mm is only a fallback if the
 real door is wider. Details: `docs/DRAWING_ROOM_TV_WALL.md`.
+
+## Entry wall cavity and live measuring (2026-09-30)
+
+Whole home 3D (Editable) now shows the empty band behind the 3 ft Main Entry cabinet (about 221 mm deep, floor to ceiling, Drawing Room north wall x 155-2151) as a teal volume with the cabinet as an amber ghost box; toggle "Hide/Show entry wall cavity". Whether the band is a real void or plain 9-inch brickwork is unconfirmed. Analysis and uses: `docs/ENTRY_WALL_CAVITY.md`. The Measure tool now follows the mouse after the first click with a live line, axis legs (E-W, N-S, height), a tooltip and status bar readout; the second click fixes it and Esc cancels. Transparent overlays (cavity, door swing, projector beam) and hidden layouts are ignored by it.

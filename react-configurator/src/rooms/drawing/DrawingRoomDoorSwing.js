@@ -13,10 +13,10 @@ export function createDrawingRoomDoorSwing(room, {wallFaceMm = 0} = {}) {
     // CircleGeometry lies in XY; after rotating -90 degrees about X its +Y becomes -Z, so the room side (z > 0) is gy < 0.
     const geometry = new THREE.CircleGeometry(radius, 48, direction < 0 ? Math.PI : -Math.PI / 2, Math.PI / 2)
     const sector = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({color: assumed ? '#e11d48' : '#f59e0b', transparent: true, opacity: assumed ? .26 : .13, side: THREE.DoubleSide, depthWrite: false}))
-    sector.rotation.x = -Math.PI / 2; sector.position.set(hingeX, .018, z0); group.add(sector)
+    sector.rotation.x = -Math.PI / 2; sector.position.set(hingeX, .018, z0); sector.userData.noMeasure = true; group.add(sector)
     if (assumed) {
       const leaf = new THREE.Mesh(new THREE.BoxGeometry(.04, door.heightMm / 1000, radius), new THREE.MeshStandardMaterial({color: '#e11d48', transparent: true, opacity: .35}))
-      leaf.position.set(hingeX + direction * .02, door.heightMm / 2000, z0 + radius / 2); group.add(leaf)
+      leaf.position.set(hingeX + direction * .02, door.heightMm / 2000, z0 + radius / 2); leaf.userData.noMeasure = true; group.add(leaf)
     }
   }
   return group

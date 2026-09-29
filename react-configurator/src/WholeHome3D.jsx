@@ -99,6 +99,7 @@ function LiveWholeHome3D({onOpenRoom}){
   const [roomLightPercent,setRoomLightPercent]=useState(100)
   const roomLightRef=useRef(100)
   const [measureMode,setMeasureMode]=useState(false)
+  const [showCavity,setShowCavity]=useState(true)
   const [measureResult,setMeasureResult]=useState(null)
   const [planMark,setPlanMark]=useState(()=>{try{return JSON.parse(localStorage.getItem(PLAN_MARK_KEY)||'{}')}catch{return {}}})
 
@@ -174,6 +175,32 @@ function LiveWholeHome3D({onOpenRoom}){
     WALLS.forEach(segment=>{const mesh=addSpan(segment);if(mesh)mesh.userData={planWall:segment}})
     model.add(createEntryArrivalDoor(X,Z))
     model.add(createEntryFoldSeat(X,Z))
+    // Entry wall cavity (owner mark 2026-09-30): translucent volumes for the empty band behind the 3-ft Entry cabinet and for
+    // the cabinet itself. They are never hit by the measure tool (userData.noMeasure). Sizes come from ENTRY.wallCavity.
+    const cavityGroup=new THREE.Group();cavityGroup.name='Entry wall cavity';model.add(cavityGroup)
+    {
+      const c=ENTRY.wallCavity,k=ENTRY.entryCabinet
+      const ghost=(box,heightMm,color,opacity)=>{
+        const w=X(box.planX2-box.planX1),d=Z(box.planY2-box.planY1),h=heightMm/1000
+        const mesh=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),new THREE.MeshBasicMaterial({color,transparent:true,opacity,depthWrite:false}))
+        mesh.position.set(X((box.planX1+box.planX2)/2),h/2,Z((box.planY1+box.planY2)/2));mesh.renderOrder=5;mesh.userData.noMeasure=true
+        const edges=new THREE.LineSegments(new THREE.EdgesGeometry(mesh.geometry),new THREE.LineBasicMaterial({color}));edges.position.copy(mesh.position);edges.userData.noMeasure=true
+        cavityGroup.add(mesh,edges)
+      }
+      const cavityLabel=(text,x,y,z)=>{
+        const canvas=document.createElement('canvas');canvas.width=640;canvas.height=96
+        const g=canvas.getContext('2d');g.fillStyle='rgba(15,23,42,.88)';g.beginPath();g.roundRect(4,4,632,88,18);g.fill()
+        g.fillStyle='#fff';g.font='bold 38px sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillText(text,320,50)
+        const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.SRGBColorSpace
+        const sprite=new THREE.Sprite(new THREE.SpriteMaterial({map:texture,depthTest:false,transparent:true}))
+        sprite.scale.set(1.5,.225,1);sprite.position.set(x,y,z);sprite.renderOrder=10;cavityGroup.add(sprite)
+      }
+      ghost(c,c.heightMm,'#0d9488',.34)
+      ghost(k,k.heightMm,'#f59e0b',.15)
+      const depthMm=Math.round(Z(c.planY2-c.planY1)*1000/5)*5,cabinetMm=Math.round(Z(k.planY2-k.planY1)*1000/5)*5
+      cavityLabel(`Wall cavity ~${depthMm} mm deep, floor to ceiling`,X((c.planX1+c.planX2)/2),c.heightMm/1000+.25,Z(c.planY1)-.15)
+      cavityLabel(`3 ft Entry cabinet, ${cabinetMm} mm deep`,X((k.planX1+k.planX2)/2),k.heightMm/1000+.25,Z((k.planY1+k.planY2)/2)+.4)
+    }
     const entryOpening=ENTRY.outerEntryOpening
     addSpan([entryOpening.wallPlanX,entryOpening.fromPlanY,entryOpening.wallPlanX,entryOpening.toPlanY],entryOpening.heightMm/1000,HEIGHT)
     for(const [x1,y1,x2,y2,bottom,top] of GLASS){
@@ -643,29 +670,84 @@ function LiveWholeHome3D({onOpenRoom}){
     const raycaster=new THREE.Raycaster(),pointer=new THREE.Vector2()
     let pressedAt=null,markedMesh=null,markedMaterial=null
     const clearMark=()=>{if(markedMesh)markedMesh.material=markedMaterial;markedMesh=null;markedMaterial=null;setWallSelection(null);setWallNote('')}
-    // Two-click tape measure (same idea as the kitchen workspace's measure
-    // mode): click any two surfaces; the straight-line and floor distances
-    // are reported in millimetres. World units here are metres.
+    // Tape measure: click a first point on any surface, then the line, the three axis legs and a tooltip follow the mouse
+    // live until the second click (Esc cancels). World units are metres; readings snap to 5 mm.
     const measureGroup=new THREE.Group();measureGroup.name='measure overlay';scene.add(measureGroup)
-    let measureActive=false,measureStart=null
-    const measureMarker=point=>{
-      const marker=new THREE.Mesh(new THREE.SphereGeometry(.06,16,16),new THREE.MeshBasicMaterial({color:'#d97706',depthTest:false}))
-      marker.position.copy(point);marker.renderOrder=999;measureGroup.add(marker)
+    let measureActive=false,measureStart=null,liveLine=null,liveGuide=null,liveDot=null,hoverDot=null,lastMove=null,moveFrame=0,lastStateAt=0
+    const shown=object=>{for(let node=object;node;node=node.parent)if(!node.visible)return false;return true}
+    const tip=document.createElement('div')
+    tip.style.cssText='position:fixed;z-index:60;pointer-events:none;display:none;padding:6px 10px;border-radius:9px;background:rgba(23,32,51,.94);color:#fff;font:600 13px system-ui,sans-serif;line-height:1.35;box-shadow:0 4px 14px rgba(0,0,0,.28);white-space:nowrap'
+    document.body.appendChild(tip)
+    const snapMm=v=>Math.round(v*1000/5)*5
+    const fmt=v=>`${snapMm(v).toLocaleString()} mm`
+    const readingOf=(a,b)=>({direct:fmt(a.distanceTo(b)),floor:fmt(Math.hypot(b.x-a.x,b.z-a.z)),rise:fmt(Math.abs(b.y-a.y)),ew:fmt(Math.abs(b.x-a.x)),ns:fmt(Math.abs(b.z-a.z))})
+    const dot=(point,color,radius=.06)=>{
+      const marker=new THREE.Mesh(new THREE.SphereGeometry(radius,16,16),new THREE.MeshBasicMaterial({color,depthTest:false}))
+      marker.position.copy(point);marker.renderOrder=999;measureGroup.add(marker);return marker
     }
-    const clearMeasure=()=>{measureStart=null;measureGroup.children.forEach(child=>{child.geometry.dispose();child.material.dispose()});measureGroup.clear();setMeasureResult(null)}
+    const polyline=(points,color,opacity=1)=>{
+      const line=new THREE.Line(new THREE.BufferGeometry().setFromPoints(points),new THREE.LineBasicMaterial({color,transparent:opacity<1,opacity,depthTest:false}))
+      line.renderOrder=998;line.frustumCulled=false;measureGroup.add(line);return line
+    }
+    const setPoints=(line,points)=>{
+      const position=line.geometry.attributes.position
+      points.forEach((p,i)=>position.setXYZ(i,p.x,p.y,p.z));position.needsUpdate=true
+    }
+    // start -> east-west leg -> north-south leg -> up/down leg to the end: the three axis components of the reading.
+    const legs=(a,b)=>[a,new THREE.Vector3(b.x,a.y,a.z),new THREE.Vector3(b.x,a.y,b.z),b]
+    const clearMeasure=()=>{
+      measureStart=liveLine=liveGuide=liveDot=hoverDot=null;tip.style.display='none'
+      measureGroup.children.forEach(child=>{child.geometry.dispose();child.material.dispose()});measureGroup.clear();setMeasureResult(null)
+    }
     const setMeasure=active=>{measureActive=active;renderer.domElement.style.cursor=active?'crosshair':'grab';if(!active)clearMeasure()}
-    const handleMeasureClick=hitPoint=>{
-      if(!measureStart){clearMeasure();measureStart=hitPoint.clone();measureMarker(measureStart);setMeasureResult({pending:true});return}
-      measureMarker(hitPoint)
-      const line=new THREE.Line(new THREE.BufferGeometry().setFromPoints([measureStart,hitPoint]),new THREE.LineBasicMaterial({color:'#d97706',depthTest:false}))
-      line.renderOrder=998;measureGroup.add(line)
-      const mm=v=>`${(Math.round(v*1000/5)*5).toLocaleString()} mm`
-      const direct=measureStart.distanceTo(hitPoint)
-      const floor=Math.hypot(hitPoint.x-measureStart.x,hitPoint.z-measureStart.z)
-      const rise=Math.abs(hitPoint.y-measureStart.y)
-      setMeasureResult({direct:mm(direct),floor:mm(floor),rise:mm(rise)})
-      measureStart=null
+    const pickPoint=event=>{
+      const rect=renderer.domElement.getBoundingClientRect()
+      pointer.set((event.clientX-rect.left)/rect.width*2-1,-(event.clientY-rect.top)/rect.height*2+1)
+      raycaster.setFromCamera(pointer,camera)
+      const hit=raycaster.intersectObjects(scene.children.filter(child=>child!==measureGroup),true).find(h=>h.object.isMesh&&shown(h.object)&&!h.object.userData.noMeasure)
+      return hit?hit.point.clone():null
     }
+    const showTip=(event,reading)=>{
+      tip.innerHTML=`<div style="font-size:15px">${reading.direct}</div><div style="font-weight:500;color:#cbd5e1;font-size:12px">E–W ${reading.ew} · N–S ${reading.ns} · height ${reading.rise}</div>`
+      tip.style.display='block'
+      tip.style.left=Math.min(event.clientX+18,window.innerWidth-tip.offsetWidth-8)+'px'
+      tip.style.top=Math.min(event.clientY+18,window.innerHeight-tip.offsetHeight-8)+'px'
+    }
+    const handleMeasureClick=hitPoint=>{
+      if(!measureStart){
+        clearMeasure();measureStart=hitPoint.clone();dot(measureStart,'#d97706')
+        liveLine=polyline([measureStart,measureStart],'#d97706');liveGuide=polyline(legs(measureStart,measureStart),'#f59e0b',.55);liveDot=dot(measureStart,'#fbbf24',.05)
+        setMeasureResult({pending:true});return
+      }
+      const end=hitPoint.clone()
+      setPoints(liveLine,[measureStart,end]);setPoints(liveGuide,legs(measureStart,end));liveDot.position.copy(end);liveDot.material.color.set('#d97706');liveDot.geometry.dispose();liveDot.geometry=new THREE.SphereGeometry(.06,16,16)
+      tip.style.display='none'
+      setMeasureResult(readingOf(measureStart,end))
+      measureStart=liveLine=liveGuide=liveDot=hoverDot=null
+    }
+    const onPointerMove=event=>{
+      if(!measureActive)return
+      lastMove=event
+      if(moveFrame)return
+      moveFrame=requestAnimationFrame(()=>{
+        moveFrame=0
+        if(!measureActive||!lastMove)return
+        const event=lastMove,point=pickPoint(event)
+        if(!point){tip.style.display='none';return}
+        if(!measureStart){
+          if(!hoverDot)hoverDot=dot(point,'#94a3b8',.04);hoverDot.position.copy(point)
+          tip.innerHTML='<div style="font-weight:500">click to start measuring here</div>';tip.style.display='block'
+          tip.style.left=Math.min(event.clientX+18,window.innerWidth-tip.offsetWidth-8)+'px';tip.style.top=Math.min(event.clientY+18,window.innerHeight-tip.offsetHeight-8)+'px'
+          return
+        }
+        setPoints(liveLine,[measureStart,point]);setPoints(liveGuide,legs(measureStart,point));liveDot.position.copy(point)
+        const reading=readingOf(measureStart,point);showTip(event,reading)
+        const now=performance.now();if(now-lastStateAt>60){lastStateAt=now;setMeasureResult({pending:true,live:reading})}
+      })
+    }
+    const onMeasureKey=event=>{if(event.key==='Escape'&&measureActive&&measureStart)clearMeasure()}
+    window.addEventListener('keydown',onMeasureKey)
+    renderer.domElement.addEventListener('pointermove',onPointerMove)
     const onPointerDown=event=>{pressedAt={x:event.clientX,y:event.clientY}}
     const onPointerUp=event=>{
       if(!pressedAt||Math.hypot(event.clientX-pressedAt.x,event.clientY-pressedAt.y)>6){pressedAt=null;return}
@@ -674,7 +756,7 @@ function LiveWholeHome3D({onOpenRoom}){
       pointer.set((event.clientX-rect.left)/rect.width*2-1,-(event.clientY-rect.top)/rect.height*2+1)
       raycaster.setFromCamera(pointer,camera)
       if(measureActive){
-        const anyHit=raycaster.intersectObjects(scene.children.filter(child=>child!==measureGroup),true).find(h=>h.object.isMesh&&h.object.visible)
+        const anyHit=raycaster.intersectObjects(scene.children.filter(child=>child!==measureGroup),true).find(h=>h.object.isMesh&&shown(h.object)&&!h.object.userData.noMeasure)
         if(anyHit)handleMeasureClick(anyHit.point)
         return
       }
@@ -707,10 +789,10 @@ function LiveWholeHome3D({onOpenRoom}){
     const interiorRoomIds=['bedroom3','study','balcony','terrace','kitchen','lobby','drawing','bedroom1','bedroom1-balcony','entry']
     const interiorScene=registerInteriorScene({id:'whole-home',scene,camera,renderer,zones:ROOMS.map((r,index)=>({id:interiorRoomIds[index],min:[X(r.bounds[0]),0,Z(r.bounds[1])],max:[X(r.bounds[2]),HEIGHT,Z(r.bounds[3])]}))})
     let raf=0;const render=()=>{controls.update();renderer.render(scene,camera);raf=requestAnimationFrame(render)};render()
-    sceneRef.current={setRoomLight,setTvLabels:visible=>drawingLayouts.setLabels(visible),setDrawingLayout:key=>drawingLayouts.setLayout(key),setDrawingArm:pulled=>drawingLayouts.setArm(pulled),setDoorSwing:visible=>drawingLayouts.setDoorSwing(visible),setDrawingTv:key=>drawingLayouts.setTvSize(key),setMedicineCabinetOpen:value=>doorInfill.userData.setOpen(value),setStorageCoverOpen:value=>storeStorage.userData.setCoverOpen(value),setMirrorOpen:value=>vanity.userData.setMirrorOpen?.(value),setPartitionOpen:value=>partition.userData.setOpen?.(value),setCamera,setWallsVisible:visible=>{walls.visible=visible},setBoardOpen:value=>{ironingStorage.userData.setBoardOpen(value)},setPoojaPersonVisible:visible=>{seatedPerson.visible=visible},setPoojaDoorsOpen:value=>{poojaDoors.userData.setDoorsOpen(value)},clearMark,setDaylight,setMeasure,clearMeasure}
+    sceneRef.current={setCavity:visible=>{cavityGroup.visible=visible},setRoomLight,setTvLabels:visible=>drawingLayouts.setLabels(visible),setDrawingLayout:key=>drawingLayouts.setLayout(key),setDrawingArm:pulled=>drawingLayouts.setArm(pulled),setDoorSwing:visible=>drawingLayouts.setDoorSwing(visible),setDrawingTv:key=>drawingLayouts.setTvSize(key),setMedicineCabinetOpen:value=>doorInfill.userData.setOpen(value),setStorageCoverOpen:value=>storeStorage.userData.setCoverOpen(value),setMirrorOpen:value=>vanity.userData.setMirrorOpen?.(value),setPartitionOpen:value=>partition.userData.setOpen?.(value),setCamera,setWallsVisible:visible=>{walls.visible=visible},setBoardOpen:value=>{ironingStorage.userData.setBoardOpen(value)},setPoojaPersonVisible:visible=>{seatedPerson.visible=visible},setPoojaDoorsOpen:value=>{poojaDoors.userData.setDoorsOpen(value)},clearMark,setDaylight,setMeasure,clearMeasure}
     setRoomLight(roomLightRef.current/100)
     setDaylight(sunHourRef.current)
-    return()=>{interiorScene.dispose();cancelAnimationFrame(raf);observer.disconnect();renderer.domElement.removeEventListener('pointerdown',onPointerDown);renderer.domElement.removeEventListener('pointerup',onPointerUp);controls.dispose();model.traverse(object=>{object.geometry?.dispose?.();object.material?.dispose?.()});markedWallMaterial.dispose();texture.dispose();environment.dispose();pmrem.dispose();renderer.dispose();renderer.domElement.remove();sceneRef.current=null}
+    return()=>{interiorScene.dispose();cancelAnimationFrame(raf);observer.disconnect();renderer.domElement.removeEventListener('pointerdown',onPointerDown);renderer.domElement.removeEventListener('pointerup',onPointerUp);renderer.domElement.removeEventListener('pointermove',onPointerMove);window.removeEventListener('keydown',onMeasureKey);cancelAnimationFrame(moveFrame);tip.remove();controls.dispose();model.traverse(object=>{object.geometry?.dispose?.();object.material?.dispose?.()});markedWallMaterial.dispose();texture.dispose();environment.dispose();pmrem.dispose();renderer.dispose();renderer.domElement.remove();sceneRef.current=null}
   },[])
 
   useEffect(()=>{sceneRef.current?.setCamera(view)},[view])
@@ -730,6 +812,7 @@ function LiveWholeHome3D({onOpenRoom}){
   useEffect(()=>{sunHourRef.current=sunHour;sceneRef.current?.setDaylight(sunHour)},[sunHour])
   useEffect(()=>{roomLightRef.current=roomLightPercent;sceneRef.current?.setRoomLight(roomLightPercent/100)},[roomLightPercent])
   useEffect(()=>{sceneRef.current?.setMeasure(measureMode)},[measureMode])
+  useEffect(()=>{sceneRef.current?.setCavity(showCavity)},[showCavity])
 
   return <section style={{background:'#fff',border:'1px solid #dbe3e9',borderRadius:22,overflow:'hidden',boxShadow:'0 16px 42px rgba(23,32,51,.1)'}}>
     <div style={{padding:'14px 16px',display:'flex',justifyContent:'space-between',alignItems:'center',gap:12,flexWrap:'wrap',borderBottom:'1px solid #e2e8f0'}}>
@@ -755,6 +838,7 @@ function LiveWholeHome3D({onOpenRoom}){
         <button onClick={()=>setTvLabels(value=>!value)} aria-pressed={tvLabels} style={buttonStyle(tvLabels)}>{tvLabels?'Hide TV wall labels':'Show TV wall labels'}</button>
         <button onClick={()=>setPartitionOpen(value=>!value)} style={buttonStyle(partitionOpen)}>{partitionOpen?'Close drawing partition':'Open drawing partition'}</button>
         <button onClick={()=>setPoojaDoorsOpen(value=>!value)} style={buttonStyle(poojaDoorsOpen)}>{poojaDoorsOpen?'Close Pooja doors':'Open Pooja doors'}</button>
+        <button onClick={()=>setShowCavity(value=>!value)} aria-pressed={showCavity} style={buttonStyle(showCavity)} title="The empty band in the wall between the Drawing Room and the Main Entry, behind the 3 ft Entry cabinet">{showCavity?'Hide entry wall cavity':'Show entry wall cavity'}</button>
         <button onClick={()=>setMeasureMode(value=>!value)} aria-pressed={measureMode} style={buttonStyle(measureMode)}>{measureMode?'Stop measuring':'Measure'}</button>
         <button onClick={()=>setMarkMode(value=>!value)} style={buttonStyle(markMode)}>{markMode?'Back to 3D':'Mark area on plan'}</button>
       </div>
@@ -762,11 +846,17 @@ function LiveWholeHome3D({onOpenRoom}){
     {!markMode&&measureMode&&<div role="status" style={{display:'flex',gap:14,alignItems:'center',flexWrap:'wrap',padding:'8px 16px',borderBottom:'1px solid #fcd9a8',background:'#fff7ea',fontSize:13,color:'#7c4a12'}}>
       <b>Measure:</b>
       {!measureResult&&<span>click a first point on any surface…</span>}
-      {measureResult?.pending&&<span>first point set — click the second point</span>}
+      {measureResult?.pending&&!measureResult.live&&<span>first point set — move the mouse: the line and reading follow it live; click for the second point (Esc cancels)</span>}
+      {measureResult?.pending&&measureResult.live&&<>
+        <span><b style={{fontSize:16}}>{measureResult.live.direct}</b> direct (live)</span>
+        <span>E–W {measureResult.live.ew}</span><span>N–S {measureResult.live.ns}</span><span>height {measureResult.live.rise}</span>
+        <span>{measureResult.live.floor} along floor</span>
+        <span style={{fontSize:11}}>click to fix · Esc cancels</span>
+      </>}
       {measureResult&&!measureResult.pending&&<>
-        <span><b>{measureResult.direct}</b> direct</span>
+        <span><b style={{fontSize:16}}>{measureResult.direct}</b> direct</span>
+        <span>E–W {measureResult.ew}</span><span>N–S {measureResult.ns}</span><span>height {measureResult.rise}</span>
         <span>{measureResult.floor} along floor</span>
-        <span>{measureResult.rise} height difference</span>
       </>}
       <button onClick={()=>sceneRef.current?.clearMeasure()} style={{...buttonStyle(false),padding:'4px 10px',fontSize:12}}>Clear</button>
       <span style={{fontSize:11,color:'#b45309'}}>Readings snap to 5 mm and measure the simplified 3D model, not a site survey.</span>

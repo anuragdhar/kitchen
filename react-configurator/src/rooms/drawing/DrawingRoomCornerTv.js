@@ -173,7 +173,8 @@ export function createDrawingRoomCornerTv(room, {wallFaceMm = 0, variant = 'wall
     const positions = []
     for (let i = 0; i < 4; i++) positions.push(...apex, ...corners[i], ...corners[(i + 1) % 4])
     const geometry = new THREE.BufferGeometry(); geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3))
-    group.add(new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({color: '#fff2c4', transparent: true, opacity: .1, side: THREE.DoubleSide, depthWrite: false})))
+    const cone = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({color: '#fff2c4', transparent: true, opacity: .1, side: THREE.DoubleSide, depthWrite: false}))
+    cone.userData.noMeasure = true; group.add(cone)
   }
   label(`${pr.screenDiagonalInches}" drop-down screen`, eastFace - 700, pr.bottomMm + pr.heightMm + 160, pr.centerFromNorthMm)
   label('Ceiling projector', place.x, room.heightMm - pr.ceilingDropMm - 260, place.z)
