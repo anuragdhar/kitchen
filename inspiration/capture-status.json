@@ -1,0 +1,18 @@
+{
+  "checkedOn": "2026-09-29",
+  "method": "Web access tools in the editing environment; not a successful capture_inspiration.py run",
+  "status": "source-access-unavailable",
+  "originalImagesImported": 0,
+  "videoFramesImported": 0,
+  "reason": "Each original pin URL returned: URL is not accessible via this tool. No original media bytes could be verified or imported.",
+  "items": [
+    {"id":"pinterest-10133167907344307","url":"https://in.pinterest.com/pin/10133167907344307/","status":"unavailable"},
+    {"id":"pinterest-1124422231981618360","url":"https://in.pinterest.com/pin/1124422231981618360/","status":"unavailable"},
+    {"id":"pinterest-10133167907411816","url":"https://in.pinterest.com/pin/10133167907411816/","status":"unavailable"},
+    {"id":"pinterest-10133167907317939","url":"https://in.pinterest.com/pin/10133167907317939/","status":"unavailable"},
+    {"id":"pinterest-10133167907322682","url":"https://in.pinterest.com/pin/10133167907322682/","status":"unavailable"},
+    {"id":"pinterest-10133167907311153","url":"https://in.pinterest.com/pin/10133167907311153/","status":"unavailable"},
+    {"id":"pinterest-10133167907020356","url":"https://in.pinterest.com/pin/10133167907020356/","status":"unavailable"}
+  ],
+  "substitutions": "None. No unrelated pins, generated images or test screenshots were added to the library."
+}
