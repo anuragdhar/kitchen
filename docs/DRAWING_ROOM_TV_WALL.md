@@ -12,7 +12,9 @@ Everything below lives in `roomShellConfig.js` (`drawing.tvWall`, `drawing.furni
 
 - Replace the window seat with a second 3-seater, the same size as the existing one.
 - Put the TV on the **north wall**, in a cabinet with a centre cavity for a TV up to 65 inches, about one foot deep.
-- Place a Bose Smart Soundbar 300, a Bose Home Speaker 500, a landline phone, an intercom and a Wi-Fi router.
+- Place a Bose Smart Soundbar 300, a Bose Bass Module 500, a landline phone, an intercom and a Wi-Fi router.
+  (The first brief said "wireless 500 speaker"; the owner later confirmed the pieces are the Soundbar 300 and the
+  **Bass Module 500**, so the Home Speaker 500 was dropped from the plan.)
 - Use the references saved in Inspiration for the room.
 
 The entry door on the north wall stays exactly where it is (x 2150-3150). I read "ignore the entry" as
@@ -33,8 +35,8 @@ Three vertical bands (each column is 280 wide, 244 clear inside):
 
 | Band | x from west wall | Contents (heights from floor) |
 | --- | --- | --- |
-| West column | 0-280 | Storage door 98-982; **open niche 1000-1300 for the Bose Home Speaker 500**; storage door above |
-| Centre bay | 280-1820 (1540 wide) | Storage doors 98-632; **open TV bay 650-1700**; header 1700-1740; **ventilated lattice bay 1740-2050 for the router**; storage doors above |
+| West column | 0-280 | One full-height storage door (98-2382) |
+| Centre bay | 280-1820 (1540 wide) | Base 98-632: **west half is an open lattice with the Bass Module 500 behind it**, east half a storage door; **open TV bay 650-1700**; header 1700-1740; **ventilated lattice bay 1740-2050 for the router**; storage doors above |
 | East column (door side) | 1820-2100 | Storage door 98-882; **open niche 900-1500: landline on the shelf, intercom on the back wall (1150-1380)**; storage door above |
 
 Inside the TV bay: the 65-inch TV (1450 x 830 x 55 with bezel) is centred at x 1050, bottom edge at 730, top at
@@ -45,10 +47,12 @@ TV's bottom edge (730), so it cannot cover the picture.
 ## Why each device is where it is
 
 - **Soundbar 300:** directly under the TV on the bay floor, centred, open to the room. Nothing in front of it.
-- **Bose Home Speaker 500:** a music speaker, not a TV speaker, so it does not need to sit under the screen.
-  The west niche is in the room corner (walls reinforce bass), at 1000-1170 mm, at ear height when seated,
-  and open at the front and top. The niche is 244 mm clear; the speaker is 216 wide (sources disagree on its
-  orientation, so the niche was sized to take it either way).
+- **Bass Module 500 (subwoofer):** in the front of the room next to the soundbar, not at the opposite end.
+  Low bass has no clear direction, but a subwoofer behind the listeners makes effects seem to come from behind
+  you instead of the screen. It stands on the base deck, west half of the centre base (centre x 665), behind an
+  open lattice so it can breathe and be heard. It is 254 x 254 x 241 mm (10 x 10 x 9.5 in, Bose specifications),
+  538 mm from the west wall (not in the corner, which would boom), about 385 mm from the soundbar's centre line,
+  with 30 mm free in front of it. It talks to the soundbar wirelessly, so it needs only a mains socket.
 - **Router:** above the TV bay, on the room's centre line and high, which helps coverage. It sits behind an
   open lattice, not a solid door, so signal and heat pass. Its cables have a short vertical run down to the TV.
 - **Landline and intercom:** on the door side of the wall, within a step of the entry, at hand height.
@@ -86,7 +90,7 @@ None of these was applied; the brief said to keep the west sofa.
 - **Wall depth:** the cabinet is 305 deep by request. That is a cabinet, not a recess; it is not cut into the wall.
 - **Window:** the south sofa's back (about 850 high) is in front of the lower part of the window (sill 550).
 - **Power and data (suggestion, needs an electrician):** two mains sockets and an HDMI/ARC lead in the TV bay,
-  one socket each in the soundbar/speaker niches and the router bay, a data cable from router bay to TV bay,
+  one socket each for the soundbar, the Bass Module compartment and the router bay, a data cable from router bay to TV bay,
   phone and intercom cable ends in the east niche. Keep mains and low-voltage runs apart. Not modelled.
 - **Ventilation:** TV bay and router bay are open at the front; keep them that way.
 - **Device sizes:** Soundbar 300 is 698.5 x 57.1 x 101.6 mm (Bose specifications, via web search); a 65-inch

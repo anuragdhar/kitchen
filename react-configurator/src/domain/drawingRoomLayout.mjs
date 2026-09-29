@@ -12,6 +12,7 @@ export function tvWallGeometry(room) {
   const depthClear = w.depthMm - w.backMm
   return {
     bayWidth, clearColumn, depthClear,
+    bayWest: w.fromWestMm + w.columnWidthMm,
     bayCenterX: w.fromWestMm + w.columnWidthMm + bayWidth / 2,
     tvCenterY: w.tv.bottomMm + w.tv.heightMm / 2,
     tvTopMm: w.tv.bottomMm + w.tv.heightMm,
@@ -55,7 +56,12 @@ export function checkDrawingRoomLayout(room) {
     need(item.heightMm + 20 <= top - shelf - w.panelMm, `${name} is too tall for its niche`)
     need(item.depthMm + 20 <= g.depthClear, `${name} is too deep for its niche`)
   }
-  niche(w.speaker.model, w.speaker, w.speaker.shelfMm, w.speaker.nicheTopMm)
+  const bm = w.bassModule, bmX = g.bayWest + g.bayWidth * bm.centerFromBayWestFraction
+  need(bm.widthMm + 100 <= g.bayWidth / 2, 'bass module does not fit the west half of the centre base')
+  need(bm.heightMm + 40 <= w.bay.floorMm - (w.plinthMm + w.panelMm) - w.panelMm, 'bass module is too tall for the centre base')
+  need(bm.depthMm + bm.frontGapMm <= g.depthClear, `bass module ${bm.depthMm} mm deep does not fit ${g.depthClear} mm behind its lattice`)
+  need(bmX - bm.widthMm / 2 >= 300, 'bass module is within 300 mm of the west wall (corner boom)')
+  need(Math.abs(bmX - g.bayCenterX) <= 1000, 'bass module is more than 1 m from the soundbar')
   niche('landline phone', w.phones.landline, w.phones.shelfMm, w.phones.nicheTopMm)
   need(w.phones.intercom.bottomMm >= w.phones.shelfMm + w.phones.landline.heightMm + 20, 'intercom overlaps the landline phone')
   need(w.phones.intercom.bottomMm + w.phones.intercom.heightMm + 20 <= w.phones.nicheTopMm, 'intercom is too tall for the phone niche')

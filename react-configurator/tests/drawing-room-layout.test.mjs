@@ -28,19 +28,22 @@ test('the entry door and its opening are untouched', () => {
 
 test('every device sits where the brief put it', () => {
   const w = room.tvWall, g = tvWallGeometry(room)
-  assert.equal(w.speaker.column, 'west')
+  assert.equal(w.bassModule.model, 'Bose Bass Module 500')
+  assert.equal(w.speaker, undefined, 'the Home Speaker 500 was replaced by the Bass Module 500')
   assert.equal(w.phones.column, 'east', 'phones are on the door side')
   assert.ok(w.router.shelfMm >= w.bay.topMm, 'router is above the TV bay')
   assert.ok(g.bayCenterX > 900 && g.bayCenterX < 1200)
 })
 
-test('the checker catches an oversized TV, a blocked door and a too-small niche', () => {
+test('the checker catches an oversized TV, a blocked door, a bass module that does not fit or sits in the corner', () => {
   const big = clone(); big.tvWall.tv.widthMm = 1600
   assert.ok(checkDrawingRoomLayout(big).issues.some(m => /TV bay/.test(m)))
   const wide = clone(); wide.tvWall.widthMm = 2300
   assert.ok(checkDrawingRoomLayout(wide).issues.some(m => /entry door/.test(m)))
-  const speaker = clone(); speaker.tvWall.speaker.widthMm = 260
-  assert.ok(checkDrawingRoomLayout(speaker).issues.some(m => /niche/.test(m)))
+  const bass = clone(); bass.tvWall.bassModule.heightMm = 600
+  assert.ok(checkDrawingRoomLayout(bass).issues.some(m => /bass module/.test(m)))
+  const corner = clone(); corner.tvWall.bassModule.centerFromBayWestFraction = 0.02
+  assert.ok(checkDrawingRoomLayout(corner).issues.some(m => /corner boom/.test(m)))
   const table = clone(); table.furniture.coffeeTable.centerXmm = 1400
   assert.ok(checkDrawingRoomLayout(table).issues.some(m => /coffee table/.test(m)))
 })

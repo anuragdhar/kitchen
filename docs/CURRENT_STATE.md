@@ -107,7 +107,7 @@ the old layout). Full plan and reasoning: `docs/DRAWING_ROOM_TV_WALL.md`.
 
 - Removed: 55-inch swivel TV on the east wall (`television`) and the window seat (`furniture.windowSeat`).
 - Added: `drawing.tvWall` (305 mm deep, 2100 wide north-wall cabinet with a 65-inch TV bay, Soundbar 300,
-  Bose Home Speaker 500, landline, intercom and router niches) and `furniture.southSofa` (same 880 x 2250
+  Bass Module 500, landline, intercom and router) and `furniture.southSofa` (same 880 x 2250
   footprint as the west sofa, facing north at centre 1140, 4810).
 - Moved: coffee table (1745, 2420) -> (1750, 3300); the live-model chandelier and lighting anchors moved with
   them. The west sofa, the entry door (x 2150-3150) and the east opening are unchanged.

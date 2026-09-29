@@ -63,13 +63,15 @@ export const EMPTY_ROOM_SHELLS={
     // with a centre bay for a 65-inch TV. Plan and rationale: docs/DRAWING_ROOM_TV_WALL.md.
     // Millimetres in the room frame: x from the west wall, z from the north wall, y up.
     // Device sizes are manufacturer figures rounded up (Soundbar 300 698.5x57.1x101.6; a 65-inch
-    // 16:9 screen is about 1439x809 mm); Home Speaker 500 is sized for either orientation.
+    // 16:9 screen is about 1439x809 mm); the Bass Module 500 is about 10 x 10 x 9.5 in.
     tvWall:{
       fromWestMm:0,widthMm:2100,depthMm:305,heightMm:2400,plinthMm:80,panelMm:18,backMm:12,columnWidthMm:280,
       bay:{floorMm:650,topMm:1700},
       tv:{diagonalInches:65,widthMm:1450,heightMm:830,depthMm:55,bottomMm:730,setbackMm:60},
       soundbar:{model:'Bose Smart Soundbar 300',widthMm:699,heightMm:58,depthMm:102,frontSetbackMm:30},
-      speaker:{model:'Bose Home Speaker 500',column:'west',widthMm:216,heightMm:170,depthMm:110,shelfMm:1000,nicheTopMm:1300},
+      // Bass Module 500 stands on the base deck in the west half of the centre base, behind an open lattice front:
+      // front of the room, beside the soundbar, off the corner. Cube about 10 x 10 x 9.5 in per Bose specifications.
+      bassModule:{model:'Bose Bass Module 500',widthMm:254,heightMm:254,depthMm:241,centerFromBayWestFraction:.25,frontGapMm:30},
       phones:{column:'east',shelfMm:900,nicheTopMm:1500,landline:{widthMm:140,heightMm:110,depthMm:140},intercom:{widthMm:130,heightMm:230,depthMm:35,bottomMm:1150}},
       router:{shelfMm:1740,topMm:2050,widthMm:260,heightMm:45,depthMm:190,antennaMm:230},
     },
