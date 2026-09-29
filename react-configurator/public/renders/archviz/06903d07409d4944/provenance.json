@@ -1,0 +1,188 @@
+{
+  "room": "drawing",
+  "job": "06903d07409d4944",
+  "sourceKind": "detailed-native-snapshot",
+  "sourceName": "A501-drawing-elegant.blend",
+  "sourceSha256": "31d3f5c32d7d39b064a881a496bd1976b317d3d0cf295b74b425068ba95a9930",
+  "capture": null,
+  "profileSha256": "61b1b860a6821e81ce850d439c732629e283327fb5f99ce2d65b5c9871930914",
+  "generatorSha256": "e8c1ce89d2b4f73b6aad43c07575ded8f1b3ee957b23de043a6c1395f1d24e37",
+  "contractSha256": "870053ff51994deb544a574e792ad4810a4ed07d81b9a9e51c80368d10ac274a",
+  "blender": "5.2.2 LTS",
+  "device": "HIP",
+  "quality": "portfolio",
+  "lighting": "authored",
+  "geometryAudit": {
+    "scope": "Native detailed snapshot; live editable geometry has not been compared."
+  },
+  "geometryUnchangedDuringRendering": true,
+  "roomDetails": {
+    "moduleSha256": "aef739d498a9db51df1e57e4fc7f863aee18fe7c036d84ab9c4d416b9f3d5d46",
+    "changes": [],
+    "addedMeshes": []
+  },
+  "profileLoaderSha256": "51989eed4f938aef2a90daa37893605fd9c2e827d602843aca3f80b2af8785eb",
+  "detailLoaderSha256": "b2e6f97b0f5a664029b5b8d49826411aa25f0360c00f08a7b8c89e0566b3b1b9",
+  "finishChanges": [
+    {
+      "material": "Warm ivory mineral plaster",
+      "role": "plaster",
+      "normalBevelMetres": 0.00039999998989515007
+    },
+    {
+      "material": "Clear window glass",
+      "role": "untagged",
+      "normalBevelMetres": 0.0003000000142492354
+    },
+    {
+      "material": "Material_2",
+      "role": "untagged",
+      "normalBevelMetres": 0.0003000000142492354
+    },
+    {
+      "material": "Material_9",
+      "role": "untagged",
+      "normalBevelMetres": 0.0003000000142492354
+    },
+    {
+      "material": "Material_8",
+      "role": "untagged",
+      "normalBevelMetres": 0.0003000000142492354
+    },
+    {
+      "material": "Smoked walnut - photographed grain",
+      "role": "wood",
+      "normalBevelMetres": 0.0007999999797903001
+    },
+    {
+      "material": "Material_10",
+      "role": "untagged",
+      "normalBevelMetres": 0.0003000000142492354
+    },
+    {
+      "material": "Material_14",
+      "role": "untagged",
+      "normalBevelMetres": 0.0003000000142492354
+    },
+    {
+      "material": "Material_15",
+      "role": "untagged",
+      "normalBevelMetres": 0.0003000000142492354
+    },
+    {
+      "material": "Material_16",
+      "role": "untagged",
+      "normalBevelMetres": 0.0003000000142492354
+    },
+    {
+      "material": "Brushed champagne bronze",
+      "role": "metal",
+      "normalBevelMetres": 0.00039999998989515007
+    },
+    {
+      "material": "Warm opal diffuser",
+      "role": "untagged",
+      "normalBevelMetres": 0.0003000000142492354
+    },
+    {
+      "material": "Material_18",
+      "role": "untagged",
+      "normalBevelMetres": 0.0003000000142492354
+    },
+    {
+      "material": "Material_21",
+      "role": "untagged",
+      "normalBevelMetres": 0.0003000000142492354
+    },
+    {
+      "material": "Material_22",
+      "role": "untagged",
+      "normalBevelMetres": 0.0003000000142492354
+    },
+    {
+      "material": "Olive woven upholstery",
+      "role": "untagged",
+      "normalBevelMetres": 0.0003000000142492354
+    },
+    {
+      "material": "Honed limestone",
+      "role": "stone",
+      "normalBevelMetres": 0.00039999998989515007
+    },
+    {
+      "material": "Handwoven oatmeal rug",
+      "role": "untagged",
+      "normalBevelMetres": 0.0003000000142492354
+    },
+    {
+      "material": "Oatmeal linen cushions",
+      "role": "untagged",
+      "normalBevelMetres": 0.0003000000142492354
+    },
+    {
+      "material": "Tobacco linen accent",
+      "role": "untagged",
+      "normalBevelMetres": 0.0003000000142492354
+    },
+    {
+      "material": "Book cloth cover",
+      "role": "untagged",
+      "normalBevelMetres": 0.0003000000142492354
+    },
+    {
+      "material": "Matte ivory ceramic",
+      "role": "untagged",
+      "normalBevelMetres": 0.0003000000142492354
+    }
+  ],
+  "lights": [
+    {
+      "kind": "authored",
+      "note": "Detailed native room lighting retained."
+    }
+  ],
+  "images": [
+    {
+      "label": "Drawing room interior",
+      "url": "/renders/archviz/06903d07409d4944/authored-1.png",
+      "sha256": "d10f9f81c245ddcbe735b471322685c4be72dd4b75367c9208cb6e4429388504",
+      "size": [
+        2560,
+        1760
+      ]
+    },
+    {
+      "label": "Drawing room seating detail",
+      "url": "/renders/archviz/06903d07409d4944/authored-2.png",
+      "sha256": "9c879a1e60a662a174930eda935078eea70562e5e1b9767a6f4d88edeec80475",
+      "size": [
+        2560,
+        1760
+      ]
+    },
+    {
+      "label": "Room composition",
+      "url": "/renders/archviz/06903d07409d4944/hero.png",
+      "sha256": "920d0c2f4a5d4a77182b7f718ac58d06a425a043bc03a69f3bf6b1f215e7d9ea",
+      "size": [
+        2560,
+        1707
+      ]
+    },
+    {
+      "label": "Reverse room view",
+      "url": "/renders/archviz/06903d07409d4944/reverse.png",
+      "sha256": "e4ac730c6bed4d9bd397f9ff834e16ad59874089514757e1b603d75b87dd5799",
+      "size": [
+        2560,
+        1707
+      ]
+    }
+  ],
+  "reviewStatus": "unreviewed",
+  "limitations": [
+    "Generated camera composition and appearance need image review.",
+    "Photographic light sources are not surveyed fixture placements.",
+    "No existing interactive baked GLB or saved project was replaced."
+  ]
+}

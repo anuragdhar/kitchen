@@ -2,14 +2,14 @@
   "schema": "a501.current-room",
   "version": 1,
   "room": "bedroom3",
-  "job": "40c622a6cdd14431",
+  "job": "4324a38ae27240fa",
   "sceneId": "bedroom3",
   "sourceKind": "editable-snapshot",
   "sourceSha256": "dfe33bed145758ea20fb5b8980591c3de0983b228083337c50f917af3cece2af",
-  "capturedAt": "2026-09-28T20:16:11.196Z",
-  "quality": "draft",
+  "capturedAt": "2026-09-28T20:39:09.419Z",
+  "quality": "final",
   "model": {
-    "url": "/renders/archviz/40c622a6cdd14431/source.glb",
+    "url": "/renders/archviz/4324a38ae27240fa/source.glb",
     "sha256": "dfe33bed145758ea20fb5b8980591c3de0983b228083337c50f917af3cece2af",
     "shading": "studio-unbaked"
   },
@@ -45,20 +45,29 @@
   "images": [
     {
       "label": "Current editable camera",
-      "url": "/renders/archviz/40c622a6cdd14431/current.png",
-      "sha256": "c13c0c37aaeaae450c72a7d1ea71c4db52ded2ab145585aa1b9990ded4801264",
+      "url": "/renders/archviz/4324a38ae27240fa/current.png",
+      "sha256": "571f0349d16a6194efa8cd65630803e1b6b6badaedcbbd117228044808f408b2",
       "size": [
-        960,
-        547
+        1920,
+        1093
+      ]
+    },
+    {
+      "label": "Room composition",
+      "url": "/renders/archviz/4324a38ae27240fa/hero.png",
+      "sha256": "3990ed4a9069c27cf717a2ca1390a6e51a82d279d7c25a20b380e187a6b88911",
+      "size": [
+        1920,
+        1280
       ]
     },
     {
       "label": "Reverse room view",
-      "url": "/renders/archviz/40c622a6cdd14431/reverse.png",
-      "sha256": "dd937c1d6ab59ef7fe18211708e62fc97f92eb9382f63bce4e0eea553f122a3c",
+      "url": "/renders/archviz/4324a38ae27240fa/reverse.png",
+      "sha256": "f349b6dd7124fe96b962c30fdbed30912fea1bd4b35dca8da2506d8a4499ac53",
       "size": [
-        960,
-        640
+        1920,
+        1280
       ]
     }
   ],

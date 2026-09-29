@@ -1,0 +1,82 @@
+{
+  "schema": "a501.current-room",
+  "version": 1,
+  "room": "balcony",
+  "job": "d94dfc8f3a1645b1",
+  "sceneId": "balcony",
+  "sourceKind": "editable-snapshot",
+  "sourceSha256": "95f4c9763b8ade97613713cab50a3ed9ea8ad88709f9518d9f073b3a34a73d90",
+  "capturedAt": "2026-09-28T12:49:39.735Z",
+  "quality": "final",
+  "model": {
+    "url": "/renders/archviz/d94dfc8f3a1645b1/source.glb",
+    "sha256": "95f4c9763b8ade97613713cab50a3ed9ea8ad88709f9518d9f073b3a34a73d90",
+    "shading": "studio-unbaked"
+  },
+  "camera": {
+    "type": "perspective",
+    "position": [
+      3.9,
+      3.1000000000000005,
+      5.223000000000001
+    ],
+    "quaternion": [
+      -0.1648512907433497,
+      0.337947208730828,
+      0.060250661172806565,
+      0.924654310474749
+    ],
+    "fov": 48.00000000000001,
+    "aspect": 1.7560355781448538,
+    "verticalSpan": null
+  },
+  "bounds": {
+    "min": [
+      -0.07999999910593034,
+      -0.059999999329447745,
+      -0.07999999910593034
+    ],
+    "max": [
+      1.3399999952316284,
+      2.6979999991059302,
+      2.7029999991059306
+    ]
+  },
+  "images": [
+    {
+      "label": "Current editable camera",
+      "url": "/renders/archviz/d94dfc8f3a1645b1/current.png",
+      "sha256": "fac26ac1e67e08a66c3b14bd7329c9d2455e7c273cae03f587391b43871a276e",
+      "size": [
+        1920,
+        1093
+      ]
+    },
+    {
+      "label": "Room composition",
+      "url": "/renders/archviz/d94dfc8f3a1645b1/hero.png",
+      "sha256": "65327e4366345a2e433ae7d0271600c7fda575f72aa727cd5f86afd6673b7092",
+      "size": [
+        1920,
+        1280
+      ]
+    },
+    {
+      "label": "Reverse room view",
+      "url": "/renders/archviz/d94dfc8f3a1645b1/reverse.png",
+      "sha256": "28a031e6d0a366cfdae72e32bdf2a7699b8df73587892bb7874bfd5bfd34e6cf",
+      "size": [
+        1920,
+        1280
+      ]
+    }
+  ],
+  "geometryAudit": {
+    "sourceObjects": 160,
+    "importedMeshes": 160,
+    "maximumBoundsErrorMetres": 2.0371377473793473e-07,
+    "triangleCountsMatch": true,
+    "scope": "Source IDs, per-object world bounds and triangle counts; not a construction/collision certificate."
+  },
+  "reviewStatus": "unreviewed"
+}

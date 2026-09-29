@@ -133,7 +133,24 @@ def geometry_signature(scene):
 
 def finish_pass(scene):
     """Retain color, wood species, UVs, PBR maps, roughness and geometry.
-    Add Cycles-only edge shading to known wood/plaster/stone/metal surfaces.
+    Add Cycles-only edge shading so surfaces read as real materials instead of
+    flat CG fills, without changing any geometry, color or authored roughness
+    value. Previously only materials explicitly tagged wood/plaster/stone/
+    metal got this treatment; auto-imported editable scenes leave most
+    fixtures/hardware/furniture untagged, so those rooms stayed visibly
+    flatter than the hand-authored native rooms. Applied to every Principled
+    BSDF now, tuned a little stronger for the tagged roles.
+
+    2026-09-29: a first version of this also added a faint procedural
+    roughness-noise variation to every untagged material's Roughness input.
+    That was reverted after it visibly regressed the drawing room (native,
+    real GI, large flat plaster walls): a Cycles adaptive-sampling threshold
+    tuned for a flat roughness value converges far slower against a
+    per-pixel-varying one, and the drawing room's authored-1/2 shots went
+    from ~30-60s to 245-285s each and came out visibly blotchy/undersampled
+    rather than smoother. Bevel-only edge shading has no such interaction
+    with adaptive sampling (it perturbs the normal, not a value Cycles
+    samples per-pixel) and was safe in the same comparison.
     """
     seen, changes = set(), []
     for obj in scene.objects:
@@ -148,19 +165,17 @@ def finish_pass(scene):
             if not role:
                 role = next((role for word,role in [('walnut','wood'),('limestone','stone'),('mineral plaster','plaster'),('bronze','metal')]
                              if word in explicit), None)
-            if role not in ('wood','plaster','stone','metal'):
-                continue
             nodes, links = mat.node_tree.nodes, mat.node_tree.links
             for principled in [node for node in nodes if node.type == 'BSDF_PRINCIPLED']:
                 bevel = nodes.new('ShaderNodeBevel')
                 bevel.label = 'Archviz edge shading only - geometry unchanged'
-                bevel.inputs['Radius'].default_value = .0008 if role == 'wood' else .0004
+                bevel.inputs['Radius'].default_value = .0008 if role == 'wood' else .0004 if role in ('plaster','stone','metal') else .0003
                 bevel.samples = 4
                 normal = principled.inputs['Normal']
                 if normal.is_linked:
                     links.new(normal.links[0].from_socket, bevel.inputs['Normal'])
                 links.new(bevel.outputs['Normal'], normal)
-                changes.append({'material':mat.name, 'role':role, 'normalBevelMetres':bevel.inputs['Radius'].default_value})
+                changes.append({'material':mat.name, 'role':role or 'untagged', 'normalBevelMetres':bevel.inputs['Radius'].default_value})
     return changes
 
 
