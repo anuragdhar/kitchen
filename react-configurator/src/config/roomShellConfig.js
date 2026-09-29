@@ -90,13 +90,35 @@ export const EMPTY_ROOM_SHELLS={
       furniture:{
         northSofa:{centerXmm:1155,centerZmm:500,widthMm:880,lengthMm:2250},
         westSofa:{centerXmm:580,centerZmm:2165,widthMm:880,lengthMm:2250},
-        coffeeTable:{centerXmm:1745,centerZmm:1900,widthMm:650,lengthMm:1100},
+        coffeeTable:{centerXmm:1745,centerZmm:1900,widthMm:600,lengthMm:1100},
         rug:{centerXmm:1500,centerZmm:1750,widthMm:2100,lengthMm:2500},
       },
       // Wall-mounted flat: TV thickness + a slim bracket protrude only 90 mm from the east wall face.
       tv:{diagonalInches:65,widthMm:1450,heightMm:830,depthMm:55,mountMm:35,centerFromNorthMm:1080,bottomMm:730},
       soundbar:{model:'Bose Smart Soundbar 300',widthMm:699,heightMm:58,depthMm:102,gapBelowTvMm:20},
       bassModule:{model:'Bose Bass Module 500',widthMm:254,heightMm:254,depthMm:241,centerFromNorthMm:1560,fromWallMm:100},
+      // Option "B2" (owner, 2026-09-30): an 18-inch (457 mm) deep LOW console on the east wall under a full-motion arm TV.
+      // A full-height 18-inch unit was tested and rejected: beside the north sofa it leaves 576 mm of walkway, and the only
+      // stretch clear of the sofa (z 960-2040) is too narrow for a TV bay. The console holds the Bass Module 500 (open lattice
+      // bay) and storage; the Soundbar 300 stands on top; the router and phones stay in the north-wall cabinet.
+      // Both TV sizes are listed: the owner has a 55-inch now and may fit a 65-inch later.
+      console:{
+        depthMm:457,heightMm:500,fromNorthMm:960,lengthMm:1080,panelMm:18,backMm:12,moduleBayMm:420,
+        soundbarCenterFromNorthMm:1320,
+        tvCenterFromNorthMm:1300,tvBottomMm:650,installedTv:'55',
+        tvs:{
+          '55':{diagonalInches:55,widthMm:1230,heightMm:710,depthMm:45},
+          '65':{diagonalInches:65,widthMm:1450,heightMm:830,depthMm:55},
+        },
+        // Full-motion wall arm: maxExtendMm is the hardware reach; watch* is the pose drawn by the toggle.
+        arm:{plateMm:35,maxExtendMm:450,watchExtendMm:200,watchSwivelDeg:10},
+      },
+      // Option "B3" (future): the TV is replaced by a ceiling projector and a drop-down screen; the console, soundbar and
+      // north cabinet stay. An 80-inch 16:9 screen (1771 x 996) is the widest that leaves 140 mm either side on the solid wall.
+      projector:{
+        screenDiagonalInches:80,widthMm:1771,heightMm:996,centerFromNorthMm:1029,bottomMm:700,
+        throwRatio:1.2,ceilingDropMm:200,body:{widthMm:330,heightMm:120,depthMm:250},
+      },
       routerCabinet:{fromWestMm:500,widthMm:1100,bottomMm:1450,heightMm:650,depthMm:250,panelMm:18,
         router:{widthMm:260,heightMm:45,depthMm:190,antennaMm:230},
         landline:{widthMm:140,heightMm:110,depthMm:140},intercom:{widthMm:130,heightMm:230,depthMm:35}},

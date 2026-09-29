@@ -5,36 +5,48 @@ import {createDrawingRoomSeating, createDrawingRoomCornerSeating} from './Drawin
 import {createDrawingLayoutLights} from './DrawingRoomLighting.js'
 
 export const DRAWING_LAYOUTS = [
-  {key: 'northTv', label: 'A: TV on the north wall'},
-  {key: 'cornerSofas', label: 'B: corner sofas, TV on the east wall'},
+  {key: 'northTv', label: 'A: TV on the north wall (cabinet, recessed)'},
+  {key: 'cornerSofas', label: 'B: corner sofas, 65-inch TV flat on the east wall'},
+  {key: 'cornerConsole', label: 'B2: corner sofas, low 18-inch console + arm TV (55 or 65-inch)'},
+  {key: 'cornerProjector', label: 'B3 (future): corner sofas, ceiling projector + screen'},
 ]
 
 /**
- * Builds both Drawing Room layouts once and shows one at a time.
+ * Builds every Drawing Room layout once and shows one at a time.
  * `built` holds the fixed pieces (cabinets, TVs, ceiling fixtures); `furniture` holds the seating.
  * Add both groups to the scene; setLayout switches which layout is visible.
+ * The three corner-sofa layouts share one seating group and one set of ceiling fixtures.
  */
-export function createDrawingRoomLayouts(room, {wallFaceMm = 0, initial = 'cornerSofas'} = {}) {
+export function createDrawingRoomLayouts(room, {wallFaceMm = 0, initial = 'cornerConsole'} = {}) {
   const built = new THREE.Group(); built.name = 'Drawing Room fixed pieces'
   const furniture = new THREE.Group(); furniture.name = 'Drawing Room furniture'
   const tvNorth = createDrawingRoomTvWall(room, {insetMm: wallFaceMm})
-  const tvCorner = createDrawingRoomCornerTv(room, {wallFaceMm})
-  const layouts = {
-    northTv: {built: [tvNorth, createDrawingLayoutLights(room, 'northTv')], furniture: [createDrawingRoomSeating(room, {wallFaceMm})], labels: tvNorth},
-    cornerSofas: {built: [tvCorner, createDrawingLayoutLights(room, 'cornerSofas')], furniture: [createDrawingRoomCornerSeating(room, {wallFaceMm})], labels: tvCorner},
+  const corner = {
+    cornerSofas: createDrawingRoomCornerTv(room, {wallFaceMm, variant: 'wallTv'}),
+    cornerConsole: createDrawingRoomCornerTv(room, {wallFaceMm, variant: 'console'}),
+    cornerProjector: createDrawingRoomCornerTv(room, {wallFaceMm, variant: 'projector'}),
   }
-  for (const layout of Object.values(layouts)) {
-    layout.built.forEach(part => built.add(part)); layout.furniture.forEach(part => furniture.add(part))
-  }
+  const CORNER = Object.keys(corner)
+  const registry = [
+    {part: tvNorth, layouts: ['northTv'], into: built},
+    {part: createDrawingLayoutLights(room, 'northTv'), layouts: ['northTv'], into: built},
+    {part: createDrawingRoomSeating(room, {wallFaceMm}), layouts: ['northTv'], into: furniture},
+    ...Object.entries(corner).map(([key, part]) => ({part, layouts: [key], into: built})),
+    {part: createDrawingLayoutLights(room, 'cornerSofas'), layouts: CORNER, into: built},
+    {part: createDrawingRoomCornerSeating(room, {wallFaceMm}), layouts: CORNER, into: furniture},
+  ]
+  registry.forEach(({part, into}) => into.add(part))
   let current = initial
   const setLayout = key => {
-    if (!layouts[key]) throw new Error(`Unknown Drawing Room layout: ${key}`)
+    if (!DRAWING_LAYOUTS.some(layout => layout.key === key)) throw new Error(`Unknown Drawing Room layout: ${key}`)
     current = key
-    for (const [name, layout] of Object.entries(layouts)) {
-      layout.built.concat(layout.furniture).forEach(part => { part.visible = name === key })
-    }
+    registry.forEach(({part, layouts}) => { part.visible = layouts.includes(key) })
   }
-  const setLabels = visible => { for (const layout of Object.values(layouts)) layout.labels.userData.setLabels(visible) }
+  const setLabels = visible => { for (const part of [tvNorth, ...Object.values(corner)]) part.userData.setLabels(visible) }
   setLayout(initial)
-  return {built, furniture, setLayout, setLabels, layout: () => current}
+  return {
+    built, furniture, setLayout, setLabels, layout: () => current,
+    setArm: pulled => corner.cornerConsole.userData.setArm(pulled),
+    setTvSize: key => corner.cornerConsole.userData.setTvSize(key),
+  }
 }

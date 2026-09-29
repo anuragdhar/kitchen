@@ -121,3 +121,10 @@ the old layout). Full plan and reasoning: `docs/DRAWING_ROOM_TV_WALL.md`.
 ## Room review sheet (2026-09-29)
 
 The room workspace has a **Review sheet for AI** button: one PNG (dimensioned top plan, overview, four walls from the room centre, key facts) plus a copyable text brief. Details and limits: `docs/REVIEW_SHEET.md`. Pure brief builder: `src/domain/roomReview.mjs`; canvas composer: `src/render/reviewSheet.js`; capture: `EmptyRoomGallery.jsx`.
+
+## Drawing Room east-wall options (2026-09-30)
+
+Layout list now has A (north-wall cabinet), B (65-inch TV flat on the east wall), **B2** (18-inch deep low console under a
+55 or 65-inch arm-mounted TV; shown first) and **B3** (future ceiling projector with an 80-inch drop-down screen). The corner
+layouts use a 600 mm coffee table (was 650) so the walkway beside the 457 mm console stays at 811 mm. A floor-to-ceiling
+18-inch unit was checked and rejected (576 mm walkway beside the north sofa). Analysis: `docs/DRAWING_ROOM_TV_WALL.md`.

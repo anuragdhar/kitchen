@@ -1,12 +1,14 @@
 // Builds the facts an outside reviewer (a person or an online AI) needs about a room, from the same
 // config the 3D scenes use. Pure: no React, Three.js or DOM. Units are millimetres unless stated.
-import {checkDrawingRoomLayout, checkCornerLayout, tvWallGeometry, cornerTvFrontX, WALL_FACE_MM} from './drawingRoomLayout.mjs'
+import {checkDrawingRoomLayout, checkCornerLayout, checkCornerConsole, checkCornerProjector, consoleGeometry, projectorPlacement, tvWallGeometry, cornerTvFrontX, WALL_FACE_MM} from './drawingRoomLayout.mjs'
 
 const mm = v => `${Math.round(v)} mm`
 const size = (a, b) => `${Math.round(a)} x ${Math.round(b)}`
 export const DRAWING_LAYOUT_LABELS = {
   northTv: 'A: TV on the north wall',
-  cornerSofas: 'B: corner sofas, TV on the east wall',
+  cornerSofas: 'B: corner sofas, 65-inch TV flat on the east wall',
+  cornerConsole: 'B2: corner sofas, low 18-inch console and arm-mounted TV',
+  cornerProjector: 'B3 (future): corner sofas, ceiling projector and drop-down screen',
 }
 
 // Frame used everywhere in the app's room scenes.
@@ -90,6 +92,71 @@ function drawingLayoutB(room) {
   }
 }
 
+
+// B2 and B3 share the seating, the router cabinet and the console; only the picture source differs.
+function consoleLines(room) {
+  const c = room.cornerLayout, k = c.console, g = consoleGeometry(room), fh = checkCornerConsole(room).fullHeight
+  return [
+    `Low console on the east wall: ${mm(k.depthMm)} (18 in) deep, ${mm(k.heightMm)} high, z ${g.z1}-${g.z2} (${mm(k.lengthMm)} long), dark walnut. The north ${mm(k.moduleBayMm)} is an open-lattice bay holding the Bose Bass Module 500; the rest is a lattice-fronted storage door. The Bose Soundbar 300 stands on top.`,
+    `A floor-to-ceiling 18-inch unit was tested and does NOT fit: beside the north sofa it leaves ${mm(fh.laneBesideNorthSofa)} of walkway (needs 800), and the stretch clear of the sofa is ${mm(fh.lengthClearOfNorthSofa)} long while a TV bay needs ${mm(fh.bayNeeded['55'])} (55-inch) or ${mm(fh.bayNeeded['65'])} (65-inch). Cables would instead run in a recessed in-wall conduit from behind the TV down to the console.`,
+  ]
+}
+
+function seatingAndCabinet(room) {
+  const b = drawingLayoutB(room)
+  return {lines: [b.lines[0], b.lines[1], b.lines[2]], cabinetLine: b.lines[5], items: [b.items[0], b.items[1], b.items[2]], cabinetItem: b.items[5]}
+}
+
+function drawingCornerConsole(room) {
+  const c = room.cornerLayout, k = c.console, g = consoleGeometry(room), check = checkCornerConsole(room), base = seatingAndCabinet(room)
+  const tv = k.tvs[k.installedTv], big = k.tvs['65'], p = check.poses[k.installedTv]
+  const spot = (name, pose) => `${pose.headTurn.northSofa.angleDeg} degrees (north sofa) and ${pose.headTurn.westSofa.angleDeg} degrees (west sofa)`
+  return {
+    lines: [
+      ...base.lines,
+      ...consoleLines(room),
+      `TV: ${tv.diagonalInches}-inch (${tv.widthMm} x ${tv.heightMm}) on a full-motion wall arm, centred ${mm(k.tvCenterFromNorthMm)} from the north wall, bottom edge ${mm(k.tvBottomMm)}. It pulls out up to ${mm(k.arm.maxExtendMm)} and turns. A 65-inch (${big.widthMm} x ${big.heightMm}) also fits the solid wall (z ${Math.round(check.tvs['65'].zRange[0])}-${Math.round(check.tvs['65'].zRange[1])}).`,
+      base.cabinetLine,
+    ],
+    items: [...base.items, {label: `Console ${k.lengthMm}x${k.depthMm}`, x1: g.frontX, z1: g.z1, x2: g.face, z2: g.z2, kind: 'fixed'}, base.cabinetItem],
+    measured: [
+      `Walkway between the console front and the coffee table: ${mm(check.lane)}.`,
+      `Head turn (angle off the direction each sofa faces) with the ${tv.diagonalInches}-inch TV flat: ${spot('flat', p.parked)}. Pulled out ${mm(k.arm.watchExtendMm)} and turned ${k.arm.watchSwivelDeg} degrees toward the north sofa: ${spot('watch', p.watch)}. The arm hardly changes how far the north-sofa viewer must turn their head.`,
+      `Picture seen off-axis: north sofa ${p.parked.pictureOffAxis.northSofa} degrees flat, ${p.watch.pictureOffAxis.northSofa} degrees with the arm turned; west sofa ${p.parked.pictureOffAxis.westSofa} flat, ${p.watch.pictureOffAxis.westSofa} turned (turning toward one sofa moves the other away).`,
+      `Walkway to the coffee table: ${mm(p.parked.laneToTable)} with the TV flat, ${mm(p.watch.laneToTable)} pulled out for watching, ${mm(p.fullReachLaneToTable)} at full reach (blocked): keep the arm folded when walking through.`,
+    ],
+    issues: check.issues,
+  }
+}
+
+function drawingCornerProjector(room) {
+  const c = room.cornerLayout, pr = c.projector, k = c.console, g = consoleGeometry(room), check = checkCornerProjector(room), base = seatingAndCabinet(room)
+  const place = projectorPlacement(room), stubEnd = room.wallOpenings.east.fromMm, face = room.widthMm - WALL_FACE_MM
+  const [z1, z2] = check.screen.zRange
+  const f = c.furniture
+  const seat = (sx, sz, facing) => { const dx = face - 140 - sx, dz = pr.centerFromNorthMm - sz, d = Math.hypot(dx, dz); return `${(d / 1000).toFixed(1)} m, ${Math.round(Math.acos((dx * facing[0] + dz * facing[1]) / d) * 180 / Math.PI)} degrees off its facing direction` }
+  return {
+    lines: [
+      ...base.lines,
+      ...consoleLines(room),
+      `Drop-down screen (replaces the TV later): ${pr.screenDiagonalInches}-inch 16:9 (${pr.widthMm} x ${pr.heightMm}), bottom edge ${mm(pr.bottomMm)}, centred ${mm(pr.centerFromNorthMm)} from the north wall; it leaves ${mm(z1)} to the door wall and ${mm(stubEnd - z2)} to the end of the solid wall. The case is recessed in the ceiling.`,
+      `Ceiling projector: throw ${mm(place.throwMm)} (ratio ${pr.throwRatio}), body ${pr.body.widthMm} x ${pr.body.heightMm} x ${pr.body.depthMm}, hanging ${mm(pr.ceilingDropMm)} below the ceiling at x ${Math.round(place.x)}, z ${Math.round(place.z)}, above ${place.over}. Needs a power and HDMI or network run to the ceiling.`,
+      base.cabinetLine,
+    ],
+    items: [...base.items,
+      {label: `Console ${k.lengthMm}x${k.depthMm}`, x1: g.frontX, z1: g.z1, x2: g.face, z2: g.z2, kind: 'fixed'},
+      {label: `Screen ${pr.screenDiagonalInches}in`, x1: face - 160, z1, x2: face - 120, z2, kind: 'table'},
+      {label: 'Projector', x1: place.x - pr.body.depthMm / 2, z1: place.z - pr.body.widthMm / 2, x2: place.x + pr.body.depthMm / 2, z2: place.z + pr.body.widthMm / 2, kind: 'seat'},
+      base.cabinetItem],
+    measured: [
+      `Seats to the screen: west sofa ${seat(f.westSofa.centerXmm, f.westSofa.centerZmm, [1, 0])}; north sofa ${seat(f.northSofa.centerXmm, f.northSofa.centerZmm, [0, 1])}.`,
+      'A projector picture can be seen from much wider angles than a TV, so the side-sofa picture problem goes away; the neck-turn problem of the north sofa stays.',
+      `Walkway between the console front and the coffee table: ${mm(g.frontX - (f.coffeeTable.centerXmm + f.coffeeTable.widthMm / 2))}.`,
+    ],
+    issues: check.issues,
+  }
+}
+
 // "2.7-3.2 m, 7-35 degrees" from a list of {distanceMm, angleDeg}
 const spread = views => {
   const d = views.map(v => v.distanceMm / 1000), a = views.map(v => v.angleDeg)
@@ -107,7 +174,7 @@ export const REVIEW_TASKS = [
 export function buildRoomReview({roomKey, room, layoutKey = null, references = [], date = new Date()}) {
   const layoutLabel = roomKey === 'drawing' && layoutKey ? `Layout ${DRAWING_LAYOUT_LABELS[layoutKey]}` : null
   let layout = null
-  if (roomKey === 'drawing') layout = layoutKey === 'northTv' ? drawingLayoutA(room) : drawingLayoutB(room)
+  if (roomKey === 'drawing') layout = {northTv: drawingLayoutA, cornerSofas: drawingLayoutB, cornerConsole: drawingCornerConsole, cornerProjector: drawingCornerProjector}[layoutKey ?? 'cornerConsole'](room)
   const dims = `${room.widthMm} x ${room.lengthMm} x ${room.heightMm} mm (width x length x ceiling)`
   const sections = [
     {heading: 'Room', lines: [`${room.name}, interior ${dims}. Source: ${room.source ?? 'app config'}.`, FRAME_NOTE]},
@@ -121,7 +188,8 @@ export function buildRoomReview({roomKey, room, layoutKey = null, references = [
     'This is a simplified concept model, not a survey: sizes come from the floor plan and manufacturer specs, walls are drawn 85 mm thick, and textures/colours are placeholders.',
     'Nothing here is structural, electrical or fire-safety advice.',
   ]})
-  const iso = date.toISOString().slice(0, 10)
+  // Local calendar date: toISOString() is UTC and reads a day behind for part of the day in time zones ahead of UTC.
+  const iso = [date.getFullYear(), String(date.getMonth() + 1).padStart(2, '0'), String(date.getDate()).padStart(2, '0')].join('-')
   const title = `${room.name}${layoutLabel ? ` - ${layoutLabel}` : ''}`
   const text = [`# ${title}`, `Generated ${iso} by the Home Interior app. Units: millimetres.`, '',
     ...sections.flatMap(s => [`## ${s.heading}`, ...s.lines.map(l => `- ${l}`), '']),

@@ -89,8 +89,7 @@ None of these was applied; the brief said to keep the west sofa.
 
 Requested afterwards: one sofa against the north wall, one against the west wall, a table in front, the TV
 across from them, and a small cabinet on the north wall for the router and phones. Both layouts are built into
-the model. Switch with **Layout A / Layout B** in the Drawing Room workspace or in Whole home 3D (B is shown
-first). Config: `roomShellConfig.js` `drawing.cornerLayout`; checks: `checkCornerLayout` in `drawingRoomLayout.mjs`.
+the model. Switch with the **Layout** list in the Drawing Room workspace or in Whole home 3D (B2, below, is shown first). Config: `roomShellConfig.js` `drawing.cornerLayout`; checks: `checkCornerLayout` in `drawingRoomLayout.mjs`.
 
 Where things go in B (millimetres, room frame):
 
@@ -134,6 +133,72 @@ What to know about B:
 - **Only one sofa can face the TV in either layout**; two sofas at right angles cannot both point at one screen.
   A puts the good seat at the far end of the room; B puts it in the right distance range but beside the walkway.
 - Both layouts share the same entry door, east opening, window, sofa size and 65-inch TV.
+
+## East wall options after choosing layout B (2026-09-30)
+
+Chosen direction: layout B, an 18-inch (457 mm) deep unit on the east wall, all devices kept, a 55-inch TV now and
+possibly a 65-inch later, a telescopic wall arm, and maybe a ceiling projector once the current TV dies. Pick them in the
+**Layout** list (B2 is shown first): *B2 low 18-inch console + arm TV* and *B3 (future) ceiling projector*. Checks:
+`checkCornerConsole` and `checkCornerProjector` in `drawingRoomLayout.mjs`, tests in `tests/drawing-room-console.test.mjs`.
+
+### 1. Floor-to-ceiling 18-inch cabinet: does not fit here
+
+| | Value |
+| --- | --- |
+| East-wall unit front with 457 mm depth | x 2856 |
+| Walkway beside the north sofa (its east end is x 2280) | **576 mm** (needs 800+) |
+| Deepest unit that still leaves an 800 mm walkway there | 233 mm |
+| Wall clear of the north sofa (z 960 to the end of the solid wall, 2058) | 1098 mm |
+| TV bay needed: 55-inch / 65-inch | 1310 mm / 1530 mm |
+
+So a tall unit either blocks the entry walkway or is too short to hold a TV. The wish behind it, hidden cabling, is met
+differently: a recessed in-wall conduit and outlet box behind the TV, running down to the console (an electrician job;
+not modelled).
+
+### 2. Option B2: low 18-inch console with a telescopic wall arm (fits)
+
+- Console: 457 deep x 500 high x 1080 long, z 960-2040 on the solid east wall, just south of the north sofa. It holds the
+  Bass Module 500 (in an open-lattice bay at the north end, so it can be heard) and a lattice-fronted storage door for the
+  set-top box, cables and chargers. The Soundbar 300 stands on top. Walkway between the console and the coffee table: 811 mm
+  (the corner-layout coffee table is 600 wide, not 650, to make this work).
+- TV on a full-motion arm, centred z 1300, bottom edge 650. The 55-inch (1230 x 710) fits now; the 65-inch (1450 x 830)
+  fits the same wall later (z 575-2025, 33 mm spare). Use the **TV size** button to see both.
+- Router, landline and intercom stay in the small cabinet above the north sofa (router higher is better for Wi-Fi; it
+  could go in the console if you prefer, at some cost in coverage).
+
+### 3. Does the arm help the sofa on the side? Not for neck strain
+
+| 55-inch TV | Flat on the wall | Pulled out 200 mm, turned 10 degrees north |
+| --- | --- | --- |
+| North sofa: head turn (angle off the way the sofa faces) | 69 | 68 |
+| North sofa: picture seen off-axis | 21 | 12 |
+| West sofa: head turn | 18 | 20 |
+| West sofa: picture seen off-axis | 18 | 30 |
+| Walkway between the TV and the coffee table | 1188 mm | 885 mm |
+
+- The north-sofa viewer must still turn their head about 69 degrees: pulling the TV forward barely changes the direction
+  they look in. Only turning the sofa itself would.
+- Turning the TV toward the north sofa gives that sofa a better picture but worsens the west sofa's (18 to 30 degrees), so a
+  small turn (about 10 degrees) is the compromise.
+- At full arm reach (450 mm) the walkway falls to about 640 mm, so the arm must be folded when people walk through.
+- If the north sofa matters, the fix is a swivel armchair at its east end that can turn toward the TV, not the arm.
+
+### 4. Option B3 (future): ceiling projector and drop-down screen
+
+- Screen: 80-inch 16:9 (1771 x 996), bottom edge 700, centred z 1029. It is the widest that leaves 140 mm either side on the
+  solid wall; a 92-inch screen (2037 wide) does not fit.
+- Projector: throw ratio 1.2 puts it 2125 mm from the wall, hanging 200 mm below the ceiling, over the open floor between
+  the west sofa and the coffee table; a shorter throw ratio moves it toward the wall. It needs a power and HDMI or network
+  run to the ceiling. A projector picture is visible from wide angles, so the side-sofa picture problem goes away, but
+  the neck turn does not.
+- Kept from B2: the console (soundbar on top, Bass Module inside) and the north cabinet with the router and phones.
+- Daylight matters: this room has a large south window, so plan blackout curtains or an ambient-light-rejecting screen.
+
+### 5. The ten-year-old TV
+
+Nothing has to be replaced now. Build B2 with the 55-inch on the arm; when the TV wears out, choose a 65-inch on the same
+arm (the bay already allows it) or move to the projector. The console, the soundbar spot, the Bass Module bay and the router
+cabinet serve all three.
 
 ## Things to confirm before building
 

@@ -180,3 +180,133 @@ export function checkCornerLayout(room) {
   need(views.westSofa.every(v => v.angleDeg <= 35 && v.distanceMm >= 2000 && v.distanceMm <= 4000), 'west sofa seats are outside 2-4 m and 35 degrees of the TV')
   return {ok: issues.length === 0, issues, clearances, views, tvFront}
 }
+
+// ---- Options B2 (18-inch low console + arm TV) and B3 (ceiling projector) ----
+
+const faceX = room => room.widthMm - WALL_FACE_MM
+const bearing = (seat, facing, target) => {
+  const dx = target.x - seat.x, dz = target.z - seat.z, distance = Math.hypot(dx, dz)
+  return {distanceMm: Math.round(distance), angleDeg: Math.round(Math.acos((dx * facing[0] + dz * facing[1]) / distance) * 180 / Math.PI)}
+}
+
+export function consoleGeometry(room) {
+  const k = room.cornerLayout.console, face = faceX(room)
+  return {face, frontX: face - k.depthMm, z1: k.fromNorthMm, z2: k.fromNorthMm + k.lengthMm, topMm: k.heightMm}
+}
+
+/**
+ * Where the TV centre and its most forward edge are when the wall arm is pulled out `extendMm` and the screen is turned
+ * `swivelDeg` toward the NORTH (door and north-sofa side). Turning north brings the SOUTH end of the screen forward.
+ */
+export function armPose(room, tvKey, extendMm = 0, swivelDeg = 0) {
+  const k = room.cornerLayout.console, tv = k.tvs[tvKey], phi = swivelDeg * Math.PI / 180
+  const x = faceX(room) - k.arm.plateMm - tv.depthMm / 2 - extendMm * Math.cos(phi)
+  const z = k.tvCenterFromNorthMm - extendMm * Math.sin(phi)
+  return {x, z, yawDeg: swivelDeg, frontX: x - (tv.widthMm / 2 * Math.sin(phi) + tv.depthMm / 2 * Math.cos(phi))}
+}
+
+/** Angle between the screen normal and the line from the screen centre to a seat (how far off-axis the picture is seen). */
+export function pictureOffAxis(pose, seat) {
+  const phi = pose.yawDeg * Math.PI / 180, nx = -Math.cos(phi), nz = -Math.sin(phi)
+  const dx = seat.x - pose.x, dz = seat.z - pose.z, d = Math.hypot(dx, dz)
+  return Math.round(Math.acos((dx * nx + dz * nz) / d) * 180 / Math.PI)
+}
+
+/** Why a floor-to-ceiling unit of the given depth cannot go on the east wall in layout B. */
+export function fullHeightEastUnit(room, depthMm = 457) {
+  const c = room.cornerLayout, f = c.furniture, face = faceX(room), k = c.console
+  const northSofaEnd = f.northSofa.centerXmm + f.northSofa.lengthMm / 2
+  const northSofaZ2 = f.northSofa.centerZmm + f.northSofa.widthMm / 2
+  const stubEnd = room.wallOpenings.east.fromMm
+  const southOfSofa = stubEnd - (northSofaZ2 + 20)
+  return {
+    laneBesideNorthSofa: face - depthMm - northSofaEnd,
+    deepestUnitForAWalkableLane: face - northSofaEnd - 800,
+    lengthClearOfNorthSofa: southOfSofa,
+    bayNeeded: Object.fromEntries(Object.entries(k.tvs).map(([key, tv]) => [key, tv.widthMm + 80])),
+    fits: false,
+  }
+}
+
+export function checkCornerConsole(room) {
+  const issues = [], c = room.cornerLayout, k = c.console, f = c.furniture, g = consoleGeometry(room)
+  const need = (ok, message) => { if (!ok) issues.push(message) }
+  const stubEnd = room.wallOpenings.east.fromMm
+  const northSofa = rect(f.northSofa.centerXmm, f.northSofa.centerZmm, f.northSofa.lengthMm, f.northSofa.widthMm)
+  const westSofa = rect(f.westSofa.centerXmm, f.westSofa.centerZmm, f.westSofa.widthMm, f.westSofa.lengthMm)
+  const table = rect(f.coffeeTable.centerXmm, f.coffeeTable.centerZmm, f.coffeeTable.widthMm, f.coffeeTable.lengthMm)
+  const overlapsZ = r => r.z1 < g.z2 && r.z2 > g.z1
+
+  need(Math.abs(k.depthMm - 457) <= 15, 'the console is not about 18 inches (457 mm) deep')
+  need(k.heightMm <= 600, 'the console is too tall to sit under a wall-mounted TV')
+  need(g.z1 >= northSofa.z2 + 20, `the console starts at z ${g.z1}, under 20 mm clear of the north sofa (ends ${northSofa.z2})`)
+  need(g.z2 <= stubEnd, `the console runs to z ${g.z2} but the solid east wall stops at ${stubEnd}`)
+  const lane = g.frontX - Math.max(0, ...[northSofa, westSofa, table].filter(overlapsZ).map(r => r.x2))
+  need(lane >= 800, `the walkway beside the console is ${lane} mm (needs 800)`)
+
+  const bm = c.bassModule, sb = c.soundbar
+  need(bm.widthMm + 100 <= k.moduleBayMm, 'the bass module does not fit its bay')
+  need(bm.depthMm + 30 <= k.depthMm - k.backMm - 20, 'the bass module is too deep for the console')
+  need(bm.heightMm + 40 <= k.heightMm - 2 * k.panelMm, 'the bass module is too tall for the console')
+  const sbZ1 = k.soundbarCenterFromNorthMm - sb.widthMm / 2, sbZ2 = k.soundbarCenterFromNorthMm + sb.widthMm / 2
+  need(sbZ1 >= g.z1 && sbZ2 <= g.z2, 'the soundbar hangs over an end of the console')
+  need(sb.depthMm <= k.depthMm - 40, 'the soundbar is too deep for the console top')
+
+  const tvs = {}
+  for (const [key, tv] of Object.entries(k.tvs)) {
+    const z1 = k.tvCenterFromNorthMm - tv.widthMm / 2, z2 = k.tvCenterFromNorthMm + tv.widthMm / 2
+    need(z1 >= 300, `the ${key}-inch TV starts ${z1} mm from the door wall (needs 300)`)
+    need(z2 <= stubEnd - 30, `the ${key}-inch TV ends at z ${z2}; the solid wall stops at ${stubEnd} (needs 30 mm spare)`)
+    need(k.tvBottomMm >= k.heightMm + sb.heightMm + 40, `the ${key}-inch TV bottom edge is not clear of the soundbar`)
+    need(k.tvBottomMm + tv.heightMm <= 1900, `the ${key}-inch TV top is above 1900 mm`)
+    tvs[key] = {zRange: [z1, z2], top: k.tvBottomMm + tv.heightMm}
+  }
+
+  // Arm poses: parked flat on the wall, and pulled out and turned toward the north sofa.
+  const seats = {northSofa: {x: f.northSofa.centerXmm, z: f.northSofa.centerZmm, facing: [0, 1]}, westSofa: {x: f.westSofa.centerXmm, z: f.westSofa.centerZmm, facing: [1, 0]}}
+  const poses = {}
+  for (const key of Object.keys(k.tvs)) {
+    const parked = armPose(room, key, 0, 0)
+    const watch = armPose(room, key, k.arm.watchExtendMm, k.arm.watchSwivelDeg)
+    const full = armPose(room, key, k.arm.maxExtendMm, k.arm.watchSwivelDeg)
+    const result = {}
+    for (const [name, pose] of [['parked', parked], ['watch', watch]]) {
+      result[name] = {
+        frontX: Math.round(pose.frontX),
+        headTurn: Object.fromEntries(Object.entries(seats).map(([s, seat]) => [s, bearing(seat, seat.facing, pose)])),
+        pictureOffAxis: Object.fromEntries(Object.entries(seats).map(([s, seat]) => [s, pictureOffAxis(pose, seat)])),
+        laneToTable: Math.round(pose.frontX - table.x2),
+      }
+    }
+    result.fullReachLaneToTable = Math.round(full.frontX - table.x2)
+    poses[key] = result
+    need(result.parked.laneToTable >= 800, `with the ${key}-inch TV flat, the walkway to the coffee table is ${result.parked.laneToTable} mm`)
+    need(result.watch.laneToTable >= 700, `with the ${key}-inch TV pulled out for watching, the walkway is ${result.watch.laneToTable} mm`)
+  }
+  return {ok: issues.length === 0, issues, geometry: g, lane, tvs, poses, fullHeight: fullHeightEastUnit(room)}
+}
+
+export function projectorPlacement(room) {
+  const c = room.cornerLayout, p = c.projector, face = faceX(room)
+  const x = face - p.throwRatio * p.widthMm
+  const z = p.centerFromNorthMm
+  const f = c.furniture
+  const over = x >= f.westSofa.centerXmm - f.westSofa.widthMm / 2 && x <= f.westSofa.centerXmm + f.westSofa.widthMm / 2 ? 'west sofa'
+    : Math.abs(x - f.coffeeTable.centerXmm) < f.coffeeTable.widthMm / 2 + 200 ? 'coffee table' : 'open floor'
+  return {x, z, y: room.heightMm - p.ceilingDropMm, throwMm: p.throwRatio * p.widthMm, over}
+}
+
+export function checkCornerProjector(room) {
+  const issues = [], c = room.cornerLayout, p = c.projector, k = c.console, sb = c.soundbar
+  const need = (ok, message) => { if (!ok) issues.push(message) }
+  const stubEnd = room.wallOpenings.east.fromMm
+  const z1 = p.centerFromNorthMm - p.widthMm / 2, z2 = p.centerFromNorthMm + p.widthMm / 2
+  need(z1 >= 100 && z2 <= stubEnd - 100, `the ${p.screenDiagonalInches}-inch screen (z ${Math.round(z1)}-${Math.round(z2)}) needs 100 mm spare either side on the solid wall`)
+  need(p.bottomMm >= k.heightMm + sb.heightMm + 50, 'the screen bottom edge would sit on the soundbar')
+  need(Math.abs(Math.hypot(p.widthMm, p.heightMm) / 25.4 - p.screenDiagonalInches) < 0.6, 'screen width and height do not match the stated diagonal')
+  need(Math.abs(p.widthMm / p.heightMm - 16 / 9) < 0.02, 'the screen is not 16:9')
+  const place = projectorPlacement(room)
+  need(place.x > 300 && place.x < faceX(room), 'the projector would be outside the room')
+  need(room.heightMm - p.ceilingDropMm - p.body.heightMm >= 2300, 'the projector hangs lower than 2300 mm')
+  return {ok: issues.length === 0, issues, placement: place, screen: {zRange: [z1, z2]}}
+}
