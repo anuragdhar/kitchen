@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import {checkDrawingRoomLayout, tvWallGeometry} from '../src/domain/drawingRoomLayout.mjs'
+import {checkDrawingRoomLayout, checkCornerLayout, tvWallGeometry} from '../src/domain/drawingRoomLayout.mjs'
 import {EMPTY_ROOM_SHELLS} from '../src/config/roomShellConfig.js'
 
 const room = EMPTY_ROOM_SHELLS.drawing
@@ -46,4 +46,36 @@ test('the checker catches an oversized TV, a blocked door, a bass module that do
   assert.ok(checkDrawingRoomLayout(corner).issues.some(m => /corner boom/.test(m)))
   const table = clone(); table.furniture.coffeeTable.centerXmm = 1400
   assert.ok(checkDrawingRoomLayout(table).issues.some(m => /coffee table/.test(m)))
+})
+
+test('layout B (corner sofas, east-wall TV) fits with no issues', () => {
+  const result = checkCornerLayout(room)
+  assert.deepEqual(result.issues, [])
+  assert.equal(result.clearances.sofaToSofa, 100)
+})
+
+test('layout B keeps the two sofas the same size as each other and as layout A', () => {
+  const b = room.cornerLayout.furniture
+  assert.deepEqual([b.northSofa.widthMm, b.northSofa.lengthMm], [880, 2250])
+  assert.deepEqual([b.westSofa.widthMm, b.westSofa.lengthMm], [880, 2250])
+  assert.equal(room.cornerLayout.tv.diagonalInches, 65)
+  assert.equal(room.cornerLayout.bassModule.model, 'Bose Bass Module 500')
+})
+
+test('layout B known trade-offs: west sofa sees the TV well, north sofa sees it side-on, the walkway passes it', () => {
+  const r = checkCornerLayout(room)
+  assert.ok(r.views.westSofa.every(v => v.angleDeg <= 35 && v.distanceMm > 2500 && v.distanceMm < 3300))
+  assert.ok(r.views.northSofa.every(v => v.angleDeg > 60), 'the north sofa is 60+ degrees off the TV')
+  assert.equal(r.clearances.northSofaPastDoorJambLine, 130, 'the north sofa end passes the door jamb line by 130 mm')
+  assert.ok(r.clearances.doorClearPastNorthSofa >= 800)
+  assert.ok(r.clearances.tvFrontBeyondDoorEastJamb < 100, 'the TV front is within 100 mm of the door edge line')
+})
+
+test('layout B checker catches a TV too close to the door, a blocked lane and a low cabinet', () => {
+  const near = structuredClone(room); near.cornerLayout.tv.centerFromNorthMm = 900
+  assert.ok(checkCornerLayout(near).issues.some(m => /door wall/.test(m)))
+  const long = structuredClone(room); long.cornerLayout.furniture.northSofa.centerXmm = 1500
+  assert.ok(checkCornerLayout(long).issues.some(m => /lane|entry door/.test(m)))
+  const low = structuredClone(room); low.cornerLayout.routerCabinet.bottomMm = 1000
+  assert.ok(checkCornerLayout(low).issues.some(m => /1400/.test(m)))
 })

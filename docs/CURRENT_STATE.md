@@ -113,3 +113,7 @@ the old layout). Full plan and reasoning: `docs/DRAWING_ROOM_TV_WALL.md`.
   them. The west sofa, the entry door (x 2150-3150) and the east opening are unchanged.
 - `src/domain/drawingRoomLayout.mjs` checks fits and clearances; the west sofa sees the TV about 72-81 degrees
   off-axis, the south sofa about 4.6-4.7 m straight on.
+- Alternative layout B (`drawing.cornerLayout`): north-wall sofa + west-wall sofa in an L, the 65-inch TV wall-mounted
+  on the solid east wall (z 355-1805), Soundbar 300 on the wall and Bass Module 500 on the floor beneath it, and a small
+  router/landline/intercom cabinet above the north sofa. Built alongside layout A and switched with the Layout toggle
+  (B is shown first). Analysis and trade-offs in `docs/DRAWING_ROOM_TV_WALL.md`.

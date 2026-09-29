@@ -1,14 +1,16 @@
 import * as THREE from 'three'
 
-// Two identical 3-seaters facing the north-wall TV, plus the coffee table, rug and
-// styling from the owner's references (cream sofas, terracotta cushions, dark carved
-// wood). Positions come from room.furniture (millimetres, room frame: x from the west
-// wall, z from the north wall). Decor sub-groups carry archvizExclude so the Blender
-// renders skip them, as with the other decor factories.
+// Two identical 3-seaters plus the coffee table, rug and styling from the owner's references
+// (cream sofas, terracotta cushions, dark carved wood). Positions come from the room config
+// (millimetres, room frame: x from the west wall, z from the north wall). Decor sub-groups carry
+// archvizExclude so the Blender renders skip them, as with the other decor factories.
+// Sofa/table/panel materials are deliberately not tagged for the Materials panel: the references
+// are dark walnut and the panel would repaint them light oak.
 const mm = v => v / 1000
+// Sofas are built facing +x with the back at -x; rotation.y turns them to face another way.
+const FACING = {east: 0, north: Math.PI / 2, south: -Math.PI / 2, west: Math.PI}
 
 function sofa(widthMm, lengthMm) {
-  // Built facing +x with its back at -x; origin at the footprint centre on the floor.
   const group = new THREE.Group(); group.name = 'three-seater sofa'
   const D = mm(widthMm), Ln = mm(lengthMm)
   const cream = new THREE.MeshStandardMaterial({color: '#e6dac6', roughness: .95})
@@ -50,44 +52,64 @@ function framedPanel(widthMm, heightMm) {
   return group
 }
 
-export function createDrawingRoomSeating(room, {wallFaceMm = 0} = {}) {
-  const f = room.furniture
+// spec: {sofas:[{centerXmm,centerZmm,widthMm,lengthMm,faces}], table, rug, sideTable:{xMm,zMm}, panelsZ:[mm]}
+function buildSeating(spec, {wallFaceMm = 0} = {}) {
   const group = new THREE.Group(); group.name = 'Drawing Room seating'
+  const wood = new THREE.MeshStandardMaterial({color: '#4a2f1e', roughness: .58})
 
   const rug = new THREE.Group(); rug.name = 'rug'; rug.userData.archvizExclude = true
-  const border = new THREE.Mesh(new THREE.BoxGeometry(mm(f.rug.widthMm), .012, mm(f.rug.lengthMm)), new THREE.MeshStandardMaterial({color: '#8f4f34', roughness: 1}))
-  const inner = new THREE.Mesh(new THREE.BoxGeometry(mm(f.rug.widthMm) - .16, .014, mm(f.rug.lengthMm) - .16), new THREE.MeshStandardMaterial({color: '#b98058', roughness: 1}))
-  border.position.set(mm(f.rug.centerXmm), .006, mm(f.rug.centerZmm)); inner.position.set(mm(f.rug.centerXmm), .008, mm(f.rug.centerZmm))
+  const border = new THREE.Mesh(new THREE.BoxGeometry(mm(spec.rug.widthMm), .012, mm(spec.rug.lengthMm)), new THREE.MeshStandardMaterial({color: '#8f4f34', roughness: 1}))
+  const inner = new THREE.Mesh(new THREE.BoxGeometry(mm(spec.rug.widthMm) - .16, .014, mm(spec.rug.lengthMm) - .16), new THREE.MeshStandardMaterial({color: '#b98058', roughness: 1}))
+  border.position.set(mm(spec.rug.centerXmm), .006, mm(spec.rug.centerZmm)); inner.position.set(mm(spec.rug.centerXmm), .008, mm(spec.rug.centerZmm))
   border.receiveShadow = inner.receiveShadow = true; rug.add(border, inner); group.add(rug)
 
-  const west = sofa(f.sofa.widthMm, f.sofa.lengthMm)
-  west.position.set(mm(f.sofa.centerXmm), 0, mm(f.sofa.centerZmm)); group.add(west)
-  const south = sofa(f.southSofa.widthMm, f.southSofa.lengthMm)
-  south.position.set(mm(f.southSofa.centerXmm), 0, mm(f.southSofa.centerZmm)); south.rotation.y = Math.PI / 2; group.add(south)
-
-  const wood = new THREE.MeshStandardMaterial({color: '#4a2f1e', roughness: .58})
-  const table = f.coffeeTable
-  const top = new THREE.Mesh(new THREE.CylinderGeometry(1, 1, .055, 48), wood)
-  top.scale.set(mm(table.widthMm) / 2, 1, mm(table.lengthMm) / 2); top.position.set(mm(table.centerXmm), .43, mm(table.centerZmm)); top.castShadow = top.receiveShadow = true; group.add(top)
-  for (const dx of [-.2, .2]) for (const dz of [-.3, .3]) {
-    const leg = new THREE.Mesh(new THREE.BoxGeometry(.04, .4, .04), wood)
-    leg.position.set(mm(table.centerXmm) + dx, .2, mm(table.centerZmm) + dz); leg.castShadow = true; group.add(leg)
+  for (const s of spec.sofas) {
+    const item = sofa(s.widthMm, s.lengthMm)
+    item.position.set(mm(s.centerXmm), 0, mm(s.centerZmm)); item.rotation.y = FACING[s.faces]; group.add(item)
   }
 
-  // Side table and lamp in the gap between the two sofas, against the west wall.
+  const t = spec.table
+  const top = new THREE.Mesh(new THREE.CylinderGeometry(1, 1, .055, 48), wood)
+  top.scale.set(mm(t.widthMm) / 2, 1, mm(t.lengthMm) / 2); top.position.set(mm(t.centerXmm), .43, mm(t.centerZmm)); top.castShadow = top.receiveShadow = true; group.add(top)
+  for (const dx of [-.2, .2]) for (const dz of [-.3, .3]) {
+    const leg = new THREE.Mesh(new THREE.BoxGeometry(.04, .4, .04), wood)
+    leg.position.set(mm(t.centerXmm) + dx, .2, mm(t.centerZmm) + dz); leg.castShadow = true; group.add(leg)
+  }
+
   const decor = new THREE.Group(); decor.name = 'seating decor'; decor.userData.archvizExclude = true; group.add(decor)
-  const sideX = wallFaceMm + 260, sideZ = (f.sofa.centerZmm + f.sofa.lengthMm / 2 + f.southSofa.centerZmm - f.southSofa.widthMm / 2) / 2
-  const sideTop = new THREE.Mesh(new THREE.CylinderGeometry(.19, .19, .04, 32), wood); sideTop.position.set(mm(sideX), .55, mm(sideZ)); decor.add(sideTop)
-  const sideLeg = new THREE.Mesh(new THREE.CylinderGeometry(.03, .04, .53, 16), wood); sideLeg.position.set(mm(sideX), .265, mm(sideZ)); decor.add(sideLeg)
+  const {xMm, zMm} = spec.sideTable
+  const sideTop = new THREE.Mesh(new THREE.CylinderGeometry(.19, .19, .04, 32), wood); sideTop.position.set(mm(xMm), .55, mm(zMm)); decor.add(sideTop)
+  const sideLeg = new THREE.Mesh(new THREE.CylinderGeometry(.03, .04, .53, 16), wood); sideLeg.position.set(mm(xMm), .265, mm(zMm)); decor.add(sideLeg)
   const lampBody = new THREE.Mesh(new THREE.CylinderGeometry(.07, .09, .26, 24), new THREE.MeshStandardMaterial({color: '#3b2a1e', roughness: .5}))
-  lampBody.position.set(mm(sideX), .7, mm(sideZ)); decor.add(lampBody)
+  lampBody.position.set(mm(xMm), .7, mm(zMm)); decor.add(lampBody)
   const shadeMaterial = new THREE.MeshStandardMaterial({color: '#f3dfbf', emissive: '#ffcf8b', emissiveIntensity: .55, roughness: .9, side: THREE.DoubleSide})
   shadeMaterial.userData.taskLightGlow = true
-  const shade = new THREE.Mesh(new THREE.CylinderGeometry(.13, .19, .22, 32, 1, true), shadeMaterial); shade.position.set(mm(sideX), .95, mm(sideZ)); decor.add(shade)
+  const shade = new THREE.Mesh(new THREE.CylinderGeometry(.13, .19, .22, 32, 1, true), shadeMaterial); shade.position.set(mm(xMm), .95, mm(zMm)); decor.add(shade)
 
-  // Two carved panels above the west sofa, below the air-conditioner.
-  for (const z of [f.sofa.centerZmm - 350, f.sofa.centerZmm + 350]) {
+  for (const z of spec.panelsZ) {
     const panel = framedPanel(600, 900); panel.position.set(mm(wallFaceMm) + .02, 1.5, mm(z)); decor.add(panel)
   }
   return group
+}
+
+/** Layout A: west sofa (faces east) and south sofa (faces north, replacing the window seat). */
+export function createDrawingRoomSeating(room, {wallFaceMm = 0} = {}) {
+  const f = room.furniture
+  const gapMid = (f.sofa.centerZmm + f.sofa.lengthMm / 2 + f.southSofa.centerZmm - f.southSofa.widthMm / 2) / 2
+  return buildSeating({
+    sofas: [{...f.sofa, faces: 'east'}, {...f.southSofa, faces: 'north'}],
+    table: f.coffeeTable, rug: f.rug, sideTable: {xMm: wallFaceMm + 260, zMm: gapMid},
+    panelsZ: [f.sofa.centerZmm - 350, f.sofa.centerZmm + 350],
+  }, {wallFaceMm})
+}
+
+/** Layout B: north-wall sofa (faces south) and west-wall sofa (faces east) forming an L. */
+export function createDrawingRoomCornerSeating(room, {wallFaceMm = 0} = {}) {
+  const f = room.cornerLayout.furniture
+  return buildSeating({
+    sofas: [{...f.northSofa, faces: 'south'}, {...f.westSofa, faces: 'east'}],
+    table: f.coffeeTable, rug: f.rug,
+    sideTable: {xMm: wallFaceMm + 260, zMm: f.westSofa.centerZmm + f.westSofa.lengthMm / 2 + 260},
+    panelsZ: [f.westSofa.centerZmm - 350, f.westSofa.centerZmm + 350],
+  }, {wallFaceMm})
 }

@@ -100,3 +100,83 @@ export function checkDrawingRoomLayout(room) {
   need(views.southSofa.every(v => v.angleDeg <= 25 && v.distanceMm >= 2500 && v.distanceMm <= 5500), 'south sofa seats are outside 2.5-5.5 m and 25 degrees of the TV')
   return {ok: issues.length === 0, issues, clearances, views, geometry: g}
 }
+
+// ---- Alternative layout "B": corner sofas, TV wall-mounted on the east wall ----
+
+export const WALL_FACE_MM = 40 // half of the drawn wall thickness, see WholeHome3D WALL_THICKNESS_M
+
+export function cornerTvFrontX(room) {
+  const c = room.cornerLayout
+  return room.widthMm - WALL_FACE_MM - c.tv.depthMm - c.tv.mountMm
+}
+
+/** Distance and off-axis angle from a seat to the east-wall TV centre. facing is a unit [dx, dz]. */
+export function viewingToCornerTv(room, seatX, seatZ, facing) {
+  const c = room.cornerLayout
+  const dx = cornerTvFrontX(room) - seatX, dz = c.tv.centerFromNorthMm - seatZ
+  const distance = Math.hypot(dx, dz)
+  const angle = Math.acos((dx * facing[0] + dz * facing[1]) / distance) * 180 / Math.PI
+  return {distanceMm: Math.round(distance), angleDeg: Math.round(angle)}
+}
+
+export function checkCornerLayout(room) {
+  const issues = [], c = room.cornerLayout, f = c.furniture
+  const need = (ok, message) => { if (!ok) issues.push(message) }
+  const door = room.doors.find(d => d.wall === 'north')
+  const doorEast = door.fromMm + door.widthMm
+  const stubEnd = room.wallOpenings.east.fromMm // the east wall is solid from z 0 to here
+  const northSofa = rect(f.northSofa.centerXmm, f.northSofa.centerZmm, f.northSofa.lengthMm, f.northSofa.widthMm)
+  const westSofa = rect(f.westSofa.centerXmm, f.westSofa.centerZmm, f.westSofa.widthMm, f.westSofa.lengthMm)
+  const table = rect(f.coffeeTable.centerXmm, f.coffeeTable.centerZmm, f.coffeeTable.widthMm, f.coffeeTable.lengthMm)
+  const tvFront = cornerTvFrontX(room)
+  const bm = c.bassModule, tv = c.tv, sb = c.soundbar, rc = c.routerCabinet
+
+  need(f.northSofa.widthMm === f.westSofa.widthMm && f.northSofa.lengthMm === f.westSofa.lengthMm, 'the two sofas must be the same size')
+  for (const [name, r] of Object.entries({northSofa, westSofa, table})) {
+    need(r.x1 >= 0 && r.x2 <= room.widthMm && r.z1 >= 0 && r.z2 <= room.lengthMm, `${name} leaves the room`)
+  }
+  const sofaGap = gap(northSofa, westSofa)
+  need(sofaGap >= 0 && sofaGap <= 150, `sofas are ${sofaGap} mm apart; an L needs 0-150 mm`)
+  const clearances = {
+    northSofaToTable: gap(northSofa, table),
+    westSofaToTable: gap(westSofa, table),
+    sofaToSofa: sofaGap,
+    laneNorthSofaToTv: tvFront - northSofa.x2,
+    laneTableToTv: tvFront - table.x2,
+    doorClearPastNorthSofa: doorEast - northSofa.x2,
+    northSofaPastDoorJambLine: Math.max(0, northSofa.x2 - door.fromMm),
+    tvFrontBeyondDoorEastJamb: tvFront - doorEast,
+  }
+  need(clearances.northSofaToTable >= 400 && clearances.westSofaToTable >= 400, 'a sofa is under 400 mm from the coffee table')
+  need(clearances.laneNorthSofaToTv >= 900, `the lane between the north sofa and the TV is ${clearances.laneNorthSofaToTv} mm (needs 900)`)
+  need(clearances.doorClearPastNorthSofa >= 800, `only ${clearances.doorClearPastNorthSofa} mm of the entry door stays clear past the north sofa`)
+  need(clearances.tvFrontBeyondDoorEastJamb >= 50, 'TV front is inside the entry door opening line')
+
+  const tvZ1 = tv.centerFromNorthMm - tv.widthMm / 2, tvZ2 = tv.centerFromNorthMm + tv.widthMm / 2
+  need(tv.diagonalInches <= 65, 'TV larger than the 65-inch brief')
+  need(tvZ1 >= 300, `TV starts ${tvZ1} mm from the door wall (needs 300)`)
+  need(tvZ2 <= stubEnd - 200, `TV ends ${tvZ2} mm from the north wall but the solid wall stops at ${stubEnd - 200} mm`)
+  need(tv.bottomMm >= sb.heightMm + sb.gapBelowTvMm + 600, 'no room for the soundbar under the TV')
+  need(sb.widthMm <= tv.widthMm, 'soundbar wider than the TV')
+  need(sb.depthMm <= 120, 'wall-mounted soundbar protrudes more than 120 mm into the walkway')
+  need(bm.centerFromNorthMm - bm.widthMm / 2 >= 300 && bm.centerFromNorthMm + bm.widthMm / 2 <= stubEnd - 150, 'bass module is in the door corner or beyond the solid wall')
+  const bmFront = room.widthMm - WALL_FACE_MM - bm.fromWallMm - bm.depthMm
+  // The lane at the module is bounded by whatever stands level with it (same z range), not by the north sofa.
+  const bmZ1 = bm.centerFromNorthMm - bm.widthMm / 2, bmZ2 = bm.centerFromNorthMm + bm.widthMm / 2
+  const beside = [northSofa, westSofa, table].filter(r => r.z1 < bmZ2 && r.z2 > bmZ1)
+  clearances.laneBassModule = bmFront - Math.max(0, ...beside.map(r => r.x2))
+  need(clearances.laneBassModule >= 700, `bass module narrows the walking lane to ${clearances.laneBassModule} mm (needs 700)`)
+  need(rc.fromWestMm >= northSofa.x1 && rc.fromWestMm + rc.widthMm <= northSofa.x2, 'router cabinet is not above the north sofa')
+  need(rc.bottomMm >= 1400 && rc.bottomMm + rc.heightMm <= 2200, 'router cabinet is outside 1400-2200 mm high')
+  const compartment = (rc.widthMm - 4 * rc.panelMm) / 3
+  need(rc.router.widthMm + 20 <= compartment && rc.router.depthMm + 20 <= rc.depthMm, 'router does not fit its compartment')
+  need(rc.router.heightMm + rc.router.antennaMm + 40 <= rc.heightMm - 2 * rc.panelMm, 'router antennas do not fit')
+
+  const seats = [-750, 0, 750]
+  const views = {
+    westSofa: seats.map(o => viewingToCornerTv(room, f.westSofa.centerXmm, f.westSofa.centerZmm + o, [1, 0])),
+    northSofa: seats.map(o => viewingToCornerTv(room, f.northSofa.centerXmm + o, f.northSofa.centerZmm, [0, 1])),
+  }
+  need(views.westSofa.every(v => v.angleDeg <= 35 && v.distanceMm >= 2000 && v.distanceMm <= 4000), 'west sofa seats are outside 2-4 m and 35 degrees of the TV')
+  return {ok: issues.length === 0, issues, clearances, views, tvFront}
+}

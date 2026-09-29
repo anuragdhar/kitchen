@@ -81,6 +81,26 @@ export const EMPTY_ROOM_SHELLS={
     // former window seat (was centerX 1650, centerZ 5045, 2150x510x450). Sofa footprint is widthMm deep by lengthMm
     // long; the coffee table moved from (1745, 2420) to sit between them, and the chandelier moved with it.
     furniture:{sofa:{centerXmm:580,centerZmm:2420,widthMm:880,lengthMm:2250},southSofa:{centerXmm:1140,centerZmm:4810,widthMm:880,lengthMm:2250},coffeeTable:{centerXmm:1750,centerZmm:3300,widthMm:650,lengthMm:1100},rug:{centerXmm:1500,centerZmm:3150,widthMm:2100,lengthMm:2900}},
+    // Alternative "B" (owner, 2026-09-29): the two sofas form an L in the north-west corner (north-wall sofa faces south,
+    // west-wall sofa faces east), the TV is wall-mounted on the solid stretch of the east wall (z 0-2058, north of the
+    // lobby opening) and a small cabinet for the router and phones hangs above the north-wall sofa. Shown next to the
+    // default layout "A" (tvWall + furniture above) via the Layout toggle; analysis in docs/DRAWING_ROOM_TV_WALL.md.
+    // Sofa footprints keep the 880 x 2250 size; the north sofa's east end passes the entry-door jamb line (x 2150) by 130 mm.
+    cornerLayout:{
+      furniture:{
+        northSofa:{centerXmm:1155,centerZmm:500,widthMm:880,lengthMm:2250},
+        westSofa:{centerXmm:580,centerZmm:2165,widthMm:880,lengthMm:2250},
+        coffeeTable:{centerXmm:1745,centerZmm:1900,widthMm:650,lengthMm:1100},
+        rug:{centerXmm:1500,centerZmm:1750,widthMm:2100,lengthMm:2500},
+      },
+      // Wall-mounted flat: TV thickness + a slim bracket protrude only 90 mm from the east wall face.
+      tv:{diagonalInches:65,widthMm:1450,heightMm:830,depthMm:55,mountMm:35,centerFromNorthMm:1080,bottomMm:730},
+      soundbar:{model:'Bose Smart Soundbar 300',widthMm:699,heightMm:58,depthMm:102,gapBelowTvMm:20},
+      bassModule:{model:'Bose Bass Module 500',widthMm:254,heightMm:254,depthMm:241,centerFromNorthMm:1560,fromWallMm:100},
+      routerCabinet:{fromWestMm:500,widthMm:1100,bottomMm:1450,heightMm:650,depthMm:250,panelMm:18,
+        router:{widthMm:260,heightMm:45,depthMm:190,antennaMm:230},
+        landline:{widthMm:140,heightMm:110,depthMm:140},intercom:{widthMm:130,heightMm:230,depthMm:35}},
+    },
     // The northeast corner of this wall backs Bedroom 1's northEastRecessWardrobe
     // (roomShellConfig.js bedroom1.furniture), not a door into Drawing Room -
     // confirmed against the owner's own floor-plan mark (owner feedback 2026-09-29).

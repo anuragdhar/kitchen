@@ -17,8 +17,7 @@ import {createLobbyEastIroningStorage} from './rooms/lobby/LobbyEastIroningStora
 import {createRoomAirConditioning} from './rooms/shared/RoomAirConditioning.js'
 import {createRoomTaskLighting} from './rooms/shared/RoomTaskLighting.js'
 import {createRug,createPottedPlant,createWallArt,createFloorLamp,createCushion,createLaundryHamper} from './rooms/shared/RoomDecor.js'
-import {createDrawingRoomTvWall} from './rooms/drawing/DrawingRoomTvWall.js'
-import {createDrawingRoomSeating} from './rooms/drawing/DrawingRoomSeating.js'
+import {createDrawingRoomLayouts,DRAWING_LAYOUTS} from './rooms/drawing/DrawingRoomLayouts.js'
 import {createLobbyConcealedDoor} from './rooms/lobby/LobbyConcealedDoor.js'
 import {createBedroom3DressingTable} from './rooms/bedroom3/Bedroom3DressingTable.js'
 import WallSelectionPanel from './WallSelectionPanel.jsx'
@@ -30,6 +29,7 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
   const [view,setView]=useState(initialView)
   const [showSouthWall,setShowSouthWall]=useState(initialRoomKey==='lobby'||initialRoomKey==='drawing'||initialRoomKey==='bedroom1')
   const [tvLabels,setTvLabels]=useState(initialRoomKey==='drawing'),tvLabelsRef=useRef(initialRoomKey==='drawing')
+  const [drawingLayout,setDrawingLayout]=useState('cornerSofas'),drawingLayoutRef=useRef('cornerSofas')
   const [showFurniture,setShowFurniture]=useState(initialView!=='pooja'&&(initialRoomKey==='bedroom1'||initialRoomKey==='bedroom3'||initialRoomKey==='drawing'||initialRoomKey==='lobby'))
   const [showIroningBoard,setShowIroningBoard]=useState(false)
   const [poojaDoorsOpen,setPoojaDoorsOpen]=useState(true)
@@ -236,8 +236,8 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
     const furniture=new THREE.Group();shell.add(furniture)
     shell.add(createRoomAirConditioning(room))
     shell.add(createRoomTaskLighting(room))
-    const tvWall=roomKey==='drawing'?createDrawingRoomTvWall(room,{insetMm:37}):null
-    if(tvWall){tvWall.userData.setLabels(tvLabelsRef.current);shell.add(tvWall)}
+    const drawingLayouts=roomKey==='drawing'?createDrawingRoomLayouts(room,{wallFaceMm:37,initial:drawingLayoutRef.current}):null
+    if(drawingLayouts){drawingLayouts.setLabels(tvLabelsRef.current);shell.add(drawingLayouts.built)}
     const vanity=createBedroom3DressingTable(room);vanity.userData.setMirrorOpen?.(mirrorOpen)
     const partition=createDrawingLobbyPartition(room,roomKey);shell.add(partition)
     partition.userData.setOpen?.(partitionOpen)
@@ -255,7 +255,7 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
       const b3Art=createWallArt(.85,.6,'#7a6a55');b3Art.position.set(2.3,1.5,0.05);furniture.add(b3Art)
     }
     if(roomKey==='drawing'){
-      furniture.add(createDrawingRoomSeating(room,{wallFaceMm:37}))
+      furniture.add(drawingLayouts.furniture)
     }else if(roomKey==='bedroom1'&&room.furniture?.bed){
       const bed=room.furniture.bed
       const bedWest=mm(bed.fromWestMm),bedSouth=L-mm(bed.fromSouthMm),bedLength=mm(bed.lengthMm),bedWidth=mm(bed.widthMm)
@@ -410,6 +410,7 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
       if(key==='top'){camera.position.set((W+extensionDepth)/2,span*1.22,(L+southDepth)/2-.01);camera.up.set(0,0,1);controls.target.set((W+extensionDepth)/2,0,(L+southDepth)/2)}
       else if(key==='poojaDoor'&&room.poojaAlcove){const center=mm(room.poojaAlcove.fromMm+room.poojaAlcove.widthMm/2);camera.position.set(center,1.42,3.10);camera.up.set(0,1,0);controls.target.set(center,1.20,0)}
       else if(key==='pooja'&&room.poojaAlcove){const alcove=room.poojaAlcove,center=mm(alcove.fromMm+alcove.widthMm/2);camera.position.set(center+.55,1.48,2.55);camera.up.set(0,1,0);controls.target.set(mm(alcove.fromMm)+.30,.82,-.55)}
+      else if(roomKey==='drawing'&&key==='tvWall'&&drawingLayoutRef.current==='cornerSofas'){camera.position.set(.45,1.9,3.9);camera.up.set(0,1,0);controls.target.set(2.9,1.0,1.0)}
       else if(roomKey==='drawing'&&key==='tvWall'){camera.position.set(1.75,1.5,L-.3);camera.up.set(0,1,0);controls.target.set(1.05,1.15,.3)}
       else if(roomKey==='lobby'){camera.position.set(W+span*.36,H*2.5,L+span*.42);camera.up.set(0,1,0);controls.target.set(W/2,H*.30,L/2)}
       else if(roomKey==='bedroom1'){camera.position.set(W+extensionDepth+span*.42,H*2.25,-span*.45);camera.up.set(0,1,0);controls.target.set((W+extensionDepth)/2,H*.40,L/2)}
@@ -450,7 +451,7 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
     renderer.domElement.addEventListener('pointerup',onPointerUp)
     const interiorScene=registerInteriorScene({id:roomKey,scene,camera,renderer,zones:[{id:roomKey,min:[0,0,0],max:[W,H,L]}]})
     let raf=0;const render=()=>{controls.update();renderer.render(scene,camera);raf=requestAnimationFrame(render)};render()
-    sceneRef.current={setTvLabels:visible=>tvWall?.userData.setLabels(visible),setMirrorOpen:value=>vanity.userData.setMirrorOpen?.(value),setPartitionOpen:value=>partition.userData.setOpen?.(value),setCamera,setSouthVisible:value=>{southWall.visible=value},setFurnitureVisible:value=>{furniture.visible=value},setBoardOpen:value=>{ironingStorage?.userData.setBoardOpen(value)},setPoojaDoorsOpen:value=>{poojaDoors?.userData.setDoorsOpen(value)},clearMark,setDaylight}
+    sceneRef.current={setTvLabels:visible=>drawingLayouts?.setLabels(visible),setDrawingLayout:key=>drawingLayouts?.setLayout(key),setMirrorOpen:value=>vanity.userData.setMirrorOpen?.(value),setPartitionOpen:value=>partition.userData.setOpen?.(value),setCamera,setSouthVisible:value=>{southWall.visible=value},setFurnitureVisible:value=>{furniture.visible=value},setBoardOpen:value=>{ironingStorage?.userData.setBoardOpen(value)},setPoojaDoorsOpen:value=>{poojaDoors?.userData.setDoorsOpen(value)},clearMark,setDaylight}
     return()=>{interiorScene.dispose();cancelAnimationFrame(raf);observer.disconnect();renderer.domElement.removeEventListener('pointerdown',onPointerDown);renderer.domElement.removeEventListener('pointerup',onPointerUp);controls.dispose();labelTextures.forEach(texture=>texture.dispose());shell.traverse(object=>{object.geometry?.dispose?.();if(Array.isArray(object.material))object.material.forEach(material=>material.dispose());else object.material?.dispose?.()});markedWallMaterial.dispose();environment.dispose();pmrem.dispose();renderer.dispose();renderer.domElement.remove();sceneRef.current=null}
   },[roomKey,initialView])
 
@@ -458,6 +459,7 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
   useEffect(()=>{sceneRef.current?.setSouthVisible(showSouthWall)},[showSouthWall,roomKey])
   useEffect(()=>{sceneRef.current?.setFurnitureVisible(showFurniture)},[showFurniture,roomKey])
   useEffect(()=>{tvLabelsRef.current=tvLabels;sceneRef.current?.setTvLabels(tvLabels)},[tvLabels,roomKey])
+  useEffect(()=>{drawingLayoutRef.current=drawingLayout;sceneRef.current?.setDrawingLayout(drawingLayout);sceneRef.current?.setCamera(view)},[drawingLayout])
   useEffect(()=>{sceneRef.current?.setBoardOpen(showIroningBoard)},[showIroningBoard,roomKey])
   useEffect(()=>{sceneRef.current?.setMirrorOpen(mirrorOpen)},[mirrorOpen,roomKey])
   useEffect(()=>{sceneRef.current?.setPartitionOpen(partitionOpen)},[partitionOpen,roomKey])
@@ -482,6 +484,7 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
         {room.poojaAlcove&&<button onClick={()=>{setView('poojaDoor');setPoojaDoorsOpen(false)}} aria-pressed={view==='poojaDoor'} style={buttonStyle(view==='poojaDoor')}>Door front</button>}
         {roomKey==='bedroom3'&&<button onClick={()=>setMirrorOpen(value=>!value)} style={buttonStyle(mirrorOpen)}>{mirrorOpen?'Close vanity mirror':'Open vanity mirror'}</button>}
         {roomKey==='bedroom3'&&<button onClick={()=>setShowBedroom3Renders(value=>!value)} aria-pressed={showBedroom3Renders} style={buttonStyle(showBedroom3Renders)}>{showBedroom3Renders?'Hide renders':'Show renders'}</button>}
+        {roomKey==='drawing'&&<button onClick={()=>setDrawingLayout(value=>value==='cornerSofas'?'northTv':'cornerSofas')} style={buttonStyle(true)} title="Switch between the two seating layouts">Layout {DRAWING_LAYOUTS.find(layout=>layout.key===drawingLayout).label}</button>}
         {roomKey==='drawing'&&<button onClick={()=>setTvLabels(value=>!value)} aria-pressed={tvLabels} style={buttonStyle(tvLabels)}>{tvLabels?'Hide TV wall labels':'Show TV wall labels'}</button>}
         {roomKey==='drawing'&&<button onClick={()=>setShowDrawingRender(value=>!value)} aria-pressed={showDrawingRender} style={buttonStyle(showDrawingRender)}>{showDrawingRender?'Hide Blender preview':'Show Blender preview'}</button>}
         {(roomKey==='drawing'||roomKey==='lobby')&&<button onClick={()=>setPartitionOpen(value=>!value)} style={buttonStyle(partitionOpen)}>{partitionOpen?'Close drawing partition':'Open drawing partition'}</button>}

@@ -85,6 +85,56 @@ If TV watching from the west sofa matters, the options are (a) turn that sofa ab
 TV, (b) use a full-motion arm in the bay (limited by the 305 depth), or (c) accept it as guest seating.
 None of these was applied; the brief said to keep the west sofa.
 
+## Alternative layout B: corner sofas, TV on the east wall
+
+Requested afterwards: one sofa against the north wall, one against the west wall, a table in front, the TV
+across from them, and a small cabinet on the north wall for the router and phones. Both layouts are built into
+the model. Switch with **Layout A / Layout B** in the Drawing Room workspace or in Whole home 3D (B is shown
+first). Config: `roomShellConfig.js` `drawing.cornerLayout`; checks: `checkCornerLayout` in `drawingRoomLayout.mjs`.
+
+Where things go in B (millimetres, room frame):
+
+| Item | Position |
+| --- | --- |
+| North sofa (faces south) | centre (1155, 500), 880 x 2250; back on the north wall |
+| West sofa (faces east) | centre (580, 2165), 880 x 2250; 100 mm south of the north sofa, forming an L |
+| Coffee table | (1745, 1900), 400+ mm from both sofas; rug under the L |
+| 65-inch TV | wall-mounted on the east wall, centred 1080 from the north wall (355-1805), bottom edge 730; sticks out 90 mm |
+| Soundbar 300 | on the wall under the TV, 20 mm below it, sticks out 102 mm |
+| Bass Module 500 | on the floor under the TV, centre 1560 from the north wall, 100 mm off the wall |
+| Small cabinet | wall-hung above the north sofa, x 500-1600, 1450-2100 high, 250 deep: router (open lattice) / landline / intercom |
+
+The TV must stay on the solid part of the east wall: the wall is solid only from the north wall to z 2058,
+after which the folding partition opens to the lobby. That leaves a 355 mm gap between the TV and the door wall
+and 253 mm to the end of the solid wall.
+
+### Layout A against layout B (computed, not measured)
+
+| | A: TV on north wall | B: corner sofas, east-wall TV |
+| --- | --- | --- |
+| Best-placed sofa | south sofa, 4.62-4.70 m, 1-10 degrees off straight | west sofa, 2.7-3.2 m, 7-35 degrees off (centre seat 2.9 m, 22) |
+| Other sofa | west sofa, 1.6-3.0 m but 72-81 degrees off | north sofa, 1.4-2.9 m but 66-78 degrees off |
+| Distance for a 65-inch | too far (aim for about 2-3.5 m) | right |
+| Entry door | untouched, out of the way | the walking lane passes the TV |
+| Walking lane past the TV | not applicable | 943 mm (north sofa to TV), 1153 mm (table to TV), 902 mm at the Bass Module |
+| Sofa vs entry door | clear | north sofa end passes the door jamb line by 130 mm; 870 mm of the door stays clear |
+| TV vs door edge | not applicable | TV front is only 73 mm beyond the door's east edge line |
+| Soundbar and Bass Module | in the cabinet, beside each other | soundbar on the wall, module on the floor below |
+| Router and phones | in the cabinet | in the small cabinet above the north sofa |
+
+What to know about B:
+
+- **The entry door itself is not blocked.** On the plan the door swings out into the Main Entry, so its leaf never
+  reaches the TV. The trade-off is the walking route: everyone who comes in walks down the strip between the north
+  sofa and the east wall, past the TV and across the west sofa's line of sight.
+- **The 2250 mm north sofa is 130 mm longer than the wall it sits on** (the free stretch is 2150 mm to the door edge).
+  It still leaves 870 mm of door clear, which is enough to pass, but the sofa arm ends in the doorway line.
+- **The small cabinet is above sofa-back height.** Its bottom edge is 1450 mm so seated heads clear it; the phones
+  and intercom are therefore standing-height, not sit-and-reach.
+- **Only one sofa can face the TV in either layout**; two sofas at right angles cannot both point at one screen.
+  A puts the good seat at the far end of the room; B puts it in the right distance range but beside the walkway.
+- Both layouts share the same entry door, east opening, window, sofa size and 65-inch TV.
+
 ## Things to confirm before building
 
 - **Wall depth:** the cabinet is 305 deep by request. That is a cabinet, not a recess; it is not cut into the wall.
