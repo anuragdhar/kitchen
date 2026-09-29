@@ -7,6 +7,7 @@ import {RoomEnvironment} from 'three/examples/jsm/environments/RoomEnvironment.j
 import {ENTRY,ENTRY_WALL_SEGMENTS} from './config/entryConfig.js'
 import {createEntryArrivalDoor} from './rooms/entry/EntryArrivalDoor.js'
 import {createEntryFoldSeat} from './rooms/entry/EntryFoldSeat.js'
+import shoeRackWoodTexture from '../../Interior/entry-textures/shoe-rack-wood.png'
 
 const buttonStyle=active=>({padding:'7px 11px',borderRadius:9,border:'1px solid #cbd5e1',background:active?'#172033':'#fff',color:active?'#fff':'#172033',fontWeight:800,cursor:'pointer'})
 
@@ -34,11 +35,19 @@ export default function EntryGallery3D(){
     const floorMaterial=new THREE.MeshStandardMaterial({color:'#bda890',roughness:.84})
     const wallMaterial=new THREE.MeshStandardMaterial({color:'#d3ccc2',roughness:.85})
     tagSurfaceMaterial(wallMaterial,'plaster')
-    const timber=new THREE.MeshStandardMaterial({color:'#aa7b56',roughness:.68})
+    // Real wood-grain photo, cropped from the owner's Scaniverse scan of this
+    // exact shoe rack (Interior/scans/entry-scan-2.glb, owner request 2026-09-29).
+    const shoeRackWoodMap=new THREE.TextureLoader().load(shoeRackWoodTexture)
+    shoeRackWoodMap.colorSpace=THREE.SRGBColorSpace
+    shoeRackWoodMap.wrapS=shoeRackWoodMap.wrapT=THREE.RepeatWrapping
+    shoeRackWoodMap.repeat.set(3,2)
+    const timber=new THREE.MeshStandardMaterial({map:shoeRackWoodMap,color:'#d8c9a8',roughness:.68})
     tagSurfaceMaterial(timber,'wood')
     const doorMaterial=new THREE.MeshStandardMaterial({color:'#825d44',roughness:.63})
     tagSurfaceMaterial(doorMaterial,'wood')
     const metal=new THREE.MeshStandardMaterial({color:'#ad936a',metalness:.67,roughness:.3})
+    // Mirror-fronted shoe cabinet doors (owner reference, 2026-09-29).
+    const rackMirror=new THREE.MeshStandardMaterial({color:'#bdced2',metalness:.88,roughness:.12})
     const addBox=(w,h,d,cx,cy,cz,material,parent=model)=>{
       const mesh=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),material)
       mesh.position.set(cx,cy,cz);mesh.castShadow=true;mesh.receiveShadow=true;parent.add(mesh)
@@ -64,7 +73,7 @@ export default function EntryGallery3D(){
     addBox(rackWidth,rackHeight,rackDepth,rackX,rackHeight/2,rackFront+rackDepth/2,timber)
     for(let i=0;i<rack.doorCount;i++){
       const panelWidth=rackWidth/rack.doorCount,panelX=rackX-rackWidth/2+(i+.5)*panelWidth
-      addBox(panelWidth-.012,rackHeight-.06,.024,panelX,rackHeight/2,rackFront-.012,doorMaterial)
+      addBox(panelWidth-.012,rackHeight-.06,.024,panelX,rackHeight/2,rackFront-.012,rackMirror)
       addBox(.025,.24,.026,panelX+(i===0?.11:-.11),1.08,rackFront-.04,metal)
     }
 

@@ -1,6 +1,7 @@
 import {tagSurfaceMaterial} from '../../render/surfaceRoles.mjs'
 import * as THREE from 'three'
 import {ENTRY} from '../../config/entryConfig.js'
+import doorWoodTexture from '../../../../Interior/entry-textures/arrival-door-wood.png'
 
 // Plan axes: +X points west, +Z points north. Accept the view's plan converters.
 export function createEntryArrivalDoor(x,z){
@@ -8,7 +9,13 @@ export function createEntryArrivalDoor(x,z){
   const door=ENTRY.arrivalDoor,height=door.heightMm/1000
   const wallX=x(door.wallPlanX),south=z(door.fromPlanY),north=z(door.toPlanY)
   const width=north-south
-  const wood=new THREE.MeshStandardMaterial({color:'#825d44',roughness:.63})
+  // Real wood-grain photo, cropped from the owner's Scaniverse scan of this
+  // exact door's jamb (Interior/scans/entry-scan-1.glb, owner request 2026-09-29).
+  const doorWoodMap=new THREE.TextureLoader().load(doorWoodTexture)
+  doorWoodMap.colorSpace=THREE.SRGBColorSpace
+  doorWoodMap.wrapS=doorWoodMap.wrapT=THREE.RepeatWrapping
+  doorWoodMap.repeat.set(1,2)
+  const wood=new THREE.MeshStandardMaterial({map:doorWoodMap,color:'#c9a578',roughness:.63})
   tagSurfaceMaterial(wood,'wood','entry')
   const frame=new THREE.MeshStandardMaterial({color:'#aa7b56',roughness:.67})
   tagSurfaceMaterial(frame,'wood','entry')

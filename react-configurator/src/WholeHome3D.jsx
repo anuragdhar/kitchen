@@ -12,6 +12,7 @@ import {createPoojaDoorAndInterior} from './rooms/pooja/PoojaDoorAndInterior.js'
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js'
 import {RoomEnvironment} from 'three/examples/jsm/environments/RoomEnvironment.js'
 import floorPlanImage from '../../Interior/home a 501 floor - unmodified.png'
+import shoeRackWoodTexture from '../../Interior/entry-textures/shoe-rack-wood.png'
 import {EMPTY_ROOM_SHELLS} from './config/roomShellConfig.js'
 import {STUDY_ROOM} from './config/studyRoomConfig.js'
 import {createStudyTerrace} from './rooms/study/StudyTerrace.js'
@@ -207,10 +208,16 @@ function LiveWholeHome3D({onOpenRoom}){
     const entryRack=ENTRY.shoeRack
     const rackWidth=entryRack.widthMm/1000,rackDepth=entryRack.projectionMm/1000,rackHeight=entryRack.heightMm/1000
     const rackX=X((entryRack.planX1+entryRack.planX2)/2),rackFrontZ=Z(entryRack.planNorthY)-.005,rackBackZ=rackFrontZ+rackDepth
-    const rackBody=new THREE.MeshStandardMaterial({color:'#ab805e',roughness:.72})
+    // Real wood-grain photo, cropped from the owner's Scaniverse scan of this
+    // exact shoe rack (Interior/scans/entry-scan-2.glb, owner request 2026-09-29).
+    const rackWoodMap=new THREE.TextureLoader().load(shoeRackWoodTexture)
+    rackWoodMap.colorSpace=THREE.SRGBColorSpace
+    rackWoodMap.wrapS=rackWoodMap.wrapT=THREE.RepeatWrapping
+    rackWoodMap.repeat.set(3,2)
+    const rackBody=new THREE.MeshStandardMaterial({map:rackWoodMap,color:'#d8c9a8',roughness:.72})
     tagSurfaceMaterial(rackBody,'wood')
-    const rackDoors=new THREE.MeshStandardMaterial({color:'#d8c4ad',roughness:.59})
-    tagSurfaceMaterial(rackDoors,'wood')
+    // Mirror-fronted shoe cabinet doors (owner reference, 2026-09-29).
+    const rackDoors=new THREE.MeshStandardMaterial({color:'#bdced2',metalness:.88,roughness:.12})
     const rackPulls=new THREE.MeshStandardMaterial({color:'#3f4242',metalness:.54,roughness:.34})
     addBox(rackWidth,rackHeight,rackDepth,rackX,rackHeight/2,(rackBackZ+rackFrontZ)/2,rackBody,model)
     for(let i=0;i<entryRack.doorCount;i++){
