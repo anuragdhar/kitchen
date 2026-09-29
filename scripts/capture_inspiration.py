@@ -5,7 +5,6 @@ Run from any directory: python scripts/capture_inspiration.py
 """
 import datetime
 import hashlib
-import html
 from html.parser import HTMLParser
 import io
 import json
@@ -13,7 +12,6 @@ from pathlib import Path
 import re
 import subprocess
 import tempfile
-import urllib.error
 import urllib.parse
 import urllib.request
 
@@ -34,7 +32,8 @@ def allowed(url, media=False):
 
 class SafeRedirect(urllib.request.HTTPRedirectHandler):
     def redirect_request(self, req, fp, code, msg, headers, newurl):
-        allowed(newurl, 'pinimg.com' in urllib.parse.urlsplit(req.full_url).hostname)
+        host = urllib.parse.urlsplit(req.full_url).hostname or ''
+        allowed(newurl, host == 'pinimg.com' or host.endswith('.pinimg.com'))
         return super().redirect_request(req, fp, code, msg, headers, newurl)
 
 
@@ -83,6 +82,18 @@ def walk(value):
             yield from walk(child)
 
 
+def media_nodes(value):
+    """Traverse only media fields, never related/recommended pins or user avatars."""
+    if isinstance(value, dict):
+        yield value
+        for key in ('videos', 'story_pin_data', 'pages', 'blocks', 'data', 'media', 'image', 'video'):
+            if key in value:
+                yield from media_nodes(value[key])
+    elif isinstance(value, list):
+        for child in value:
+            yield from media_nodes(child)
+
+
 def source_media(page, pin):
     records = []
     for script in page.scripts:
@@ -92,7 +103,7 @@ def source_media(page, pin):
             pass
     images, videos = [], []
     for record in records:
-        for node in walk(record):
+        for node in media_nodes(record):
             sizes = node.get('images')
             if isinstance(sizes, dict):
                 for key in ('orig', 'originals', '736x', '564x', '474x'):
@@ -121,7 +132,7 @@ def source_media(page, pin):
                 allowed(url, True)
                 if url not in result:
                     result.append(url)
-            except ValueError:
+            except (ValueError, TypeError):
                 pass
         return result
     return clean(images)[:4], clean(videos)[:1]
@@ -130,11 +141,15 @@ def source_media(page, pin):
 def save_image(raw, pin, label):
     from PIL import Image, ImageOps
     with Image.open(io.BytesIO(raw)) as image:
+        if image.width * image.height > 40_000_000:
+            raise ValueError('Image exceeds the 40 megapixel limit')
         image = ImageOps.exif_transpose(image).convert('RGB')
         image.thumbnail((1600, 1600))
         buffer = io.BytesIO()
         image.save(buffer, 'WEBP', quality=88)
     contents = buffer.getvalue()
+    if len(contents) > 2 * 1024 * 1024:
+        raise ValueError('Compressed image exceeds the app 2 MiB limit')
     digest = hashlib.sha256(contents).hexdigest()[:16]
     filename = f'{pin}-{label}-{digest}.webp'
     (OUTPUT / filename).write_bytes(contents)
