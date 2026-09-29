@@ -46,7 +46,7 @@ export default function InspirationLibrary(){
   });
   const saveToProject=()=>run('Saving photos to the project folder…',async()=>{
     const result=await syncPhotosToProject(current.current);
-    if(alive.current)setNotice(result.photos?`Saved ${result.photos} photos for ${result.references} references to react-configurator/public/inspiration-media and inspiration/library.json. Commit them to keep them in the repository.`:'No browser-only photos to save: every photo is already in the project folder.');
+    if(alive.current)setNotice(result.photos?`Saved ${result.photos} photos for ${result.references} references to react-configurator/public/inspiration-media and inspiration/library.json. This repository is public: review the images before committing them.`:'No browser-only photos to save: every photo is already in the project folder.');
   });
   const exportMetadata=()=>{try{download(new Blob([JSON.stringify(current.current,null,2)],{type:'application/json'}),'inspiration-library.json');setNotice('Metadata JSON only: uploaded photo bytes are NOT included. Use the ZIP backup to move or preserve uploads.');}catch(error){setError(error.message);}};
   const importFile=event=>{

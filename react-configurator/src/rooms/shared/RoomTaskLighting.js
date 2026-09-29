@@ -40,11 +40,12 @@ export function createRoomTaskLighting(room){
     box(.22,.025,.025,.17,1.60,z,metal)
     box(.12,.10,.12,.27,1.56,z,metal)
     box(.10,.008,.10,.27,1.507,z,warm)
-    const seat=room.furniture.windowSeat
-    box((seat.widthMm-160)/1000,.012,.025,seat.centerXmm/1000,DRAWING_LIGHTING.seatGlow.heightMm/1000,DRAWING_LIGHTING.seatGlow.fromNorthMm/1000,diffuser)
-    // Low-output rear glow; it is not a direct light aimed at the TV screen.
-    const tv=room.television
-    box(.014,(tv.heightMm+90)/1000,.018,room.widthMm/1000-.038,DRAWING_LIGHTING.tvBias.heightMm/1000,DRAWING_LIGHTING.tvBias.fromNorthMm/1000,diffuser)
+    const sofa=room.furniture.southSofa
+    box((sofa.lengthMm-160)/1000,.012,.025,sofa.centerXmm/1000,DRAWING_LIGHTING.seatGlow.heightMm/1000,DRAWING_LIGHTING.seatGlow.fromNorthMm/1000,diffuser)
+    // Low-output rear glow behind the north-wall TV; it is not a direct light aimed at the screen.
+    const wall=room.tvWall,tvWidth=wall.tv.widthMm-160
+    const bayCenter=(wall.fromWestMm+wall.columnWidthMm+(wall.widthMm-2*wall.columnWidthMm)/2)/1000
+    box(tvWidth/1000,.014,.018,bayCenter,(wall.tv.bottomMm+wall.tv.heightMm+40)/1000,(wall.backMm+16)/1000,diffuser)
   }
   return group
 }

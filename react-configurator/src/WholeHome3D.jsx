@@ -25,7 +25,8 @@ import {createBedroom3Wardrobe} from './rooms/bedroom3/Bedroom3Wardrobe.js'
 import {createLobbyEastIroningStorage} from './rooms/lobby/LobbyEastIroningStorage.js'
 import {createRoomAirConditioning} from './rooms/shared/RoomAirConditioning.js'
 import {createRoomTaskLighting} from './rooms/shared/RoomTaskLighting.js'
-import {createDrawingRoomTelevision} from './rooms/drawing/DrawingRoomTelevision.js'
+import {createDrawingRoomTvWall} from './rooms/drawing/DrawingRoomTvWall.js'
+import {createDrawingRoomSeating} from './rooms/drawing/DrawingRoomSeating.js'
 import {createStoreStorage} from './rooms/shared/StoreStorage.js'
 import {BALCONY_OFFICE,BALCONY_DESK_HEIGHT_KEY} from './config/balconyOfficeConfig.js'
 import {KITCHEN,KITCHEN_REFRIGERATOR,EAST_INIT,WEST_INIT,KITCHEN_AUTOSAVE_KEY,NORTH_HOB_OPTION_Y_MM,EAST_TOP_UPPER_DEPTH,WEST_TOP_UPPER_DEPTH,autoFillModules} from './config/kitchenConfig.js'
@@ -83,6 +84,8 @@ function LiveWholeHome3D({onOpenRoom}){
   const [partitionOpen,setPartitionOpen]=useState(false)
   const [mirrorOpen,setMirrorOpen]=useState(false)
   const [medicineCabinetOpen,setMedicineCabinetOpen]=useState(false)
+  const [tvLabels,setTvLabels]=useState(false)
+  const tvLabelsRef=useRef(false)
   const [storageCoverOpen,setStorageCoverOpen]=useState(false)
   const [wallSelection,setWallSelection]=useState(null)
   const [wallNote,setWallNote]=useState('')
@@ -254,7 +257,8 @@ function LiveWholeHome3D({onOpenRoom}){
     const dg=roomGroup(db,drawing.widthMm,drawing.lengthMm)
     dg.add(createRoomAirConditioning(drawing))
     dg.add(createRoomTaskLighting(drawing))
-    dg.add(createDrawingRoomTelevision(drawing))
+    const tvWall=createDrawingRoomTvWall(drawing,{insetMm:WALL_THICKNESS_M*500});dg.add(tvWall)
+    tvWall.userData.setLabels(tvLabelsRef.current)
     const partition=createDrawingLobbyPartition(drawing,'drawing');dg.add(partition)
     partition.userData.setOpen(partitionOpen)
     const dw=drawing.windows[0],dd=drawing.doors[0],open=drawing.wallOpenings.east
@@ -266,15 +270,7 @@ function LiveWholeHome3D({onOpenRoom}){
     const ba=roomPoint(db,drawing.widthMm,drawing.lengthMm,drawing.widthMm,beam.fromMm)
     const bb=roomPoint(db,drawing.widthMm,drawing.lengthMm,drawing.widthMm,beam.toMm)
     addSpan([...ba,...bb],HEIGHT-beam.dropMm/1000,HEIGHT)
-    const {sofa,coffeeTable,windowSeat}=drawing.furniture
-    localBox(dg,sofa.widthMm,360,sofa.lengthMm,sofa.centerXmm,350,sofa.centerZmm,fabric)
-    localBox(dg,160,490,sofa.lengthMm,sofa.centerXmm-sofa.widthMm/2+80,650,sofa.centerZmm,fabric)
-    const coffeeTop=new THREE.Mesh(new THREE.CylinderGeometry(1,1,.055,48),paleWood)
-    coffeeTop.scale.set(coffeeTable.widthMm/2000,1,coffeeTable.lengthMm/2000)
-    coffeeTop.position.set(coffeeTable.centerXmm/1000,.43,coffeeTable.centerZmm/1000);dg.add(coffeeTop)
-    for(const dx of [-200,200])for(const dz of [-300,300])localBox(dg,35,390,35,coffeeTable.centerXmm+dx,215,coffeeTable.centerZmm+dz,aluminium)
-    localBox(dg,windowSeat.widthMm,windowSeat.heightMm,windowSeat.depthMm,windowSeat.centerXmm,windowSeat.heightMm/2,windowSeat.centerZmm,paleWood)
-    localBox(dg,windowSeat.widthMm,65,windowSeat.depthMm,windowSeat.centerXmm,windowSeat.heightMm+32,windowSeat.centerZmm,cushion)
+    dg.add(createDrawingRoomSeating(drawing,{wallFaceMm:WALL_THICKNESS_M*500}))
 
     const lobby=EMPTY_ROOM_SHELLS.lobby,lb=boundsFor('Lobby / Dining')
     const lg=roomGroup(lb,lobby.widthMm,lobby.lengthMm)
@@ -711,7 +707,7 @@ function LiveWholeHome3D({onOpenRoom}){
     const interiorRoomIds=['bedroom3','study','balcony','terrace','kitchen','lobby','drawing','bedroom1','bedroom1-balcony','entry']
     const interiorScene=registerInteriorScene({id:'whole-home',scene,camera,renderer,zones:ROOMS.map((r,index)=>({id:interiorRoomIds[index],min:[X(r.bounds[0]),0,Z(r.bounds[1])],max:[X(r.bounds[2]),HEIGHT,Z(r.bounds[3])]}))})
     let raf=0;const render=()=>{controls.update();renderer.render(scene,camera);raf=requestAnimationFrame(render)};render()
-    sceneRef.current={setRoomLight,setMedicineCabinetOpen:value=>doorInfill.userData.setOpen(value),setStorageCoverOpen:value=>storeStorage.userData.setCoverOpen(value),setMirrorOpen:value=>vanity.userData.setMirrorOpen?.(value),setPartitionOpen:value=>partition.userData.setOpen?.(value),setCamera,setWallsVisible:visible=>{walls.visible=visible},setBoardOpen:value=>{ironingStorage.userData.setBoardOpen(value)},setPoojaPersonVisible:visible=>{seatedPerson.visible=visible},setPoojaDoorsOpen:value=>{poojaDoors.userData.setDoorsOpen(value)},clearMark,setDaylight,setMeasure,clearMeasure}
+    sceneRef.current={setRoomLight,setTvLabels:visible=>tvWall.userData.setLabels(visible),setMedicineCabinetOpen:value=>doorInfill.userData.setOpen(value),setStorageCoverOpen:value=>storeStorage.userData.setCoverOpen(value),setMirrorOpen:value=>vanity.userData.setMirrorOpen?.(value),setPartitionOpen:value=>partition.userData.setOpen?.(value),setCamera,setWallsVisible:visible=>{walls.visible=visible},setBoardOpen:value=>{ironingStorage.userData.setBoardOpen(value)},setPoojaPersonVisible:visible=>{seatedPerson.visible=visible},setPoojaDoorsOpen:value=>{poojaDoors.userData.setDoorsOpen(value)},clearMark,setDaylight,setMeasure,clearMeasure}
     setRoomLight(roomLightRef.current/100)
     setDaylight(sunHourRef.current)
     return()=>{interiorScene.dispose();cancelAnimationFrame(raf);observer.disconnect();renderer.domElement.removeEventListener('pointerdown',onPointerDown);renderer.domElement.removeEventListener('pointerup',onPointerUp);controls.dispose();model.traverse(object=>{object.geometry?.dispose?.();object.material?.dispose?.()});markedWallMaterial.dispose();texture.dispose();environment.dispose();pmrem.dispose();renderer.dispose();renderer.domElement.remove();sceneRef.current=null}
@@ -724,6 +720,7 @@ function LiveWholeHome3D({onOpenRoom}){
   useEffect(()=>{sceneRef.current?.setStorageCoverOpen(storageCoverOpen)},[storageCoverOpen])
   useEffect(()=>{sceneRef.current?.setMirrorOpen(mirrorOpen)},[mirrorOpen])
   useEffect(()=>{sceneRef.current?.setMedicineCabinetOpen(medicineCabinetOpen)},[medicineCabinetOpen])
+  useEffect(()=>{tvLabelsRef.current=tvLabels;sceneRef.current?.setTvLabels(tvLabels)},[tvLabels])
   useEffect(()=>{sceneRef.current?.setPartitionOpen(partitionOpen)},[partitionOpen])
   useEffect(()=>{sceneRef.current?.setPoojaDoorsOpen(poojaDoorsOpen)},[poojaDoorsOpen])
   useEffect(()=>{sunHourRef.current=sunHour;sceneRef.current?.setDaylight(sunHour)},[sunHour])
@@ -743,6 +740,7 @@ function LiveWholeHome3D({onOpenRoom}){
         <button onClick={()=>setStorageCoverOpen(value=>!value)} style={buttonStyle(storageCoverOpen)}>{storageCoverOpen?'Close storage cover':'Open storage cover'}</button>
         <button onClick={()=>setMirrorOpen(value=>!value)} style={buttonStyle(mirrorOpen)}>{mirrorOpen?'Close vanity mirror':'Open vanity mirror'}</button>
         <button onClick={()=>setMedicineCabinetOpen(value=>!value)} aria-pressed={medicineCabinetOpen} style={buttonStyle(medicineCabinetOpen)}>{medicineCabinetOpen?'Close medicine cabinet':'Open medicine cabinet'}</button>
+        <button onClick={()=>setTvLabels(value=>!value)} aria-pressed={tvLabels} style={buttonStyle(tvLabels)}>{tvLabels?'Hide TV wall labels':'Show TV wall labels'}</button>
         <button onClick={()=>setPartitionOpen(value=>!value)} style={buttonStyle(partitionOpen)}>{partitionOpen?'Close drawing partition':'Open drawing partition'}</button>
         <button onClick={()=>setPoojaDoorsOpen(value=>!value)} style={buttonStyle(poojaDoorsOpen)}>{poojaDoorsOpen?'Close Pooja doors':'Open Pooja doors'}</button>
         <button onClick={()=>setMeasureMode(value=>!value)} aria-pressed={measureMode} style={buttonStyle(measureMode)}>{measureMode?'Stop measuring':'Measure'}</button>

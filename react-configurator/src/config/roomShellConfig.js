@@ -59,10 +59,26 @@ export const EMPTY_ROOM_SHELLS={
   },
   drawing:{
     name:'Drawing Room',widthMm:3353,lengthMm:5335,heightMm:2700,color:'#6b8e63',source:'A501 floor plan',
-    television:{diagonalInches:55,widthMm:1230,heightMm:710,depthMm:45,centerFromNorthMm:1500,centerHeightMm:1100,projectionMm:500,rotationYDegrees:-45},
+    // TV wall (owner, 2026-09-29): a 305 mm deep cabinet on the north wall, west of the entry door,
+    // with a centre bay for a 65-inch TV. Plan and rationale: docs/DRAWING_ROOM_TV_WALL.md.
+    // Millimetres in the room frame: x from the west wall, z from the north wall, y up.
+    // Device sizes are manufacturer figures rounded up (Soundbar 300 698.5x57.1x101.6; a 65-inch
+    // 16:9 screen is about 1439x809 mm); Home Speaker 500 is sized for either orientation.
+    tvWall:{
+      fromWestMm:0,widthMm:2100,depthMm:305,heightMm:2400,plinthMm:80,panelMm:18,backMm:12,columnWidthMm:280,
+      bay:{floorMm:650,topMm:1700},
+      tv:{diagonalInches:65,widthMm:1450,heightMm:830,depthMm:55,bottomMm:730,setbackMm:60},
+      soundbar:{model:'Bose Smart Soundbar 300',widthMm:699,heightMm:58,depthMm:102,frontSetbackMm:30},
+      speaker:{model:'Bose Home Speaker 500',column:'west',widthMm:216,heightMm:170,depthMm:110,shelfMm:1000,nicheTopMm:1300},
+      phones:{column:'east',shelfMm:900,nicheTopMm:1500,landline:{widthMm:140,heightMm:110,depthMm:140},intercom:{widthMm:130,heightMm:230,depthMm:35,bottomMm:1150}},
+      router:{shelfMm:1740,topMm:2050,widthMm:260,heightMm:45,depthMm:190,antennaMm:230},
+    },
     wallOpenings:{east:{fromMm:2058,toMm:5335}},
     hangingBeams:[{wall:'east',fromMm:2058,toMm:5335,dropMm:305,widthMm:180}],
-    furniture:{sofa:{centerXmm:580,centerZmm:2420,widthMm:880,lengthMm:2250},coffeeTable:{centerXmm:1745,centerZmm:2420,widthMm:650,lengthMm:1100},windowSeat:{centerXmm:1650,centerZmm:5045,widthMm:2150,depthMm:510,heightMm:450}},
+    // Two identical 3-seaters (owner, 2026-09-29): the west sofa is unchanged and the south sofa replaces the
+    // former window seat (was centerX 1650, centerZ 5045, 2150x510x450). Sofa footprint is widthMm deep by lengthMm
+    // long; the coffee table moved from (1745, 2420) to sit between them, and the chandelier moved with it.
+    furniture:{sofa:{centerXmm:580,centerZmm:2420,widthMm:880,lengthMm:2250},southSofa:{centerXmm:1140,centerZmm:4810,widthMm:880,lengthMm:2250},coffeeTable:{centerXmm:1750,centerZmm:3300,widthMm:650,lengthMm:1100},rug:{centerXmm:1500,centerZmm:3150,widthMm:2100,lengthMm:2900}},
     // The northeast corner of this wall backs Bedroom 1's northEastRecessWardrobe
     // (roomShellConfig.js bedroom1.furniture), not a door into Drawing Room -
     // confirmed against the owner's own floor-plan mark (owner feedback 2026-09-29).
