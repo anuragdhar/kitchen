@@ -99,6 +99,7 @@ function LiveWholeHome3D({onOpenRoom}){
     const renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance'})
     renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));renderer.outputColorSpace=THREE.SRGBColorSpace
     renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.06
+    renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap
     mount.appendChild(renderer.domElement)
     const pmrem=new THREE.PMREMGenerator(renderer),environment=pmrem.fromScene(new RoomEnvironment(renderer),.04).texture
     scene.environment=environment
@@ -125,11 +126,25 @@ function LiveWholeHome3D({onOpenRoom}){
     const plan=new THREE.Mesh(new THREE.PlaneGeometry(W,L),new THREE.MeshBasicMaterial({map:texture,side:THREE.DoubleSide}))
     plan.rotation.x=-Math.PI/2;plan.position.set(W/2,-.035,L/2);model.add(plan)
     const slab=new THREE.Mesh(new THREE.BoxGeometry(W,.07,L),new THREE.MeshStandardMaterial({color:'#f4f2ed',roughness:.94}))
-    slab.position.set(W/2,-.09,L/2);model.add(slab)
+    slab.position.set(W/2,-.09,L/2);slab.receiveShadow=true;model.add(slab)
     for(const room of ROOMS){
       const [x1,y1,x2,y2]=room.bounds
       const floor=addBox(X(x2-x1),.018,Z(y2-y1),X((x1+x2)/2),.016,Z((y1+y2)/2),new THREE.MeshBasicMaterial({color:room.color,transparent:true,opacity:.22,depthWrite:false}),model)
       floor.castShadow=false
+    }
+    // Shadow-only ceilings: the daylight sun otherwise has nothing to block it
+    // from directly overhead, so every room reads as lit even at floor level
+    // away from any window (owner feedback 2026-09-29 - "sunlight shouldn't
+    // come from the ceiling, it's covered"). colorWrite/depthWrite are off so
+    // these stay invisible and non-occluding for every camera (including the
+    // bird's-eye cutaway views); they only ever render into the sun's shadow
+    // map. Skip the terrace, which is genuinely open to the sky.
+    const shadowCeilingMaterial=new THREE.MeshBasicMaterial({colorWrite:false,depthWrite:false})
+    for(const room of ROOMS){
+      if(room.key==='terrace')continue
+      const [x1,y1,x2,y2]=room.bounds
+      const ceiling=addBox(X(x2-x1),.02,Z(y2-y1),X((x1+x2)/2),HEIGHT,Z((y1+y2)/2),shadowCeilingMaterial,model)
+      ceiling.receiveShadow=false
     }
     const mergedShaft=KITCHEN.mergedShaftPlan
     const extensionFloor=addBox(X(130-mergedShaft.x1),.018,Z(mergedShaft.y2-671),X((mergedShaft.x1+130)/2),.016,Z((671+mergedShaft.y2)/2),new THREE.MeshBasicMaterial({color:'#dca56c',transparent:true,opacity:.22,depthWrite:false}),model)
@@ -554,6 +569,10 @@ function LiveWholeHome3D({onOpenRoom}){
     }
     const hemi=new THREE.HemisphereLight('#ffffff','#8b9ca8',1.4);scene.add(hemi)
     const sun=new THREE.DirectionalLight('#fff5e5',2);sun.position.set(-5,16,-7);scene.add(sun);scene.add(sun.target)
+    sun.castShadow=true;sun.shadow.mapSize.set(2048,2048)
+    sun.shadow.camera.left=-W-2;sun.shadow.camera.right=W+2
+    sun.shadow.camera.top=L+2;sun.shadow.camera.bottom=-L-2
+    sun.shadow.camera.near=1;sun.shadow.camera.far=90;sun.shadow.bias=-.0015
     // Interior task/accent lights would mask the pure sun effect (owner
     // feedback 2026-09-28), so daylight hours switch them off entirely and
     // night hands the scene back to them.
