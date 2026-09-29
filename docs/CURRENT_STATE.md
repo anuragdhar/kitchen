@@ -78,3 +78,24 @@ changing active state. Original unreadable autosaves are protected until explici
 recovery. Existing project rules still flag non-preset designs; loading does not
 convert those designs to defaults. Undo/redo and export-model unification remain
 separate work.
+
+## Whole-home 3D: closed Bedroom 1 door and in-home light dial (2026-09-29)
+
+Owner change, live Editable 3D only (Blender exports/renders are not updated).
+
+- The old door drawn on the A501 plan between Lobby/Dining and Bedroom 1
+  (plan x 347-390, wall line y 612; owner mark x 346-400, y 601-661) is closed
+  with a 12 mm fibre-cement sheet flush with the lobby face. The cavity behind
+  it is a shallow medicine cabinet with two flush doors opening into Bedroom 1
+  (toolbar: Open/Close medicine cabinet). Source: `src/config/bedroom1ClosedDoor.js`,
+  built by `src/rooms/lobby/Bedroom1DoorInfill.js`. The replacement door
+  (lobby/bedroom1 `doors`, fromMm 100) is unchanged.
+- The opening (~0.83 m wide, 2.1 m high) is scaled from the plan drawing, not
+  surveyed. Cabinet depth follows the drawn wall thickness (`WALL_THICKNESS_M`
+  = 85 mm): about 73 mm cavity, about 50 mm usable behind the doors. Plan lines
+  suggest a thicker real wall; confirm on site before ordering.
+- In the model the bed (`bedroom1.furniture.bed`, against this south wall) sits in
+  front of the lower part of the cabinet, and the open leaves sweep over it.
+- The Daylight bar has an "In-home light" dial (100% default). It scales ambient
+  fill, environment light, interior lights and emissive fixture glow together;
+  0% leaves only the sun. It does not change the sun or saved state.

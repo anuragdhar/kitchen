@@ -3,6 +3,8 @@ import {tagSurfaceMaterial} from './render/surfaceRoles.mjs'
 import {createDrawingLobbyPartition} from './rooms/drawing/DrawingLobbyPartition.js'
 import {createStudyFurniture} from './rooms/study/StudyFurniture.js'
 import {createLobbyConcealedDoor} from './rooms/lobby/LobbyConcealedDoor.js'
+import {createBedroom1DoorInfill} from './rooms/lobby/Bedroom1DoorInfill.js'
+import {BEDROOM1_CLOSED_DOOR,closedDoorSpanMm} from './config/bedroom1ClosedDoor.js'
 import {createBedroom3DressingTable} from './rooms/bedroom3/Bedroom3DressingTable.js'
 import React,{useEffect,useRef,useState} from 'react'
 import * as THREE from 'three'
@@ -45,6 +47,8 @@ const Z_METRES_PER_PIXEL=ENTRY.planScale.zMetresPerPixel
 const X=x=>x*X_METRES_PER_PIXEL
 const Z=y=>y*Z_METRES_PER_PIXEL
 const W=X(PLAN_WIDTH),L=Z(PLAN_HEIGHT),HEIGHT=2.7
+// Drawn thickness of every plan wall span (m); shared by addSpan and the closed-door cabinet.
+const WALL_THICKNESS_M=.085
 const PLAN_MARK_KEY='a501-whole-home-plan-mark-v1'
 
 const ROOMS=HOME_ROOM_LAYOUTS
@@ -78,6 +82,7 @@ function LiveWholeHome3D({onOpenRoom}){
   const [poojaDoorsOpen,setPoojaDoorsOpen]=useState(true)
   const [partitionOpen,setPartitionOpen]=useState(false)
   const [mirrorOpen,setMirrorOpen]=useState(false)
+  const [medicineCabinetOpen,setMedicineCabinetOpen]=useState(false)
   const [storageCoverOpen,setStorageCoverOpen]=useState(false)
   const [wallSelection,setWallSelection]=useState(null)
   const [wallNote,setWallNote]=useState('')
@@ -85,6 +90,9 @@ function LiveWholeHome3D({onOpenRoom}){
   // null = existing studio lighting; a decimal hour drives the daylight sun.
   const [sunHour,setSunHour]=useState(null)
   const sunHourRef=useRef(null)
+  // 100 = the scene's normal ambient/interior light; 0 = sun only.
+  const [roomLightPercent,setRoomLightPercent]=useState(100)
+  const roomLightRef=useRef(100)
   const [measureMode,setMeasureMode]=useState(false)
   const [measureResult,setMeasureResult]=useState(null)
   const [planMark,setPlanMark]=useState(()=>{try{return JSON.parse(localStorage.getItem(PLAN_MARK_KEY)||'{}')}catch{return {}}})
@@ -153,7 +161,7 @@ function LiveWholeHome3D({onOpenRoom}){
       const [x1,y1,x2,y2]=segment,xA=X(x1),xB=X(x2),zA=Z(y1),zB=Z(y2)
       const dx=xB-xA,dz=zB-zA,length=Math.hypot(dx,dz)
       if(length<.01||top<=bottom) return
-      const beam=addBox(length,top-bottom,.085,(xA+xB)/2,(top+bottom)/2,(zA+zB)/2,material)
+      const beam=addBox(length,top-bottom,WALL_THICKNESS_M,(xA+xB)/2,(top+bottom)/2,(zA+zB)/2,material)
       beam.rotation.y=-Math.atan2(dz,dx)
       wallMeshes.push(beam)
       return beam
@@ -275,8 +283,12 @@ function LiveWholeHome3D({onOpenRoom}){
     lg.add(createLobbyConcealedDoor(lobby))
     const toilet=lobby.doors.find(door=>door.wall==='south'),bedDoor=lobby.doors.find(door=>door.wall==='north')
     roomEdge(lb,lobby.widthMm,lobby.lengthMm,'south',[{start:toilet.fromMm,end:toilet.fromMm+toilet.widthMm,top:toilet.heightMm/1000}])
+    // The old plan door on this wall is closed (owner, 2026-09-29): sheet on the lobby face, medicine cabinet behind it.
+    const closedDoor=BEDROOM1_CLOSED_DOOR,closedSpan=closedDoorSpanMm(closedDoor,lb,lobby.widthMm)
+    const doorInfill=createBedroom1DoorInfill(closedDoor,closedSpan,WALL_THICKNESS_M*1000);lg.add(doorInfill)
     roomEdge(lb,lobby.widthMm,lobby.lengthMm,'north',[
       {start:bedDoor.fromMm,end:bedDoor.fromMm+bedDoor.widthMm,top:bedDoor.heightMm/1000},
+      {start:closedSpan.start,end:closedSpan.end,top:closedDoor.heightMm/1000},
       {start:lobby.poojaAlcove.fromMm,end:lobby.poojaAlcove.fromMm+lobby.poojaAlcove.widthMm,top:HEIGHT},
     ])
     roomEdge(lb,lobby.widthMm,lobby.lengthMm,'east',[{start:lobby.wallOpenings.east.fromMm,end:lobby.wallOpenings.east.toMm,top:HEIGHT}])
@@ -593,25 +605,32 @@ function LiveWholeHome3D({onOpenRoom}){
     const centerX=X((50+688)/2),centerZ=Z((69+874)/2)
     // Daylight preview: an indicative equinox sun path oriented by the site's
     // true north (orientationConfig.js). hour==null restores studio lighting.
+    // roomLight (0-1) is the owner's "in-home light" dial: it scales everything
+    // that is not the sun - ambient fill, image-based environment light,
+    // interior lights and emissive fixture glow - so 0 leaves the sun alone.
+    let roomLight=1,lastHour=null
     const setDaylight=hour=>{
+      lastHour=hour
+      scene.environmentIntensity=roomLight
       if(hour==null){
-        hemi.color.set('#ffffff');hemi.groundColor.set('#8b9ca8');hemi.intensity=1.4
+        hemi.color.set('#ffffff');hemi.groundColor.set('#8b9ca8');hemi.intensity=1.4*roomLight
         sun.color.set('#fff5e5');sun.intensity=2;sun.position.set(-5,16,-7);sun.target.position.set(0,0,0)
         scene.background.set('#edf3f7')
-        interiorLights.forEach(({light,base})=>{light.intensity=base})
-        taskGlowMaterials.forEach(({material,base})=>{material.emissiveIntensity=base})
+        interiorLights.forEach(({light,base})=>{light.intensity=base*roomLight})
+        taskGlowMaterials.forEach(({material,base})=>{material.emissiveIntensity=base*roomLight})
         return null
       }
       const p=daylightPreset(hour,{trueNorthOffsetDeg:TRUE_NORTH_OFFSET_DEG,latitudeDeg:SITE_LATITUDE_DEG})
-      hemi.color.set(p.hemiSky);hemi.groundColor.set(p.hemiGround);hemi.intensity=p.hemiIntensity
+      hemi.color.set(p.hemiSky);hemi.groundColor.set(p.hemiGround);hemi.intensity=p.hemiIntensity*roomLight
       sun.color.set(p.sunColor);sun.intensity=p.sunIntensity
       sun.position.set(centerX+p.direction[0]*40,Math.max(p.direction[1],.03)*40,centerZ+p.direction[2]*40)
       sun.target.position.set(centerX,0,centerZ)
       scene.background.set(p.background)
-      interiorLights.forEach(({light,base})=>{light.intensity=p.up?0:base*1.2})
-      taskGlowMaterials.forEach(({material,base})=>{material.emissiveIntensity=p.up?0:base})
+      interiorLights.forEach(({light,base})=>{light.intensity=(p.up?0:base*1.2)*roomLight})
+      taskGlowMaterials.forEach(({material,base})=>{material.emissiveIntensity=(p.up?0:base)*roomLight})
       return p
     }
+    const setRoomLight=level=>{roomLight=Math.min(Math.max(level,0),1);setDaylight(lastHour)}
     const setCamera=mode=>{
       if(mode==='top'){
         camera.position.set(centerX,27,centerZ+.001);camera.up.set(0,0,-1);controls.target.set(centerX,0,centerZ)
@@ -692,7 +711,8 @@ function LiveWholeHome3D({onOpenRoom}){
     const interiorRoomIds=['bedroom3','study','balcony','terrace','kitchen','lobby','drawing','bedroom1','bedroom1-balcony','entry']
     const interiorScene=registerInteriorScene({id:'whole-home',scene,camera,renderer,zones:ROOMS.map((r,index)=>({id:interiorRoomIds[index],min:[X(r.bounds[0]),0,Z(r.bounds[1])],max:[X(r.bounds[2]),HEIGHT,Z(r.bounds[3])]}))})
     let raf=0;const render=()=>{controls.update();renderer.render(scene,camera);raf=requestAnimationFrame(render)};render()
-    sceneRef.current={setStorageCoverOpen:value=>storeStorage.userData.setCoverOpen(value),setMirrorOpen:value=>vanity.userData.setMirrorOpen?.(value),setPartitionOpen:value=>partition.userData.setOpen?.(value),setCamera,setWallsVisible:visible=>{walls.visible=visible},setBoardOpen:value=>{ironingStorage.userData.setBoardOpen(value)},setPoojaPersonVisible:visible=>{seatedPerson.visible=visible},setPoojaDoorsOpen:value=>{poojaDoors.userData.setDoorsOpen(value)},clearMark,setDaylight,setMeasure,clearMeasure}
+    sceneRef.current={setRoomLight,setMedicineCabinetOpen:value=>doorInfill.userData.setOpen(value),setStorageCoverOpen:value=>storeStorage.userData.setCoverOpen(value),setMirrorOpen:value=>vanity.userData.setMirrorOpen?.(value),setPartitionOpen:value=>partition.userData.setOpen?.(value),setCamera,setWallsVisible:visible=>{walls.visible=visible},setBoardOpen:value=>{ironingStorage.userData.setBoardOpen(value)},setPoojaPersonVisible:visible=>{seatedPerson.visible=visible},setPoojaDoorsOpen:value=>{poojaDoors.userData.setDoorsOpen(value)},clearMark,setDaylight,setMeasure,clearMeasure}
+    setRoomLight(roomLightRef.current/100)
     setDaylight(sunHourRef.current)
     return()=>{interiorScene.dispose();cancelAnimationFrame(raf);observer.disconnect();renderer.domElement.removeEventListener('pointerdown',onPointerDown);renderer.domElement.removeEventListener('pointerup',onPointerUp);controls.dispose();model.traverse(object=>{object.geometry?.dispose?.();object.material?.dispose?.()});markedWallMaterial.dispose();texture.dispose();environment.dispose();pmrem.dispose();renderer.dispose();renderer.domElement.remove();sceneRef.current=null}
   },[])
@@ -703,9 +723,11 @@ function LiveWholeHome3D({onOpenRoom}){
   useEffect(()=>{sceneRef.current?.setBoardOpen(showIroningBoard)},[showIroningBoard])
   useEffect(()=>{sceneRef.current?.setStorageCoverOpen(storageCoverOpen)},[storageCoverOpen])
   useEffect(()=>{sceneRef.current?.setMirrorOpen(mirrorOpen)},[mirrorOpen])
+  useEffect(()=>{sceneRef.current?.setMedicineCabinetOpen(medicineCabinetOpen)},[medicineCabinetOpen])
   useEffect(()=>{sceneRef.current?.setPartitionOpen(partitionOpen)},[partitionOpen])
   useEffect(()=>{sceneRef.current?.setPoojaDoorsOpen(poojaDoorsOpen)},[poojaDoorsOpen])
   useEffect(()=>{sunHourRef.current=sunHour;sceneRef.current?.setDaylight(sunHour)},[sunHour])
+  useEffect(()=>{roomLightRef.current=roomLightPercent;sceneRef.current?.setRoomLight(roomLightPercent/100)},[roomLightPercent])
   useEffect(()=>{sceneRef.current?.setMeasure(measureMode)},[measureMode])
 
   return <section style={{background:'#fff',border:'1px solid #dbe3e9',borderRadius:22,overflow:'hidden',boxShadow:'0 16px 42px rgba(23,32,51,.1)'}}>
@@ -720,6 +742,7 @@ function LiveWholeHome3D({onOpenRoom}){
         <button onClick={()=>setShowIroningBoard(value=>!value)} style={buttonStyle(showIroningBoard)}>{showIroningBoard?'Stow ironing board':'Pull out ironing board'}</button>
         <button onClick={()=>setStorageCoverOpen(value=>!value)} style={buttonStyle(storageCoverOpen)}>{storageCoverOpen?'Close storage cover':'Open storage cover'}</button>
         <button onClick={()=>setMirrorOpen(value=>!value)} style={buttonStyle(mirrorOpen)}>{mirrorOpen?'Close vanity mirror':'Open vanity mirror'}</button>
+        <button onClick={()=>setMedicineCabinetOpen(value=>!value)} aria-pressed={medicineCabinetOpen} style={buttonStyle(medicineCabinetOpen)}>{medicineCabinetOpen?'Close medicine cabinet':'Open medicine cabinet'}</button>
         <button onClick={()=>setPartitionOpen(value=>!value)} style={buttonStyle(partitionOpen)}>{partitionOpen?'Close drawing partition':'Open drawing partition'}</button>
         <button onClick={()=>setPoojaDoorsOpen(value=>!value)} style={buttonStyle(poojaDoorsOpen)}>{poojaDoorsOpen?'Close Pooja doors':'Open Pooja doors'}</button>
         <button onClick={()=>setMeasureMode(value=>!value)} aria-pressed={measureMode} style={buttonStyle(measureMode)}>{measureMode?'Stop measuring':'Measure'}</button>
@@ -746,6 +769,11 @@ function LiveWholeHome3D({onOpenRoom}){
         Time
         <input type="range" min="5" max="21" step="0.25" value={sunHour??12} onChange={event=>setSunHour(Number(event.target.value))} style={{width:150}} aria-label="Time of day for the daylight sun"/>
         {sunHour!=null&&<span style={{fontVariantNumeric:'tabular-nums',minWidth:44}}>{String(Math.floor(sunHour)).padStart(2,'0')}:{String(Math.round(sunHour%1*60)).padStart(2,'0')}</span>}
+      </label>
+      <label style={{display:'flex',alignItems:'center',gap:6,fontSize:12,color:'#475569'}} title="Dims the ambient fill, interior lights and fixture glow so the sun's light and shadows stand out. 0% leaves only the sun.">
+        In-home light
+        <input type="range" min="0" max="100" step="5" value={roomLightPercent} onChange={event=>setRoomLightPercent(Number(event.target.value))} style={{width:130}} aria-label="In-home light level"/>
+        <span style={{fontVariantNumeric:'tabular-nums',minWidth:34}}>{roomLightPercent}%</span>
       </label>
       <span style={{fontSize:10,color:'#94a3b8'}}>Indicative equinox sun path · true north ≈{TRUE_NORTH_OFFSET_DEG}° off plan north · not a solar study</span>
     </div>}
