@@ -30,7 +30,7 @@ export default function ArchvizPanel(){
   }
   return <section aria-label="Current design Blender export">
     <h3>Current design → Blender</h3>
-    <p>Bedroom 3, the kitchen and balcony office use the <strong>actual editable 3D scene</strong>, never the older whole-home Blender model. Furniture positions, selected finishes, desk height and visible cabinet state travel with the export. Geometry beyond the room walls is retained at its authored depth.</p>
+    <p>Bedroom 3, the kitchen, the balcony office and the study use the <strong>actual editable 3D scene</strong>, never the older whole-home Blender model. Furniture positions, selected finishes, desk height and visible cabinet state travel with the export. Geometry beyond the room walls is retained at its authored depth.</p>
     <p>Open the room’s <strong>Editable workspace</strong> and its 3D view first. Choose an interior camera and the intended door/wall visibility. The room profile controls photographic treatment; it does not crop or replace the source geometry.</p>
     <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(min(100%,220px),1fr))',gap:12}}>
       <label>Source 3D scene<select aria-label="Source 3D scene" value={sceneId} onChange={e=>setSelectedScene(e.target.value)} disabled={busy}>

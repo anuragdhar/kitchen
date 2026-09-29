@@ -1,6 +1,6 @@
 // Room-local editable geometry is authoritative. A cropped whole-home model is
 // a different, simplified scene, even when the selected render profile matches.
-export const PARITY_ROOMS = Object.freeze(['bedroom3', 'balcony', 'kitchen']);
+export const PARITY_ROOMS = Object.freeze(['bedroom3', 'balcony', 'kitchen', 'study']);
 export const usesEditableRoomSource = room => PARITY_ROOMS.includes(room);
 
 export function assertEditableRoomSource(sceneId, room) {
