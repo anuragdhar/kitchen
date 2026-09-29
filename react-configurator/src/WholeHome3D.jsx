@@ -551,6 +551,18 @@ function LiveWholeHome3D({onOpenRoom}){
     // feedback 2026-09-28), so daylight hours switch them off entirely and
     // night hands the scene back to them.
     const interiorLights=[];scene.traverse(object=>{if(object.isLight&&object!==hemi&&object!==sun)interiorLights.push({light:object,base:object.intensity})})
+    // Emissive fixture glow (pendant lamps, downlight lenses, the vanity mirror)
+    // renders as material, not a THREE.Light, so it needs its own day/night list.
+    const taskGlowMaterials=[];const seenMaterials=new Set()
+    scene.traverse(object=>{
+      const materials=object.isMesh?[].concat(object.material||[]):[]
+      for(const material of materials){
+        if(material?.userData?.taskLightGlow && !seenMaterials.has(material)){
+          seenMaterials.add(material)
+          taskGlowMaterials.push({material,base:material.emissiveIntensity})
+        }
+      }
+    })
 
     const centerX=X((50+688)/2),centerZ=Z((69+874)/2)
     // Daylight preview: an indicative equinox sun path oriented by the site's
@@ -561,6 +573,7 @@ function LiveWholeHome3D({onOpenRoom}){
         sun.color.set('#fff5e5');sun.intensity=2;sun.position.set(-5,16,-7);sun.target.position.set(0,0,0)
         scene.background.set('#edf3f7')
         interiorLights.forEach(({light,base})=>{light.intensity=base})
+        taskGlowMaterials.forEach(({material,base})=>{material.emissiveIntensity=base})
         return null
       }
       const p=daylightPreset(hour,{trueNorthOffsetDeg:TRUE_NORTH_OFFSET_DEG,latitudeDeg:SITE_LATITUDE_DEG})
@@ -570,6 +583,7 @@ function LiveWholeHome3D({onOpenRoom}){
       sun.target.position.set(centerX,0,centerZ)
       scene.background.set(p.background)
       interiorLights.forEach(({light,base})=>{light.intensity=p.up?0:base*1.2})
+      taskGlowMaterials.forEach(({material,base})=>{material.emissiveIntensity=p.up?0:base})
       return p
     }
     const setCamera=mode=>{

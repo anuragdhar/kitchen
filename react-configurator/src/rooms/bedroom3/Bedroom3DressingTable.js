@@ -17,6 +17,7 @@ export function createBedroom3DressingTable(room){
   tagSurfaceMaterial(dark,'wood','bedroom3')
   const glass=new THREE.MeshStandardMaterial({color:'#bdced2',metalness:.88,roughness:.12})
   const glow=new THREE.MeshStandardMaterial({color:'#fff0ce',emissive:'#ffe0a0',emissiveIntensity:.8})
+  glow.userData.taskLightGlow=true
   const box=(width,height,length,cx,cy,cz,mat,parent=group)=>{
     const mesh=new THREE.Mesh(new THREE.BoxGeometry(width,height,length),mat)
     mesh.position.set(cx,cy,cz);mesh.castShadow=true;mesh.receiveShadow=true;parent.add(mesh)

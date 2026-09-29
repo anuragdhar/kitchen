@@ -5,6 +5,7 @@ export function createRoomTaskLighting(room){
   const group=new THREE.Group();group.name=`${room.name} task lighting`
   const metal=new THREE.MeshStandardMaterial({color:'#514941',roughness:.55,metalness:.4})
   const warm=new THREE.MeshStandardMaterial({color:'#fff1d4',emissive:'#ffcf8b',emissiveIntensity:.7,roughness:.8})
+  warm.userData.taskLightGlow=true
   const box=(w,h,d,x,y,z,material)=>{
     const mesh=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),material)
     mesh.position.set(x,y,z);group.add(mesh)
@@ -20,6 +21,7 @@ export function createRoomTaskLighting(room){
     const ceiling=room.heightMm/1000
     const white=new THREE.MeshStandardMaterial({color:'#8d714f',metalness:.58,roughness:.38})
     const diffuser=new THREE.MeshStandardMaterial({color:'#fff7e7',emissive:'#ffd9a1',emissiveIntensity:.48,roughness:.95})
+    diffuser.userData.taskLightGlow=true
     for(const fixture of DRAWING_LIGHTING.ambient){
       const x=fixture.xMm/1000,z=fixture.zMm/1000
       const canopy=new THREE.Mesh(new THREE.CylinderGeometry(.085,.085,.025,32),white)
