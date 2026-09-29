@@ -269,6 +269,10 @@ function LiveWholeHome3D({onOpenRoom}){
       localBox(lg,70,510,430,x+side*200,690,row,wood)
     }
     const pooja=lobby.poojaAlcove
+    // Close the recess so the door interior's backing panel and artwork sit against a
+    // solid wall instead of leaving a gap to whatever is beyond the alcove.
+    localBox(lg,pooja.widthMm,HEIGHT*1000,90,pooja.fromMm+pooja.widthMm/2,HEIGHT*500,-pooja.depthMm,stone)
+    for(const x of [pooja.fromMm,pooja.fromMm+pooja.widthMm])localBox(lg,70,HEIGHT*1000,pooja.depthMm,x,HEIGHT*500,-pooja.depthMm/2,stone)
     if(pooja.altarVisible!==false)localBox(lg,pooja.widthMm,500,350,pooja.fromMm+pooja.widthMm/2,450,-pooja.depthMm+200,stone)
     localBox(lg,pooja.widthMm,65,pooja.depthMm,pooja.fromMm+pooja.widthMm/2,45,-pooja.depthMm/2,stone)
     lg.add(createPoojaPlatform(pooja,77.5))
