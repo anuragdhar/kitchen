@@ -117,3 +117,7 @@ the old layout). Full plan and reasoning: `docs/DRAWING_ROOM_TV_WALL.md`.
   on the solid east wall (z 355-1805), Soundbar 300 on the wall and Bass Module 500 on the floor beneath it, and a small
   router/landline/intercom cabinet above the north sofa. Built alongside layout A and switched with the Layout toggle
   (B is shown first). Analysis and trade-offs in `docs/DRAWING_ROOM_TV_WALL.md`.
+
+## Room review sheet (2026-09-29)
+
+The room workspace has a **Review sheet for AI** button: one PNG (dimensioned top plan, overview, four walls from the room centre, key facts) plus a copyable text brief. Details and limits: `docs/REVIEW_SHEET.md`. Pure brief builder: `src/domain/roomReview.mjs`; canvas composer: `src/render/reviewSheet.js`; capture: `EmptyRoomGallery.jsx`.

@@ -18,11 +18,23 @@ import {createRoomAirConditioning} from './rooms/shared/RoomAirConditioning.js'
 import {createRoomTaskLighting} from './rooms/shared/RoomTaskLighting.js'
 import {createRug,createPottedPlant,createWallArt,createFloorLamp,createCushion,createLaundryHamper} from './rooms/shared/RoomDecor.js'
 import {createDrawingRoomLayouts,DRAWING_LAYOUTS} from './rooms/drawing/DrawingRoomLayouts.js'
+import {buildRoomReview} from './domain/roomReview.mjs'
+import {composeReviewSheet,canvasToBlob} from './render/reviewSheet.js'
+import {parseInspiration,validateInspiration} from './home/inspiration.mjs'
+import inspirationSeed from '../../inspiration/library.json'
 import {createLobbyConcealedDoor} from './rooms/lobby/LobbyConcealedDoor.js'
 import {createBedroom3DressingTable} from './rooms/bedroom3/Bedroom3DressingTable.js'
 import WallSelectionPanel from './WallSelectionPanel.jsx'
 
 const mm=value=>value/1000
+
+// Reference links for the review sheet: the browser library when readable, else the project seed.
+function referencesFor(roomKey){
+  const inspirationRoom=roomKey==='kitchenShell'?'kitchen':roomKey
+  let library
+  try{const raw=localStorage.getItem('home-interior.inspiration.v1');library=raw?parseInspiration(raw):validateInspiration(inspirationSeed)}catch{library=validateInspiration(inspirationSeed)}
+  return library.items.filter(item=>item.room===inspirationRoom).map(item=>({title:item.title,url:item.url,tags:item.tags,notes:item.notes}))
+}
 
 export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView='overview',showSelector=true}){
   const [roomKey,setRoomKey]=useState(initialRoomKey)
@@ -30,6 +42,7 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
   const [showSouthWall,setShowSouthWall]=useState(initialRoomKey==='lobby'||initialRoomKey==='drawing'||initialRoomKey==='bedroom1')
   const [tvLabels,setTvLabels]=useState(initialRoomKey==='drawing'),tvLabelsRef=useRef(initialRoomKey==='drawing')
   const [drawingLayout,setDrawingLayout]=useState('cornerSofas'),drawingLayoutRef=useRef('cornerSofas')
+  const [review,setReview]=useState(null),[reviewBusy,setReviewBusy]=useState(false),[reviewNote,setReviewNote]=useState('')
   const [showFurniture,setShowFurniture]=useState(initialView!=='pooja'&&(initialRoomKey==='bedroom1'||initialRoomKey==='bedroom3'||initialRoomKey==='drawing'||initialRoomKey==='lobby'))
   const [showIroningBoard,setShowIroningBoard]=useState(false)
   const [poojaDoorsOpen,setPoojaDoorsOpen]=useState(true)
@@ -451,7 +464,38 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
     renderer.domElement.addEventListener('pointerup',onPointerUp)
     const interiorScene=registerInteriorScene({id:roomKey,scene,camera,renderer,zones:[{id:roomKey,min:[0,0,0],max:[W,H,L]}]})
     let raf=0;const render=()=>{controls.update();renderer.render(scene,camera);raf=requestAnimationFrame(render)};render()
-    sceneRef.current={setTvLabels:visible=>drawingLayouts?.setLabels(visible),setDrawingLayout:key=>drawingLayouts?.setLayout(key),setMirrorOpen:value=>vanity.userData.setMirrorOpen?.(value),setPartitionOpen:value=>partition.userData.setOpen?.(value),setCamera,setSouthVisible:value=>{southWall.visible=value},setFurnitureVisible:value=>{furniture.visible=value},setBoardOpen:value=>{ironingStorage?.userData.setBoardOpen(value)},setPoojaDoorsOpen:value=>{poojaDoors?.userData.setDoorsOpen(value)},clearMark,setDaylight}
+    // Renders the six review-sheet views (top plan, overview, four walls from inside) at fixed sizes, then restores the camera.
+    const captureReview=()=>{
+      const saved={pos:camera.position.clone(),up:camera.up.clone(),target:controls.target.clone(),fov:camera.fov,aspect:camera.aspect,size:renderer.getSize(new THREE.Vector2()),ratio:renderer.getPixelRatio()}
+      const views={};let project=null
+      const shoot=(name,width,height,place)=>{
+        renderer.setPixelRatio(1);renderer.setSize(width,height,false);camera.aspect=width/height
+        place();camera.updateProjectionMatrix();camera.lookAt(controls.target);renderer.render(scene,camera)
+        const canvas=document.createElement('canvas');canvas.width=width;canvas.height=height
+        canvas.getContext('2d').drawImage(renderer.domElement,0,0,width,height);views[name]=canvas
+        return camera.clone()
+      }
+      drawingLayouts?.setLabels(true)
+      try{
+        shoot('overview',1200,900,()=>setCamera('overview'))
+        // Near-orthographic top plan (narrow lens, far away) so tall walls do not smear the floor outline; no 3D labels here
+        // because the plan gets its own dimension labels.
+        drawingLayouts?.setLabels(false)
+        const topCamera=shoot('top',1000,1000,()=>{setCamera('top');camera.fov=20;camera.position.y*=2.41*1.3;camera.updateProjectionMatrix()}),point=new THREE.Vector3()
+        drawingLayouts?.setLabels(true)
+        project=(xMm,zMm)=>{point.set(xMm/1000,.02,zMm/1000).project(topCamera);return [(point.x+1)/2*1000,(1-point.y)/2*1000]}
+        // Wall views are all shot from the room centre at eye height: near a wall the camera can end up inside a cabinet or sofa.
+        const inside=(name,tx,tz,fov)=>shoot(name,800,600,()=>{camera.fov=fov;camera.position.set(W/2,1.5,L/2);camera.up.set(0,1,0);controls.target.set(tx,1.3,tz)})
+        inside('north',W/2,0,78);inside('south',W/2,L,78);inside('east',W,L/2,84);inside('west',0,L/2,84)
+      }finally{
+        drawingLayouts?.setLabels(tvLabelsRef.current)
+        renderer.setPixelRatio(saved.ratio);renderer.setSize(saved.size.x,saved.size.y,false)
+        camera.aspect=saved.aspect;camera.fov=saved.fov;camera.position.copy(saved.pos);camera.up.copy(saved.up);controls.target.copy(saved.target)
+        camera.updateProjectionMatrix();camera.lookAt(controls.target);controls.update()
+      }
+      return {views,project}
+    }
+    sceneRef.current={captureReview,setTvLabels:visible=>drawingLayouts?.setLabels(visible),setDrawingLayout:key=>drawingLayouts?.setLayout(key),setMirrorOpen:value=>vanity.userData.setMirrorOpen?.(value),setPartitionOpen:value=>partition.userData.setOpen?.(value),setCamera,setSouthVisible:value=>{southWall.visible=value},setFurnitureVisible:value=>{furniture.visible=value},setBoardOpen:value=>{ironingStorage?.userData.setBoardOpen(value)},setPoojaDoorsOpen:value=>{poojaDoors?.userData.setDoorsOpen(value)},clearMark,setDaylight}
     return()=>{interiorScene.dispose();cancelAnimationFrame(raf);observer.disconnect();renderer.domElement.removeEventListener('pointerdown',onPointerDown);renderer.domElement.removeEventListener('pointerup',onPointerUp);controls.dispose();labelTextures.forEach(texture=>texture.dispose());shell.traverse(object=>{object.geometry?.dispose?.();if(Array.isArray(object.material))object.material.forEach(material=>material.dispose());else object.material?.dispose?.()});markedWallMaterial.dispose();environment.dispose();pmrem.dispose();renderer.dispose();renderer.domElement.remove();sceneRef.current=null}
   },[roomKey,initialView])
 
@@ -466,6 +510,30 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
   useEffect(()=>{sceneRef.current?.setPoojaDoorsOpen(poojaDoorsOpen)},[poojaDoorsOpen,roomKey])
   useEffect(()=>{daylightRef.current=daylightOn;sceneRef.current?.setDaylight(daylightOn)},[daylightOn,roomKey])
 
+  const makeReview=async()=>{
+    setReviewBusy(true);setReviewNote('')
+    try{
+      await new Promise(resolve=>setTimeout(resolve,30))
+      const shots=sceneRef.current.captureReview()
+      const brief=buildRoomReview({roomKey,room,layoutKey:roomKey==='drawing'?drawingLayoutRef.current:null,references:referencesFor(roomKey)})
+      const blob=await canvasToBlob(composeReviewSheet({review:brief,room,views:shots.views,project:shots.project}))
+      setReview(previous=>{if(previous)URL.revokeObjectURL(previous.url);return {url:URL.createObjectURL(blob),blob,text:brief.text,title:brief.title}})
+    }catch(error){setReviewNote('Could not build the review sheet: '+error.message)}
+    finally{setReviewBusy(false)}
+  }
+  const copyReview=async kind=>{
+    try{
+      if(kind==='image')await navigator.clipboard.write([new ClipboardItem({'image/png':review.blob})])
+      else await navigator.clipboard.writeText(review.text)
+      setReviewNote(kind==='image'?'Image copied. Paste it into the AI chat, then paste the text brief as well.':'Text brief copied. Paste it together with the image.')
+    }catch{setReviewNote('The browser blocked clipboard access. Use the download buttons instead.')}
+  }
+  const saveFile=(blobOrText,name,type)=>{
+    const url=URL.createObjectURL(blobOrText instanceof Blob?blobOrText:new Blob([blobOrText],{type}))
+    const link=document.createElement('a');link.href=url;link.download=name;link.click();setTimeout(()=>URL.revokeObjectURL(url),1000)
+  }
+  const reviewName=roomKey+(roomKey==='drawing'?'-layout-'+drawingLayout:'')+'-review'
+
   return <>
     {showSelector&&<div style={{display:'flex',gap:8,flexWrap:'wrap',marginBottom:14}}>
       {Object.entries(EMPTY_ROOM_SHELLS).map(([key,item])=><button key={key} onClick={()=>{setRoomKey(key);setView('overview');setShowSouthWall(key==='lobby'||key==='drawing'||key==='bedroom1');setShowFurniture(key==='bedroom1'||key==='bedroom3'||key==='drawing'||key==='lobby');setShowBedroom3Renders(key==='bedroom3');setShowDrawingRender(key==='drawing');setWallSelection(null);setWallNote('')}} style={{...buttonStyle(roomKey===key),padding:'9px 13px'}}>{item.name}</button>)}
@@ -478,6 +546,7 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
         <button onClick={()=>setDaylightOn(false)} aria-pressed={!daylightOn} style={buttonStyle(!daylightOn)}>Evening</button>
         <button onClick={()=>setView('overview')} aria-pressed={view==='overview'} style={buttonStyle(view==='overview')}>Overview</button>
         <button onClick={()=>setView('top')} aria-pressed={view==='top'} style={buttonStyle(view==='top')}>Top</button>
+        <button onClick={makeReview} disabled={reviewBusy} style={buttonStyle(false)} title="One image with a dimensioned top plan, an overview and the four walls, plus a text brief, for sharing with an online AI">{reviewBusy?'Building review sheet…':'Review sheet for AI'}</button>
         {roomKey==='drawing'&&<button onClick={()=>setView('tvWall')} aria-pressed={view==='tvWall'} style={buttonStyle(view==='tvWall')}>TV wall view</button>}
         {roomKey==='bedroom3'&&<button onClick={()=>{setShowSouthWall(true);setView('southOpenings')}} aria-pressed={view==='southOpenings'} style={buttonStyle(view==='southOpenings')}>Balcony door + window</button>}
         {room.poojaAlcove&&<button onClick={()=>{setView('pooja');setPoojaDoorsOpen(true)}} aria-pressed={view==='pooja'} style={buttonStyle(view==='pooja')}>Pooja view</button>}
@@ -495,6 +564,23 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
       </div>
     </div>
     <div ref={mountRef} style={{height:'clamp(620px,82vh,1100px)',width:'100%'}}/>
+    {(review||reviewNote)&&<div style={{padding:16,borderTop:'1px solid #e2e8f0',background:'#f8fafc'}}>
+      <div style={{display:'flex',gap:8,flexWrap:'wrap',alignItems:'center',marginBottom:10}}>
+        <b>{review?'Review sheet: '+review.title:'Review sheet'}</b>
+        {review&&<>
+          <button onClick={()=>saveFile(review.blob,reviewName+'.png')} style={buttonStyle(false)}>Download image</button>
+          <button onClick={()=>copyReview('image')} style={buttonStyle(false)}>Copy image</button>
+          <button onClick={()=>copyReview('text')} style={buttonStyle(false)}>Copy text brief</button>
+          <button onClick={()=>saveFile(review.text,reviewName+'.md','text/markdown')} style={buttonStyle(false)}>Download text brief</button>
+          <button onClick={()=>{URL.revokeObjectURL(review.url);setReview(null);setReviewNote('')}} style={buttonStyle(false)}>Close</button>
+        </>}
+      </div>
+      {reviewNote&&<p role="status" style={{margin:'0 0 10px',color:'#334155'}}>{reviewNote}</p>}
+      {review&&<>
+        <p style={{margin:'0 0 10px',fontSize:13,color:'#475569'}}>Share the image and the text brief together: the image shows the room, the text carries every size exactly (small print in a picture is easy for an AI to misread). Then ask it to review, or to make a render that keeps the same proportions.</p>
+        <img src={review.url} alt="Room review sheet preview" style={{width:'100%',maxWidth:1300,border:'1px solid #cbd5e1',borderRadius:8}}/>
+      </>}
+    </div>}
     {roomKey==='drawing'&&showDrawingRender&&<div style={{padding:'16px',background:'#f5f0e9',borderTop:'1px solid #e2e8f0'}}>
       <div style={{fontSize:13,color:'#5b5147',marginBottom:10}}>Drawing Room finish and lighting preview · photographed beige plaster texture from Poly Haven · Blender render</div>
       <img src="/renders/drawing-room-chandelier-lighting.png" alt="Drawing Room Blender preview with one chandelier above the oval table and a west-wall uplight" style={{display:'block',width:'100%',maxWidth:1100,height:'auto',borderRadius:12,margin:'0 auto'}}/>
