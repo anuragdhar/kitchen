@@ -1,5 +1,3 @@
-import {ENTRY} from './entryConfig.js'
-
 export const EMPTY_ROOM_SHELLS={
   bedroom1:{
     name:'Bedroom 1',widthMm:3353,lengthMm:3240,heightMm:2700,color:'#9f7aea',source:'A501 floor plan',
@@ -65,8 +63,10 @@ export const EMPTY_ROOM_SHELLS={
     wallOpenings:{east:{fromMm:2058,toMm:5335}},
     hangingBeams:[{wall:'east',fromMm:2058,toMm:5335,dropMm:305,widthMm:180}],
     furniture:{sofa:{centerXmm:580,centerZmm:2420,widthMm:880,lengthMm:2250},coffeeTable:{centerXmm:1745,centerZmm:2420,widthMm:650,lengthMm:1100},windowSeat:{centerXmm:1650,centerZmm:5045,widthMm:2150,depthMm:510,heightMm:450}},
-    doors:[{wall:'north',fromMm:2150,widthMm:1000,heightMm:2100,leadsTo:'Main entry'},
-      {wall:'north',fromMm:(688-ENTRY.drawingStorage.doorX2)*3353/173,widthMm:(ENTRY.drawingStorage.doorX2-ENTRY.drawingStorage.doorX1)*3353/173,heightMm:ENTRY.drawingStorage.doorHeightMm,leadsTo:'Recess storage'}],
+    // The northeast corner of this wall backs Bedroom 1's northEastRecessWardrobe
+    // (roomShellConfig.js bedroom1.furniture), not a door into Drawing Room -
+    // confirmed against the owner's own floor-plan mark (owner feedback 2026-09-29).
+    doors:[{wall:'north',fromMm:2150,widthMm:1000,heightMm:2100,leadsTo:'Main entry'}],
     windows:[{wall:'south',fromMm:471,widthMm:2298,bottomMm:550,topMm:2100,frameStyle:'dark',mullionFractions:[.62],source:'clipboard screenshot'}],
   },
   kitchenShell:{name:'Kitchen shell',widthMm:2324,lengthMm:3070,heightMm:2700,color:'#b45309',source:'A501 floor plan'},

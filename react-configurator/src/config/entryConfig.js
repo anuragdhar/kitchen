@@ -17,7 +17,6 @@ export const ENTRY = {
     widthMm: 865, heightMm: 2134, projectionMm: 305, doorCount: 2, projects: 'north-outside',
   },
   shaft: {planX1: 575, planY1: 775, planX2: 688, planY2: 810},
-  drawingStorage: {planX1:649,planX2:688,planY1:715,planY2:775,doorX1:653,doorX2:684,doorHeightMm:2100,estimated:true},
   arrivalDoor: {wallPlanX:575,fromPlanY:810,toPlanY:874,heightMm:2200,openAngleDegrees:80,hinge:'north',opens:'west-outside'},
   outerEntryOpening: {wallPlanX: 688, fromPlanY: 822, toPlanY: 867, heightMm: 2200},
   innerOpening: {wallPlanY: 715, fromPlanX: 515, toPlanX: 570, heightMm: 2100},
@@ -25,11 +24,15 @@ export const ENTRY = {
 }
 
 // Both the whole-home and dedicated entry views use these exact plan segments.
+// The drawingStorage span (649-684) is not a walk-through opening: it is the
+// back of Bedroom 1's northEastRecessWardrobe (roomShellConfig.js), confirmed
+// against the owner's own floor-plan mark (owner feedback 2026-09-29). Keep
+// this wall solid so the Entry/Drawing Room side doesn't show an unexplained
+// gap into a room that is not part of either scene.
 export const ENTRY_WALL_SEGMENTS = [
   [515, 715, 515, 874],
   [515, 874, ENTRY.shoeRack.planX1, 874],
-  [570,715,ENTRY.drawingStorage.doorX1,715],
-  [ENTRY.drawingStorage.doorX2,715,688,715],
+  [570, 715, 688, 715],
   [688, 715, 688, ENTRY.outerEntryOpening.fromPlanY],
   [688, ENTRY.outerEntryOpening.toPlanY, 688, 874],
   [570, 874, 688, 874],

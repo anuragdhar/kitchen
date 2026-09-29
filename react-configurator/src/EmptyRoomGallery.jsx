@@ -18,7 +18,6 @@ import {createRoomAirConditioning} from './rooms/shared/RoomAirConditioning.js'
 import {createRoomTaskLighting} from './rooms/shared/RoomTaskLighting.js'
 import {createRug,createPottedPlant,createWallArt,createFloorLamp,createCushion,createLaundryHamper} from './rooms/shared/RoomDecor.js'
 import {createDrawingRoomTelevision} from './rooms/drawing/DrawingRoomTelevision.js'
-import {createEntryRecessStorage} from './rooms/entry/EntryRecessStorage.js'
 import {createLobbyConcealedDoor} from './rooms/lobby/LobbyConcealedDoor.js'
 import {createBedroom3DressingTable} from './rooms/bedroom3/Bedroom3DressingTable.js'
 import WallSelectionPanel from './WallSelectionPanel.jsx'
@@ -240,7 +239,6 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
     const partition=createDrawingLobbyPartition(room,roomKey);shell.add(partition)
     partition.userData.setOpen?.(partitionOpen)
     if(roomKey==='lobby')wallParent('south').add(createLobbyConcealedDoor(room))
-    if(roomKey==='drawing')shell.add(createEntryRecessStorage(p=>(688-p)*W/173,p=>(715-p)*L/266))
     let ironingStorage=null
     if(roomKey==='bedroom3'){
       furniture.add(createBedroom3Bed(room))

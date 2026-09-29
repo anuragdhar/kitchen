@@ -28,7 +28,7 @@ import {BALCONY_OFFICE,BALCONY_DESK_HEIGHT_KEY} from './config/balconyOfficeConf
 import {KITCHEN,KITCHEN_REFRIGERATOR,EAST_INIT,WEST_INIT,KITCHEN_AUTOSAVE_KEY,NORTH_HOB_OPTION_Y_MM,EAST_TOP_UPPER_DEPTH,WEST_TOP_UPPER_DEPTH,autoFillModules} from './config/kitchenConfig.js'
 import {ENTRY,ENTRY_WALL_SEGMENTS,PLAN_IMAGE} from './config/entryConfig.js'
 import {createEntryArrivalDoor} from './rooms/entry/EntryArrivalDoor.js'
-import {createEntryRecessStorage} from './rooms/entry/EntryRecessStorage.js'
+import {createEntryFoldSeat} from './rooms/entry/EntryFoldSeat.js'
 import WallSelectionPanel from './WallSelectionPanel.jsx'
 import PlanMarkPanel from './PlanMarkPanel.jsx'
 import HomeLightingGallery from './HomeLightingGallery.jsx'
@@ -144,7 +144,7 @@ function LiveWholeHome3D({onOpenRoom}){
     }
     WALLS.forEach(segment=>{const mesh=addSpan(segment);if(mesh)mesh.userData={planWall:segment}})
     model.add(createEntryArrivalDoor(X,Z))
-    model.add(createEntryRecessStorage(X,Z))
+    model.add(createEntryFoldSeat(X,Z))
     const entryOpening=ENTRY.outerEntryOpening
     addSpan([entryOpening.wallPlanX,entryOpening.fromPlanY,entryOpening.wallPlanX,entryOpening.toPlanY],entryOpening.heightMm/1000,HEIGHT)
     for(const [x1,y1,x2,y2,bottom,top] of GLASS){
