@@ -100,14 +100,18 @@ export async function exportPhotoLibrary(input){
   for(const item of data.items)for(const photo of item.photos??[]){
     if(!sources.has(photo.src)){
       const blob=await readPhoto(photo);total+=blob.size;
-      if(total>MAX_ARCHIVE)throw new Error('Photo backup exceeds 50 MiB. Export smaller room libraries.');
+      if(total>MAX_ARCHIVE)throw new Error('Photo backup exceeds the 50 MiB limit.');
       const id=`export-${sources.size+1}`;sources.set(photo.src,id);
       zip.file(`photos/${id}`,await blob.arrayBuffer());
     }
     photo.src=`asset:${sources.get(photo.src)}`;
   }
-  zip.file('library.json',JSON.stringify(data,null,2));
-  return zip.generateAsync({type:'blob',compression:'STORE'});
+  const metadata=JSON.stringify(parseInspiration(JSON.stringify(data)));
+  if(new TextEncoder().encode(metadata).length>2_000_000)throw new Error('Backup metadata exceeds 2 MB.');
+  zip.file('library.json',metadata);
+  const archive=await zip.generateAsync({type:'blob',compression:'STORE'});
+  if(archive.size>MAX_ARCHIVE)throw new Error('Photo backup exceeds the 50 MiB limit.');
+  return archive;
 }
 export async function prepareLibraryImport(file){
   if(file.size>MAX_ARCHIVE)throw new Error('Backup exceeds 50 MiB.');
@@ -133,5 +137,5 @@ export async function prepareLibraryImport(file){
     }
     photo.src=`asset:${sources.get(photo.src)}`;
   }
-  return {library:validateInspiration(library),assets};
+  return {library:parseInspiration(JSON.stringify(library)),assets};
 }
