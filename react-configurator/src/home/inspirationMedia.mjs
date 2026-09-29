@@ -60,6 +60,22 @@ export async function compressPhoto(file){
     return blob;
   }finally{URL.revokeObjectURL(objectUrl);image.src='';}
 }
+// Browsers give clipboard images a generic name ("image.png"); rename so captions read sensibly.
+const pastedFile=(blob,index,total)=>new File([blob],`Pasted image${total>1?` ${index+1}`:''}.${blob.type.split('/')[1]}`,{type:blob.type});
+export function clipboardImages(blobs){
+  const images=blobs.filter(blob=>blob&&blob.type.startsWith('image/'));
+  return images.map((blob,index)=>pastedFile(blob,index,images.length));
+}
+export const imagesFromPasteEvent=event=>clipboardImages(Array.from(event.clipboardData?.items??[]).filter(item=>item.kind==='file').map(item=>item.getAsFile()));
+export async function imagesFromClipboardApi(){
+  if(!navigator.clipboard?.read)throw new Error('This browser cannot read the clipboard from a button. Click the paste box and press Ctrl+V instead.');
+  let entries;
+  try{entries=await navigator.clipboard.read();}
+  catch{throw new Error('Clipboard access was blocked. Click the paste box and press Ctrl+V instead.');}
+  const blobs=[];
+  for(const entry of entries){const type=entry.types.find(type=>type.startsWith('image/'));if(type)blobs.push(await entry.getType(type));}
+  return clipboardImages(blobs);
+}
 export async function preparePhotos(files,sourceUrl){
   if(files.length>MAX_PHOTOS)throw new Error(`Choose at most ${MAX_PHOTOS} photos.`);
   const photos=[],assets=[];

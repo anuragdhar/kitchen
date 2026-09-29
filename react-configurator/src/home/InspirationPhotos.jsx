@@ -1,6 +1,6 @@
 import React,{useEffect,useRef,useState} from 'react';
 import {MAX_PHOTOS} from './inspiration.mjs';
-import {PHOTO_ACCEPT,readPhoto} from './inspirationMedia.mjs';
+import {PHOTO_ACCEPT,imagesFromClipboardApi,imagesFromPasteEvent,readPhoto} from './inspirationMedia.mjs';
 import './inspiration-photos.css';
 
 function Photo({photo,onOpen}){
@@ -21,7 +21,21 @@ function Photo({photo,onOpen}){
 }
 
 export function PhotoPicker({label,disabled,onFiles}){
-  return <label className="inspiration-upload">{label}<input type="file" accept={PHOTO_ACCEPT} multiple disabled={disabled} onChange={event=>{const files=Array.from(event.target.files??[]);event.target.value='';if(files.length)onFiles(files);}}/></label>;
+  const [problem,setProblem]=useState('');
+  const accept=files=>{
+    if(!files.length){setProblem('No image found on the clipboard. Right-click the picture on the web page and choose “Copy image” (not “Copy image address”), then paste again.');return;}
+    setProblem('');onFiles(files);
+  };
+  const pasteFromButton=()=>imagesFromClipboardApi().then(accept,error=>setProblem(error.message));
+  return <div className="inspiration-picker">
+    <label className="inspiration-upload">{label}<input type="file" accept={PHOTO_ACCEPT} multiple disabled={disabled} onChange={event=>{const files=Array.from(event.target.files??[]);event.target.value='';if(files.length)onFiles(files);}}/></label>
+    <div className="inspiration-paste" tabIndex={disabled?-1:0} role="group" aria-label="Paste an image from the clipboard" aria-disabled={disabled||undefined}
+      onPaste={event=>{if(disabled)return;event.preventDefault();accept(imagesFromPasteEvent(event));}}>
+      <span>Copy an image on any web page, click here and press <kbd>Ctrl</kbd>+<kbd>V</kbd> (<kbd>⌘</kbd>+<kbd>V</kbd> on Mac) to paste it.</span>
+      <button type="button" disabled={disabled} onClick={pasteFromButton}>Paste image from clipboard</button>
+    </div>
+    {problem&&<p className="inspiration-paste-problem" role="status">{problem}</p>}
+  </div>;
 }
 
 export default function InspirationPhotos({item,disabled,onUpload,onChange}){
@@ -48,7 +62,7 @@ export default function InspirationPhotos({item,disabled,onUpload,onChange}){
       </figcaption>
     </figure>)}</div>
     <PhotoPicker label="Upload photos / screenshots" disabled={disabled||photos.length>=MAX_PHOTOS} onFiles={onUpload}/>
-    <small className="interior-muted">Select several JPG, PNG or WebP files. Up to 20 MiB each; stored copies are resized to 1600 px. Uploads stay in this browser until exported.</small>
+    <small className="interior-muted">Select or paste several JPG, PNG or WebP images. Up to 20 MiB each; stored copies are resized to 1600 px. Uploads stay in this browser until exported.</small>
     <dialog className="inspiration-lightbox" ref={dialog} aria-label={`Full-size photos for ${item.title}`} onKeyDown={handleKey} onClose={()=>setViewerOpen(false)}>
       <header className="interior-row"><strong>{item.title} · {active+1} / {photos.length}</strong><button type="button" onClick={close} autoFocus>Close photo ✕</button></header>
       {viewerOpen&&selected&&<><Photo photo={selected}/><p>{selected.caption}</p>{selected.kind==='video-frame'&&<p>Original video frame{selected.timeSeconds!==undefined?` at ${selected.timeSeconds} seconds`:''}</p>}</>}
