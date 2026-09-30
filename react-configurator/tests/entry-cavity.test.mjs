@@ -1,7 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import {cavityGeometry, usableDepth, recessOptions} from '../src/domain/entryCavity.mjs'
-import {ENTRY} from '../src/config/entryConfig.js'
+import {ENTRY, entryPocketEastWallSpans} from '../src/config/entryConfig.js'
 import {HOME_ROOM_LAYOUTS} from '../src/config/homeRoomViews.js'
 import {EMPTY_ROOM_SHELLS} from '../src/config/roomShellConfig.js'
 
@@ -49,4 +49,16 @@ test('recess options: the TV bay and the router cabinet fit the pocket completel
   assert.equal(router.ifOpened.protrudesMm, 0, 'the router cabinet disappears into the pocket when the wall is opened')
   assert.equal(deep.ifOpened.protrudesMm, 0, 'an 18-inch bay fits entirely in the pocket')
   assert.ok(deep.ifKept.protrudesMm > 340, 'if the wall must stay, an 18-inch bay still sticks out about 350 mm')
+})
+
+test('the pocket has an east opening onto the Entry gallery, door height, inside the pocket depth, and the wall is solid elsewhere', () => {
+  const c = ENTRY.wallCavity, o = c.eastOpening, spans = entryPocketEastWallSpans(2.7)
+  assert.ok(o.fromPlanY >= c.planY1 && o.toPlanY <= c.planY2, 'opening lies within the pocket depth')
+  assert.ok(o.wallPlanX < c.planX1, 'the opening is in the plan-left (east) wall, west of the pocket')
+  const zmm = ENTRY.planScale.zMetresPerPixel * 1000, width = (o.toPlanY - o.fromPlanY) * zmm
+  assert.ok(width > 700 && width < 900, `opening width ${width}`)
+  const [before, lintel, after] = spans
+  assert.deepEqual([before[0][1], before[0][3], before[1], before[2]], [c.wallPlanY1, o.fromPlanY, 0, 2.7])
+  assert.deepEqual([after[0][1], after[0][3], after[1], after[2]], [o.toPlanY, ENTRY.shaft.planY1, 0, 2.7])
+  assert.deepEqual([lintel[0][1], lintel[0][3], lintel[1], lintel[2]], [o.fromPlanY, o.toPlanY, o.heightMm / 1000, 2.7])
 })

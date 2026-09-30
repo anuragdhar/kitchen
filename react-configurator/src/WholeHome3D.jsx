@@ -29,7 +29,7 @@ import {createDrawingRoomLayouts,DRAWING_LAYOUTS} from './rooms/drawing/DrawingR
 import {createStoreStorage} from './rooms/shared/StoreStorage.js'
 import {BALCONY_OFFICE,BALCONY_DESK_HEIGHT_KEY} from './config/balconyOfficeConfig.js'
 import {KITCHEN,KITCHEN_REFRIGERATOR,EAST_INIT,WEST_INIT,KITCHEN_AUTOSAVE_KEY,NORTH_HOB_OPTION_Y_MM,EAST_TOP_UPPER_DEPTH,WEST_TOP_UPPER_DEPTH,autoFillModules} from './config/kitchenConfig.js'
-import {ENTRY,ENTRY_WALL_SEGMENTS,PLAN_IMAGE} from './config/entryConfig.js'
+import {ENTRY,ENTRY_WALL_SEGMENTS,entryPocketEastWallSpans,PLAN_IMAGE} from './config/entryConfig.js'
 import {createEntryArrivalDoor} from './rooms/entry/EntryArrivalDoor.js'
 import {createEntryFoldSeat} from './rooms/entry/EntryFoldSeat.js'
 import WallSelectionPanel from './WallSelectionPanel.jsx'
@@ -99,7 +99,7 @@ function LiveWholeHome3D({onOpenRoom}){
   const [roomLightPercent,setRoomLightPercent]=useState(100)
   const roomLightRef=useRef(100)
   const [measureMode,setMeasureMode]=useState(false)
-  const [showCavity,setShowCavity]=useState(true)
+  const [showCavity,setShowCavity]=useState(false)
   const [measureResult,setMeasureResult]=useState(null)
   const [planMark,setPlanMark]=useState(()=>{try{return JSON.parse(localStorage.getItem(PLAN_MARK_KEY)||'{}')}catch{return {}}})
 
@@ -189,6 +189,8 @@ function LiveWholeHome3D({onOpenRoom}){
       }
       const mesh=addSpan(segment);if(mesh)mesh.userData={planWall:segment}
     })
+    // The pocket's east wall (plan-left) with its east opening onto the Entry gallery; the north opening is cut above.
+    for(const [segment,bottom,top] of entryPocketEastWallSpans(HEIGHT)){const mesh=addSpan(segment,bottom,top);if(mesh)mesh.userData={planWall:segment}}
     model.add(createEntryArrivalDoor(X,Z))
     model.add(createEntryFoldSeat(X,Z))
     // Entry wall cavity (owner mark 2026-09-30): translucent volumes for the empty 3-ft pocket on the Entry side of the Drawing

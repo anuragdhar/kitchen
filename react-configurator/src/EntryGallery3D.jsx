@@ -4,7 +4,7 @@ import React,{useEffect,useRef,useState} from 'react'
 import * as THREE from 'three'
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js'
 import {RoomEnvironment} from 'three/examples/jsm/environments/RoomEnvironment.js'
-import {ENTRY,ENTRY_WALL_SEGMENTS} from './config/entryConfig.js'
+import {ENTRY,ENTRY_WALL_SEGMENTS,entryPocketEastWallSpans} from './config/entryConfig.js'
 import {createEntryArrivalDoor} from './rooms/entry/EntryArrivalDoor.js'
 import {createEntryFoldSeat} from './rooms/entry/EntryFoldSeat.js'
 import shoeRackWoodTexture from '../../Interior/entry-textures/shoe-rack-wood.png'
@@ -61,6 +61,7 @@ export default function EntryGallery3D(){
       mesh.rotation.y=-Math.atan2(d-c,b-a)
     }
     ENTRY_WALL_SEGMENTS.forEach(segment=>addSpan(segment))
+    entryPocketEastWallSpans(height).forEach(([segment,bottom,top])=>addSpan(segment,bottom,top))
     model.add(createEntryArrivalDoor(x,z))
     model.add(createEntryFoldSeat(x,z))
     const outer=ENTRY.outerEntryOpening

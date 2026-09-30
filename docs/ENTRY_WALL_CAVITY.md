@@ -41,7 +41,9 @@ All figures come from `src/domain/entryCavity.mjs` (`recessOptions`), tested in 
 | **Recess the whole 2100 mm cabinet** | no | its west 116 mm is outside the cavity |
 | **Keep the wall** | shallow only | about 110 mm: a slim shelf or cable chase |
 
-The pocket has no door to the Entry, so the Drawing Room is the only way in.
+The drawing shows no door onto the Entry, but the owner (2026-09-30, from the Blender render) says the pocket has **two openings**:
+one on its **east** side and the north one to be cut from the Drawing Room (below). The Blender top view shows the pocket open on
+the plan-left side toward the Entry gallery, which is the east side in the Drawing Room frame (the plan is drawn south-up).
 
 ## Wall storage (built in the model, 2026-09-30)
 
@@ -74,3 +76,17 @@ Drawing Room page has a "North wall view" button.
 - Layout A still has no opening; recessing its TV bay into the cavity is possible (see the table above) but not modelled.
 - The Drawing Room's north wall is still drawn 85 mm thick like every other wall in the model, so the real 221 mm thickness
   is only visible through the amber ghost.
+
+## East opening (editable 3D, 2026-09-30)
+
+The editable 3D (Whole home 3D and the Main entry workspace) now draws the pocket as a closed box, not just a translucent volume:
+Drawing Room wall (plan y 715), outer wall (x 688), shaft box (y 775) and a new **east wall at plan x 575** with the east opening in
+it. Source: `ENTRY.wallCavity.eastOpening` and `entryPocketEastWallSpans()` in `src/config/entryConfig.js`; test in
+`tests/entry-cavity.test.mjs`. The teal/amber cavity ghost is now hidden by default (toggle: Show entry wall cavity).
+
+- Working size: plan y 729-769 (about 800 mm of the 925 mm depth), 2100 mm high. **Not measured**; the Blender render shows the
+  side open over most of the depth. Change the numbers in `eastOpening` to match the render or the site.
+- The north opening is unchanged (layouts B, B2, B3; layout A keeps a plug). It has no effect on the east wall.
+- Conflict to decide: the wall storage's east side panel stands at x 2050 and the pocket ends at x 2149, so the east opening lands
+  on a 100 mm slot in front of a closed storage side, not on a bay you can step into. Either move the storage or open its east side.
+- Blender exports and renders were not regenerated (the repo's Blender scene predates the cavity work).
