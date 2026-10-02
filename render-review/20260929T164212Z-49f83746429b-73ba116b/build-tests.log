@@ -1,0 +1,1278 @@
+
+> home-interior@1.0.0 check
+> npm test && npm run build
+
+
+> home-interior@1.0.0 test
+> node --test tests/current-layout.test.mjs tests/layout-checks.test.mjs tests/browser-helpers.test.mjs tests/kitchen-validation.test.mjs tests/current-validation.test.mjs tests/kitchen-navigation.test.mjs tests/project-codec.test.mjs tests/project-storage.test.mjs tests/current-project.test.mjs tests/interior-inspiration.test.mjs tests/inspiration-photos.test.mjs tests/interior-materials.test.mjs tests/interior-lighting.test.mjs tests/local-update.test.mjs tests/local-update-plugin.test.mjs tests/blender-room-views.test.mjs tests/archviz.test.mjs tests/parallel-profiles.test.mjs tests/whole-home-render.test.mjs tests/kitchen-export.test.mjs tests/kitchen-bom.test.mjs tests/daylight.test.mjs tests/kitchen-services.test.mjs ../scripts/windows/launchers.test.mjs
+
+TAP version 13
+# Subtest: start-server.bat is the only root Windows command script
+ok 1 - start-server.bat is the only root Windows command script
+  ---
+  duration_ms: 1.9764
+  type: 'test'
+  ...
+# Subtest: the five specialist utilities are preserved outside the root
+ok 2 - the five specialist utilities are preserved outside the root
+  ---
+  duration_ms: 46.6684
+  type: 'test'
+  ...
+# Subtest: the FreeCAD opener calls its relocated generator and returns
+ok 3 - the FreeCAD opener calls its relocated generator and returns
+  ---
+  duration_ms: 0.4654
+  type: 'test'
+  ...
+# Subtest: startup uses the lockfile, loopback and Vite browser opening
+ok 4 - startup uses the lockfile, loopback and Vite browser opening
+  ---
+  duration_ms: 0.4869
+  type: 'test'
+  ...
+# Subtest: launcher documentation uses the single root entry point
+ok 5 - launcher documentation uses the single root entry point
+  ---
+  duration_ms: 14.0739
+  type: 'test'
+  ...
+# Subtest: Windows: fresh checkout installs before starting, from a spaced path
+ok 6 - Windows: fresh checkout installs before starting, from a spaced path
+  ---
+  duration_ms: 176.1804
+  type: 'test'
+  ...
+# Subtest: Windows: existing dependencies are reused
+ok 7 - Windows: existing dependencies are reused
+  ---
+  duration_ms: 73.9196
+  type: 'test'
+  ...
+# Subtest: Windows: failed install stops startup and preserves its exit code
+ok 8 - Windows: failed install stops startup and preserves its exit code
+  ---
+  duration_ms: 66.8659
+  type: 'test'
+  ...
+# Subtest: Windows: failed server preserves its exit code
+ok 9 - Windows: failed server preserves its exit code
+  ---
+  duration_ms: 66.6639
+  type: 'test'
+  ...
+# Subtest: Windows: missingPackage fails before npm is invoked
+ok 10 - Windows: missingPackage fails before npm is invoked
+  ---
+  duration_ms: 32.106
+  type: 'test'
+  ...
+# Subtest: Windows: missingNode fails before npm is invoked
+ok 11 - Windows: missingNode fails before npm is invoked
+  ---
+  duration_ms: 46.6519
+  type: 'test'
+  ...
+# Subtest: Windows: missingNpm fails before npm is invoked
+ok 12 - Windows: missingNpm fails before npm is invoked
+  ---
+  duration_ms: 65.0096
+  type: 'test'
+  ...
+# Subtest: capture validation preserves measured values and source identity
+ok 13 - capture validation preserves measured values and source identity
+  ---
+  duration_ms: 1.9779
+  type: 'test'
+  ...
+# Subtest: refuses wrong units, axes, versions and nonfinite scale
+ok 14 - refuses wrong units, axes, versions and nonfinite scale
+  ---
+  duration_ms: 0.2925
+  type: 'test'
+  ...
+# Subtest: refuses missing, duplicate or corrupt geometry evidence
+ok 15 - refuses missing, duplicate or corrupt geometry evidence
+  ---
+  duration_ms: 0.224
+  type: 'test'
+  ...
+# Subtest: requires a reconstructable source camera
+ok 16 - requires a reconstructable source camera
+  ---
+  duration_ms: 0.1191
+  type: 'test'
+  ...
+# Subtest: gallery accepts only immutable local PNG paths
+ok 17 - gallery accepts only immutable local PNG paths
+  ---
+  duration_ms: 0.2555
+  type: 'test'
+  ...
+# Subtest: every room has a measured-scene-independent photographic profile
+ok 18 - every room has a measured-scene-independent photographic profile
+  ---
+  duration_ms: 147.9606
+  type: 'test'
+  ...
+# Subtest: affected rooms require their own editable scene identity
+ok 19 - affected rooms require their own editable scene identity
+  ---
+  duration_ms: 0.5209
+  type: 'test'
+  ...
+# (node:7612) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///<LOCAL_PATH>/build-checkout/react-configurator/src/config/homeRoomViews.js is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to C:\\Users\\anura\\A501RenderWorker\\build-checkout\\react-configurator\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: every individual room has a Blender model region and a rendered preview
+ok 20 - every individual room has a Blender model region and a rendered preview
+  ---
+  duration_ms: 1.423
+  type: 'test'
+  ...
+# Subtest: interactive lighting exports contain embedded atlases with usable UVs and linear range metadata
+ok 21 - interactive lighting exports contain embedded atlases with usable UVs and linear range metadata
+  ---
+  duration_ms: 163.804
+  type: 'test'
+  ...
+# Subtest: CLI accepts separated and equals arguments
+ok 22 - CLI accepts separated and equals arguments
+  ---
+  duration_ms: 2.137
+  type: 'test'
+  ...
+# Subtest: CLI rejects missing values, unknown flags, and unsupported schemes
+ok 23 - CLI rejects missing values, unknown flags, and unsupported schemes
+  ---
+  duration_ms: 0.3299
+  type: 'test'
+  ...
+# Subtest: help does not require Playwright
+ok 24 - help does not require Playwright
+  ---
+  duration_ms: 0.157
+  type: 'test'
+  ...
+# Subtest: inspection records unavailable optional APIs explicitly
+ok 25 - inspection records unavailable optional APIs explicitly
+  ---
+  duration_ms: 0.2772
+  type: 'test'
+  ...
+# Subtest: missing required API is an error, not an empty result
+ok 26 - missing required API is an error, not an empty result
+  ---
+  duration_ms: 0.2937
+  type: 'test'
+  ...
+# Subtest: thrown API calls are not swallowed
+ok 27 - thrown API calls are not swallowed
+  ---
+  duration_ms: 0.0945
+  type: 'test'
+  ...
+# Subtest: malformed required returns fail
+ok 28 - malformed required returns fail
+  ---
+  duration_ms: 0.2743
+  type: 'test'
+  ...
+# Subtest: strict mode rejects false and inconsistent validation
+ok 29 - strict mode rejects false and inconsistent validation
+  ---
+  duration_ms: 0.0783
+  type: 'test'
+  ...
+# Subtest: whole-home page is opened before waiting for kitchen API
+ok 30 - whole-home page is opened before waiting for kitchen API
+  ---
+  duration_ms: 0.4045
+  type: 'test'
+  ...
+# Subtest: already mounted kitchen needs no navigation click
+ok 31 - already mounted kitchen needs no navigation click
+  ---
+  duration_ms: 0.3097
+  type: 'test'
+  ...
+# Subtest: missing canvas fails smoke inspection
+ok 32 - missing canvas fails smoke inspection
+  ---
+  duration_ms: 0.1732
+  type: 'test'
+  ...
+# (node:5456) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///<LOCAL_PATH>/build-checkout/react-configurator/src/config/kitchenConfig.js is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to C:\\Users\\anura\\A501RenderWorker\\build-checkout\\react-configurator\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: room, opening and clearance baseline is preserved
+ok 33 - room, opening and clearance baseline is preserved
+  ---
+  duration_ms: 1.0041
+  type: 'test'
+  ...
+# Subtest: active east geometry stays on the cooking/appliance wall
+ok 34 - active east geometry stays on the cooking/appliance wall
+  ---
+  duration_ms: 0.2843
+  type: 'test'
+  ...
+# Subtest: active west geometry stays on the wet wall
+ok 35 - active west geometry stays on the wet wall
+  ---
+  duration_ms: 0.2744
+  type: 'test'
+  ...
+# Subtest: historical placeholders remain hidden, with stable IDs
+ok 36 - historical placeholders remain hidden, with stable IDs
+  ---
+  duration_ms: 0.2533
+  type: 'test'
+  ...
+# Subtest: baseline and airy variants pass the documented basic checks
+ok 37 - baseline and airy variants pass the documented basic checks
+  ---
+  duration_ms: 0.6771
+  type: 'test'
+  ...
+# Subtest: airy option changes only the intended y positions
+ok 38 - airy option changes only the intended y positions
+  ---
+  duration_ms: 0.1265
+  type: 'test'
+  ...
+# Subtest: shaft ends at the north wall and rack follows baseline sink
+ok 39 - shaft ends at the north wall and rack follows baseline sink
+  ---
+  duration_ms: 0.1294
+  type: 'test'
+  ...
+# Subtest: module fill preserves run lengths including fractional fillers
+ok 40 - module fill preserves run lengths including fractional fillers
+  ---
+  duration_ms: 0.4634
+  type: 'test'
+  ...
+# (node:5532) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///<LOCAL_PATH>/build-checkout/react-configurator/src/config/kitchenConfig.js is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to C:\\Users\\anura\\A501RenderWorker\\build-checkout\\react-configurator\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: real baseline configuration has a lossless v1 round trip
+ok 41 - real baseline configuration has a lossless v1 round trip
+  ---
+  duration_ms: 3.0808
+  type: 'test'
+  ...
+# Subtest: real airy configuration has a lossless v1 round trip
+ok 42 - real airy configuration has a lossless v1 round trip
+  ---
+  duration_ms: 0.9641
+  type: 'test'
+  ...
+# Subtest: real custom hob and shelf elevation survive legacy migration without changing configuration
+ok 43 - real custom hob and shelf elevation survive legacy migration without changing configuration
+  ---
+  duration_ms: 0.7491
+  type: 'test'
+  ...
+# Subtest: real model-only format maps shaft dimensions and does not reset the stored hob
+ok 44 - real model-only format maps shaft dimensions and does not reset the stored hob
+  ---
+  duration_ms: 0.9097
+  type: 'test'
+  ...
+# (node:26904) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///<LOCAL_PATH>/build-checkout/react-configurator/src/config/kitchenConfig.js is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to C:\\Users\\anura\\A501RenderWorker\\build-checkout\\react-configurator\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: actual baseline configuration passes with baseline east
+ok 45 - actual baseline configuration passes with baseline east
+  ---
+  duration_ms: 1.8724
+  type: 'test'
+  ...
+# Subtest: actual baseline configuration passes with refined east
+ok 46 - actual baseline configuration passes with refined east
+  ---
+  duration_ms: 0.3811
+  type: 'test'
+  ...
+# Subtest: actual airy configuration passes with baseline east
+ok 47 - actual airy configuration passes with baseline east
+  ---
+  duration_ms: 0.2459
+  type: 'test'
+  ...
+# Subtest: actual airy configuration passes with refined east
+ok 48 - actual airy configuration passes with refined east
+  ---
+  duration_ms: 0.658
+  type: 'test'
+  ...
+# Subtest: with no offset, sunrise comes from plan east and sunset from plan west
+ok 49 - with no offset, sunrise comes from plan east and sunset from plan west
+  ---
+  duration_ms: 0.5984
+  type: 'test'
+  ...
+# Subtest: solar noon is the highest sun and lies toward plan south
+ok 50 - solar noon is the highest sun and lies toward plan south
+  ---
+  duration_ms: 0.1304
+  type: 'test'
+  ...
+# Subtest: direction is always a unit vector and hour is validated
+ok 51 - direction is always a unit vector and hour is validated
+  ---
+  duration_ms: 0.732
+  type: 'test'
+  ...
+# Subtest: the true-north offset rotates the whole sun path by the same angle
+ok 52 - the true-north offset rotates the whole sun path by the same angle
+  ---
+  duration_ms: 0.1143
+  type: 'test'
+  ...
+# Subtest: presets: night before sunrise and after sunset, golden near horizon, day at noon
+ok 53 - presets: night before sunrise and after sunset, golden near horizon, day at noon
+  ---
+  duration_ms: 0.4377
+  type: 'test'
+  ...
+# Subtest: photo schema remains optional and legacy libraries round-trip unchanged
+ok 54 - photo schema remains optional and legacy libraries round-trip unchanged
+  ---
+  duration_ms: 2.6414
+  type: 'test'
+  ...
+# Subtest: unsafe or remote photo locations and invalid IDs are rejected
+ok 55 - unsafe or remote photo locations and invalid IDs are rejected
+  ---
+  duration_ms: 1.4002
+  type: 'test'
+  ...
+# Subtest: photo limits, duplicate IDs and invalid metadata fail before persistence
+ok 56 - photo limits, duplicate IDs and invalid metadata fail before persistence
+  ---
+  duration_ms: 0.6741
+  type: 'test'
+  ...
+# Subtest: explicit merge enriches matching old references while preserving local captions, order and decisions
+ok 57 - explicit merge enriches matching old references while preserving local captions, order and decisions
+  ---
+  duration_ms: 0.703
+  type: 'test'
+  ...
+# Subtest: merge deduplicates media paths and never attaches photos from unrelated ID collisions
+ok 58 - merge deduplicates media paths and never attaches photos from unrelated ID collisions
+  ---
+  duration_ms: 0.4683
+  type: 'test'
+  ...
+# Subtest: merge respects per-reference cap and does not resurrect removed photos until requested
+ok 59 - merge respects per-reference cap and does not resurrect removed photos until requested
+  ---
+  duration_ms: 0.5837
+  type: 'test'
+  ...
+# Subtest: room IDs unique and tour covers entry to balcony
+ok 60 - room IDs unique and tour covers entry to balcony
+  ---
+  duration_ms: 0.6162
+  type: 'test'
+  ...
+# Subtest: reference JSON round trip and no mutation
+ok 61 - reference JSON round trip and no mutation
+  ---
+  duration_ms: 0.6396
+  type: 'test'
+  ...
+# Subtest: unsupported schemas, duplicate IDs and unknown rooms rejected
+ok 62 - unsupported schemas, duplicate IDs and unknown rooms rejected
+  ---
+  duration_ms: 0.2116
+  type: 'test'
+  ...
+# Subtest: unsafe reference URLs rejected
+ok 63 - unsafe reference URLs rejected
+  ---
+  duration_ms: 0.1553
+  type: 'test'
+  ...
+# Subtest: repository reference library is valid
+ok 64 - repository reference library is valid
+  ---
+  duration_ms: 25.362
+  type: 'test'
+  ...
+# Subtest: requested Pinterest ideas are assigned to the correct rooms with design notes
+ok 65 - requested Pinterest ideas are assigned to the correct rooms with design notes
+  ---
+  duration_ms: 0.587
+  type: 'test'
+  ...
+# Subtest: project references can be added to an existing empty browser library
+ok 66 - project references can be added to an existing empty browser library
+  ---
+  duration_ms: 0.5316
+  type: 'test'
+  ...
+# Subtest: merge preserves local edits and decisions, adds missing references and does not mutate
+ok 67 - merge preserves local edits and decisions, adds missing references and does not mutate
+  ---
+  duration_ms: 0.3179
+  type: 'test'
+  ...
+# Subtest: merge deduplicates a Pinterest pin across regional hosts, tracking queries and IDs
+ok 68 - merge deduplicates a Pinterest pin across regional hosts, tracking queries and IDs
+  ---
+  duration_ms: 0.2274
+  type: 'test'
+  ...
+# Subtest: same reference can be used in another room but ID collisions never overwrite local data
+ok 69 - same reference can be used in another room but ID collisions never overwrite local data
+  ---
+  duration_ms: 0.2647
+  type: 'test'
+  ...
+# Subtest: merge deduplicates other HTTPS references without treating lookalike hosts as Pinterest
+ok 70 - merge deduplicates other HTTPS references without treating lookalike hosts as Pinterest
+  ---
+  duration_ms: 0.14
+  type: 'test'
+  ...
+# Subtest: merge rejects invalid input and combined overflow without changing the browser library
+ok 71 - merge rejects invalid input and combined overflow without changing the browser library
+  ---
+  duration_ms: 3.826
+  type: 'test'
+  ...
+# Subtest: every named room has a layered lighting proposal
+ok 72 - every named room has a layered lighting proposal
+  ---
+  duration_ms: 1.8173
+  type: 'test'
+  ...
+# Subtest: auto schedule handles boundaries and midnight, cooler day warmer night
+ok 73 - auto schedule handles boundaries and midnight, cooler day warmer night
+  ---
+  duration_ms: 0.4162
+  type: 'test'
+  ...
+# Subtest: room overrides and individual layer switches do not leak to other rooms
+ok 74 - room overrides and individual layer switches do not leak to other rooms
+  ---
+  duration_ms: 0.23
+  type: 'test'
+  ...
+# Subtest: invalid lighting parameters are rejected
+ok 75 - invalid lighting parameters are rejected
+  ---
+  duration_ms: 0.322
+  type: 'test'
+  ...
+# Subtest: all layers can be independently disabled and master intensity scales them
+ok 76 - all layers can be independently disabled and master intensity scales them
+  ---
+  duration_ms: 0.3467
+  type: 'test'
+  ...
+# Subtest: Kelvin approximation is bounded and night contains less blue
+ok 77 - Kelvin approximation is bounded and night contains less blue
+  ---
+  duration_ms: 0.1544
+  type: 'test'
+  ...
+# Subtest: four independently sourced wood species and plaster finishes exist
+ok 78 - four independently sourced wood species and plaster finishes exist
+  ---
+  duration_ms: 1.6297
+  type: 'test'
+  ...
+# Subtest: appearance roundtrip and inheritance preserve distinct room overrides
+ok 79 - appearance roundtrip and inheritance preserve distinct room overrides
+  ---
+  duration_ms: 0.3043
+  type: 'test'
+  ...
+# Subtest: unknown IDs, room and invalid grain scales fail closed
+ok 80 - unknown IDs, room and invalid grain scales fail closed
+  ---
+  duration_ms: 0.341
+  type: 'test'
+  ...
+# Subtest: surface tags do not alter material properties
+ok 81 - surface tags do not alter material properties
+  ---
+  duration_ms: 0.1326
+  type: 'test'
+  ...
+# Subtest: bundled PBR maps match their documented source checksums
+ok 82 - bundled PBR maps match their documented source checksums
+  ---
+  duration_ms: 47.1844
+  type: 'test'
+  ...
+# Subtest: buildBOM counts modules/drawers and excludes power points from the appliance list
+ok 83 - buildBOM counts modules/drawers and excludes power points from the appliance list
+  ---
+  duration_ms: 1.3525
+  type: 'test'
+  ...
+# Subtest: buildBOM does not mutate its input
+ok 84 - buildBOM does not mutate its input
+  ---
+  duration_ms: 0.3173
+  type: 'test'
+  ...
+# Subtest: buildBOMCsv quotes every field and includes one row per appliance and note
+ok 85 - buildBOMCsv quotes every field and includes one row per appliance and note
+  ---
+  duration_ms: 0.9379
+  type: 'test'
+  ...
+# Subtest: buildBOMMarkdown lists every module row and every appliance
+ok 86 - buildBOMMarkdown lists every module row and every appliance
+  ---
+  duration_ms: 0.304
+  type: 'test'
+  ...
+# Subtest: svgY converts south-origin Y to SVG top-origin Y
+ok 87 - svgY converts south-origin Y to SVG top-origin Y
+  ---
+  duration_ms: 0.5761
+  type: 'test'
+  ...
+# Subtest: buildPlanSvg renders room, openings, runs and both active items without mutating its input
+ok 88 - buildPlanSvg renders room, openings, runs and both active items without mutating its input
+  ---
+  duration_ms: 1.8973
+  type: 'test'
+  ...
+# Subtest: buildPlanSvg draws grid lines only when grid is 50 or 100
+ok 89 - buildPlanSvg draws grid lines only when grid is 50 or 100
+  ---
+  duration_ms: 0.3878
+  type: 'test'
+  ...
+# Subtest: buildPlanSvg marks a filler module with a dashed outline
+ok 90 - buildPlanSvg marks a filler module with a dashed outline
+  ---
+  duration_ms: 0.1792
+  type: 'test'
+  ...
+# Subtest: buildPlanDxf emits a valid entities section with room, openings and labeled appliances
+ok 91 - buildPlanDxf emits a valid entities section with room, openings and labeled appliances
+  ---
+  duration_ms: 0.3999
+  type: 'test'
+  ...
+# Subtest: buildPlanDxf includes GRID-layer lines only when grid is 50 or 100
+ok 92 - buildPlanDxf includes GRID-layer lines only when grid is 50 or 100
+  ---
+  duration_ms: 0.8464
+  type: 'test'
+  ...
+# Subtest: buildPlanSvg and buildPlanDxf agree on which depth each wall uses
+ok 93 - buildPlanSvg and buildPlanDxf agree on which depth each wall uses
+  ---
+  duration_ms: 0.2992
+  type: 'test'
+  ...
+# Subtest: normal and unknown view requests keep the existing 3D default
+ok 94 - normal and unknown view requests keep the existing 3D default
+  ---
+  duration_ms: 0.5815
+  type: 'test'
+  ...
+# Subtest: recognized view preference is explicit and works with other query parameters
+ok 95 - recognized view preference is explicit and works with other query parameters
+  ---
+  duration_ms: 0.195
+  type: 'test'
+  ...
+# Subtest: derives water, drain, gas and power points that follow appliance centres
+ok 96 - derives water, drain, gas and power points that follow appliance centres
+  ---
+  duration_ms: 0.8561
+  type: 'test'
+  ...
+# Subtest: hidden appliances contribute no points and moving an appliance moves its points
+ok 97 - hidden appliances contribute no points and moving an appliance moves its points
+  ---
+  duration_ms: 0.2085
+  type: 'test'
+  ...
+# Subtest: routes hug the walls: every vertex lies on a wall line
+ok 98 - routes hug the walls: every vertex lies on a wall line
+  ---
+  duration_ms: 0.6043
+  type: 'test'
+  ...
+# Subtest: does not mutate its input
+ok 99 - does not mutate its input
+  ---
+  duration_ms: 0.251
+  type: 'test'
+  ...
+# Subtest: summary requires every rule, including non-order rules
+ok 100 - summary requires every rule, including non-order rules
+  ---
+  duration_ms: 1.4818
+  type: 'test'
+  ...
+# Subtest: empty, missing, duplicate and unknown-status rows cannot pass
+ok 101 - empty, missing, duplicate and unknown-status rows cannot pass
+  ---
+  duration_ms: 0.3545
+  type: 'test'
+  ...
+# Subtest: nominal plan dimensions use both actual base depths
+ok 102 - nominal plan dimensions use both actual base depths
+  ---
+  duration_ms: 0.1475
+  type: 'test'
+  ...
+# Subtest: all-pair checking finds a non-neighbor overlapping an enclosing interval
+ok 103 - all-pair checking finds a non-neighbor overlapping an enclosing interval
+  ---
+  duration_ms: 0.5549
+  type: 'test'
+  ...
+# Subtest: 3D separation and face contact do not collide; true overlap does
+ok 104 - 3D separation and face contact do not collide; true overlap does
+  ---
+  duration_ms: 0.1759
+  type: 'test'
+  ...
+# Subtest: baseline fixture passes without mutation
+ok 105 - baseline fixture passes without mutation
+  ---
+  duration_ms: 0.7497
+  type: 'test'
+  ...
+# Subtest: both orders pass but misaligned rack makes overall result fail
+ok 106 - both orders pass but misaligned rack makes overall result fail
+  ---
+  duration_ms: 0.2315
+  type: 'test'
+  ...
+# Subtest: nominal aisle below the configured minimum is a real failure
+ok 107 - nominal aisle below the configured minimum is a real failure
+  ---
+  duration_ms: 0.1581
+  type: 'test'
+  ...
+# Subtest: fixed objects are checked for door clearance, bounds and collision
+ok 108 - fixed objects are checked for door clearance, bounds and collision
+  ---
+  duration_ms: 0.3201
+  type: 'test'
+  ...
+# Subtest: collisions are checked across walls, not only within each run
+ok 109 - collisions are checked across walls, not only within each run
+  ---
+  duration_ms: 0.2884
+  type: 'test'
+  ...
+# Subtest: hidden placeholders stay inactive; malformed visibility fails closed
+ok 110 - hidden placeholders stay inactive; malformed visibility fails closed
+  ---
+  duration_ms: 0.1769
+  type: 'test'
+  ...
+# Subtest: invalid coordinates do not produce a successful or partial success
+ok 111 - invalid coordinates do not produce a successful or partial success
+  ---
+  duration_ms: 0.1591
+  type: 'test'
+  ...
+# Subtest: materials do not alter the geometry-validation result
+ok 112 - materials do not alter the geometry-validation result
+  ---
+  duration_ms: 0.8003
+  type: 'test'
+  ...
+# Subtest: valid fixture passes without mutation
+ok 113 - valid fixture passes without mutation
+  ---
+  duration_ms: 1.3734
+  type: 'test'
+  ...
+# Subtest: a real reduction in the nominal aisle fails
+ok 114 - a real reduction in the nominal aisle fails
+  ---
+  duration_ms: 0.187
+  type: 'test'
+  ...
+# Subtest: door-zone violation reports its object and overlap
+ok 115 - door-zone violation reports its object and overlap
+  ---
+  duration_ms: 0.1872
+  type: 'test'
+  ...
+# Subtest: full-height clear zone also checks fixed items
+ok 116 - full-height clear zone also checks fixed items
+  ---
+  duration_ms: 0.1098
+  type: 'test'
+  ...
+# Subtest: out-of-room x fails
+ok 117 - out-of-room x fails
+  ---
+  duration_ms: 0.079
+  type: 'test'
+  ...
+# Subtest: out-of-room y fails
+ok 118 - out-of-room y fails
+  ---
+  duration_ms: 0.0482
+  type: 'test'
+  ...
+# Subtest: out-of-room z fails
+ok 119 - out-of-room z fails
+  ---
+  duration_ms: 0.0931
+  type: 'test'
+  ...
+# Subtest: out-of-room h fails
+ok 120 - out-of-room h fails
+  ---
+  duration_ms: 0.0494
+  type: 'test'
+  ...
+# Subtest: out-of-room d fails
+ok 121 - out-of-room d fails
+  ---
+  duration_ms: 0.1858
+  type: 'test'
+  ...
+# Subtest: invalid dimension NaN fails
+ok 122 - invalid dimension NaN fails
+  ---
+  duration_ms: 0.2445
+  type: 'test'
+  ...
+# Subtest: invalid dimension Infinity fails
+ok 123 - invalid dimension Infinity fails
+  ---
+  duration_ms: 0.0992
+  type: 'test'
+  ...
+# Subtest: invalid dimension 600 fails
+ok 124 - invalid dimension 600 fails
+  ---
+  duration_ms: 0.0446
+  type: 'test'
+  ...
+# Subtest: invalid dimension null fails
+ok 125 - invalid dimension null fails
+  ---
+  duration_ms: 0.0274
+  type: 'test'
+  ...
+# Subtest: invalid dimension 0 fails
+ok 126 - invalid dimension 0 fails
+  ---
+  duration_ms: 0.0379
+  type: 'test'
+  ...
+# Subtest: invalid dimension -1 fails
+ok 127 - invalid dimension -1 fails
+  ---
+  duration_ms: 0.0262
+  type: 'test'
+  ...
+# Subtest: malformed layout fails rather than reporting an empty success
+ok 128 - malformed layout fails rather than reporting an empty success
+  ---
+  duration_ms: 0.0741
+  type: 'test'
+  ...
+# Subtest: constraints must be explicit, finite and in-room
+ok 129 - constraints must be explicit, finite and in-room
+  ---
+  duration_ms: 0.6386
+  type: 'test'
+  ...
+# Subtest: duplicate IDs across walls fail
+ok 130 - duplicate IDs across walls fail
+  ---
+  duration_ms: 0.0862
+  type: 'test'
+  ...
+# Subtest: hidden zero-sized placeholders are retained but inactive
+ok 131 - hidden zero-sized placeholders are retained but inactive
+  ---
+  duration_ms: 0.0613
+  type: 'test'
+  ...
+# Subtest: a string hidden flag must not hide an invalid item
+ok 132 - a string hidden flag must not hide an invalid item
+  ---
+  duration_ms: 0.0382
+  type: 'test'
+  ...
+# Subtest: material changes do not change basic geometry-check results
+ok 133 - material changes do not change basic geometry-check results
+  ---
+  duration_ms: 0.0611
+  type: 'test'
+  ...
+# Subtest: touching an interval end is allowed; missing z means floor level
+ok 134 - touching an interval end is allowed; missing z means floor level
+  ---
+  duration_ms: 0.0409
+  type: 'test'
+  ...
+# Subtest: update requests require local or exact private Codespaces origin
+ok 135 - update requests require local or exact private Codespaces origin
+  ---
+  duration_ms: 0.7288
+  type: 'test'
+  ...
+# Subtest: updates a clean checkout by fast forward and preserves local edits
+ok 136 - updates a clean checkout by fast forward and preserves local edits
+  ---
+  duration_ms: 1507.3658
+  type: 'test'
+  ...
+# Subtest: v1 to independently owned v2 round trip preserves every profile setting
+ok 137 - v1 to independently owned v2 round trip preserves every profile setting
+  ---
+  duration_ms: 11.3285
+  type: 'test'
+  ...
+# Subtest: production profiles retain supported rooms and source routing
+ok 138 - production profiles retain supported rooms and source routing
+  ---
+  duration_ms: 24.7555
+  type: 'test'
+  ...
+# Subtest: editing one room never mutates another room or the source documents
+ok 139 - editing one room never mutates another room or the source documents
+  ---
+  duration_ms: 3.7072
+  type: 'test'
+  ...
+# Subtest: missing files and path traversal fail instead of using historical defaults
+ok 140 - missing files and path traversal fail instead of using historical defaults
+  ---
+  duration_ms: 1.2624
+  type: 'test'
+  ...
+# Subtest: malformed camera, native source and quality settings are rejected
+ok 141 - malformed camera, native source and quality settings are rejected
+  ---
+  duration_ms: 1.2103
+  type: 'test'
+  ...
+# Subtest: v1 round trip preserves custom positions, elevations, metadata, zeros and modules
+ok 142 - v1 round trip preserves custom positions, elevations, metadata, zeros and modules
+  ---
+  duration_ms: 2.1897
+  type: 'test'
+  ...
+# Subtest: returned states/documents share no mutable references with input/defaults
+ok 143 - returned states/documents share no mutable references with input/defaults
+  ---
+  duration_ms: 0.9537
+  type: 'test'
+  ...
+# Subtest: legacy array shape never resets a non-preset hob or zero-sized placeholders
+ok 144 - legacy array shape never resets a non-preset hob or zero-sized placeholders
+  ---
+  duration_ms: 0.4297
+  type: 'test'
+  ...
+# Subtest: legacy partial settings use defaults not the currently open project
+ok 145 - legacy partial settings use defaults not the currently open project
+  ---
+  duration_ms: 0.2885
+  type: 'test'
+  ...
+# Subtest: legacy layoutModel conversion preserves z, hidden, fixed and shaft axis semantics
+ok 146 - legacy layoutModel conversion preserves z, hidden, fixed and shaft axis semantics
+  ---
+  duration_ms: 0.2199
+  type: 'test'
+  ...
+# Subtest: explicit legacy short aliases take precedence over rich shaft extents
+ok 147 - explicit legacy short aliases take precedence over rich shaft extents
+  ---
+  duration_ms: 0.155
+  type: 'test'
+  ...
+# Subtest: live arrays are authoritative over obsolete derived layoutModel geometry
+ok 148 - live arrays are authoritative over obsolete derived layoutModel geometry
+  ---
+  duration_ms: 0.2732
+  type: 'test'
+  ...
+# Subtest: draft rule violations remain loadable rather than reset to preset geometry
+ok 149 - draft rule violations remain loadable rather than reset to preset geometry
+  ---
+  duration_ms: 0.2494
+  type: 'test'
+  ...
+# Subtest: unsupported schema 0 rejected
+ok 150 - unsupported schema 0 rejected
+  ---
+  duration_ms: 0.5259
+  type: 'test'
+  ...
+# Subtest: unsupported schema 2 rejected
+ok 151 - unsupported schema 2 rejected
+  ---
+  duration_ms: 0.7692
+  type: 'test'
+  ...
+# Subtest: unsupported schema "1" rejected
+ok 152 - unsupported schema "1" rejected
+  ---
+  duration_ms: 0.2195
+  type: 'test'
+  ...
+# Subtest: unsupported schema null rejected
+ok 153 - unsupported schema null rejected
+  ---
+  duration_ms: 0.136
+  type: 'test'
+  ...
+# Subtest: room width mismatch rejected
+ok 154 - room width mismatch rejected
+  ---
+  duration_ms: 0.1824
+  type: 'test'
+  ...
+# Subtest: room length mismatch rejected
+ok 155 - room length mismatch rejected
+  ---
+  duration_ms: 0.1253
+  type: 'test'
+  ...
+# Subtest: room height mismatch rejected
+ok 156 - room height mismatch rejected
+  ---
+  duration_ms: 0.1126
+  type: 'test'
+  ...
+# Subtest: invalid document d=>{d.format='other-app';} rejected without mutation
+ok 157 - invalid document d=>{d.format='other-app';} rejected without mutation
+  ---
+  duration_ms: 0.3429
+  type: 'test'
+  ...
+# Subtest: invalid document d=>{d.unit='cm';} rejected without mutation
+ok 158 - invalid document d=>{d.unit='cm';} rejected without mutation
+  ---
+  duration_ms: 0.1923
+  type: 'test'
+  ...
+# Subtest: invalid document d=>{d.east='bad';} rejected without mutation
+ok 159 - invalid document d=>{d.east='bad';} rejected without mutation
+  ---
+  duration_ms: 0.143
+  type: 'test'
+  ...
+# Subtest: invalid document d=>{delete d.west;} rejected without mutation
+ok 160 - invalid document d=>{delete d.west;} rejected without mutation
+  ---
+  duration_ms: 0.2043
+  type: 'test'
+  ...
+# Subtest: invalid document d=>{d.west[1].id=d.east[0].id;} rejected without mutation
+ok 161 - invalid document d=>{d.west[1].id=d.east[0].id;} rejected without mutation
+  ---
+  duration_ms: 0.446
+  type: 'test'
+  ...
+# Subtest: invalid document d=>{d.east[0].y='2255';} rejected without mutation
+ok 162 - invalid document d=>{d.east[0].y='2255';} rejected without mutation
+  ---
+  duration_ms: 0.3439
+  type: 'test'
+  ...
+# Subtest: invalid document d=>{d.east[0].hidden='false';} rejected without mutation
+ok 163 - invalid document d=>{d.east[0].hidden='false';} rejected without mutation
+  ---
+  duration_ms: 0.286
+  type: 'test'
+  ...
+# Subtest: invalid document d=>{d.east[0].color='red" onclick="bad';} rejected without mutation
+ok 164 - invalid document d=>{d.east[0].color='red" onclick="bad';} rejected without mutation
+  ---
+  duration_ms: 0.2328
+  type: 'test'
+  ...
+# Subtest: invalid document d=>{d.materials.cabinetBody='url(bad)';} rejected without mutation
+ok 165 - invalid document d=>{d.materials.cabinetBody='url(bad)';} rejected without mutation
+  ---
+  duration_ms: 0.2492
+  type: 'test'
+  ...
+# Subtest: invalid document d=>{d.modules.west=[{id:'bad',width:-1}];} rejected without mutation
+ok 166 - invalid document d=>{d.modules.west=[{id:'bad',width:-1}];} rejected without mutation
+  ---
+  duration_ms: 0.3534
+  type: 'test'
+  ...
+# Subtest: invalid document d=>{d.modules='bad';} rejected without mutation
+ok 167 - invalid document d=>{d.modules='bad';} rejected without mutation
+  ---
+  duration_ms: 0.4835
+  type: 'test'
+  ...
+# Subtest: invalid document d=>{d.grid=30;} rejected without mutation
+ok 168 - invalid document d=>{d.grid=30;} rejected without mutation
+  ---
+  duration_ms: 0.1916
+  type: 'test'
+  ...
+# Subtest: invalid document d=>{d.viewOptions.hide3DObstructions='false';} rejected without mutation
+ok 169 - invalid document d=>{d.viewOptions.hide3DObstructions='false';} rejected without mutation
+  ---
+  duration_ms: 0.1623
+  type: 'test'
+  ...
+# Subtest: invalid document d=>{d.eastTopUpperDepth=0;} rejected without mutation
+ok 170 - invalid document d=>{d.eastTopUpperDepth=0;} rejected without mutation
+  ---
+  duration_ms: 0.164
+  type: 'test'
+  ...
+# Subtest: invalid document d=>{delete d.materials;} rejected without mutation
+ok 171 - invalid document d=>{delete d.materials;} rejected without mutation
+  ---
+  duration_ms: 0.1594
+  type: 'test'
+  ...
+# Subtest: invalid document d=>{d.east[0].d=0;} rejected without mutation
+ok 172 - invalid document d=>{d.east[0].d=0;} rejected without mutation
+  ---
+  duration_ms: 0.1642
+  type: 'test'
+  ...
+# Subtest: nonfinite numbers are rejected before stringify can conceal them
+ok 173 - nonfinite numbers are rejected before stringify can conceal them
+  ---
+  duration_ms: 0.1485
+  type: 'test'
+  ...
+# Subtest: invalid JSON, missing arrays and nonsupported payloads are rejected
+ok 174 - invalid JSON, missing arrays and nonsupported payloads are rejected
+  ---
+  duration_ms: 0.2184
+  type: 'test'
+  ...
+# Subtest: byte order mark is accepted
+ok 175 - byte order mark is accepted
+  ---
+  duration_ms: 0.2616
+  type: 'test'
+  ...
+# Subtest: oversized and too deeply nested documents fail predictably
+ok 176 - oversized and too deeply nested documents fail predictably
+  ---
+  duration_ms: 1.4243
+  type: 'test'
+  ...
+# Subtest: prototype-pollution keys and non-JSON values are rejected
+ok 177 - prototype-pollution keys and non-JSON values are rejected
+  ---
+  duration_ms: 0.2533
+  type: 'test'
+  ...
+# Subtest: explicit null fields are invalid, not silently replaced by legacy defaults
+ok 178 - explicit null fields are invalid, not silently replaced by legacy defaults
+  ---
+  duration_ms: 0.4436
+  type: 'test'
+  ...
+# Subtest: known colorless hidden placeholders retain absent color during legacy migration
+ok 179 - known colorless hidden placeholders retain absent color during legacy migration
+  ---
+  duration_ms: 0.222
+  type: 'test'
+  ...
+# Subtest: legacy autosave migrates to a new key and original bytes are retained
+ok 180 - legacy autosave migrates to a new key and original bytes are retained
+  ---
+  duration_ms: 2.5678
+  type: 'test'
+  ...
+# Subtest: saving before load is rejected
+ok 181 - saving before load is rejected
+  ---
+  duration_ms: 0.271
+  type: 'test'
+  ...
+# Subtest: new key takes precedence over old legacy state
+ok 182 - new key takes precedence over old legacy state
+  ---
+  duration_ms: 0.4464
+  type: 'test'
+  ...
+# Subtest: corrupt versioned autosave is protected, not replaced by valid legacy or defaults
+ok 183 - corrupt versioned autosave is protected, not replaced by valid legacy or defaults
+  ---
+  duration_ms: 0.1854
+  type: 'test'
+  ...
+# Subtest: corrupt legacy autosave remains untouched
+ok 184 - corrupt legacy autosave remains untouched
+  ---
+  duration_ms: 0.1147
+  type: 'test'
+  ...
+# Subtest: previous valid autosave is recoverable without mutating primary
+ok 185 - previous valid autosave is recoverable without mutating primary
+  ---
+  duration_ms: 0.5648
+  type: 'test'
+  ...
+# Subtest: unchanged saves do not consume backup writes
+ok 186 - unchanged saves do not consume backup writes
+  ---
+  duration_ms: 0.2426
+  type: 'test'
+  ...
+# Subtest: quota failure on backup leaves primary unchanged
+ok 187 - quota failure on backup leaves primary unchanged
+  ---
+  duration_ms: 0.3874
+  type: 'test'
+  ...
+# Subtest: failed primary write preserves both old primary and backup
+ok 188 - failed primary write preserves both old primary and backup
+  ---
+  duration_ms: 0.9401
+  type: 'test'
+  ...
+# Subtest: another tab changing or clearing storage blocks stale autosave
+ok 189 - another tab changing or clearing storage blocks stale autosave
+  ---
+  duration_ms: 0.999
+  type: 'test'
+  ...
+# Subtest: explicit resume backs up unreadable/conflicting bytes before replacement
+ok 190 - explicit resume backs up unreadable/conflicting bytes before replacement
+  ---
+  duration_ms: 0.4922
+  type: 'test'
+  ...
+# Subtest: failed recovery backup never overwrites the damaged original
+ok 191 - failed recovery backup never overwrites the damaged original
+  ---
+  duration_ms: 0.2298
+  type: 'test'
+  ...
+# Subtest: blocked storage access is reported, not swallowed
+ok 192 - blocked storage access is reported, not swallowed
+  ---
+  duration_ms: 0.1592
+  type: 'test'
+  ...
+# Subtest: malformed state never replaces the last stored project
+ok 193 - malformed state never replaces the last stored project
+  ---
+  duration_ms: 0.31
+  type: 'test'
+  ...
+# Subtest: named versions share v1 format and retain original legacy slots
+ok 194 - named versions share v1 format and retain original legacy slots
+  ---
+  duration_ms: 0.4113
+  type: 'test'
+  ...
+# Subtest: named-slot backup failure preserves original named project
+ok 195 - named-slot backup failure preserves original named project
+  ---
+  duration_ms: 0.3295
+  type: 'test'
+  ...
+# Subtest: missing slot and missing previous save are explicit errors
+ok 196 - missing slot and missing previous save are explicit errors
+  ---
+  duration_ms: 0.0902
+  type: 'test'
+  ...
+# Subtest: exports the existing plan directions into Blender metres without mutation
+ok 197 - exports the existing plan directions into Blender metres without mutation
+  ---
+  duration_ms: 1.1445
+  type: 'test'
+  ...
+# Subtest: supports all preset and quality combinations
+ok 198 - supports all preset and quality combinations
+  ---
+  duration_ms: 0.1796
+  type: 'test'
+  ...
+# Subtest: exports a selected artifact and its exact support ID
+ok 199 - exports a selected artifact and its exact support ID
+  ---
+  duration_ms: 0.4511
+  type: 'test'
+  ...
+# Subtest: refuses invalid presets, scales, dimensions and output IDs
+ok 200 - refuses invalid presets, scales, dimensions and output IDs
+  ---
+  duration_ms: 0.3003
+  type: 'test'
+  ...
+# Subtest: refuses floating, unknown and overlapping artifact selections
+ok 201 - refuses floating, unknown and overlapping artifact selections
+  ---
+  duration_ms: 0.1124
+  type: 'test'
+  ...
+# Subtest: accepts only generated same-origin PNG paths
+ok 202 - accepts only generated same-origin PNG paths
+  ---
+  duration_ms: 0.2
+  type: 'test'
+  ...
+# Subtest: refuses shared support across room boundaries
+ok 203 - refuses shared support across room boundaries
+  ---
+  duration_ms: 0.159
+  type: 'test'
+  ...
+1..203
+# tests 203
+# suites 0
+# pass 203
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1722.4594
+
+> home-interior@1.0.0 build
+> vite build
+
+vite v5.4.21 building for production...
+transforming...
+✓ 851 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                             0.38 kB │ gzip:   0.28 kB
+dist/assets/shoe-rack-wood-DN05ZZCn.png                    34.05 kB
+dist/assets/home a 501 floor - unmodified-ysNysRCF.png    141.67 kB
+dist/assets/arrival-door-wood-8ZZDJ-c-.png                150.43 kB
+dist/assets/floorplan_final-Di7c9Q31.dxf                  355.62 kB
+dist/assets/index-BjKwVxW5.css                              4.84 kB │ gzip:   1.40 kB
+dist/assets/purify.es-BnINGy_Y.js                          28.93 kB │ gzip:  11.14 kB
+dist/assets/index.es-PgnKlx3K.js                          150.85 kB │ gzip:  51.62 kB
+dist/assets/html2canvas.esm-CBrSDip1.js                   201.42 kB │ gzip:  48.03 kB
+dist/assets/jspdf.es.min-7m-mg2dG.js                      390.44 kB │ gzip: 128.77 kB
+dist/assets/index-BCW4l-pv.js                           3,149.15 kB │ gzip: 888.25 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 9.83s
