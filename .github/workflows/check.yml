@@ -1,0 +1,30 @@
+name: check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  fast-gate:
+    runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: react-configurator
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: react-configurator/package-lock.json
+      - run: npm ci
+      - run: npm run check
+
+  # This only runs the dependency-free "fast gate" from docs/TESTING.md
+  # (node --test suite + vite build). It does not run test:browser,
+  # test:persistence, test:materials, test:lighting, test:baked-lighting,
+  # visual:qa, or the Python/Blender checks in scripts/render_worker.py --
+  # those need a managed local server, Chromium, and/or Blender, and are
+  # run separately (see docs/RENDER_WORKER.md). Do not treat a green run
+  # of this workflow as covering those checks.
