@@ -28,3 +28,4 @@ patch-log.txt
 
 # Local dev-server logs from start-server.bat / npm run dev.
 react-configurator/vite-*.log
+work-plan/plan.backup.json

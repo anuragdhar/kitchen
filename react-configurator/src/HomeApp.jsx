@@ -8,6 +8,7 @@ import StudyRoom3D from './StudyRoom3D.jsx'
 import EmptyRoomGallery from './EmptyRoomGallery.jsx'
 import EntryGallery3D from './EntryGallery3D.jsx'
 import WholeHome3D from './WholeHome3D.jsx'
+import WorkPlan from './WorkPlan.jsx'
 import BlenderHomeView from './BlenderHomeView.jsx'
 import CurrentRoomBlenderView from './home/CurrentRoomBlenderView.jsx'
 import {usesEditableRoomSource} from './render/roomParity.mjs'
@@ -26,6 +27,7 @@ const rooms={
   study:{name:'Study',eyebrow:'Ready to design together',description:'A new room workspace for layout, storage, lighting, desk placement and finishes.',color:'#2563eb'},
   balcony:{name:'Balcony office',eyebrow:'Active design area',description:'Turn the narrow east balcony into a focused, comfortable home office.',color:'#7c3aed'},
   shells:{name:'Other rooms in 3D',eyebrow:'Whole-home 3D',description:'Explore the room shells, furnished spaces, and Bedroom 1 balcony extension.',color:'#0e7490'},
+  plan:{name:'Work plan',hotspotOnly:true},
   whole3d:{name:'Whole home 3D',eyebrow:'Complete home',description:'Orbit around the full floor plan with rooms, openings, and balcony extensions in one view.',color:'#0f766e'},
   bedroom1:{name:'Bedroom 1',color:'#7e22ce',shellKey:'bedroom1',hotspotOnly:true},
   bedroom3:{name:'Bedroom 3',color:'#c2410c',shellKey:'bedroom3',hotspotOnly:true},
@@ -114,7 +116,7 @@ function UpdateButton(){
   </div>
 }
 
-function HomeHeader({section,onHome,onOpen3D}){
+function HomeHeader({section,onHome,onOpen3D,onOpenPlan}){
   return <header style={{position:'sticky',top:0,zIndex:50,background:'rgba(252,250,247,.94)',backdropFilter:'blur(14px)',borderBottom:'1px solid #e7e0d7'}}>
     <div style={{maxWidth:1920,margin:'0 auto',minHeight:68,padding:'0 clamp(18px,3vw,48px)',display:'flex',alignItems:'center',justifyContent:'space-between',gap:16}}>
       <button onClick={onHome} style={{...buttonStyle,background:'transparent',padding:'8px 0',fontSize:18,color:'#241f1a',display:'flex',alignItems:'center',gap:10}} aria-label="Return to whole home plan">
@@ -123,6 +125,7 @@ function HomeHeader({section,onHome,onOpen3D}){
       </button>
       <div style={{display:'flex',alignItems:'center',gap:10}}>
         <span style={{fontSize:13,color:'#6f665e'}}>{section==='home'?'Whole home':rooms[section]?.name}</span>
+        {section!=='plan'&&<button onClick={onOpenPlan} style={{...buttonStyle,background:'#7c2d12',color:'#fff'}}>Work plan</button>}
         {section!=='whole3d'&&<button onClick={onOpen3D} style={{...buttonStyle,background:'#0f766e',color:'#fff'}}>Whole home 3D</button>}
         {section!=='home'&&<button onClick={onHome} style={{...buttonStyle,background:'#eee8e1',color:'#241f1a'}}>← Floor plan</button>}
       </div>
@@ -350,8 +353,9 @@ export default function HomeApp(){
   useEffect(()=>{window.scrollTo({top:0,left:0,behavior:'auto'})},[section])
   return <>
     <InteriorStudio/>
-    <HomeHeader section={section} onHome={()=>setSection('home')} onOpen3D={()=>setSection('whole3d')}/>
-    {section!=='home'&&section!=='dxf'&&<MiniFloorNavigator section={section} onOpen={setSection}/>}
+    <HomeHeader section={section} onHome={()=>setSection('home')} onOpen3D={()=>setSection('whole3d')} onOpenPlan={()=>setSection('plan')}/>
+    {section==='plan'&&<WorkPlan/>}
+    {section!=='home'&&section!=='dxf'&&section!=='plan'&&<MiniFloorNavigator section={section} onOpen={setSection}/>}
     {section==='home'&&<WholeHome onOpen={setSection}/>} 
     {section==='kitchen'&&<RoomPresentation key={section} section={section}><KitchenConfigurator/></RoomPresentation>}
     {section==='study'&&<RoomPresentation key={section} section={section}><StudyWorkspace/></RoomPresentation>}

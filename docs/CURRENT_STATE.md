@@ -178,3 +178,6 @@ Click for dimensions (2026-10-03): in Whole home 3D (editable) and the room page
 and shows its width (east-west), depth (north-south), height and height off the floor in room millimetres
 (`src/render/dimensionPick.js`, `ItemDimensionsPanel.jsx`). Sizes are the modelled outer box, not site measurements. Clicking a
 wall still marks the wall. Not in the kitchen planner, Study, Balcony office, Entry or Storage views.
+
+Work plan (2026-10-03): `work-plan/plan.json` tracks renovation tasks by phase and trade with dependencies and status; the
+Work plan page (header button) edits it and saves to the file when run locally. Details: `docs/WORK_PLAN.md`.

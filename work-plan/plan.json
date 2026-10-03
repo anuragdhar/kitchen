@@ -1,0 +1,457 @@
+{
+  "schemaVersion": 1,
+  "note": "Renovation work plan for A501. Edit in the app (Work plan page) or here. Sizes are from the model, not site measurements.",
+  "phases": [
+    {
+      "id": "measure",
+      "name": "1. Measure, decide and get approvals"
+    },
+    {
+      "id": "civil",
+      "name": "2. Demolition and civil work"
+    },
+    {
+      "id": "plumbing-rough",
+      "name": "3. Plumbing first fix"
+    },
+    {
+      "id": "electrical-rough",
+      "name": "4. Electrical first fix (conduits and boxes)"
+    },
+    {
+      "id": "surfaces",
+      "name": "5. Plaster and flooring"
+    },
+    {
+      "id": "carpentry",
+      "name": "6. Carpentry"
+    },
+    {
+      "id": "paint",
+      "name": "7. Painting"
+    },
+    {
+      "id": "second-fix",
+      "name": "8. Electrical and plumbing fittings"
+    },
+    {
+      "id": "finish",
+      "name": "9. Furnish, snag and handover"
+    }
+  ],
+  "trades": [
+    {
+      "id": "civil",
+      "name": "Civil / structure"
+    },
+    {
+      "id": "electrical",
+      "name": "Electrical"
+    },
+    {
+      "id": "plumbing",
+      "name": "Plumbing"
+    },
+    {
+      "id": "carpentry",
+      "name": "Carpentry"
+    },
+    {
+      "id": "fabrication",
+      "name": "Steel fabrication"
+    },
+    {
+      "id": "painting",
+      "name": "Painting"
+    },
+    {
+      "id": "general",
+      "name": "Owner / general"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "site-measure",
+      "phase": "measure",
+      "trade": "general",
+      "title": "Measure the rooms on site and compare with the plan",
+      "room": "Whole home",
+      "detail": "The model uses floor-plan sizes. Measure the Drawing Room north wall, the entry pocket, the entry door leaf and the window sill before ordering anything.",
+      "dependsOn": [],
+      "status": "todo",
+      "source": "docs/CURRENT_STATE.md"
+    },
+    {
+      "id": "engineer-check",
+      "phase": "measure",
+      "trade": "civil",
+      "title": "Get the builder or structural engineer to approve every wall opening",
+      "room": "Drawing Room / Main entry",
+      "detail": "Three openings need approval: the cabinet door through the 9-inch Drawing Room north wall, the entry pocket, and the wall to be removed on the left after the entry for the shoe rack. Ask which walls are load-bearing and what support (lintel or beam) each needs.",
+      "dependsOn": [
+        "site-measure"
+      ],
+      "status": "todo",
+      "needs": "Structural approval before any cutting",
+      "source": "docs/ENTRY_WALL_CAVITY.md"
+    },
+    {
+      "id": "pocket-check",
+      "phase": "measure",
+      "trade": "civil",
+      "title": "Check that the entry pocket is really hollow",
+      "room": "Main entry",
+      "detail": "Test-drill from the Drawing Room side. Look for shaft services and a beam above. The drawing shows only a closed rectangle.",
+      "dependsOn": [
+        "site-measure"
+      ],
+      "status": "todo",
+      "source": "docs/ENTRY_WALL_CAVITY.md"
+    },
+    {
+      "id": "society-permission",
+      "phase": "measure",
+      "trade": "general",
+      "title": "Get housing-society permission for civil work and the new main gate",
+      "room": "Whole home",
+      "detail": "Many societies need notice or permission for wall changes, debris removal hours and a change to the outer door or gate.",
+      "dependsOn": [],
+      "status": "todo",
+      "needs": "Society permission"
+    },
+    {
+      "id": "electrician-survey",
+      "phase": "measure",
+      "trade": "electrical",
+      "title": "Electrician to survey existing wiring, earthing and the distribution board",
+      "room": "Whole home",
+      "detail": "Confirm existing points, MCB/RCBO ratings, the AC rating, and where intercom, broadband and DTH cables enter.",
+      "dependsOn": [],
+      "status": "todo",
+      "source": "docs/DRAWING_ROOM_ELECTRICAL.md"
+    },
+    {
+      "id": "plumbing-scope",
+      "phase": "measure",
+      "trade": "plumbing",
+      "title": "List the plumbing changes wanted",
+      "room": "Kitchen / washrooms / balcony",
+      "detail": "No plumbing change is recorded in the project yet. Decide: kitchen sink and water purifier points, washing machine, washroom fittings, balcony water heater. Add each as its own task.",
+      "dependsOn": [],
+      "status": "todo",
+      "needs": "Owner decision"
+    },
+    {
+      "id": "finalise-layouts",
+      "phase": "measure",
+      "trade": "general",
+      "title": "Freeze the furniture layouts that fix where points and openings go",
+      "room": "Whole home",
+      "detail": "Electrical points follow the furniture (Drawing Room layout C). Confirm layouts before chasing walls.",
+      "dependsOn": [],
+      "status": "todo",
+      "source": "docs/DRAWING_ROOM_TV_WALL.md"
+    },
+    {
+      "id": "shoe-rack-wall",
+      "phase": "civil",
+      "trade": "civil",
+      "title": "Remove the wall on the left after the entry and add a support for the new shoe rack",
+      "room": "Main entry",
+      "detail": "Owner 2026-10-03: on the north side, after entering, the wall on the left is removed and a support is added so a new shoe rack can be built there. Exact wall and support size to be marked on the plan; not yet drawn in the 3D model.",
+      "dependsOn": [
+        "engineer-check",
+        "society-permission"
+      ],
+      "status": "todo",
+      "needs": "Structural approval; mark the exact wall on the plan"
+    },
+    {
+      "id": "north-wall-door",
+      "phase": "civil",
+      "trade": "civil",
+      "title": "Cut the cabinet door opening in the Drawing Room north wall",
+      "room": "Drawing Room",
+      "detail": "Opening 600 wide x 2100 high at the west end of the north wall (80-680 mm from the west wall), with a lintel, into the west half of the entry pocket.",
+      "dependsOn": [
+        "engineer-check",
+        "pocket-check"
+      ],
+      "status": "todo",
+      "needs": "Structural approval",
+      "source": "docs/ENTRY_WALL_CAVITY.md"
+    },
+    {
+      "id": "pocket-partition",
+      "phase": "civil",
+      "trade": "civil",
+      "title": "Build the partition that splits the entry pocket into two cabinets",
+      "room": "Main entry",
+      "detail": "Full-height partition about 736 mm from the Drawing Room west wall line; the east cabinet stays open to the entry gallery.",
+      "dependsOn": [
+        "pocket-check"
+      ],
+      "status": "todo",
+      "source": "docs/ENTRY_WALL_CAVITY.md"
+    },
+    {
+      "id": "main-gate",
+      "phase": "civil",
+      "trade": "fabrication",
+      "title": "Replace the iron main entry gate with a stainless steel one",
+      "room": "Main entry",
+      "detail": "Owner 2026-10-03. Measure the opening, choose grade 304 (or 316 near the coast), design, lock and finish; remove the old gate and fix the new frame.",
+      "dependsOn": [
+        "society-permission",
+        "site-measure"
+      ],
+      "status": "todo"
+    },
+    {
+      "id": "debris",
+      "phase": "civil",
+      "trade": "civil",
+      "title": "Remove debris and make good the cut edges",
+      "room": "Whole home",
+      "detail": "Plaster the reveals of every new opening ready for frames.",
+      "dependsOn": [
+        "shoe-rack-wall",
+        "north-wall-door",
+        "pocket-partition"
+      ],
+      "status": "todo"
+    },
+    {
+      "id": "plumbing-rough",
+      "phase": "plumbing-rough",
+      "trade": "plumbing",
+      "title": "Plumbing first fix: pipes and drains in walls and floor",
+      "room": "As decided",
+      "detail": "Do this before plaster and tiles. Pressure-test before closing the walls.",
+      "dependsOn": [
+        "plumbing-scope"
+      ],
+      "status": "todo"
+    },
+    {
+      "id": "elec-chase-drawing",
+      "phase": "electrical-rough",
+      "trade": "electrical",
+      "title": "Chase walls and fix conduits and boxes for the 17 Drawing Room points",
+      "room": "Drawing Room",
+      "detail": "TV box behind the screen, media and router points behind the TV console with a 50 mm HDMI conduit between them, main switchboard on the east wall, AC point, sofa charging points, lights and the closet light.",
+      "dependsOn": [
+        "electrician-survey",
+        "finalise-layouts",
+        "north-wall-door"
+      ],
+      "status": "todo",
+      "source": "docs/DRAWING_ROOM_ELECTRICAL.md"
+    },
+    {
+      "id": "elec-floor-box",
+      "phase": "electrical-rough",
+      "trade": "electrical",
+      "title": "Decide and install the optional floor box at the coffee table",
+      "room": "Drawing Room",
+      "detail": "Must be chased into the floor before any flooring work.",
+      "dependsOn": [
+        "finalise-layouts"
+      ],
+      "status": "todo",
+      "needs": "Owner decision",
+      "source": "docs/DRAWING_ROOM_ELECTRICAL.md"
+    },
+    {
+      "id": "elec-data",
+      "phase": "electrical-rough",
+      "trade": "electrical",
+      "title": "Run CAT6, coax, phone and intercom cables to the TV wall",
+      "room": "Drawing Room",
+      "detail": "Low-voltage cables in their own conduits; cross mains only at right angles.",
+      "dependsOn": [
+        "elec-chase-drawing"
+      ],
+      "status": "todo",
+      "source": "docs/DRAWING_ROOM_ELECTRICAL.md"
+    },
+    {
+      "id": "elec-other-rooms",
+      "phase": "electrical-rough",
+      "trade": "electrical",
+      "title": "Plan electrical points for the other rooms",
+      "room": "Other rooms",
+      "detail": "Only the Drawing Room and the Balcony office have a point plan so far.",
+      "dependsOn": [
+        "finalise-layouts"
+      ],
+      "status": "todo",
+      "needs": "Plan not made yet"
+    },
+    {
+      "id": "plaster",
+      "phase": "surfaces",
+      "trade": "civil",
+      "title": "Close chases, plaster and level the walls",
+      "room": "Whole home",
+      "detail": "",
+      "dependsOn": [
+        "elec-chase-drawing",
+        "elec-data",
+        "plumbing-rough",
+        "debris"
+      ],
+      "status": "todo"
+    },
+    {
+      "id": "flooring",
+      "phase": "surfaces",
+      "trade": "civil",
+      "title": "Flooring and skirting repairs where walls were cut",
+      "room": "Drawing Room / Main entry",
+      "detail": "",
+      "dependsOn": [
+        "plaster",
+        "elec-floor-box"
+      ],
+      "status": "todo"
+    },
+    {
+      "id": "carp-west-cabinet",
+      "phase": "carpentry",
+      "trade": "carpentry",
+      "title": "West cabinet: frame, two inward-opening doors and shelves",
+      "room": "Drawing Room",
+      "detail": "Two 300 mm leaves, 2100 high, opening into the closet; shelves 380 deep at the back. For winter clothes, opened about twice a year.",
+      "dependsOn": [
+        "north-wall-door",
+        "plaster"
+      ],
+      "status": "todo",
+      "source": "docs/ENTRY_WALL_CAVITY.md"
+    },
+    {
+      "id": "carp-tv-console",
+      "phase": "carpentry",
+      "trade": "carpentry",
+      "title": "Wall-hung TV console under the TV",
+      "room": "Drawing Room",
+      "detail": "1300 x 400 x 400, 200 off the floor: router bay and Bass Module bay with open lattice, storage with a lattice door, cable holes to the points behind.",
+      "dependsOn": [
+        "plaster"
+      ],
+      "status": "todo",
+      "source": "docs/DRAWING_ROOM_TV_WALL.md"
+    },
+    {
+      "id": "carp-shoe-rack",
+      "phase": "carpentry",
+      "trade": "carpentry",
+      "title": "New shoe rack on the north side of the entry",
+      "room": "Main entry",
+      "detail": "Size after the wall is removed and the support is in.",
+      "dependsOn": [
+        "shoe-rack-wall",
+        "plaster"
+      ],
+      "status": "todo"
+    },
+    {
+      "id": "carp-other",
+      "phase": "carpentry",
+      "trade": "carpentry",
+      "title": "Other carpentry: wardrobes, kitchen cabinets, study, pooja, balcony office",
+      "room": "Other rooms",
+      "detail": "One line for now. Split into a task per room when each design is frozen.",
+      "dependsOn": [
+        "finalise-layouts"
+      ],
+      "status": "todo",
+      "needs": "Split per room"
+    },
+    {
+      "id": "paint",
+      "phase": "paint",
+      "trade": "painting",
+      "title": "Putty, primer and paint",
+      "room": "Whole home",
+      "detail": "After carpentry carcasses are in, before fixtures.",
+      "dependsOn": [
+        "plaster",
+        "carp-west-cabinet",
+        "carp-tv-console"
+      ],
+      "status": "todo"
+    },
+    {
+      "id": "elec-second-fix",
+      "phase": "second-fix",
+      "trade": "electrical",
+      "title": "Fit switches, sockets, USB chargers and light fittings; test every circuit",
+      "room": "Drawing Room",
+      "detail": "Includes the RCBO test, earth test and labelling the board.",
+      "dependsOn": [
+        "paint",
+        "elec-chase-drawing"
+      ],
+      "status": "todo",
+      "source": "docs/DRAWING_ROOM_ELECTRICAL.md"
+    },
+    {
+      "id": "plumbing-second-fix",
+      "phase": "second-fix",
+      "trade": "plumbing",
+      "title": "Fit taps, sanitary ware and appliances; leak test",
+      "room": "As decided",
+      "detail": "",
+      "dependsOn": [
+        "paint",
+        "plumbing-rough"
+      ],
+      "status": "todo"
+    },
+    {
+      "id": "tv-mount",
+      "phase": "second-fix",
+      "trade": "electrical",
+      "title": "Mount the TV and connect the soundbar, Bass Module, router, landline and intercom",
+      "room": "Drawing Room",
+      "detail": "",
+      "dependsOn": [
+        "elec-second-fix",
+        "carp-tv-console"
+      ],
+      "status": "todo"
+    },
+    {
+      "id": "furniture",
+      "phase": "finish",
+      "trade": "general",
+      "title": "Place sofas, coffee table, corner lamp table and rug",
+      "room": "Drawing Room",
+      "detail": "Layout C positions are in the review sheet.",
+      "dependsOn": [
+        "paint",
+        "flooring"
+      ],
+      "status": "todo",
+      "source": "docs/DRAWING_ROOM_TV_WALL.md"
+    },
+    {
+      "id": "snag",
+      "phase": "finish",
+      "trade": "general",
+      "title": "Snag list, deep clean and handover",
+      "room": "Whole home",
+      "detail": "",
+      "dependsOn": [
+        "elec-second-fix",
+        "plumbing-second-fix",
+        "furniture",
+        "main-gate",
+        "carp-shoe-rack"
+      ],
+      "status": "todo"
+    }
+  ]
+}
