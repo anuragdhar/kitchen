@@ -213,6 +213,22 @@
       "source": "docs/ENTRY_WALL_CAVITY.md"
     },
     {
+      "id": "west-cabinet-frame",
+      "phase": "civil",
+      "trade": "fabrication",
+      "title": "West cabinet: iron support frame for the floor board",
+      "room": "Drawing Room",
+      "detail": "Owner 2026-10-04: after the mason cuts the wall, an iron support goes in below, and the board the storage stands on is laid on it. It must take a person walking on it, about 100 kg. Proposal (drawing: docs/drawings/west-cabinet-platform.png): A, a 50 x 50 x 6 angle bolted along the west wall with M10 anchor fasteners every 300 mm; B, on the east side where there is no wall to fasten into, a 50 x 50 x 3 square hollow section spanning north to south and bolted down to the concrete floor at both ends on 100 x 100 x 6 base plates; C, 40 x 40 x 5 angles across the north and south ends on the concrete; D, 40 x 40 x 3 cross members between A and B, no more than 300 mm apart. Anti-rust primer and two coats of paint. Frame about 650 wide x 1,100 front to back, from the model, not measured.",
+      "dependsOn": [
+        "north-wall-door",
+        "engineer-check",
+        "pocket-check"
+      ],
+      "status": "todo",
+      "needs": "Fabricator or engineer to confirm the member sizes, anchors and real span; measure the gap and the level of the two floors",
+      "source": "docs/drawings/west-cabinet-platform.png"
+    },
+    {
       "id": "pocket-partition",
       "phase": "civil",
       "trade": "civil",
@@ -411,10 +427,11 @@
       "trade": "carpentry",
       "title": "West cabinet: one hidden outward-opening door and shelves",
       "room": "Drawing Room",
-      "detail": "One flush 500 x 1800 leaf on concealed hinges, hinged on its west edge, no handle (push latch), opening into the room, faced with the same fluted slats as the wall panelling; shelves 380 deep at the back. For winter clothes, opened about twice a year.",
+      "detail": "One flush 500 x 1800 leaf on concealed hinges, hinged on its west edge, no handle (push latch), opening into the room, faced with the same fluted slats as the wall panelling; shelves 380 deep at the back. For winter clothes, opened about twice a year. The carpenter also lays the floor board on the iron frame first: 19 mm waterproof (BWP) plywood screwed to the frame.",
       "dependsOn": [
         "north-wall-door",
-        "plaster"
+        "plaster",
+        "west-cabinet-frame"
       ],
       "status": "todo",
       "source": "docs/ENTRY_WALL_CAVITY.md"
