@@ -1,0 +1,73 @@
+{
+  "schema": "a501.current-room",
+  "version": 1,
+  "room": "drawing",
+  "job": "78a55262e06d49c1",
+  "sceneId": "drawing",
+  "sourceKind": "editable-snapshot",
+  "sourceSha256": "c8c19cea7d05e7906ddf2127cc2ee83b436a773cae47e45ec5b9d7cc4e6d293d",
+  "capturedAt": "2026-10-03T16:08:17.045Z",
+  "quality": "draft",
+  "model": {
+    "url": "/renders/archviz/78a55262e06d49c1/source.glb",
+    "sha256": "c8c19cea7d05e7906ddf2127cc2ee83b436a773cae47e45ec5b9d7cc4e6d293d",
+    "shading": "studio-unbaked"
+  },
+  "camera": {
+    "type": "perspective",
+    "position": [
+      1.2,
+      1.2499999999999996,
+      4.4
+    ],
+    "quaternion": [
+      -0.01701608302945114,
+      -0.02270639755028387,
+      -0.00038652960905709126,
+      0.9995972804202123
+    ],
+    "fov": 46,
+    "aspect": 1.7560355781448538,
+    "verticalSpan": null
+  },
+  "bounds": {
+    "min": [
+      -0.05000000074505806,
+      -0.055499999850988385,
+      -1.068000009059906
+    ],
+    "max": [
+      3.443000003576279,
+      2.700000023841858,
+      5.385000000745058
+    ]
+  },
+  "images": [
+    {
+      "label": "Current editable camera",
+      "url": "/renders/archviz/78a55262e06d49c1/current.png",
+      "sha256": "797f4f079772d6228abb83623eff0383bbebb62458672c210f7d012cba39acd2",
+      "size": [
+        960,
+        547
+      ]
+    },
+    {
+      "label": "Reverse room view",
+      "url": "/renders/archviz/78a55262e06d49c1/reverse.png",
+      "sha256": "a4199edbb984efb818ee931c4a1784a9b2e2ee800b018981a3aeefdd93b56d93",
+      "size": [
+        960,
+        640
+      ]
+    }
+  ],
+  "geometryAudit": {
+    "sourceObjects": 175,
+    "importedMeshes": 175,
+    "maximumBoundsErrorMetres": 4.315376278540839e-07,
+    "triangleCountsMatch": true,
+    "scope": "Source IDs, per-object world bounds and triangle counts; not a construction/collision certificate."
+  },
+  "reviewStatus": "unreviewed"
+}

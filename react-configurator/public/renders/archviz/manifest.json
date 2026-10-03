@@ -217,49 +217,31 @@
     },
     {
       "room": "drawing",
-      "job": "06903d07409d4944",
-      "sourceKind": "detailed-native-snapshot",
-      "quality": "portfolio",
-      "lighting": "authored",
+      "job": "78a55262e06d49c1",
+      "sourceKind": "editable-snapshot",
+      "quality": "draft",
+      "lighting": "day",
       "images": [
         {
-          "label": "Drawing room interior",
-          "url": "/renders/archviz/06903d07409d4944/authored-1.png",
-          "sha256": "d10f9f81c245ddcbe735b471322685c4be72dd4b75367c9208cb6e4429388504",
+          "label": "Current editable camera",
+          "url": "/renders/archviz/78a55262e06d49c1/current.png",
+          "sha256": "797f4f079772d6228abb83623eff0383bbebb62458672c210f7d012cba39acd2",
           "size": [
-            2560,
-            1760
-          ]
-        },
-        {
-          "label": "Drawing room seating detail",
-          "url": "/renders/archviz/06903d07409d4944/authored-2.png",
-          "sha256": "9c879a1e60a662a174930eda935078eea70562e5e1b9767a6f4d88edeec80475",
-          "size": [
-            2560,
-            1760
-          ]
-        },
-        {
-          "label": "Room composition",
-          "url": "/renders/archviz/06903d07409d4944/hero.png",
-          "sha256": "920d0c2f4a5d4a77182b7f718ac58d06a425a043bc03a69f3bf6b1f215e7d9ea",
-          "size": [
-            2560,
-            1707
+            960,
+            547
           ]
         },
         {
           "label": "Reverse room view",
-          "url": "/renders/archviz/06903d07409d4944/reverse.png",
-          "sha256": "e4ac730c6bed4d9bd397f9ff834e16ad59874089514757e1b603d75b87dd5799",
+          "url": "/renders/archviz/78a55262e06d49c1/reverse.png",
+          "sha256": "a4199edbb984efb818ee931c4a1784a9b2e2ee800b018981a3aeefdd93b56d93",
           "size": [
-            2560,
-            1707
+            960,
+            640
           ]
         }
       ],
-      "reviewStatus": "reviewed"
+      "reviewStatus": "unreviewed"
     }
   ]
 }

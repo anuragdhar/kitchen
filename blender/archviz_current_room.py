@@ -12,7 +12,7 @@ import tempfile
 
 from archviz_contract import atomic_json, load_bundle, sha256, validate_outputs
 
-PARITY_ROOMS = frozenset(('bedroom3', 'balcony', 'kitchen'))
+PARITY_ROOMS = frozenset(('bedroom3', 'balcony', 'kitchen', 'drawing'))
 
 
 def publish_current_room(public, room, bundle):

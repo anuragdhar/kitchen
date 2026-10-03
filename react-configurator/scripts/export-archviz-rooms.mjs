@@ -48,7 +48,7 @@ try{
     await dialog.getByLabel('Source 3D scene',{exact:true}).selectOption(room);
     // Study's export takes ~206s (many unique material textures); 180s was
     // too tight and looked like a hang. Measured 2026-09-29, headroomed here.
-    const downloadPromise=page.waitForEvent('download',{timeout:300000});
+    const downloadPromise=page.waitForEvent('download',{timeout:1200000});
     await dialog.getByRole('button',{name:'Export current design for Blender',exact:true}).click();
     const download=await downloadPromise;
     await download.saveAs(path.join(output,`A501-${room}-archviz.zip`));

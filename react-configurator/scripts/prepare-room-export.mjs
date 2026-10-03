@@ -9,6 +9,18 @@ export async function prepareRoomExport(page, room) {
     const showFurniture = page.getByRole('button', {name: 'Show furniture', exact: true});
     if (await showFurniture.isVisible()) await showFurniture.click();
   }
+  if (room === 'drawing') {
+    // The current layout (C by default) with its built-ins, furniture and the west cabinet; the door-swing ghost and the
+    // layout labels are planning overlays, not things to render.
+    const swing = page.getByRole('button', {name: 'Hide entry door swing', exact: true})
+    if (await swing.isVisible()) await swing.click()
+    const labels = page.getByRole('button', {name: 'Hide TV wall labels', exact: true})
+    if (await labels.isVisible()) await labels.click()
+    const showFurniture = page.getByRole('button', {name: 'Show furniture', exact: true})
+    if (await showFurniture.isVisible()) await showFurniture.click()
+    // Render from inside, looking at the TV wall, not the cutaway overview.
+    await page.getByRole('button', {name: 'TV wall view', exact: true}).click()
+  }
   // Let React's visibility/camera effects and the renderer reach the same frame
   // before recording either the reference image or the exported world matrices.
   await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
