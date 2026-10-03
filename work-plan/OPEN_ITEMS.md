@@ -28,7 +28,7 @@ page). Write the answer next to the item or just tell the assistant; the task an
 | B3 | Is the society permission to close the shaft in writing? Does the society also need to approve the new main door and the shaft cover? | Society permission |
 | B4 | Is the present shaft cover at the entry ventilated (holes or louvres)? | Shaft cover |
 | B5 | ANSWERED 2026-10-04: the south window frame is wood, in three sections, shutters open outward, centre section fixed (to be replaced by two shutters). Nothing outside blocks the centre shutters (owner). | Centre window shutters |
-| B6 | Drawing Room south window: there is a cover above it outside (owner). How far does it stick out from the wall (450 mm or more is needed), and how wide is one shutter leaf? | Outside sun screen |
+| B6 | Drawing Room south window: exact height of the fixed top band (owner: about 1 ft), and whether it runs across all three sections | Outside sun screen; centre shutters; mosquito net |
 
 ## C. Decisions
 
@@ -53,7 +53,7 @@ page). Write the answer next to the item or just tell the assistant; the task an
 | C17 | Track lights: type (230 V or slim 48 V magnetic), colour, number of heads | two surface tracks, warm white, dimmable | Layered lighting |
 | C18 | Is there a ceiling fan in the Drawing Room, and where? | not known | Layered lighting |
 | C19 | South window: which wood shade; glass type for the new shutters; roller net cassette at the top or the side (roller net per section is DECIDED) | match the TV panel wall; 5 mm clear glass | Window wooden shade; mosquito net; centre shutters |
-| C20 | Outside sun screen on the south window: plain bamboo or an outdoor PVC/HDPE screen; worked by a cord brought inside, a crank, or a motor | outdoor screen with a cord through an eyelet in the frame | Outside sun screen |
+| C20 | Outside sun screen on the south window: plain bamboo or an outdoor PVC/HDPE screen | outdoor screen lasts longer; bamboo looks warmer. Hung close to the wall, cord brought inside | Outside sun screen |
 
 ## D. People to arrange
 
