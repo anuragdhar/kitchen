@@ -163,3 +163,7 @@ grounds furniture and shades corners without changing any geometry, material or 
 Drawing Room layout C (2026-10-03, now the default): south sofa against the window wall, west sofa slid south into an L, table
 inside it, 55-inch TV (65-inch option) on the north wall between the west cabinet door and the entry door, router cabinet moved
 to the east wall. The west cabinet's two leaves open inward. Details: `docs/DRAWING_ROOM_TV_WALL.md`.
+
+Drawing Room electrical plan (2026-10-03, layout C): 17 proposed points (TV box, media point, router and intercom, main
+switchboard with a drop-zone charger, AC, lamps, USB charging within 1.5 m of every seat, closet light, spares, optional
+floor box), shown with "Show electrical points". Planning only, for a licensed electrician: `docs/DRAWING_ROOM_ELECTRICAL.md`.

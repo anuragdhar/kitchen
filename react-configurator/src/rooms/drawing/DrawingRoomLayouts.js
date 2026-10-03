@@ -3,6 +3,8 @@ import {createDrawingRoomTvWall} from './DrawingRoomTvWall.js'
 import {createDrawingRoomCornerTv} from './DrawingRoomCornerTv.js'
 import {createDrawingRoomSeating, createDrawingRoomCornerSeating, createDrawingRoomSouthSeating} from './DrawingRoomSeating.js'
 import {createDrawingRoomSouthTv} from './DrawingRoomSouthTv.js'
+import {createDrawingRoomElectrical} from './DrawingRoomElectrical.js'
+import {DRAWING_ELECTRICAL} from '../../config/drawingElectricalConfig.js'
 import {createDrawingLayoutLights} from './DrawingRoomLighting.js'
 import {createDrawingRoomDoorSwing} from './DrawingRoomDoorSwing.js'
 import {createDrawingRoomWallStorage} from './DrawingRoomWallStorage.js'
@@ -32,6 +34,9 @@ export function createDrawingRoomLayouts(room, {wallFaceMm = 0, initial = 'south
   }
   const CORNER = Object.keys(corner)
   const south = createDrawingRoomSouthTv(room, {wallFaceMm})
+  // Electrical points belong to layout C; the inner group is the on/off switch, the outer one follows the layout.
+  const electrical = new THREE.Group(); electrical.name = 'Drawing Room electrical plan'
+  const electricalPoints = createDrawingRoomElectrical(room, DRAWING_ELECTRICAL, {wallFaceMm}); electricalPoints.visible = false; electrical.add(electricalPoints)
   const doorSwing = createDrawingRoomDoorSwing(room, {wallFaceMm})
   const wallStorage = createDrawingRoomWallStorage(room, {wallFaceMm}) // part of the building: shown in every layout
   const registry = [
@@ -42,6 +47,7 @@ export function createDrawingRoomLayouts(room, {wallFaceMm = 0, initial = 'south
     {part: createDrawingLayoutLights(room, 'cornerSofas'), layouts: CORNER, into: built},
     {part: createDrawingRoomCornerSeating(room, {wallFaceMm}), layouts: CORNER, into: furniture},
     {part: south, layouts: ['southSofas'], into: built},
+    {part: electrical, layouts: [DRAWING_ELECTRICAL.layout], into: built},
     {part: createDrawingLayoutLights(room, 'southSofas'), layouts: ['southSofas'], into: built},
     {part: createDrawingRoomSouthSeating(room, {wallFaceMm}), layouts: ['southSofas'], into: furniture},
   ]
@@ -58,6 +64,7 @@ export function createDrawingRoomLayouts(room, {wallFaceMm = 0, initial = 'south
   return {
     built, furniture, setLayout, setLabels, layout: () => current,
     setDoorSwing: visible => { doorSwing.visible = visible },
+    setElectrical: visible => { electricalPoints.visible = visible },
     setStorageOpen: open => wallStorage.storage.userData.setOpen(open),
     setArm: pulled => corner.cornerConsole.userData.setArm(pulled),
     setTvSize: key => { corner.cornerConsole.userData.setTvSize(key); south.userData.setTvSize(key) },
