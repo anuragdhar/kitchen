@@ -381,19 +381,18 @@ export function southTvGeometry(room, sizeKey = room.southLayout.tv.installedTv)
   const s = room.southLayout, t = s.tv, tv = t.tvs[sizeKey], sb = s.soundbar, bm = s.bassModule, k = s.console
   const x1 = t.centerFromWestMm - tv.widthMm / 2, x2 = t.centerFromWestMm + tv.widthMm / 2
   const bottomMm = t.centerHeightMm - tv.heightMm / 2
-  const console = {x1: k.fromWestMm, x2: k.fromWestMm + k.lengthMm, z1: WALL_FACE_MM, z2: WALL_FACE_MM + k.depthMm, bottomMm: k.bottomMm, topMm: k.bottomMm + k.heightMm}
+  const panelMm = s.wallPanel?.thicknessMm ?? 0 // the console and the TV bracket stand on the wall panelling
+  const console = {x1: k.fromWestMm, x2: k.fromWestMm + k.lengthMm, z1: WALL_FACE_MM + panelMm, z2: WALL_FACE_MM + panelMm + k.depthMm, bottomMm: k.bottomMm, topMm: k.bottomMm + k.heightMm}
   const bayX1 = console.x2 - k.panelMm - k.moduleBayMm, bayX2 = console.x2 - k.panelMm, bassX = (bayX1 + bayX2) / 2
-  // The loose west module (in front of the hidden west cabinet door) and the wall-hung rest; the bays are in the fixed part.
-  const movable = {...console, x2: console.x1 + k.movable.lengthMm}, fixed = {...console, x1: movable.x2 + k.movable.gapMm}
-  const routerBay = {x1: fixed.x1 + k.panelMm, x2: fixed.x1 + k.panelMm + k.routerBayMm}
+  const routerBay = {x1: console.x1 + k.panelMm, x2: console.x1 + k.panelMm + k.routerBayMm}
   const rc = room.cornerLayout.routerCabinet, sbX1 = t.centerFromWestMm - sb.widthMm / 2, sbX2 = t.centerFromWestMm + sb.widthMm / 2
   return {
     tv, x1, x2, bottomMm, topMm: bottomMm + tv.heightMm,
-    frontZ: WALL_FACE_MM + t.mountMm + tv.depthMm, // how far the screen face stands off the north wall line
-    console, movable, fixed, bay: {x1: bayX1, x2: bayX2}, routerBay, storageBay: {x1: routerBay.x2 + k.panelMm, x2: bayX1 - k.panelMm},
+    frontZ: WALL_FACE_MM + panelMm + t.mountMm + tv.depthMm, // how far the screen face stands off the north wall line
+    console, panelMm, bay: {x1: bayX1, x2: bayX2}, routerBay, storageBay: {x1: routerBay.x2 + k.panelMm, x2: bayX1 - k.panelMm},
     soundbar: {x1: sbX1, x2: sbX2},
     // On the console top: the landline centred between the west end and the soundbar, the desk intercom likewise at the east end.
-    landlineX: (fixed.x1 + sbX1) / 2, intercomX: (sbX2 + console.x2) / 2,
+    landlineX: (console.x1 + sbX1) / 2, intercomX: (sbX2 + console.x2) / 2,
     router: rc.router, landline: rc.landline, intercom: rc.intercom,
     soundbarY: console.topMm + sb.heightMm / 2,
     bass: {x1: bassX - bm.widthMm / 2, x2: bassX + bm.widthMm / 2, z1: console.z2 - 30 - bm.depthMm, z2: console.z2 - 30},
@@ -433,18 +432,18 @@ export function checkSouthLayout(room) {
     need(s.soundbar.widthMm <= g.tv.widthMm, `the soundbar is wider than the ${key}-inch TV`)
   }
   const g = southTvGeometry(room), k = s.console, bm = s.bassModule, inner = k.heightMm - 2 * k.panelMm
-  // Wall to wall: from the west wall face to 50 mm short of the entry door frame. The loose module covers the whole hidden
-  // door with 40 mm to spare each side; the wall-hung part starts east of the door so it never has to move.
-  need(g.console.x1 >= WALL_FACE_MM && g.console.x1 <= WALL_FACE_MM + 30 && g.console.x2 <= door.fromMm - 50 && g.console.x2 >= door.fromMm - 80, `the TV console (x ${g.console.x1}-${g.console.x2}) should run from the west wall (${WALL_FACE_MM}) to 50 mm short of the entry door (${door.fromMm})`)
-  need(g.movable.x1 <= ws.fromWestMm - 40 && g.movable.x2 >= cabinetDoorEnd + 40, `the movable console module (x ${g.movable.x1}-${g.movable.x2}) does not cover the hidden door (x ${ws.fromWestMm}-${cabinetDoorEnd}) with 40 mm each side`)
-  need(g.fixed.x1 >= cabinetDoorEnd, 'the wall-hung part of the console stands in front of the hidden door')
-  need(g.soundbar.x1 >= g.fixed.x1 + 20, 'the soundbar reaches onto the movable module')
+  // One free-standing piece: it stops 50 mm short of the entry door frame, does not reach the west wall, and may overlap the
+  // hidden door's east edge a little (it is dragged out before the door is used).
+  const consoleOverlapsDoorMm = Math.max(0, cabinetDoorEnd - g.console.x1)
+  need(g.console.x2 <= door.fromMm - 50, `the TV console (to x ${g.console.x2}) needs 50 mm clear of the entry door (${door.fromMm})`)
+  need(g.console.x1 >= WALL_FACE_MM + 300, `the TV console (from x ${g.console.x1}) should stand clear of the west wall`)
+  need(consoleOverlapsDoorMm <= 150, `the TV console overlaps the hidden door by ${consoleOverlapsDoorMm} mm; keep it to a little (150 mm)`)
   need(k.depthMm >= 350 && k.depthMm <= 460, `the TV console is ${k.depthMm} mm deep; keep it 350-460 mm`)
   need(bm.widthMm + 2 * 20 <= k.moduleBayMm - 2 * k.panelMm && bm.heightMm + 30 <= inner && bm.depthMm + 30 + k.backMm <= k.depthMm, 'the Bass Module does not fit its console bay')
   // The router (with its antennas up) in the west bay; the landline and the desk intercom on the top beside the soundbar.
   need(g.router.widthMm + 40 <= k.routerBayMm && g.router.heightMm + g.router.antennaMm + 20 <= inner && g.router.depthMm + 40 + k.backMm <= k.depthMm, 'the router does not fit its console bay')
   need(g.storageBay.x2 - g.storageBay.x1 >= 300, `the storage bay between the router and the Bass Module is only ${g.storageBay.x2 - g.storageBay.x1} mm`)
-  need(g.soundbar.x1 - g.fixed.x1 >= g.landline.widthMm + 40, 'no room for the landline on the console top west of the soundbar')
+  need(g.soundbar.x1 - g.console.x1 >= g.landline.widthMm + 40, 'no room for the landline on the console top west of the soundbar')
   need(g.console.x2 - g.soundbar.x2 >= g.intercom.widthMm + 40, 'no room for the desk intercom on the console top east of the soundbar')
   need(s.soundbar.widthMm <= g.console.x2 - g.console.x1 && s.soundbar.depthMm + s.soundbar.frontSetbackMm <= k.depthMm, 'the soundbar does not fit on the console top')
   for (const key of Object.keys(s.tv.tvs)) {
@@ -452,11 +451,20 @@ export function checkSouthLayout(room) {
     need(t.bottomMm >= t.console.topMm + s.soundbar.heightMm + 40, `the ${key}-inch TV's bottom edge (${t.bottomMm}) is not 40 mm above the soundbar on the console`)
   }
 
-  // The hidden door opens inward. The loose module rolls straight out (pullOutMm) to uncover it: that strip of floor must be
-  // free of the sofas and the table, and the module must leave room to step in behind it.
-  const pullOut = {x1: g.movable.x1, x2: g.movable.x2, z1: g.console.z2, z2: g.console.z2 + k.movable.pullOutMm}
-  for (const [name, r] of Object.entries({southSofa, westSofa, table})) need(gap(r, pullOut) > 0, `the ${name} is in the way of rolling the console module out from the hidden door`)
-  need(k.movable.pullOutMm >= k.depthMm + 450, `rolled out ${k.movable.pullOutMm} mm, the module leaves under 450 mm to step in behind it`)
+  // Before the hidden door is opened outward the whole console is dragged straight out (dragOutMm): that strip of floor must
+  // be free of the sofas and the table, and the leaf must then swing clear of the console.
+  const dragPath = {x1: g.console.x1, x2: g.console.x2, z1: g.console.z2, z2: g.console.z2 + k.dragOutMm}
+  for (const [name, r] of Object.entries({southSofa, westSofa, table})) need(gap(r, dragPath) > 0, `the ${name} is in the way of dragging the TV console out from the hidden door`)
+  const leafMm = ws.widthMm / ws.doorCount
+  if (consoleOverlapsDoorMm > 0 && ws.opens !== 'inward') need(k.dragOutMm >= leafMm + 50, `the ${leafMm} mm door leaf swings out into the console dragged out only ${k.dragOutMm} mm`)
+  // Wall panelling: wall to wall like the console, up to the door head, with both door edges on a groove so the door hides in it.
+  const wp = s.wallPanel
+  if (wp) {
+    need(wp.fromWestMm <= ws.fromWestMm && wp.toMm >= cabinetDoorEnd && wp.toMm <= door.fromMm - 50, `the wall panelling (x ${wp.fromWestMm}-${wp.toMm}) must cover the hidden door and stop 50 mm short of the entry door`)
+    need(ws.widthMm % wp.grooveMm === 0, `the ${ws.widthMm} mm door is not a whole number of ${wp.grooveMm} mm slats, so its edges would show`)
+    need(wp.bottomMm === 0, 'the panelling should run from the floor: the wall west of the console is in view')
+    for (const key of Object.keys(s.tv.tvs)) need(southTvGeometry(room, key).topMm + 40 <= ws.bottomMm + ws.heightMm + wp.cap.heightMm || key !== s.tv.installedTv, `the ${key}-inch TV rises above the panelling`)
+  }
 
   const clearances = {
     southSofaToTable: gap(southSofa, table),
@@ -465,7 +473,8 @@ export function checkSouthLayout(room) {
     southWallGapMm,
     tableToEntryLine: door.fromMm - table.x2,
     cabinetDoorFrontClearMm: Math.min(southSofa.z1, westSofa.z1, table.z1),
-    consoleMm: {x1: g.console.x1, x2: g.console.x2, movableLengthMm: k.movable.lengthMm, fixedLengthMm: g.fixed.x2 - g.fixed.x1, stepBehindModuleMm: k.movable.pullOutMm - k.depthMm},
+    doorSwing: ws.opens, doorLeafClearOfConsoleMm: k.dragOutMm - leafMm,
+    consoleMm: {x1: g.console.x1, x2: g.console.x2, fromWestWallMm: g.console.x1 - WALL_FACE_MM, overlapsDoorMm: consoleOverlapsDoorMm, dragOutMm: k.dragOutMm},
     tvMarginsMm,
     consoleToTableMm: gap(g.console, table),
     cornerTable: cornerGaps,

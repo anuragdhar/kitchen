@@ -34,8 +34,10 @@ export function createDrawingRoomWallStorage(room, {wallFaceMm = 0} = {}) {
   for (const y of s.shelves.heightsMm) box(cab.widthMm - 2 * p, p, s.shelves.depthMm, (cx1 + cx2) / 2, y, zb + p + s.shelves.depthMm / 2, shelfMat)
 
   // Door frame lining the cut through the wall, then the leaves flush with the room face.
-  // A concealed door (s.concealed) has no visible frame or pulls and its leaf is finished like the wall.
-  const reveal = 2 * wallFaceMm, wallFinish = mat('#dfd2c4', {roughness: .87})
+  // A concealed door (s.concealed) has no visible frame or pulls. Its leaf takes the finish of the fluted wall panelling
+  // (room.southLayout.wallPanel: colour, thickness, groove spacing), so it reads as five more slats of that panelling.
+  const wp = room.southLayout?.wallPanel, proud = s.concealed && wp ? wp.thicknessMm : 0
+  const reveal = 2 * wallFaceMm, wallFinish = mat(wp ? wp.color : '#dfd2c4', {roughness: wp ? .6 : .87}), grooveMat = mat(wp?.grooveColor ?? '#5b3d27', {roughness: .8})
   if (!s.concealed) {
     for (const x of [x1 - p / 2, x2 + p / 2]) box(p, s.heightMm, reveal + 10, x, (y0 + y1) / 2, zf - wallFaceMm, frame)
     box(s.widthMm + 2 * p, p, reveal + 10, (x1 + x2) / 2, y1 + p / 2, zf - wallFaceMm, frame)
@@ -46,11 +48,12 @@ export function createDrawingRoomWallStorage(room, {wallFaceMm = 0} = {}) {
   const leaf = s.widthMm / s.doorCount, inward = s.opens === 'inward', leaves = []
   for (let i = 0; i < s.doorCount; i++) {
     const westHinge = i === 0, hingeX = westHinge ? x1 : x2
-    const pivot = new THREE.Group(); pivot.position.set(hingeX / 1000, 0, (zf - 30) / 1000); fronts.add(pivot)
+    const pivot = new THREE.Group(); pivot.position.set(hingeX / 1000, 0, (zf - 30 + proud) / 1000); fronts.add(pivot)
     const out = westHinge ? 1 : -1 // direction from the hinge across the leaf
     box(leaf - 4, s.heightMm - 4, 30, out * leaf / 2, (y0 + y1) / 2, 15, s.concealed ? wallFinish : doorPanel, pivot)
     // Pulls on the meeting stiles, at hand height (as in the Blender model), on the room side.
     if (!s.concealed) box(14, 320, 18, out * (leaf - 45), 1080, 39, pull, pivot)
+    else if (wp) for (let x = 0; x <= leaf + 1; x += wp.grooveMm) box(wp.grooveWidthMm, s.heightMm - 4, 2, out * Math.min(Math.max(x, wp.grooveWidthMm / 2), leaf - wp.grooveWidthMm / 2), (y0 + y1) / 2, 30.5, grooveMat, pivot)
     leaves.push({pivot, out})
   }
   const swingDeg = 95

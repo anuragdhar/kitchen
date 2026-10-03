@@ -42,8 +42,9 @@ test('the furniture standing in front of the west cabinet door is reported for e
   const {blockedBy} = checkWallStorage(room, cavity, use)
   const covered = blockedBy.flatMap(b => b.layouts).sort()
   assert.deepEqual(covered, ['cornerConsole', 'cornerProjector', 'cornerSofas', 'northTv', 'southSofas'])
-  assert.ok(blockedBy.every(b => b.overlapMm === room.wallStorage.widthMm))
-  // Only layout C's cover is meant to move: the loose end module of the TV console.
+  assert.ok(blockedBy.filter(b => !b.movable).every(b => b.overlapMm === room.wallStorage.widthMm))
+  // Only layout C's is meant to move: the free-standing TV console, which overlaps the door a little.
+  assert.equal(blockedBy.find(b => b.movable).overlapMm, 100)
   assert.deepEqual(blockedBy.filter(b => b.movable).flatMap(b => b.layouts), ['southSofas'])
 })
 
@@ -65,14 +66,16 @@ test('the shared Drawing Room / Entry wall is cut only across the door, from the
   assert.equal(wallPiecesAroundStorage([515, 715, 515, 874], room, plan.bounds, 2.7), null)
 })
 
-test('the hidden door is as narrow as the owner (5 ft 7 in, 80 kg) can just walk through', () => {
+test('the hidden door is only as wide as the owner (5 ft 7 in, 80 kg) needs to walk through', () => {
   const s = room.wallStorage, {access, issues} = checkWallStorage(room, cavity, use)
   assert.deepEqual(issues, [])
   assert.equal(s.concealed, true); assert.equal(s.doorCount, 1)
-  assert.equal(access.clearWidthMm, 450, 'opening less the open leaf and its stop')
-  assert.equal(access.walksStraight, false, 'narrower than the shoulders: walk in slightly turned')
+  assert.equal(s.opens, 'outward')
+  assert.equal(access.clearWidthMm, 490, 'opening less its stop; an outward leaf leaves the opening')
+  assert.equal(access.walksStraight, true, '20 mm wider than the shoulders')
   assert.ok(access.sidewaysSpareMm >= 100 && access.headroomMm >= 50 && access.headroomMm <= 150)
   const bad = patch => { const r = structuredClone(room); patch(r.wallStorage); return checkWallStorage(r, cavity, use).issues.join(' | ') }
   assert.match(bad(w => { w.widthMm = 400 }), /too narrow/)
+  assert.equal(checkWallStorage({...room, wallStorage: {...s, opens: 'inward'}}, cavity, use).access.clearWidthMm, 450, 'an inward leaf would take 40 mm more')
   assert.match(bad(w => { w.heightMm = 1700 }), /door head/)
 })

@@ -267,36 +267,40 @@ as in any L. Limits stated plainly:
 - The south sofa's back (about 925 mm) covers the lower part of the window above its 550 mm sill.
 - The west cabinet door now has nothing in front of it; its two leaves open inward into the closet.
 
-## Wall-to-wall console and hidden closet door (owner, later 2026-10-03)
+## Hidden closet door in fluted wall panelling, one-piece console (owner, later 2026-10-03)
 
-The owner asked for the low TV console to run wall to wall on the north wall, and for the west cabinet (winter clothes,
-rarely opened) to be hidden behind it with an entrance "as narrow as possible, so barely a human can walk in" (the owner:
-5 ft 7 in, 80 kg). To use it they will move the lower cabinet and then open the door. This supersedes the 1,300 mm console
-and the two-leaf 600 x 2,100 door described above.
+Three owner instructions on the same evening, the later ones replacing the earlier:
+1. Run the console wall to wall and hide the west cabinet (winter clothes, rarely opened) behind it, with an entrance only as
+   wide as a person (the owner: 5 ft 7 in, 80 kg) needs. Built as a wall-to-wall console with a loose end module (commit fc02ca5).
+2. Open the door outward instead, and panel the wall in the door's finish up to the door height, "maybe some design".
+3. Make the console smaller again: it need not reach the wall, it may overlap the door a little, and it should stay in one
+   piece ("no need to break the lower cabinet"); it is dragged out before the door is opened. This is not done daily.
 
-| Item | Before | Now |
-| --- | --- | --- |
-| TV console | x 765-2065 (1,300 long), all wall-hung | x 50-2100 (**2,050 long**), west wall to 50 mm short of the entry door frame; 400 deep, 200-600 high as before |
-| Console make-up | one piece | **loose end module** x 50-650 (600 long) on four castors, then a 4 mm joint, then the wall-hung part x 654-2100 (1,446 long) with the router bay, storage and Bass Module bay |
-| West cabinet door | two leaves, x 80-680, 2,100 high, dark frame and pulls | **one flush leaf, x 100-600 (500 wide), 1,800 high**, no handle and no visible frame, finished like the wall, push latch, opens inward |
-| Clear way through | 600 | **450 mm** (the open leaf, 40 mm, and its 10 mm stop lie in the opening) |
-| Closet behind | 650 wide, 1,105 deep, floor to ceiling | unchanged |
+What is in the model now:
 
-Why these sizes:
-- **450 mm clear width.** Shoulders at 5 ft 7 in and 80 kg are typically about 470 mm, so the owner walks in slightly turned,
-  which is the "barely" asked for; sideways (body about 300 mm deep) there is 150 mm to spare for a bag of clothes. Both body
-  figures are typical values, not measurements of the owner. Narrower is possible (400 mm clear still passes sideways) but a
-  storage box could then not be carried through.
-- **1,800 mm high.** 98 mm above the owner's height; a lower head hides better but means ducking every time.
-- **Loose module 600 long.** It covers the door with 50 mm each side. Rolled 900 mm out it leaves 500 mm to step in behind it;
-  the west sofa starts 1,655 mm beyond the console front, so the floor is free.
-- The landline, soundbar and intercom all stand on the wall-hung part, so nothing with a cord has to move.
+| Item | Size and position (mm, x from the west wall) |
+| --- | --- |
+| West cabinet door | one flush leaf, x 100-600 (500 wide), floor to 1,800, hinged on its west edge, **opens outward**, no handle or frame (push latch) |
+| Clear way through | **490** (500 less a 10 mm stop); an inward leaf would have left 450 |
+| Wall panelling | fluted, x 40-2100 (west wall to 50 short of the entry door frame), floor to 1,800, 18 thick, a groove every 100; cap 25 high with a warm light strip above |
+| TV console | **one piece, x 500-2100 (1,600 long)**, 400 deep, 200-600 high, free-standing on six legs against the panelling |
+| Console to west wall | 460 clear |
+| Console over the door | overlaps its east edge by 100 |
+| Drag-out to use the door | 600 straight out; the 500 mm leaf then clears it by 100 |
+| Closet behind | 650 wide, 1,105 deep, floor to ceiling (unchanged) |
 
-How well it hides: the console covers the door's bottom 600 mm. Above that the leaf is a flush wall-coloured panel beside the
-TV, so a fine joint line remains visible from 600 to 1,800 mm; wall panelling or a tall picture over that strip would hide it
-completely (not drawn). Checks: `checkSouthLayout()` (console span, module covers the door, roll-out path) and
-`checkWallStorage().access` (clear width and headroom for the person in `wallStorage.access`). In the app, "Open hidden west
-cabinet" rolls the module out and swings the door in.
+Why it hides: the grooves are set out from the door's west edge, and the door is exactly five 100 mm slats, so both door edges
+fall on a groove and the leaf carries the same slats. The cap runs over the door head. Closed, there is no joint to see.
 
-Not confirmed on site, as before: that the pocket is hollow and that the 9-inch wall may be cut. The drawn wall is 85 mm thick;
-in the real 221 mm wall the inward leaf needs pivot hinges to swing past the reveal. Blender renders are regenerated separately.
+Things to tell the carpenter:
+- The console carries the router, set-top box, Bass Module, soundbar, landline and intercom, and all of it moves when the
+  console is dragged. Leave about 1 m of slack in every cable behind it (points N2 and N4), and fit glides or lockable castors.
+- Point N4 (router, phone, intercom) moved from x 990 to x 730 so it stays behind the router bay.
+- The TV bracket fixes through the panelling into the wall; the 35 mm stand-off is measured from the panel face.
+- The panel colour (a mid walnut, `#a47a52`) is a proposal; the owner asked only that the wall match the door.
+- Sizes for the person are typical figures for 5 ft 7 in and 80 kg (shoulders about 470, body about 300 deep), not measured.
+
+Checks: `checkSouthLayout()` (console clear of the west wall, overlap of the door at most 150, drag path free, leaf clears the
+dragged console, door a whole number of slats) and `checkWallStorage().access`. In the app, "Open hidden west cabinet" drags the
+console out and swings the door open. Not confirmed on site, as before: that the pocket is hollow and that the 9-inch wall may
+be cut.

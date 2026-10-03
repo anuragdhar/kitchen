@@ -19,7 +19,7 @@ export const DRAWING_ELECTRICAL = {
     {id: 'N2', name: 'Media point in the TV console', kind: 'power', wall: 'north', alongMm: 1300, heightMm: 400, hidden: true,
       outlets: '3 x 6 A sockets + 1 TV coax (DTH/cable) + 1 CAT6 (spare)',
       use: 'behind the console back: Bass Module 500, set-top box and Soundbar 300; a 50 mm conduit runs up inside the wall to N1 for HDMI (eARC)'},
-    {id: 'N4', name: 'Router, phone and intercom point', kind: 'data', wall: 'north', alongMm: 990, heightMm: 400, hidden: true,
+    {id: 'N4', name: 'Router, phone and intercom point', kind: 'data', wall: 'north', alongMm: 730, heightMm: 400, hidden: true,
       outlets: '2 x 6 A sockets + fibre/broadband entry + telephone line + intercom cable + 1 CAT6 to N1',
       use: 'behind the router bay of the TV console: router and landline base, intercom wiring to the desk intercom on the console top'},
     {id: 'N3', name: 'West cabinet light', kind: 'lighting', wall: 'closet', xMm: 380, heightMm: 2450,

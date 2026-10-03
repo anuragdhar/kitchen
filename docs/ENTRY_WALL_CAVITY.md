@@ -108,7 +108,7 @@ shelves and the 18 mm panels are assumed; nothing is measured on site. Check: `e
 
 ## Narrow hidden door to the west cabinet (owner, later 2026-10-03)
 
-The door through the Drawing Room wall is now one concealed flush leaf, x 100-600 (500 wide, 450 clear), 1,800 high, opening
-inward, hidden behind the loose end module of the wall-to-wall TV console. It lies inside the Blender door position but no
-longer matches its size. Details and reasons: `docs/DRAWING_ROOM_TV_WALL.md`, last section. The app button is now "Open hidden
-west cabinet".
+The door through the Drawing Room wall is now one concealed flush leaf, x 100-600 (500 wide, 490 clear), 1,800 high, opening
+OUTWARD into the Drawing Room, hidden in fluted wall panelling. It lies inside the Blender door position but no longer matches
+its size, and it supersedes the inward-opening instruction above. Details and reasons: `docs/DRAWING_ROOM_TV_WALL.md`, last
+section. The app button is now "Open hidden west cabinet".

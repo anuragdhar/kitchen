@@ -172,7 +172,7 @@
       "trade": "civil",
       "title": "Cut the cabinet door opening in the Drawing Room north wall",
       "room": "Drawing Room",
-      "detail": "Opening 500 wide x 1800 high at the west end of the north wall (100-600 mm from the west wall), with a lintel, into the west half of the entry pocket. Kept as narrow as a person can pass (450 clear) so it can be hidden.",
+      "detail": "Opening 500 wide x 1800 high at the west end of the north wall (100-600 mm from the west wall), with a lintel, into the west half of the entry pocket. Kept only as wide as a person needs (490 clear) so it can be hidden in the wall panelling.",
       "dependsOn": [
         "engineer-check",
         "pocket-check"
@@ -320,9 +320,9 @@
       "id": "carp-west-cabinet",
       "phase": "carpentry",
       "trade": "carpentry",
-      "title": "West cabinet: one hidden inward-opening door and shelves",
+      "title": "West cabinet: one hidden outward-opening door and shelves",
       "room": "Drawing Room",
-      "detail": "One flush 500 x 1800 leaf on pivot hinges, no handle (push latch), finished like the wall, opening into the closet; shelves 380 deep at the back. For winter clothes, opened about twice a year.",
+      "detail": "One flush 500 x 1800 leaf on concealed hinges, hinged on its west edge, no handle (push latch), opening into the room, faced with the same fluted slats as the wall panelling; shelves 380 deep at the back. For winter clothes, opened about twice a year.",
       "dependsOn": [
         "north-wall-door",
         "plaster"
@@ -334,9 +334,9 @@
       "id": "carp-tv-console",
       "phase": "carpentry",
       "trade": "carpentry",
-      "title": "Wall-to-wall TV console under the TV, with a loose end module",
+      "title": "TV console under the TV (one piece, drag-out) and fluted wall panelling",
       "room": "Drawing Room",
-      "detail": "2050 x 400 x 400, 200 off the floor, from the west wall to 50 short of the entry door. West 600 is a loose module on four locking castors in front of the hidden door; the other 1446 is wall-hung: router bay and Bass Module bay with open lattice, storage with a lattice door, cable holes to the points behind.",
+      "detail": "Console 1600 x 400 x 400 on 200 legs with glides, 500-2100 from the west wall, free-standing so it can be dragged 600 out (leave 1 m cable slack): router bay and Bass Module bay with open lattice, storage with a lattice door. Wall panelling behind it: fluted, 40-2100 from the west wall, floor to 1800, 18 thick, a groove every 100 set out from the hidden door's edge, cap with a light strip.",
       "dependsOn": [
         "plaster"
       ],

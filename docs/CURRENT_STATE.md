@@ -150,7 +150,7 @@ Entry pocket east opening (2026-09-30): the editable 3D (Whole home 3D and Main 
 
 Owner: the pocket behind the Drawing Room north wall is two separate cabinets, as the Blender model shows. Editable 3D now has a
 full-height partition at plan x 650; the east cabinet is open over its whole east side onto the Entry gallery; the west cabinet
-is entered from the Drawing Room by a narrow hidden door at the west end of the north wall (one flush leaf, x 100-600, 1,800 high, 450 mm clear; was two leaves x 80-680, 2,100 high) with shelves at
+is entered from the Drawing Room by a narrow hidden door at the west end of the north wall (one flush leaf in fluted wall panelling, x 100-600, 1,800 high, 490 mm clear, opening outward; was two leaves x 80-680, 2,100 high) with shelves at
 the back. This replaces the 2026-09-30 wide wall storage opening (x 200-2050) and the door-height east opening; the router
 cabinet is wall-hung again at x 800-1900. The north sofa (B, B2, B3) and the TV cabinet (A) stand in front of the new door; this is
 reported, not fixed. Details: `docs/ENTRY_WALL_CAVITY.md`. The Whole home 3D Blender model now opens looking from the north, so
@@ -162,7 +162,7 @@ grounds furniture and shades corners without changing any geometry, material or 
 
 Drawing Room layout C (2026-10-03, now the default): south sofa against the window wall, west sofa slid south into an L, table
 inside it, 55-inch TV (65-inch option) on the north wall between the west cabinet door and the entry door, router cabinet moved
-to the east wall. The TV console runs wall to wall (x 50-2100); its loose west module on castors hides the west cabinet's door, whose single leaf opens inward. Details: `docs/DRAWING_ROOM_TV_WALL.md`.
+to the east wall. The TV console is one free-standing piece (x 500-2100) in front of fluted wall panelling (x 40-2100, to 1,800 high) that hides the west cabinet's door; drag the console out 600 mm before opening the door outward. Details: `docs/DRAWING_ROOM_TV_WALL.md`.
 
 Drawing Room electrical plan (2026-10-03, layout C): 17 proposed points (TV box, media point, router and intercom, main
 switchboard with a drop-zone charger, AC, lamps, USB charging within 1.5 m of every seat, closet light, spares, optional
