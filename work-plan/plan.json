@@ -127,14 +127,14 @@
       "id": "entry-ceiling-plan",
       "phase": "measure",
       "trade": "general",
-      "title": "Finalise the entry ceiling: 24 x 24 inch PVC ceiling panels",
+      "title": "Finalise the entry ceiling: long PVC ceiling planks",
       "room": "Main entry",
-      "detail": "Owner 2026-10-04: the entry ceiling will be 24 x 24 inch (about 610 x 610 mm) PVC ceiling panels, finalised after visiting some shops. Lights: recessed round LED panel lights, the type already used in the home (Orient Electric 12 W recessed panel, 1,200 lumens), but single-colour, not the 3-in-1 colour-changing version. Proposed, not yet agreed by the owner: neutral white (4000 K), two lights of 6-8 W each along the length of the entry, each centred in a panel, on one switch at the door. Still to decide: the panel design and colour, the frame it sits in (exposed grid or concealed), the height the ceiling drops to, and whether anything above must stay reachable. Nothing is drawn in the 3D model yet.",
+      "detail": "Owner 2026-10-04: the entry ceiling will be PVC. Square 24 x 24 inch tiles were considered and dropped the same day: the entry is only about 1.0 m wide, so a 610 mm tile fits barely one and a half times across. Instead use LONG PVC ceiling planks (the interlocking strip type, commonly about 250 mm wide and sold in 3 m lengths), finalised after visiting some shops. Proposed: run them along the length of the entry (about 2.1 m), so each plank is one piece with no end joints and about four planks cover the width. Lights: recessed round LED panel lights, the type already used in the home (Orient Electric 12 W recessed panel, 1,200 lumens), but single-colour, not the 3-in-1 colour-changing version. Proposed, not yet agreed by the owner: neutral white (4000 K), two lights of 6-8 W each along the length, on one switch at the door. Still to decide: the plank width, design and colour, the edge trim, the height the ceiling drops to, and whether anything above must stay reachable. Nothing is drawn in the 3D model yet.",
       "dependsOn": [
         "site-measure"
       ],
       "status": "todo",
-      "needs": "Owner to visit shops and choose the panel; confirm light colour (neutral white proposed) and count (two proposed)"
+      "needs": "Owner to visit shops and choose the plank; confirm plank direction, light colour (neutral white proposed) and count (two proposed)"
     },
     {
       "id": "electrician-survey",
@@ -381,15 +381,15 @@
       "id": "entry-ceiling",
       "phase": "surfaces",
       "trade": "ceiling",
-      "title": "Fit the entry ceiling: 24 x 24 inch PVC panels on a frame",
+      "title": "Fit the entry ceiling: long PVC planks on a frame",
       "room": "Main entry",
-      "detail": "Hang the frame level from the slab, run the light wiring above it first, then lay the 24 x 24 inch PVC panels and fit the recessed LED panel lights, each in a round cut-out at the centre of a panel. The entry is about 2.1 m long by 1.0 m clear wide on the plan, so it takes only a few panels and the edge panels will be cut; set the grid out so the cut pieces are equal on both sides and the lights land on whole panels.",
+      "detail": "Fix a level frame of battens or metal channels to the slab, run the light wiring above it first, then clip the PVC planks on and finish the edges with trim. The entry is about 2.1 m long by 1.0 m clear wide on the plan. Set the planks out from the centre line so the two edge planks are cut to the same width. Fit the recessed LED panel lights in round cut-outs; place each cut-out within one plank or centred on a joint, and add a batten above each light to carry it.",
       "dependsOn": [
         "entry-ceiling-plan",
         "plaster"
       ],
       "status": "todo",
-      "needs": "Panel chosen; light wiring for the entry run before the panels go in"
+      "needs": "Plank chosen; light wiring for the entry run before the planks go on"
     },
     {
       "id": "carp-west-cabinet",
