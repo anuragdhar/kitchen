@@ -1,0 +1,14 @@
+.....E.s...
+======================================================================
+ERROR: test_actual_room_registry_and_source_modes (test_parallel_profiles.ProfileTests.test_actual_room_registry_and_source_modes)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<LOCAL_PATH>\build-checkout\blender\test_parallel_profiles.py", line 33, in test_actual_room_registry_and_source_modes
+    self.assertIn('bedroom3/daylight', current['rooms']['bedroom3']['native'])
+                                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+KeyError: 'native'
+
+----------------------------------------------------------------------
+Ran 11 tests in 0.124s
+
+FAILED (errors=1, skipped=1)
