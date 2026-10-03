@@ -87,3 +87,9 @@ Drawing Room page's "North wall view" faces the door.
 - The Drawing Room's north wall is still drawn 85 mm thick like every other wall in the model, so the real 221 mm thickness
   is only visible through the amber ghost.
 - Blender exports and renders were not regenerated; the Blender model already had this layout.
+
+## West cabinet doors open inward (owner, 2026-10-03)
+
+Used about twice a year (winter clothes and the like), so the two 300 mm leaves swing INTO the closet (`wallStorage.opens`),
+leaving 725 mm between the door and the 380 mm shelves; `checkWallStorage()` checks that clearance. In Drawing Room layout C
+nothing stands in front of the door (layouts A, B, B2 and B3 still block it, as reported).

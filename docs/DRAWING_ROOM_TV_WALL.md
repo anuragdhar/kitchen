@@ -243,3 +243,25 @@ outward. `maxLeafThatClears` in `drawingRoomLayout.mjs` computes the limit for a
 - The Materials panel does not recolor the new cabinet, sofas and table: they are intentionally left
   untagged so they keep the dark walnut of the references.
 - No visual regression baseline exists; the new view was checked by eye in a software-rendered browser.
+
+## Layout C: sofas south and west, TV on the north wall (owner, 2026-10-03; now the default)
+
+Owner's request: move the north-wall sofa to the south wall against the window, slide the west sofa south, move the table,
+and put the TV on the north wall. Config: `southLayout` in `roomShellConfig.js`; checks: `checkSouthLayout()` in
+`src/domain/drawingRoomLayout.mjs`; tests: `tests/drawing-room-south.test.mjs`.
+
+| Item | Position (x from the west wall, z from the north wall, mm) |
+| --- | --- |
+| South sofa (faces north) | x 30-2280, z 4395-5275: back 60 mm off the south wall, under the window |
+| West sofa (faces east) | x 140-1020, z 2095-4345: 50 mm north of the south sofa, an L in the south-west corner |
+| Coffee table | x 1445-2045, z 2875-3975: 420 mm from the south sofa, 425 mm from the west sofa |
+| TV, flat on the north wall | centre x 1415, centre 1,150 high. 55-inch x 800-2030 (120 mm to each door opening); 65-inch x 690-2140 (10 mm) |
+| Soundbar 300 / Bass Module 500 | on the wall under the TV / on the floor under its east end (x 1858-2112) |
+| Router, landline, intercom cabinet | east wall, z 900-2000, 1,450-2,100 high: past the entry door's swing (850 mm) and before the lobby opening (2058) |
+
+Measured: south sofa seats are 4.7-4.8 m from the TV and 3-12 degrees off-axis; west sofa seats watch side-on (70-78 degrees),
+as in any L. Limits stated plainly:
+- At 4.7 m a 55-inch screen is small (common guides put that distance at 75 inches or more); the 65-inch is the largest the
+  wall takes, and only with about 10 mm to the door openings (it stands 90 mm off the wall, in front of the architraves).
+- The south sofa's back (about 925 mm) covers the lower part of the window above its 550 mm sill.
+- The west cabinet door now has nothing in front of it; its two leaves open inward into the closet.

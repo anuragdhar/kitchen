@@ -159,3 +159,7 @@ south is at the top like the plan, with a compass in the corner.
 
 Designer render (2026-10-03): the live 3D views now default to an ambient-occlusion render (switch: "Designer render") that
 grounds furniture and shades corners without changing any geometry, material or colour. Details: `docs/LIGHTING.md`.
+
+Drawing Room layout C (2026-10-03, now the default): south sofa against the window wall, west sofa slid south into an L, table
+inside it, 55-inch TV (65-inch option) on the north wall between the west cabinet door and the entry door, router cabinet moved
+to the east wall. The west cabinet's two leaves open inward. Details: `docs/DRAWING_ROOM_TV_WALL.md`.

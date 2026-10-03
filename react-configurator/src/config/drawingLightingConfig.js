@@ -8,6 +8,13 @@ export const DRAWING_LIGHTING = {
     reading: {fromNorthMm: 4645, heightMm: 1550, label: 'South sofa reading light'},
     sofaGlow: {xMm: 1140, lengthMm: 2250, fromNorthMm: 4810, heightMm: 120, label: 'South sofa low glow'},
   },
+  // Layout C: the chandelier stays over the coffee table; reading light over the south sofa's west end, low glow under it.
+  southSofas: {
+    ambient: [{xMm: 1745, zMm: 3425, label: 'Existing chandelier over oval table'}],
+    wallUplight: {fromNorthMm: 850, heightMm: 1800, label: 'West wall uplight'},
+    reading: {fromNorthMm: 4645, heightMm: 1550, label: 'South sofa reading light'},
+    sofaGlow: {xMm: 1155, lengthMm: 2250, fromNorthMm: 4835, heightMm: 120, label: 'South sofa low glow'},
+  },
   cornerSofas: {
     ambient: [{xMm: 1745, zMm: 1900, label: 'Existing chandelier over oval table'}],
     wallUplight: {fromNorthMm: 850, heightMm: 1800, label: 'West wall uplight'},

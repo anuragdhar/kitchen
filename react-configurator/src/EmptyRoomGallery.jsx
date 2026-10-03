@@ -43,7 +43,7 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
   const [view,setView]=useState(initialView)
   const [showSouthWall,setShowSouthWall]=useState(initialRoomKey==='lobby'||initialRoomKey==='drawing'||initialRoomKey==='bedroom1')
   const [tvLabels,setTvLabels]=useState(initialRoomKey==='drawing'),tvLabelsRef=useRef(initialRoomKey==='drawing')
-  const [drawingLayout,setDrawingLayout]=useState('cornerConsole'),drawingLayoutRef=useRef('cornerConsole')
+  const [drawingLayout,setDrawingLayout]=useState('southSofas'),drawingLayoutRef=useRef('southSofas')
   const [armOut,setArmOut]=useState(false),[tvSize,setTvSize]=useState('55'),[doorSwing,setDoorSwing]=useState(true),[storageOpen,setStorageOpen]=useState(false)
   const [review,setReview]=useState(null),[reviewBusy,setReviewBusy]=useState(false),[reviewNote,setReviewNote]=useState('')
   const [showFurniture,setShowFurniture]=useState(initialView!=='pooja'&&(initialRoomKey==='bedroom1'||initialRoomKey==='bedroom3'||initialRoomKey==='drawing'||initialRoomKey==='lobby'))
@@ -430,6 +430,7 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
       else if(key==='poojaDoor'&&room.poojaAlcove){const center=mm(room.poojaAlcove.fromMm+room.poojaAlcove.widthMm/2);camera.position.set(center,1.42,3.10);camera.up.set(0,1,0);controls.target.set(center,1.20,0)}
       else if(key==='pooja'&&room.poojaAlcove){const alcove=room.poojaAlcove,center=mm(alcove.fromMm+alcove.widthMm/2);camera.position.set(center+.55,1.48,2.55);camera.up.set(0,1,0);controls.target.set(mm(alcove.fromMm)+.30,.82,-.55)}
       else if(roomKey==='drawing'&&key==='northWall'){camera.position.set(1.7,1.5,3.7);camera.up.set(0,1,0);controls.target.set(1.1,1.5,.1)}
+      else if(roomKey==='drawing'&&key==='tvWall'&&drawingLayoutRef.current==='southSofas'){camera.position.set(1.2,1.25,4.4);camera.up.set(0,1,0);controls.target.set(1.4,1.1,0)}
       else if(roomKey==='drawing'&&key==='tvWall'&&drawingLayoutRef.current!=='northTv'){camera.position.set(.45,1.9,3.9);camera.up.set(0,1,0);controls.target.set(2.9,1.0,1.0)}
       else if(roomKey==='drawing'&&key==='tvWall'){camera.position.set(1.75,1.5,L-.3);camera.up.set(0,1,0);controls.target.set(1.05,1.15,.3)}
       else if(roomKey==='lobby'){camera.position.set(W+span*.36,H*2.5,L+span*.42);camera.up.set(0,1,0);controls.target.set(W/2,H*.30,L/2)}
@@ -571,9 +572,9 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
           <select value={drawingLayout} onChange={event=>setDrawingLayout(event.target.value)} style={{padding:'7px 8px',borderRadius:9,border:'1px solid #cbd5e1',maxWidth:360}}>{DRAWING_LAYOUTS.map(layout=><option key={layout.key} value={layout.key}>{layout.label}</option>)}</select>
         </label>}
         {roomKey==='drawing'&&<button onClick={()=>setDoorSwing(value=>!value)} aria-pressed={doorSwing} style={buttonStyle(doorSwing)} title="The entry door opens into the room: red is the area its leaf sweeps">{doorSwing?'Hide entry door swing':'Show entry door swing'}</button>}
-        {roomKey==='drawing'&&<button onClick={()=>setStorageOpen(value=>!value)} aria-pressed={storageOpen} style={buttonStyle(storageOpen)} title="The west cabinet of the entry pocket, entered through a door at the west end of the north wall: doors hidden to show the shelves">{storageOpen?'Close west cabinet doors':'Open west cabinet doors'}</button>}
-        {roomKey==='drawing'&&drawingLayout==='cornerConsole'&&<>
-          <button onClick={()=>setArmOut(value=>!value)} aria-pressed={armOut} style={buttonStyle(armOut)}>{armOut?'Park TV flat on the wall':'Pull TV out and turn it toward the north sofa'}</button>
+        {roomKey==='drawing'&&<button onClick={()=>setStorageOpen(value=>!value)} aria-pressed={storageOpen} style={buttonStyle(storageOpen)} title="The west cabinet of the entry pocket, entered through a door at the west end of the north wall: the two leaves swing inward to show the shelves">{storageOpen?'Close west cabinet doors':'Open west cabinet doors'}</button>}
+        {roomKey==='drawing'&&(drawingLayout==='cornerConsole'||drawingLayout==='southSofas')&&<>
+          {drawingLayout==='cornerConsole'&&<button onClick={()=>setArmOut(value=>!value)} aria-pressed={armOut} style={buttonStyle(armOut)}>{armOut?'Park TV flat on the wall':'Pull TV out and turn it toward the north sofa'}</button>}
           <button onClick={()=>setTvSize(value=>value==='55'?'65':'55')} style={buttonStyle(tvSize==='65')}>TV size: {tvSize} inch (click for {tvSize==='55'?'65':'55'})</button>
         </>}
         {roomKey==='drawing'&&<button onClick={()=>setTvLabels(value=>!value)} aria-pressed={tvLabels} style={buttonStyle(tvLabels)}>{tvLabels?'Hide TV wall labels':'Show TV wall labels'}</button>}

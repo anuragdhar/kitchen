@@ -113,3 +113,15 @@ export function createDrawingRoomCornerSeating(room, {wallFaceMm = 0} = {}) {
     panelsZ: [f.westSofa.centerZmm - 350, f.westSofa.centerZmm + 350],
   }, {wallFaceMm})
 }
+
+/** Layout C: south-wall sofa (faces north, back under the window) and west-wall sofa (faces east) in an L in the south-west. */
+export function createDrawingRoomSouthSeating(room, {wallFaceMm = 0} = {}) {
+  const f = room.southLayout.furniture
+  return buildSeating({
+    sofas: [{...f.southSofa, faces: 'north'}, {...f.westSofa, faces: 'east'}],
+    table: f.coffeeTable, rug: f.rug,
+    // Side table and lamp just north of the west sofa, where the L opens toward the TV.
+    sideTable: {xMm: wallFaceMm + 260, zMm: f.westSofa.centerZmm - f.westSofa.lengthMm / 2 - 260},
+    panelsZ: [f.westSofa.centerZmm - 350, f.westSofa.centerZmm + 350],
+  }, {wallFaceMm})
+}

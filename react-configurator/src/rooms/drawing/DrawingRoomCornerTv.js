@@ -40,29 +40,7 @@ export function createDrawingRoomCornerTv(room, {wallFaceMm = 0, variant = 'wall
   }
 
   // ---- Small cabinet on the north wall above the north sofa: router | landline | intercom ----
-  {
-    const p = rc.panelMm, z0 = wallFaceMm, x0 = rc.fromWestMm, W = rc.widthMm, H = rc.heightMm, D = rc.depthMm, y0 = rc.bottomMm
-    box(W, H, 12, x0 + W / 2, y0 + H / 2, z0 + 6, inside)
-    for (const y of [y0 + p / 2, y0 + H - p / 2]) box(W, p, D, x0 + W / 2, y, z0 + D / 2, carcass)
-    const inner = (W - 4 * p) / 3
-    for (const i of [0, 1, 2, 3]) box(p, H - 2 * p, D, x0 + p / 2 + i * (inner + p), y0 + H / 2, z0 + D / 2, carcass)
-    const cells = [0, 1, 2].map(i => x0 + p + inner / 2 + i * (inner + p))
-    const shelfTop = y0 + p, rt = rc.router
-    box(rt.widthMm, rt.heightMm, rt.depthMm, cells[0], shelfTop + rt.heightMm / 2, z0 + D - 60 - rt.depthMm / 2, white)
-    for (const dx of [-rt.widthMm / 2 + 25, rt.widthMm / 2 - 25]) box(10, rt.antennaMm, 10, cells[0] + dx, shelfTop + rt.heightMm + rt.antennaMm / 2, z0 + D - 60 - rt.depthMm + 20, white)
-    box(8, 4, 2, cells[0] - 60, shelfTop + rt.heightMm / 2, z0 + D - 60 + 1, led, false)
-    const latticeH = H - 2 * p
-    for (let i = 0; i <= 12; i++) box(6, latticeH - 8, 5, x0 + p + 8 + (inner - 16) * i / 12, y0 + H / 2, z0 + D - 2, bars, false)
-    for (let j = 0; j <= 6; j++) box(inner - 16, 6, 5, cells[0], y0 + p + 6 + (latticeH - 12) * j / 6, z0 + D - 2.5, bars, false)
-    const ll = rc.landline
-    box(ll.widthMm, ll.heightMm, ll.depthMm, cells[1], shelfTop + ll.heightMm / 2, z0 + D - 50 - ll.depthMm / 2, white)
-    box(ll.widthMm - 40, 25, ll.depthMm - 30, cells[1], shelfTop + ll.heightMm + 12, z0 + D - 50 - ll.depthMm / 2, white)
-    const ic = rc.intercom
-    box(ic.widthMm, ic.heightMm, ic.depthMm, cells[2], y0 + H / 2, z0 + 12 + ic.depthMm / 2, white)
-    box(ic.widthMm - 40, ic.heightMm * .45, 2, cells[2], y0 + H / 2 + ic.heightMm * .12, z0 + 12 + ic.depthMm + 1, glass, false)
-    box(30, 6, 2, cells[2], y0 + H / 2 - ic.heightMm * .3, z0 + 12 + ic.depthMm + 1, led, false)
-    label('Router + landline + intercom', x0 + W / 2, y0 + H + 110, z0 + D + 260)
-  }
+  group.add(createRouterCabinet(room.cornerLayout.routerCabinet, {wallFaceMm, label}))
 
   group.userData.setLabels = visible => { labels.visible = visible }
   labels.visible = false
@@ -178,5 +156,44 @@ export function createDrawingRoomCornerTv(room, {wallFaceMm = 0, variant = 'wall
   }
   label(`${pr.screenDiagonalInches}" drop-down screen`, eastFace - 700, pr.bottomMm + pr.heightMm + 160, pr.centerFromNorthMm)
   label('Ceiling projector', place.x, room.heightMm - pr.ceilingDropMm - 260, place.z)
+  return group
+}
+
+/**
+ * The small router | landline | intercom cabinet, built in a wall's own frame: x along the wall from rc.fromWestMm, z out from
+ * the wall (its back at `wallFaceMm`). Layout B hangs it on the north wall as is; layout C turns the group onto the east wall.
+ * `label(text, x, y, z)` adds its label to the caller's label group.
+ */
+export function createRouterCabinet(rc, {wallFaceMm = 0, label = () => {}} = {}) {
+  const group = new THREE.Group(); group.name = 'router, landline and intercom cabinet'
+  const mat = (color, extra = {}) => new THREE.MeshStandardMaterial({color, roughness: .62, ...extra})
+  const carcass = mat('#6a4429'), bars = mat('#8a5b37', {roughness: .55}), inside = mat('#2e2118', {roughness: .85})
+  const white = mat('#e9ecee', {roughness: .5}), glass = mat('#15181b', {roughness: .1, metalness: .4}), led = new THREE.MeshBasicMaterial({color: '#7bd88f'})
+  const box = (sx, sy, sz, cx, cy, cz, material, cast = true) => {
+    const mesh = new THREE.Mesh(new THREE.BoxGeometry(sx / 1000, sy / 1000, sz / 1000), material)
+    mesh.position.set(cx / 1000, cy / 1000, cz / 1000); mesh.castShadow = cast; mesh.receiveShadow = true
+    group.add(mesh); return mesh
+  }
+  const p = rc.panelMm, z0 = wallFaceMm, x0 = rc.fromWestMm, W = rc.widthMm, H = rc.heightMm, D = rc.depthMm, y0 = rc.bottomMm
+  box(W, H, 12, x0 + W / 2, y0 + H / 2, z0 + 6, inside)
+  for (const y of [y0 + p / 2, y0 + H - p / 2]) box(W, p, D, x0 + W / 2, y, z0 + D / 2, carcass)
+  const inner = (W - 4 * p) / 3
+  for (const i of [0, 1, 2, 3]) box(p, H - 2 * p, D, x0 + p / 2 + i * (inner + p), y0 + H / 2, z0 + D / 2, carcass)
+  const cells = [0, 1, 2].map(i => x0 + p + inner / 2 + i * (inner + p))
+  const shelfTop = y0 + p, rt = rc.router
+  box(rt.widthMm, rt.heightMm, rt.depthMm, cells[0], shelfTop + rt.heightMm / 2, z0 + D - 60 - rt.depthMm / 2, white)
+  for (const dx of [-rt.widthMm / 2 + 25, rt.widthMm / 2 - 25]) box(10, rt.antennaMm, 10, cells[0] + dx, shelfTop + rt.heightMm + rt.antennaMm / 2, z0 + D - 60 - rt.depthMm + 20, white)
+  box(8, 4, 2, cells[0] - 60, shelfTop + rt.heightMm / 2, z0 + D - 60 + 1, led, false)
+  const latticeH = H - 2 * p
+  for (let i = 0; i <= 12; i++) box(6, latticeH - 8, 5, x0 + p + 8 + (inner - 16) * i / 12, y0 + H / 2, z0 + D - 2, bars, false)
+  for (let j = 0; j <= 6; j++) box(inner - 16, 6, 5, cells[0], y0 + p + 6 + (latticeH - 12) * j / 6, z0 + D - 2.5, bars, false)
+  const ll = rc.landline
+  box(ll.widthMm, ll.heightMm, ll.depthMm, cells[1], shelfTop + ll.heightMm / 2, z0 + D - 50 - ll.depthMm / 2, white)
+  box(ll.widthMm - 40, 25, ll.depthMm - 30, cells[1], shelfTop + ll.heightMm + 12, z0 + D - 50 - ll.depthMm / 2, white)
+  const ic = rc.intercom
+  box(ic.widthMm, ic.heightMm, ic.depthMm, cells[2], y0 + H / 2, z0 + 12 + ic.depthMm / 2, white)
+  box(ic.widthMm - 40, ic.heightMm * .45, 2, cells[2], y0 + H / 2 + ic.heightMm * .12, z0 + 12 + ic.depthMm + 1, glass, false)
+  box(30, 6, 2, cells[2], y0 + H / 2 - ic.heightMm * .3, z0 + 12 + ic.depthMm + 1, led, false)
+  label('Router + landline + intercom', x0 + W / 2, y0 + H + 110, z0 + D + 260)
   return group
 }

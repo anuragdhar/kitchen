@@ -125,6 +125,29 @@ export const EMPTY_ROOM_SHELLS={
         router:{widthMm:260,heightMm:45,depthMm:190,antennaMm:230},
         landline:{widthMm:140,heightMm:110,depthMm:140},intercom:{widthMm:130,heightMm:230,depthMm:35}},
     },
+    // Layout "C" (owner, 2026-10-03; the default): the former north-wall sofa moves to the SOUTH wall, back against the wall under
+    // the window, facing north; the west sofa slides south to meet it in an L in the south-west corner; the coffee table sits
+    // inside the L; the TV is wall-mounted on the NORTH wall, on the free stretch between the west cabinet door (wallStorage,
+    // x 80-680) and the entry door (x 2150). Nothing stands in front of the west cabinet door any more. The router, landline and
+    // intercom cabinet (cornerLayout.routerCabinet, same box) moves to the solid stretch of the EAST wall, past the swing of the
+    // entry door and near it, where an intercom belongs. Sofas keep the 880 x 2250 footprint.
+    southLayout:{
+      furniture:{
+        southSofa:{centerXmm:1155,centerZmm:4835,widthMm:880,lengthMm:2250},
+        westSofa:{centerXmm:580,centerZmm:3220,widthMm:880,lengthMm:2250},
+        coffeeTable:{centerXmm:1745,centerZmm:3425,widthMm:600,lengthMm:1100},
+        rug:{centerXmm:1500,centerZmm:3585,widthMm:2100,lengthMm:2500},
+      },
+      // Flat on the wall, centred on the free stretch (x 680-2150). The TV centre is at seated eye height; both sizes are listed
+      // as in B2 (the owner has a 55-inch now and may fit a 65-inch later). 65 inches is the widest that fits the stretch: it
+      // leaves only about 10 mm to each door opening (the 55-inch leaves 120 mm).
+      tv:{centerFromWestMm:1415,centerHeightMm:1150,mountMm:35,installedTv:'55',
+        tvs:{'55':{diagonalInches:55,widthMm:1230,heightMm:710,depthMm:45},'65':{diagonalInches:65,widthMm:1450,heightMm:830,depthMm:55}}},
+      soundbar:{model:'Bose Smart Soundbar 300',widthMm:699,heightMm:58,depthMm:102,gapBelowTvMm:30},
+      // On the floor under the east end of the TV, clear of the west cabinet door and the entry door frame.
+      bassModule:{model:'Bose Bass Module 500',widthMm:254,heightMm:254,depthMm:241,centerFromWestMm:1985,fromWallMm:80},
+      routerCabinet:{wall:'east',fromNorthMm:900},
+    },
     // The northeast corner of this wall backs Bedroom 1's northEastRecessWardrobe
     // (roomShellConfig.js bedroom1.furniture), not a door into Drawing Room -
     // confirmed against the owner's own floor-plan mark (owner feedback 2026-09-29).
@@ -144,7 +167,9 @@ export const EMPTY_ROOM_SHELLS={
     // shelves: Blender shelf board heights, 380 mm deep against the back (plan y 754-773). Same in every layout (it is part of
     // the building), but the north sofa (layouts B, B2, B3) and the TV cabinet (layout A) stand in front of the doors: see
     // checkWallStorage().blockedBy. Not confirmed on site: that the pocket is hollow and the 9-inch wall may be opened.
-    wallStorage:{fromWestMm:80,widthMm:600,bottomMm:0,heightMm:2100,doorCount:2,cabinet:{fromWestMm:40,widthMm:650},depthMm:1105,panelMm:18,
+    // opens:'inward' (owner 2026-10-03): opened about twice a year for winter clothes and the like, so the two leaves swing INTO
+    // the closet and never sweep the room.
+    wallStorage:{fromWestMm:80,widthMm:600,bottomMm:0,heightMm:2100,doorCount:2,opens:'inward',cabinet:{fromWestMm:40,widthMm:650},depthMm:1105,panelMm:18,
       shelves:{depthMm:380,heightsMm:[120,550,1000,1450,1900,2350]}},
     windows:[{wall:'south',fromMm:471,widthMm:2298,bottomMm:550,topMm:2100,frameStyle:'dark',mullionFractions:[.62],source:'clipboard screenshot'}],
   },

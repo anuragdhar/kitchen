@@ -23,6 +23,8 @@ export function checkWallStorage(room, cavity, use) {
   need(s.depthMm <= use.ifOpenedMm, `the cabinet is ${s.depthMm} mm deep but only ${use.ifOpenedMm} mm is available`)
   need(top <= room.heightMm - DOOR_HEAD_CLEAR_MM, `the door reaches ${top} mm of a ${room.heightMm} mm ceiling; keep ${DOOR_HEAD_CLEAR_MM} mm of wall above it`)
   need(s.shelves.depthMm < s.depthMm, 'the shelves are deeper than the cabinet')
+  const leafMm = s.widthMm / s.doorCount
+  if (s.opens === 'inward') need(leafMm + 50 <= s.depthMm - s.shelves.depthMm, `the ${Math.round(leafMm)} mm leaves cannot swing in: only ${s.depthMm - s.shelves.depthMm} mm between the door and the shelves`)
   need(s.shelves.heightsMm.every(y => y > 0 && y < room.heightMm), 'a shelf is outside the cabinet height')
 
   // Footprints standing against the north wall in front of the doors, per layout (z1 = 0 at the wall).

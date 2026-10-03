@@ -2,11 +2,12 @@
 // config the 3D scenes use. Pure: no React, Three.js or DOM. Units are millimetres unless stated.
 import {BEDROOM1_CLOSED_DOOR, closedDoorSpanMm} from '../config/bedroom1ClosedDoor.js'
 import {HOME_ROOM_LAYOUTS} from '../config/homeRoomViews.js'
-import {checkDrawingRoomLayout, checkCornerLayout, checkCornerConsole, checkCornerProjector, consoleGeometry, projectorPlacement, tvWallGeometry, cornerTvFrontX, WALL_FACE_MM} from './drawingRoomLayout.mjs'
+import {checkDrawingRoomLayout, checkCornerLayout, checkCornerConsole, checkCornerProjector, checkSouthLayout, southRouterCabinet, consoleGeometry, projectorPlacement, tvWallGeometry, cornerTvFrontX, WALL_FACE_MM} from './drawingRoomLayout.mjs'
 
 const mm = v => `${Math.round(v)} mm`
 const size = (a, b) => `${Math.round(a)} x ${Math.round(b)}`
 export const DRAWING_LAYOUT_LABELS = {
+  southSofas: 'C: sofas south + west, TV on the north wall',
   northTv: 'A: TV on the north wall',
   cornerSofas: 'B: corner sofas, 65-inch TV flat on the east wall',
   cornerConsole: 'B2: corner sofas, low 18-inch console and arm-mounted TV',
@@ -103,6 +104,39 @@ function drawingLayoutB(room) {
   }
 }
 
+
+function drawingLayoutC(room) {
+  const s = room.southLayout, f = s.furniture, check = checkSouthLayout(room), g = check.tv, rc = southRouterCabinet(room), bm = s.bassModule
+  const sofa = (r, along) => along === 'x' ? {x1: r.centerXmm - r.lengthMm / 2, x2: r.centerXmm + r.lengthMm / 2, z1: r.centerZmm - r.widthMm / 2, z2: r.centerZmm + r.widthMm / 2} : {x1: r.centerXmm - r.widthMm / 2, x2: r.centerXmm + r.widthMm / 2, z1: r.centerZmm - r.lengthMm / 2, z2: r.centerZmm + r.lengthMm / 2}
+  const south = sofa(f.southSofa, 'x'), west = sofa(f.westSofa, 'z'), t = f.coffeeTable
+  return {
+    lines: [
+      `South-wall 3-seater: centre (${f.southSofa.centerXmm}, ${f.southSofa.centerZmm}), ${size(f.southSofa.lengthMm, f.southSofa.widthMm)}, back against the south wall under the window (${mm(check.clearances.southWallGapMm)} off it), faces north to the TV. Its back (about 925 mm high) covers the lower part of the window above the 550 mm sill.`,
+      `West-wall 3-seater: centre (${f.westSofa.centerXmm}, ${f.westSofa.centerZmm}), ${size(f.westSofa.widthMm, f.westSofa.lengthMm)}, back on the west wall, faces east, ${mm(check.clearances.sofaToSofa)} north of the south sofa (an L in the south-west corner).`,
+      `Oval coffee table: centre (${t.centerXmm}, ${t.centerZmm}), ${size(t.widthMm, t.lengthMm)}, inside the L. Rug under it.`,
+      `TV: ${g.tv.diagonalInches}-inch (${g.tv.widthMm} x ${g.tv.heightMm}) flat on the north wall, x ${g.x1}-${g.x2}, bottom edge ${mm(g.bottomMm)}, centre ${mm(s.tv.centerHeightMm)} high; it fits between the west cabinet door and the entry door with ${mm(check.clearances.tvMarginsMm[s.tv.installedTv])} to spare (a 65-inch leaves ${mm(check.clearances.tvMarginsMm['65'])}).`,
+      `Bose Smart Soundbar 300 on the wall under the TV; Bose Bass Module 500 on the floor under its east end, x ${bm.centerFromWestMm - bm.widthMm / 2}-${bm.centerFromWestMm + bm.widthMm / 2}.`,
+      `Router, landline and intercom cabinet on the solid east wall: z ${rc.z1}-${rc.z2}, ${mm(rc.bottomMm)}-${mm(rc.bottomMm + rc.heightMm)} high, ${mm(rc.depthMm)} deep, past the entry door's swing.`,
+      `Nothing stands in front of the west cabinet door (x ${room.wallStorage.fromWestMm}-${room.wallStorage.fromWestMm + room.wallStorage.widthMm}); its two leaves open into the closet.`,
+    ],
+    items: [
+      {label: `Sofa ${f.southSofa.lengthMm}x${f.southSofa.widthMm}`, ...south, kind: 'seat'},
+      {label: `Sofa ${f.westSofa.lengthMm}x${f.westSofa.widthMm}`, ...west, kind: 'seat'},
+      {label: `Table ${t.lengthMm}x${t.widthMm}`, x1: t.centerXmm - t.widthMm / 2, z1: t.centerZmm - t.lengthMm / 2, x2: t.centerXmm + t.widthMm / 2, z2: t.centerZmm + t.lengthMm / 2, kind: 'table'},
+      {label: `TV ${g.tv.widthMm}`, x1: g.x1, z1: 0, x2: g.x2, z2: g.frontZ, kind: 'fixed'},
+      {label: 'Bass Module', ...g.bass, kind: 'fixed'},
+      {label: `Router cabinet ${rc.widthMm}`, x1: rc.x1, z1: rc.z1, x2: rc.x2, z2: rc.z2, kind: 'fixed'},
+      {label: `West cabinet door ${room.wallStorage.widthMm}`, x1: room.wallStorage.fromWestMm, z1: 0, x2: room.wallStorage.fromWestMm + room.wallStorage.widthMm, z2: 40, kind: 'fixed'},
+    ],
+    measured: [
+      `South sofa seats: ${spread(check.views.southSofa)}.`,
+      `West sofa seats: ${spread(check.views.westSofa)} (side-on, as in any L).`,
+      `Gaps: south sofa to table ${mm(check.clearances.southSofaToTable)}, west sofa to table ${mm(check.clearances.westSofaToTable)}, table to the entry-door walking line ${mm(check.clearances.tableToEntryLine)}.`,
+      `At about 4.7 m from the south sofa a 55-inch screen is small (common guides put 4.7 m at 75 inches or more); the 65-inch is the largest that fits this wall.`,
+    ],
+    issues: check.issues,
+  }
+}
 
 // B2 and B3 share the seating, the router cabinet and the console; only the picture source differs.
 function consoleLines(room) {
@@ -225,7 +259,7 @@ export const REVIEW_TASKS = [
 export function buildRoomReview({roomKey, room, layoutKey = null, references = [], date = new Date()}) {
   const layoutLabel = roomKey === 'drawing' && layoutKey ? `Layout ${DRAWING_LAYOUT_LABELS[layoutKey]}` : null
   let layout = null
-  if (roomKey === 'drawing') layout = {northTv: drawingLayoutA, cornerSofas: drawingLayoutB, cornerConsole: drawingCornerConsole, cornerProjector: drawingCornerProjector}[layoutKey ?? 'cornerConsole'](room)
+  if (roomKey === 'drawing') layout = {southSofas: drawingLayoutC, northTv: drawingLayoutA, cornerSofas: drawingLayoutB, cornerConsole: drawingCornerConsole, cornerProjector: drawingCornerProjector}[layoutKey ?? 'southSofas'](room)
   const dims = `${room.widthMm} x ${room.lengthMm} x ${room.heightMm} mm (width x length x ceiling)`
   const planItems = layout?.items ?? genericPlanItems(roomKey, room)
   const sections = [

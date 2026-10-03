@@ -89,8 +89,8 @@ function LiveWholeHome3D({onOpenRoom}){
   const [medicineCabinetOpen,setMedicineCabinetOpen]=useState(false)
   const [tvLabels,setTvLabels]=useState(false)
   const tvLabelsRef=useRef(false)
-  // Drawing Room seating layout: 'cornerSofas' (B, requested 2026-09-29) or 'northTv' (A, default TV wall).
-  const [drawingLayout,setDrawingLayout]=useState('cornerConsole'),drawingLayoutRef=useRef('cornerConsole')
+  // Drawing Room seating layout (DRAWING_LAYOUTS); 'southSofas' (C, owner 2026-10-03) is the default.
+  const [drawingLayout,setDrawingLayout]=useState('southSofas'),drawingLayoutRef=useRef('southSofas')
   const [armOut,setArmOut]=useState(false),[tvSize,setTvSize]=useState('55'),[doorSwing,setDoorSwing]=useState(true),[storageOpen,setStorageOpen]=useState(false)
   const [storageCoverOpen,setStorageCoverOpen]=useState(false)
   const [wallSelection,setWallSelection]=useState(null)
@@ -845,9 +845,9 @@ function LiveWholeHome3D({onOpenRoom}){
           <select value={drawingLayout} onChange={event=>setDrawingLayout(event.target.value)} style={{padding:'7px 8px',borderRadius:9,border:'1px solid #cbd5e1',maxWidth:340}}>{DRAWING_LAYOUTS.map(layout=><option key={layout.key} value={layout.key}>{layout.label}</option>)}</select>
         </label>
         <button onClick={()=>setDoorSwing(value=>!value)} aria-pressed={doorSwing} style={buttonStyle(doorSwing)} title="The Drawing Room entry door opens into the room: red is the area its leaf sweeps">{doorSwing?'Hide entry door swing':'Show entry door swing'}</button>
-        <button onClick={()=>setStorageOpen(value=>!value)} aria-pressed={storageOpen} style={buttonStyle(storageOpen)} title="The west cabinet of the entry pocket, entered from the Drawing Room through a door at the west end of its north wall: doors hidden to show the shelves">{storageOpen?'Close west cabinet doors':'Open west cabinet doors'}</button>
-        {drawingLayout==='cornerConsole'&&<>
-          <button onClick={()=>setArmOut(value=>!value)} aria-pressed={armOut} style={buttonStyle(armOut)}>{armOut?'Park TV flat on the wall':'Pull TV out and turn it toward the north sofa'}</button>
+        <button onClick={()=>setStorageOpen(value=>!value)} aria-pressed={storageOpen} style={buttonStyle(storageOpen)} title="The west cabinet of the entry pocket, entered from the Drawing Room through a door at the west end of its north wall: the two leaves swing inward to show the shelves">{storageOpen?'Close west cabinet doors':'Open west cabinet doors'}</button>
+        {(drawingLayout==='cornerConsole'||drawingLayout==='southSofas')&&<>
+          {drawingLayout==='cornerConsole'&&<button onClick={()=>setArmOut(value=>!value)} aria-pressed={armOut} style={buttonStyle(armOut)}>{armOut?'Park TV flat on the wall':'Pull TV out and turn it toward the north sofa'}</button>}
           <button onClick={()=>setTvSize(value=>value==='55'?'65':'55')} style={buttonStyle(tvSize==='65')}>TV size: {tvSize} inch (click for {tvSize==='55'?'65':'55'})</button>
         </>}
         <button onClick={()=>setTvLabels(value=>!value)} aria-pressed={tvLabels} style={buttonStyle(tvLabels)}>{tvLabels?'Hide TV wall labels':'Show TV wall labels'}</button>

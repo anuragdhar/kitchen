@@ -37,14 +37,22 @@ export function createDrawingRoomWallStorage(room, {wallFaceMm = 0} = {}) {
   const reveal = 2 * wallFaceMm
   for (const x of [x1 - p / 2, x2 + p / 2]) box(p, s.heightMm, reveal + 10, x, (y0 + y1) / 2, zf - wallFaceMm, frame)
   box(s.widthMm + 2 * p, p, reveal + 10, (x1 + x2) / 2, y1 + p / 2, zf - wallFaceMm, frame)
+  // Two leaves hinged at the jambs. They open INWARD (s.opens === 'inward'): each swings back into the closet, so the room in
+  // front stays clear; an outward pair would swing into the room instead.
   const fronts = new THREE.Group(); fronts.name = 'west cabinet doors'; storage.add(fronts)
-  const leaf = s.widthMm / s.doorCount
+  const leaf = s.widthMm / s.doorCount, inward = s.opens === 'inward', leaves = []
   for (let i = 0; i < s.doorCount; i++) {
-    const xa = x1 + i * leaf, xb = xa + leaf
-    box(leaf - 4, s.heightMm - 4, 30, (xa + xb) / 2, (y0 + y1) / 2, zf - 15, doorPanel, fronts)
-    // Pulls on the meeting stiles, at hand height (as in the Blender model).
-    const px = i === 0 ? xb - 45 : xa + 45
-    box(14, 320, 18, px, 1080, zf + 9, pull, fronts)
+    const westHinge = i === 0, hingeX = westHinge ? x1 : x2
+    const pivot = new THREE.Group(); pivot.position.set(hingeX / 1000, 0, (zf - 30) / 1000); fronts.add(pivot)
+    const out = westHinge ? 1 : -1 // direction from the hinge across the leaf
+    box(leaf - 4, s.heightMm - 4, 30, out * leaf / 2, (y0 + y1) / 2, 15, doorPanel, pivot)
+    // Pulls on the meeting stiles, at hand height (as in the Blender model), on the room side.
+    box(14, 320, 18, out * (leaf - 45), 1080, 39, pull, pivot)
+    leaves.push({pivot, out})
+  }
+  const swingDeg = 95
+  const setLeaves = open => {
+    for (const {pivot, out} of leaves) pivot.rotation.y = open ? out * (inward ? 1 : -1) * swingDeg * Math.PI / 180 : 0
   }
 
   const labels = new THREE.Group(); labels.name = 'west cabinet labels'; storage.add(labels); labels.visible = false
@@ -60,6 +68,6 @@ export function createDrawingRoomWallStorage(room, {wallFaceMm = 0} = {}) {
     labels.add(sprite)
   }
   storage.userData.setLabels = visible => { labels.visible = visible }
-  storage.userData.setOpen = open => { fronts.visible = !open } // open: the leaves are hidden to show the shelves
+  storage.userData.setOpen = setLeaves // open: both leaves swing (inward) to show the shelves
   return {storage}
 }
