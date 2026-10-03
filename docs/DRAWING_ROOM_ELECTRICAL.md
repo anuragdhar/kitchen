@@ -15,8 +15,8 @@ Positions are measured inside the room: **x** from the west wall, **z** from the
 
 | ID | Point | Where | What to fit | Why |
 | --- | --- | --- | --- | --- |
-| N1 | TV box (behind the screen) | north wall, x 1600, 1000 high | 3 x 6 A sockets in a recessed media box + 1 CAT6 + end of the HDMI conduit | TV, Soundbar 300 and a streaming stick; recessed so the plugs do not push the TV off the wall |
-| N2 | Media point under the TV | north wall, x 1700, 300 high | 2 x 6 A sockets + 1 TV coax (DTH/cable) + 1 CAT6 (spare) | Bass Module 500 and a set-top box or game console; a 50 mm conduit runs up inside the wall to N1 for HDMI (eARC) |
+| N1 | TV box (behind the screen) | north wall, x 1600, 1000 high | 2 x 6 A sockets in a recessed media box + 1 CAT6 + end of the HDMI conduit | TV and a streaming stick; recessed so the plugs do not push the TV off the wall |
+| N2 | Media point in the TV console | north wall, x 1300, 400 high | 3 x 6 A sockets + 1 TV coax (DTH/cable) + 1 CAT6 (spare) | behind the console back: Bass Module 500, set-top box and Soundbar 300; a 50 mm conduit runs up inside the wall to N1 for HDMI (eARC) |
 | N3 | West cabinet light | inside the west cabinet, x 380, 2450 high | LED batten with a door-contact switch | lights the winter-clothes closet when its doors open; nothing to remember to switch off |
 | E1 | Main switchboard + drop-zone charger | east wall, z 1250, 1200 high | switches for chandelier, uplight, reading light (2-way), sofa glow; 1 x 6 A socket; 1 USB-A + USB-C charger | first wall on the left after the entry door swing (850 mm); phones and keys can charge on arrival |
 | E2 | Router cabinet | east wall, z 1090, 1560 high | 2 x 6 A sockets + fibre/broadband entry + telephone line + 2 CAT6 out (to N1 and N2) | router and landline base inside the lattice cell of the east-wall cabinet |

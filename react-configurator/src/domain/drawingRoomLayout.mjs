@@ -373,16 +373,22 @@ export function doorSwingIssues(room, items) {
 
 // ---- Layout "C": sofas in the south-west L, TV on the north wall (room.southLayout) ----
 
-/** Where the north-wall TV, its soundbar and the Bass Module sit for one TV size (mm, room frame). */
+/**
+ * Where the north-wall TV, the console below it, the soundbar on the console and the Bass Module in the console's east bay sit
+ * for one TV size (mm, room frame; rectangles are floor footprints, z measured from the north wall line).
+ */
 export function southTvGeometry(room, sizeKey = room.southLayout.tv.installedTv) {
-  const s = room.southLayout, t = s.tv, tv = t.tvs[sizeKey], sb = s.soundbar, bm = s.bassModule
+  const s = room.southLayout, t = s.tv, tv = t.tvs[sizeKey], sb = s.soundbar, bm = s.bassModule, k = s.console
   const x1 = t.centerFromWestMm - tv.widthMm / 2, x2 = t.centerFromWestMm + tv.widthMm / 2
   const bottomMm = t.centerHeightMm - tv.heightMm / 2
+  const console = {x1: k.centerFromWestMm - k.lengthMm / 2, x2: k.centerFromWestMm + k.lengthMm / 2, z1: WALL_FACE_MM, z2: WALL_FACE_MM + k.depthMm, bottomMm: k.bottomMm, topMm: k.bottomMm + k.heightMm}
+  const bayX1 = console.x2 - k.panelMm - k.moduleBayMm, bayX2 = console.x2 - k.panelMm, bassX = (bayX1 + bayX2) / 2
   return {
     tv, x1, x2, bottomMm, topMm: bottomMm + tv.heightMm,
     frontZ: WALL_FACE_MM + t.mountMm + tv.depthMm, // how far the screen face stands off the north wall line
-    soundbarY: bottomMm - sb.gapBelowTvMm - sb.heightMm / 2,
-    bass: {x1: bm.centerFromWestMm - bm.widthMm / 2, x2: bm.centerFromWestMm + bm.widthMm / 2, z1: WALL_FACE_MM + bm.fromWallMm, z2: WALL_FACE_MM + bm.fromWallMm + bm.depthMm},
+    console, bay: {x1: bayX1, x2: bayX2},
+    soundbarY: console.topMm + sb.heightMm / 2,
+    bass: {x1: bassX - bm.widthMm / 2, x2: bassX + bm.widthMm / 2, z1: console.z2 - 30 - bm.depthMm, z2: console.z2 - 30},
   }
 }
 
@@ -418,12 +424,19 @@ export function checkSouthLayout(room) {
     need(tvMarginsMm[key] >= 0, `the ${key}-inch TV (x ${g.x1}-${g.x2}) overlaps the cabinet door (to ${cabinetDoorEnd}) or the entry door (from ${door.fromMm})`)
     need(s.soundbar.widthMm <= g.tv.widthMm, `the soundbar is wider than the ${key}-inch TV`)
   }
-  const g = southTvGeometry(room)
-  need(g.bass.x1 >= cabinetDoorEnd + 50 && g.bass.x2 <= door.fromMm - 20, 'the Bass Module stands in front of the cabinet door or in the entry door frame')
+  const g = southTvGeometry(room), k = s.console, bm = s.bassModule, inner = k.heightMm - 2 * k.panelMm
+  need(g.console.x1 >= cabinetDoorEnd + 50 && g.console.x2 <= door.fromMm - 50, `the TV console (x ${g.console.x1}-${g.console.x2}) needs 50 mm clear of the cabinet door (${cabinetDoorEnd}) and the entry door (${door.fromMm})`)
+  need(k.depthMm >= 350 && k.depthMm <= 460, `the TV console is ${k.depthMm} mm deep; keep it 350-460 mm`)
+  need(bm.widthMm + 2 * 20 <= k.moduleBayMm - 2 * k.panelMm && bm.heightMm + 30 <= inner && bm.depthMm + 30 + k.backMm <= k.depthMm, 'the Bass Module does not fit its console bay')
+  need(s.soundbar.widthMm <= g.console.x2 - g.console.x1 && s.soundbar.depthMm + s.soundbar.frontSetbackMm <= k.depthMm, 'the soundbar does not fit on the console top')
+  for (const key of Object.keys(s.tv.tvs)) {
+    const t = southTvGeometry(room, key)
+    need(t.bottomMm >= t.console.topMm + s.soundbar.heightMm + 40, `the ${key}-inch TV's bottom edge (${t.bottomMm}) is not 40 mm above the soundbar on the console`)
+  }
 
   // The west cabinet doors open inward; keep 600 mm of floor in front of them clear to reach in.
   const cabinetFront = {x1: ws.fromWestMm, x2: cabinetDoorEnd, z1: 0, z2: 600}
-  for (const [name, r] of Object.entries({southSofa, westSofa, table, 'Bass Module': g.bass})) need(gap(r, cabinetFront) > 0, `the ${name} stands in front of the west cabinet door`)
+  for (const [name, r] of Object.entries({southSofa, westSofa, table, 'TV console': g.console})) need(gap(r, cabinetFront) > 0, `the ${name} stands in front of the west cabinet door`)
 
   // Router cabinet on the solid east wall, past the entry door leaf.
   const rc = southRouterCabinet(room), d = room.doors.find(x => x.wall === 'north')
@@ -438,10 +451,11 @@ export function checkSouthLayout(room) {
     tableToEntryLine: door.fromMm - table.x2,
     cabinetDoorFrontClearMm: Math.min(southSofa.z1, westSofa.z1, table.z1),
     tvMarginsMm,
+    consoleToTableMm: gap(g.console, table),
   }
   need(clearances.southSofaToTable >= 400 && clearances.westSofaToTable >= 400, 'a sofa is under 400 mm from the coffee table')
   need(clearances.tableToEntryLine >= 0, 'the coffee table reaches into the walking line from the entry door')
-  issues.push(...doorSwingIssues(room, {'south sofa': southSofa, 'west sofa': westSofa, 'coffee table': table, 'Bass Module': g.bass}))
+  issues.push(...doorSwingIssues(room, {'south sofa': southSofa, 'west sofa': westSofa, 'coffee table': table, 'TV console': g.console}))
 
   // Viewing: three seats per sofa to the TV centre on the north wall.
   const view = (seatX, seatZ, facing) => {

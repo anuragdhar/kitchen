@@ -143,9 +143,12 @@ export const EMPTY_ROOM_SHELLS={
       // leaves only about 10 mm to each door opening (the 55-inch leaves 120 mm).
       tv:{centerFromWestMm:1415,centerHeightMm:1150,mountMm:35,installedTv:'55',
         tvs:{'55':{diagonalInches:55,widthMm:1230,heightMm:710,depthMm:45},'65':{diagonalInches:65,widthMm:1450,heightMm:830,depthMm:55}}},
-      soundbar:{model:'Bose Smart Soundbar 300',widthMm:699,heightMm:58,depthMm:102,gapBelowTvMm:30},
-      // On the floor under the east end of the TV, clear of the west cabinet door and the entry door frame.
-      bassModule:{model:'Bose Bass Module 500',widthMm:254,heightMm:254,depthMm:241,centerFromWestMm:1985,fromWallMm:80},
+      // TV cabinet below the TV (owner, 2026-10-03): a wall-hung low console, centred under the TV, clear of the west cabinet
+      // door and the entry door frame by 85 mm each. Bass Module 500 behind an open lattice in its east bay (a closed door would
+      // muffle it); a storage bay with a lattice door for the set-top box and media; the Soundbar 300 stands on top.
+      console:{centerFromWestMm:1415,lengthMm:1300,depthMm:400,heightMm:400,bottomMm:200,panelMm:18,backMm:12,moduleBayMm:420},
+      soundbar:{model:'Bose Smart Soundbar 300',widthMm:699,heightMm:58,depthMm:102,frontSetbackMm:60},
+      bassModule:{model:'Bose Bass Module 500',widthMm:254,heightMm:254,depthMm:241},
       routerCabinet:{wall:'east',fromNorthMm:900},
     },
     // The northeast corner of this wall backs Bedroom 1's northEastRecessWardrobe

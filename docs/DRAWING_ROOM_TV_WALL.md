@@ -256,7 +256,7 @@ and put the TV on the north wall. Config: `southLayout` in `roomShellConfig.js`;
 | West sofa (faces east) | x 140-1020, z 2095-4345: 50 mm north of the south sofa, an L in the south-west corner |
 | Coffee table | x 1445-2045, z 2875-3975: 420 mm from the south sofa, 425 mm from the west sofa |
 | TV, flat on the north wall | centre x 1415, centre 1,150 high. 55-inch x 800-2030 (120 mm to each door opening); 65-inch x 690-2140 (10 mm) |
-| Soundbar 300 / Bass Module 500 | on the wall under the TV / on the floor under its east end (x 1858-2112) |
+| TV cabinet below the TV (owner, 2026-10-03) | wall-hung console x 765-2065, 400 deep, 200-600 high (85 mm clear of both doors). Bass Module 500 behind an open lattice in its east bay, set-top storage behind a lattice door, Soundbar 300 on top |
 | Router, landline, intercom cabinet | east wall, z 900-2000, 1,450-2,100 high: past the entry door's swing (850 mm) and before the lobby opening (2058) |
 
 Measured: south sofa seats are 4.7-4.8 m from the TV and 3-12 degrees off-axis; west sofa seats watch side-on (70-78 degrees),

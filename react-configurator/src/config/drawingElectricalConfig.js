@@ -14,11 +14,11 @@ export const DRAWING_ELECTRICAL = {
   points: [
     // ---- North wall: the TV wall ----
     {id: 'N1', name: 'TV box (behind the screen)', kind: 'power', wall: 'north', alongMm: 1600, heightMm: 1000, hidden: true,
-      outlets: '3 x 6 A sockets in a recessed media box + 1 CAT6 + end of the HDMI conduit',
-      use: 'TV, Soundbar 300 and a streaming stick; recessed so the plugs do not push the TV off the wall'},
-    {id: 'N2', name: 'Media point under the TV', kind: 'power', wall: 'north', alongMm: 1700, heightMm: 300,
-      outlets: '2 x 6 A sockets + 1 TV coax (DTH/cable) + 1 CAT6 (spare)',
-      use: 'Bass Module 500 and a set-top box or game console; a 50 mm conduit runs up inside the wall to N1 for HDMI (eARC)'},
+      outlets: '2 x 6 A sockets in a recessed media box + 1 CAT6 + end of the HDMI conduit',
+      use: 'TV and a streaming stick; recessed so the plugs do not push the TV off the wall'},
+    {id: 'N2', name: 'Media point in the TV console', kind: 'power', wall: 'north', alongMm: 1300, heightMm: 400, hidden: true,
+      outlets: '3 x 6 A sockets + 1 TV coax (DTH/cable) + 1 CAT6 (spare)',
+      use: 'behind the console back: Bass Module 500, set-top box and Soundbar 300; a 50 mm conduit runs up inside the wall to N1 for HDMI (eARC)'},
     {id: 'N3', name: 'West cabinet light', kind: 'lighting', wall: 'closet', xMm: 380, heightMm: 2450,
       outlets: 'LED batten with a door-contact switch',
       use: 'lights the winter-clothes closet when its doors open; nothing to remember to switch off'},
