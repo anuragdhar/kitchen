@@ -25,6 +25,7 @@ page). Write the answer next to the item or just tell the assistant; the task an
 | B2 | What does the existing east cabinet stand on (is there a floor under it)? | Inspect the shaft |
 | B3 | Is the society permission to close the shaft in writing? Does the society also need to approve the new main door and the shaft cover? | Society permission |
 | B4 | Is the present shaft cover at the entry ventilated (holes or louvres)? | Shaft cover |
+| B5 | Drawing Room south window: is the frame wood, steel or aluminium? How does it open (swing or slide, in or out)? | Window wooden shade; mosquito net |
 
 ## C. Decisions
 
@@ -48,6 +49,7 @@ page). Write the answer next to the item or just tell the assistant; the task an
 | C16 | Can the opening between the Drawing Room and the Lobby/Dining be closed (door or curtain) when the AC runs? | not decided | Choose the AC |
 | C17 | Track lights: type (230 V or slim 48 V magnetic), colour, number of heads | two surface tracks, warm white, dimmable | Layered lighting |
 | C18 | Is there a ceiling fan in the Drawing Room, and where? | not known | Layered lighting |
+| C19 | South window: which wood shade; which type of mosquito net | match the TV panel wall; net type depends on how the window opens | Window wooden shade; mosquito net |
 
 ## D. People to arrange
 

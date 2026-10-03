@@ -69,6 +69,10 @@
       "name": "Air conditioning"
     },
     {
+      "id": "windows",
+      "name": "Aluminium windows and mesh"
+    },
+    {
       "id": "painting",
       "name": "Painting"
     },
@@ -618,9 +622,23 @@
       "dependsOn": [
         "plaster",
         "carp-west-cabinet",
-        "carp-tv-console"
+        "carp-tv-console",
+        "window-wood-finish"
       ],
       "status": "todo"
+    },
+    {
+      "phase": "paint",
+      "id": "window-wood-finish",
+      "trade": "painting",
+      "title": "Drawing Room south window: change the white paint to a wooden shade",
+      "room": "Drawing Room",
+      "detail": "Owner 2026-10-04: the window on the south wall is painted white; give it a wooden shade. The window is about 2.3 m wide, from 550 to 2,100 mm above the floor (model sizes). If the frame is wood: strip the white paint, sand to bare wood, stain to the chosen shade and finish with PU or melamine polish, two or three coats; on the outside face use an exterior-grade finish, because it gets sun and rain. If the frame is steel or aluminium it cannot be polished: use a wood-grain paint finish or a wood-look coating instead. Match the shade to the TV panel wall and console so the room has one wood tone. Do this before the walls get their final coat, and mask the glass.",
+      "dependsOn": [
+        "plaster"
+      ],
+      "status": "todo",
+      "needs": "What the window frame is made of (wood, steel or aluminium); the wood shade"
     },
     {
       "id": "elec-second-fix",
@@ -691,6 +709,19 @@
         "paint"
       ],
       "status": "todo"
+    },
+    {
+      "phase": "second-fix",
+      "id": "window-mosquito-net",
+      "trade": "windows",
+      "title": "Drawing Room south window: fit a mosquito net",
+      "room": "Drawing Room",
+      "detail": "Owner 2026-10-04. Type depends on how the window opens: for shutters that swing inward or outward, a pleated or roller mesh in a slim frame that slides out of the way; for sliding shutters, a sliding mesh shutter on its own track; the cheapest is a fixed mesh frame held by magnets or clips, removable for cleaning. Use stainless steel or fibreglass mesh in a frame coloured to match the new wooden shade. The south sofa stands against this wall under the window, so choose a type that can be opened and cleaned by reaching over the sofa back.",
+      "dependsOn": [
+        "window-wood-finish"
+      ],
+      "status": "todo",
+      "needs": "How the window opens (swing or slide, in or out); net type"
     },
     {
       "id": "furniture",
