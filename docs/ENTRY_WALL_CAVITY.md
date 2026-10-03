@@ -105,3 +105,10 @@ shelves, so none are drawn" above.
 Only the cabinet's presence and position come from the owner. The two door leaves, the loft pair above 2,100 mm, the four
 shelves and the 18 mm panels are assumed; nothing is measured on site. Check: `eastCabinetGeometry()` in
 `src/domain/entryCavity.mjs`, tested in `tests/entry-cavity.test.mjs`. The Blender models and renders were not regenerated.
+
+## Narrow hidden door to the west cabinet (owner, later 2026-10-03)
+
+The door through the Drawing Room wall is now one concealed flush leaf, x 100-600 (500 wide, 450 clear), 1,800 high, opening
+inward, hidden behind the loose end module of the wall-to-wall TV console. It lies inside the Blender door position but no
+longer matches its size. Details and reasons: `docs/DRAWING_ROOM_TV_WALL.md`, last section. The app button is now "Open hidden
+west cabinet".

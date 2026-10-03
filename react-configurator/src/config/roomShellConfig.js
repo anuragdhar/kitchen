@@ -157,7 +157,12 @@ export const EMPTY_ROOM_SHELLS={
       //  east bay   the Bass Module 500 behind an open lattice (a closed door would muffle it), moduleBayMm wide;
       //  top        Soundbar 300 centred under the TV, the landline at the west end, a desk intercom at the east end.
       // The device sizes are cornerLayout.routerCabinet's router, landline and intercom.
-      console:{centerFromWestMm:1415,lengthMm:1300,depthMm:400,heightMm:400,bottomMm:200,panelMm:18,backMm:12,routerBayMm:420,moduleBayMm:420},
+      // Owner, later 2026-10-03: the console runs WALL TO WALL (the west wall to the entry door frame) and hides the west cabinet
+      // door behind it. Its west end is a separate loose module on castors (`movable`), standing in front of that door: to get
+      // into the closet, roll the module out (pullOutMm) and push the hidden door in. The rest is wall-hung as before, and the
+      // router bay, storage and Bass Module bay are all in that fixed part. Nothing corded stands on the movable module.
+      console:{fromWestMm:50,lengthMm:2050,depthMm:400,heightMm:400,bottomMm:200,panelMm:18,backMm:12,routerBayMm:420,moduleBayMm:420,
+        movable:{lengthMm:600,gapMm:4,castorMm:50,pullOutMm:900}},
       soundbar:{model:'Bose Smart Soundbar 300',widthMm:699,heightMm:58,depthMm:102,frontSetbackMm:60},
       bassModule:{model:'Bose Bass Module 500',widthMm:254,heightMm:254,depthMm:241},
     },
@@ -182,7 +187,15 @@ export const EMPTY_ROOM_SHELLS={
     // checkWallStorage().blockedBy. Not confirmed on site: that the pocket is hollow and the 9-inch wall may be opened.
     // opens:'inward' (owner 2026-10-03): opened about twice a year for winter clothes and the like, so the two leaves swing INTO
     // the closet and never sweep the room.
-    wallStorage:{fromWestMm:80,widthMm:600,bottomMm:0,heightMm:2100,doorCount:2,opens:'inward',cabinet:{fromWestMm:40,widthMm:650},depthMm:1105,panelMm:18,
+    // Owner, later 2026-10-03: HIDDEN and as narrow as a person can just walk through (the owner: 5 ft 7 in, 80 kg); the closet
+    // behind stays full size. One flush leaf with no handle or visible frame (`concealed`: painted as the wall, push latch),
+    // 500 x 1800, inside the Blender door position (was two leaves, 600 x 2100 at x 80-680). Swung in, the leaf lies in the
+    // opening, so the clear way through is widthMm - leafThicknessMm - stopMm = 450 mm. `access` holds the person it is sized
+    // for; shoulderMm and bodyDepthMm are typical figures for that height and weight, not measured. In layout C the movable
+    // end module of the TV console stands in front of it (southLayout.console.movable).
+    wallStorage:{fromWestMm:100,widthMm:500,bottomMm:0,heightMm:1800,doorCount:1,opens:'inward',concealed:true,leafThicknessMm:40,stopMm:10,
+      access:{personHeightMm:1702,personKg:80,shoulderMm:470,bodyDepthMm:300,headroomMm:50},
+      cabinet:{fromWestMm:40,widthMm:650},depthMm:1105,panelMm:18,
       shelves:{depthMm:380,heightsMm:[120,550,1000,1450,1900,2350]}},
     windows:[{wall:'south',fromMm:471,widthMm:2298,bottomMm:550,topMm:2100,frameStyle:'dark',mullionFractions:[.62],source:'clipboard screenshot'}],
   },

@@ -34,16 +34,26 @@ test('the TV is on the north wall between the west cabinet door and the entry do
   assert.equal(checkSouthLayout(room).clearances.tvMarginsMm['55'], 120)
 })
 
-test('nothing stands in front of the west cabinet door', () => {
-  assert.ok(checkSouthLayout(room).clearances.cabinetDoorFrontClearMm >= 600)
+test('the TV console runs wall to wall and its loose end module hides the west cabinet door', () => {
+  const r = checkSouthLayout(room), g = southTvGeometry(room), ws = room.wallStorage, door = room.doors[0]
+  assert.deepEqual(r.issues, [])
+  assert.deepEqual([g.console.x1, g.console.x2], [50, 2100])
+  assert.ok(door.fromMm - g.console.x2 === 50, 'stops 50 mm short of the entry door frame')
+  assert.ok(g.movable.x1 < ws.fromWestMm && g.movable.x2 > ws.fromWestMm + ws.widthMm, 'the loose module covers the door')
+  assert.ok(g.fixed.x1 >= ws.fromWestMm + ws.widthMm, 'the wall-hung part is clear of the door')
+  assert.ok(r.clearances.consoleMm.stepBehindModuleMm >= 450)
+  assert.ok(r.clearances.cabinetDoorFrontClearMm >= 600 + room.southLayout.console.movable.pullOutMm, 'floor is free to roll the module out')
+  const blocked = structuredClone(room); blocked.southLayout.furniture.westSofa.centerZmm = 1500
+  assert.match(checkSouthLayout(blocked).issues.join(' '), /in the way of rolling the console module out/)
 })
 
 test('the TV console holds the router, landline and intercom; there is no east-wall cabinet', () => {
   const g = southTvGeometry(room), k = room.southLayout.console
   assert.equal(room.southLayout.routerCabinet, undefined)
-  assert.ok(g.routerBay.x1 >= g.console.x1 && g.routerBay.x2 < g.bay.x1, 'router bay at the west end, Bass Module bay at the east end')
+  assert.ok(g.routerBay.x1 >= g.fixed.x1 && g.routerBay.x2 < g.bay.x1, 'router bay at the west end of the wall-hung part, Bass Module bay at the east end')
   assert.ok(g.landlineX < g.soundbar.x1 && g.intercomX > g.soundbar.x2, 'landline west of the soundbar, intercom east of it')
-  assert.ok(g.console.x1 >= room.wallStorage.fromWestMm + room.wallStorage.widthMm && g.console.x2 <= room.doors[0].fromMm)
+  assert.ok(g.landlineX > g.fixed.x1, 'nothing corded on the loose module')
+  assert.ok(g.console.x2 <= room.doors[0].fromMm)
   assert.ok(k.routerBayMm >= g.router.widthMm + 40)
 })
 
@@ -55,13 +65,13 @@ test('the south sofa moved east and a small lamp table stands at its west end', 
   assert.ok(r.clearances.cornerTable.westWall >= 0 && r.clearances.cornerTable.westSofa >= 0)
 })
 
-test('the west cabinet leaves open inward and clear the shelves; no layout C furniture blocks them', () => {
+test('the west cabinet leaf opens inward and clears the shelves; in layout C only the loose console module covers it', () => {
   const plan = HOME_ROOM_LAYOUTS.find(r => r.name === 'Drawing Room')
   const cavity = cavityGeometry(ENTRY, {bounds: plan.bounds, widthMm: room.widthMm})
   const result = checkWallStorage(room, cavity, usableDepth(cavity))
   assert.equal(room.wallStorage.opens, 'inward')
   assert.deepEqual(result.issues, [])
-  assert.ok(!result.blockedBy.some(b => b.layouts.includes('southSofas')))
+  assert.ok(result.blockedBy.filter(b => b.layouts.includes('southSofas')).every(b => b.movable))
   const tooDeep = structuredClone(room); tooDeep.wallStorage.shelves.depthMm = 900
   assert.match(checkWallStorage(tooDeep, cavity, usableDepth(cavity)).issues.join(' '), /cannot swing in/)
 })

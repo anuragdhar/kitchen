@@ -54,15 +54,16 @@ export function createDrawingRoomSouthTv(room, {wallFaceMm = 0} = {}) {
   // Its own group, so a click anywhere on it reports the whole console (render/dimensionPick.js).
   const consoleGroup = new THREE.Group(); consoleGroup.name = 'TV console'; group.add(consoleGroup)
   const roomBox = box
+  let movable = null
   {
     const box = (sx, sy, sz, cx, cy, cz, material, cast = true) => roomBox(sx, sy, sz, cx, cy, cz, material, cast, consoleGroup)
-    const g = southTvGeometry(room), p = k.panelMm, x1 = g.console.x1, x2 = g.console.x2, y0 = k.bottomMm, y1 = y0 + k.heightMm
+    const g = southTvGeometry(room), p = k.panelMm, x1 = g.fixed.x1, x2 = g.fixed.x2, len = x2 - x1, y0 = k.bottomMm, y1 = y0 + k.heightMm
     const z0 = wallFaceMm, z1 = wallFaceMm + k.depthMm, midX = (x1 + x2) / 2, midZ = (z0 + z1) / 2, label = labelsIn(group)
-    box(k.lengthMm, p, k.depthMm, midX, y1 - p / 2, midZ, carcass)                                // top
-    box(k.lengthMm, p, k.depthMm, midX, y0 + p / 2, midZ, carcass)                                // bottom
-    box(k.lengthMm, k.heightMm, k.backMm, midX, (y0 + y1) / 2, z0 + k.backMm / 2, inside)         // back
-    for (const x of [x1 + p / 2, x2 - p / 2, g.routerBay.x2 + p / 2, g.bay.x1 - p / 2]) box(p, k.heightMm - 2 * p, k.depthMm, x, (y0 + y1) / 2, midZ, carcass) // ends and bay dividers
+    box(len, p, k.depthMm, midX, y1 - p / 2, midZ, carcass)                                // top
+    box(len, p, k.depthMm, midX, y0 + p / 2, midZ, carcass)                                // bottom
+    box(len, k.heightMm, k.backMm, midX, (y0 + y1) / 2, z0 + k.backMm / 2, inside)         // back
     const innerH = k.heightMm - 2 * p, innerY = (y0 + y1) / 2
+    for (const x of [x1 + p / 2, x2 - p / 2, g.routerBay.x2 + p / 2, g.bay.x1 - p / 2]) box(p, innerH, k.depthMm, x, innerY, midZ, carcass) // ends and bay dividers
     // Open lattice over a bay: the router's signal and heat and the Bass Module's sound get out through it.
     const lattice = ({x1: a, x2: b}) => {
       const w = b - a
@@ -87,6 +88,31 @@ export function createDrawingRoomSouthTv(room, {wallFaceMm = 0} = {}) {
     const cols = Math.max(2, Math.round(dw / 70)), rows = Math.round(dh / 70)
     for (let i = 0; i <= cols; i++) box(6, dh - 16, 7, dx1 + 3 + 8 + (dw - 16) * i / cols, innerY, z1 + 3, bars, false)
     for (let j = 0; j <= rows; j++) box(dw - 16, 6, 7, (dx1 + dx2) / 2, y0 + p + 3 + 8 + (dh - 16) * j / rows, z1 + 3.5, bars, false)
+    // Loose west module in front of the hidden west cabinet door: same carcass and lattice doors, standing on four castors
+    // instead of hanging on the wall, so it rolls out (setAccess) to uncover the door. Nothing corded stands on it.
+    {
+      const m = g.movable, mLen = m.x2 - m.x1, mMid = (m.x1 + m.x2) / 2
+      movable = new THREE.Group(); movable.name = 'TV console: loose end module (rolls out from the hidden door)'; consoleGroup.add(movable)
+      const mBox = (sx, sy, sz, cx, cy, cz, material, cast = true) => roomBox(sx, sy, sz, cx, cy, cz, material, cast, movable)
+      mBox(mLen, p, k.depthMm, mMid, y1 - p / 2, midZ, carcass); mBox(mLen, p, k.depthMm, mMid, y0 + p / 2, midZ, carcass)
+      mBox(mLen, k.heightMm, k.backMm, mMid, (y0 + y1) / 2, z0 + k.backMm / 2, inside)
+      for (const x of [m.x1 + p / 2, m.x2 - p / 2]) mBox(p, innerH, k.depthMm, x, innerY, midZ, carcass)
+      const leafW = (mLen - 2 * p) / 2 - 4, dh = innerH - 6
+      for (const side of [-1, 1]) {
+        const lx = mMid + side * (leafW / 2 + 2)
+        mBox(leafW, dh, p, lx, innerY, z1 - p / 2, doorPanel)
+        for (let i = 0; i <= 4; i++) mBox(6, dh - 16, 7, lx - leafW / 2 + 8 + (leafW - 16) * i / 4, innerY, z1 + 3, bars, false)
+        for (let j = 0; j <= 5; j++) mBox(leafW - 16, 6, 7, lx, y0 + p + 11 + (dh - 16) * j / 5, z1 + 3.5, bars, false)
+      }
+      // Legs set back from the front, each on a castor, so the module reads as floating like the wall-hung part.
+      const c = k.movable.castorMm
+      for (const x of [m.x1 + 60, m.x2 - 60]) for (const z of [z0 + 70, z1 - 90]) {
+        mBox(30, y0 - c, 30, x, c + (y0 - c) / 2, z, black)
+        const wheel = new THREE.Mesh(new THREE.CylinderGeometry(c / 2000, c / 2000, .024, 16), black); wheel.rotation.z = Math.PI / 2
+        wheel.position.set(x / 1000, c / 2000, z / 1000); wheel.castShadow = true; movable.add(wheel)
+      }
+      label('Loose module: roll out for the hidden door', mMid + 150, y0 - 400, z1 + 300)
+    }
     // On the top: Soundbar 300 centred under the TV, the landline to its west, the desk intercom to its east. Their own
     // group, so the console reports its own size.
     const onTop = new THREE.Group(); onTop.name = 'Soundbar, landline and intercom (on the TV console)'; group.add(onTop)
@@ -102,7 +128,7 @@ export function createDrawingRoomSouthTv(room, {wallFaceMm = 0} = {}) {
     topBox(ic.widthMm, ic.heightMm, ic.depthMm, g.intercomX, y1 + ic.heightMm / 2, icZ, white)
     topBox(ic.widthMm - 40, ic.heightMm * .45, 2, g.intercomX, y1 + ic.heightMm * .62, icZ + ic.depthMm / 2 + 1, glass, false)
     topBox(ic.widthMm, 12, 90, g.intercomX, y1 + 6, icZ - 20, white)
-    label(`TV console ${k.lengthMm} x ${k.depthMm}`, midX, y0 - 120, z1 + 300)
+    label(`TV console ${k.lengthMm} x ${k.depthMm}, wall to wall`, midX, y0 - 120, z1 + 300)
     label('Soundbar 300', cx, y1 + 180, z1 + 300)
     label('Router (inside)', rx - 100, y0 - 260, z1 + 300)
     label('Bass Module 500 (inside)', (g.bay.x1 + g.bay.x2) / 2 + 150, y0 - 260, z1 + 300)
@@ -111,6 +137,8 @@ export function createDrawingRoomSouthTv(room, {wallFaceMm = 0} = {}) {
   }
 
   group.userData.setLabels = visible => { for (const labels of labelGroups) labels.visible = visible }
+  // Rolls the loose module out from the wall (and back), as when the hidden west cabinet door is used.
+  group.userData.setAccess = open => { movable.position.z = open ? k.movable.pullOutMm / 1000 : 0 }
   group.userData.setTvSize = key => { if (tvGroups[key]) { shown = key; showTv() } }
   return group
 }

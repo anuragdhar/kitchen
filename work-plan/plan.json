@@ -172,7 +172,7 @@
       "trade": "civil",
       "title": "Cut the cabinet door opening in the Drawing Room north wall",
       "room": "Drawing Room",
-      "detail": "Opening 600 wide x 2100 high at the west end of the north wall (80-680 mm from the west wall), with a lintel, into the west half of the entry pocket.",
+      "detail": "Opening 500 wide x 1800 high at the west end of the north wall (100-600 mm from the west wall), with a lintel, into the west half of the entry pocket. Kept as narrow as a person can pass (450 clear) so it can be hidden.",
       "dependsOn": [
         "engineer-check",
         "pocket-check"
@@ -320,9 +320,9 @@
       "id": "carp-west-cabinet",
       "phase": "carpentry",
       "trade": "carpentry",
-      "title": "West cabinet: frame, two inward-opening doors and shelves",
+      "title": "West cabinet: one hidden inward-opening door and shelves",
       "room": "Drawing Room",
-      "detail": "Two 300 mm leaves, 2100 high, opening into the closet; shelves 380 deep at the back. For winter clothes, opened about twice a year.",
+      "detail": "One flush 500 x 1800 leaf on pivot hinges, no handle (push latch), finished like the wall, opening into the closet; shelves 380 deep at the back. For winter clothes, opened about twice a year.",
       "dependsOn": [
         "north-wall-door",
         "plaster"
@@ -334,9 +334,9 @@
       "id": "carp-tv-console",
       "phase": "carpentry",
       "trade": "carpentry",
-      "title": "Wall-hung TV console under the TV",
+      "title": "Wall-to-wall TV console under the TV, with a loose end module",
       "room": "Drawing Room",
-      "detail": "1300 x 400 x 400, 200 off the floor: router bay and Bass Module bay with open lattice, storage with a lattice door, cable holes to the points behind.",
+      "detail": "2050 x 400 x 400, 200 off the floor, from the west wall to 50 short of the entry door. West 600 is a loose module on four locking castors in front of the hidden door; the other 1446 is wall-hung: router bay and Bass Module bay with open lattice, storage with a lattice door, cable holes to the points behind.",
       "dependsOn": [
         "plaster"
       ],

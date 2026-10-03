@@ -65,7 +65,8 @@ export function createDrawingRoomLayouts(room, {wallFaceMm = 0, initial = 'south
     built, furniture, setLayout, setLabels, layout: () => current,
     setDoorSwing: visible => { doorSwing.visible = visible },
     setElectrical: visible => { electricalPoints.visible = visible },
-    setStorageOpen: open => wallStorage.storage.userData.setOpen(open),
+    // Opening the hidden west cabinet door also rolls the loose console module (layout C) out of its way.
+    setStorageOpen: open => { wallStorage.storage.userData.setOpen(open); south.userData.setAccess(open) },
     setArm: pulled => corner.cornerConsole.userData.setArm(pulled),
     setTvSize: key => { corner.cornerConsole.userData.setTvSize(key); south.userData.setTvSize(key) },
   }

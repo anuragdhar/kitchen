@@ -18,15 +18,14 @@ test('the west cabinet fits west of the partition, inside the pocket depth, clea
   const result = checkWallStorage(room, cavity, use)
   assert.deepEqual(result.issues, [])
   assert.equal(result.ok, true)
-  assert.equal(result.topMm, 2100)
-  assert.equal(result.leafMm, 300)
+  assert.equal(result.topMm, 1800)
+  assert.equal(result.leafMm, 500)
 })
 
-test('the west cabinet matches the Blender model: door at plan x 653-684, partition at plan x 650, 2100 mm high', () => {
+test('the narrow hidden door lies inside the Blender door position (plan x 653-684, 2100 high); the closet is unchanged', () => {
   const s = room.wallStorage, ref = ENTRY.wallCavity.westDoorPlan
-  assert.ok(Math.abs(s.fromWestMm - roomX(ref.toPlanX)) < 20, `door starts ${s.fromWestMm}, Blender ${roomX(ref.toPlanX)}`)
-  assert.ok(Math.abs(s.fromWestMm + s.widthMm - roomX(ref.fromPlanX)) < 20, `door ends ${s.fromWestMm + s.widthMm}, Blender ${roomX(ref.fromPlanX)}`)
-  assert.equal(s.heightMm, ref.heightMm)
+  assert.ok(s.fromWestMm >= roomX(ref.toPlanX) && s.fromWestMm + s.widthMm <= roomX(ref.fromPlanX), `door x ${s.fromWestMm}-${s.fromWestMm + s.widthMm}, Blender ${roomX(ref.toPlanX)}-${roomX(ref.fromPlanX)}`)
+  assert.ok(s.heightMm <= ref.heightMm)
   assert.equal(s.bottomMm, 0)
   assert.ok(s.cabinet.fromWestMm + s.cabinet.widthMm <= cavity.partitionRoomXMm, 'the closet stops at the partition')
   const zmm = ENTRY.planScale.zMetresPerPixel * 1000
@@ -42,8 +41,10 @@ test('the router cabinet is wall-hung again, above the north sofa, and clear of 
 test('the furniture standing in front of the west cabinet door is reported for every layout', () => {
   const {blockedBy} = checkWallStorage(room, cavity, use)
   const covered = blockedBy.flatMap(b => b.layouts).sort()
-  assert.deepEqual(covered, ['cornerConsole', 'cornerProjector', 'cornerSofas', 'northTv'])
+  assert.deepEqual(covered, ['cornerConsole', 'cornerProjector', 'cornerSofas', 'northTv', 'southSofas'])
   assert.ok(blockedBy.every(b => b.overlapMm === room.wallStorage.widthMm))
+  // Only layout C's cover is meant to move: the loose end module of the TV console.
+  assert.deepEqual(blockedBy.filter(b => b.movable).flatMap(b => b.layouts), ['southSofas'])
 })
 
 test('the checks catch a door wider than the closet, past the partition, too deep or too tall', () => {
@@ -60,6 +61,18 @@ test('the shared Drawing Room / Entry wall is cut only across the door, from the
   const [left, below, above, right] = pieces
   assert.equal(left[0][0], 570); assert.equal(right[0][2], 688)
   assert.equal(below[1], 0); assert.equal(below[2], 0, 'nothing under the door: it starts at the floor')
-  assert.deepEqual([above[1], above[2]], [2.1, 2.7])
+  assert.deepEqual([above[1], above[2]], [1.8, 2.7])
   assert.equal(wallPiecesAroundStorage([515, 715, 515, 874], room, plan.bounds, 2.7), null)
+})
+
+test('the hidden door is as narrow as the owner (5 ft 7 in, 80 kg) can just walk through', () => {
+  const s = room.wallStorage, {access, issues} = checkWallStorage(room, cavity, use)
+  assert.deepEqual(issues, [])
+  assert.equal(s.concealed, true); assert.equal(s.doorCount, 1)
+  assert.equal(access.clearWidthMm, 450, 'opening less the open leaf and its stop')
+  assert.equal(access.walksStraight, false, 'narrower than the shoulders: walk in slightly turned')
+  assert.ok(access.sidewaysSpareMm >= 100 && access.headroomMm >= 50 && access.headroomMm <= 150)
+  const bad = patch => { const r = structuredClone(room); patch(r.wallStorage); return checkWallStorage(r, cavity, use).issues.join(' | ') }
+  assert.match(bad(w => { w.widthMm = 400 }), /too narrow/)
+  assert.match(bad(w => { w.heightMm = 1700 }), /door head/)
 })

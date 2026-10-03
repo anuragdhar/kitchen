@@ -34,9 +34,12 @@ export function createDrawingRoomWallStorage(room, {wallFaceMm = 0} = {}) {
   for (const y of s.shelves.heightsMm) box(cab.widthMm - 2 * p, p, s.shelves.depthMm, (cx1 + cx2) / 2, y, zb + p + s.shelves.depthMm / 2, shelfMat)
 
   // Door frame lining the cut through the wall, then the leaves flush with the room face.
-  const reveal = 2 * wallFaceMm
-  for (const x of [x1 - p / 2, x2 + p / 2]) box(p, s.heightMm, reveal + 10, x, (y0 + y1) / 2, zf - wallFaceMm, frame)
-  box(s.widthMm + 2 * p, p, reveal + 10, (x1 + x2) / 2, y1 + p / 2, zf - wallFaceMm, frame)
+  // A concealed door (s.concealed) has no visible frame or pulls and its leaf is finished like the wall.
+  const reveal = 2 * wallFaceMm, wallFinish = mat('#dfd2c4', {roughness: .87})
+  if (!s.concealed) {
+    for (const x of [x1 - p / 2, x2 + p / 2]) box(p, s.heightMm, reveal + 10, x, (y0 + y1) / 2, zf - wallFaceMm, frame)
+    box(s.widthMm + 2 * p, p, reveal + 10, (x1 + x2) / 2, y1 + p / 2, zf - wallFaceMm, frame)
+  }
   // Two leaves hinged at the jambs. They open INWARD (s.opens === 'inward'): each swings back into the closet, so the room in
   // front stays clear; an outward pair would swing into the room instead.
   const fronts = new THREE.Group(); fronts.name = 'west cabinet doors'; storage.add(fronts)
@@ -45,9 +48,9 @@ export function createDrawingRoomWallStorage(room, {wallFaceMm = 0} = {}) {
     const westHinge = i === 0, hingeX = westHinge ? x1 : x2
     const pivot = new THREE.Group(); pivot.position.set(hingeX / 1000, 0, (zf - 30) / 1000); fronts.add(pivot)
     const out = westHinge ? 1 : -1 // direction from the hinge across the leaf
-    box(leaf - 4, s.heightMm - 4, 30, out * leaf / 2, (y0 + y1) / 2, 15, doorPanel, pivot)
+    box(leaf - 4, s.heightMm - 4, 30, out * leaf / 2, (y0 + y1) / 2, 15, s.concealed ? wallFinish : doorPanel, pivot)
     // Pulls on the meeting stiles, at hand height (as in the Blender model), on the room side.
-    box(14, 320, 18, out * (leaf - 45), 1080, 39, pull, pivot)
+    if (!s.concealed) box(14, 320, 18, out * (leaf - 45), 1080, 39, pull, pivot)
     leaves.push({pivot, out})
   }
   const swingDeg = 95

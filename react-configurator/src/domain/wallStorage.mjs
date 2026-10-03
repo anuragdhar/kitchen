@@ -26,6 +26,14 @@ export function checkWallStorage(room, cavity, use) {
   const leafMm = s.widthMm / s.doorCount
   if (s.opens === 'inward') need(leafMm + 50 <= s.depthMm - s.shelves.depthMm, `the ${Math.round(leafMm)} mm leaves cannot swing in: only ${s.depthMm - s.shelves.depthMm} mm between the door and the shelves`)
   need(s.shelves.heightsMm.every(y => y > 0 && y < room.heightMm), 'a shelf is outside the cabinet height')
+  // Access: an inward leaf lies in the opening when open, so it and its stop come off the clear width. The person it is
+  // sized for (s.access) must at least pass sideways with 100 mm spare and stand upright under the head.
+  const clearWidthMm = s.widthMm - (s.opens === 'inward' ? (s.leafThicknessMm ?? 0) + (s.stopMm ?? 0) : 0)
+  const a = s.access, access = a ? {clearWidthMm, clearHeightMm: s.heightMm, walksStraight: clearWidthMm >= a.shoulderMm, shoulderMm: a.shoulderMm, sidewaysSpareMm: clearWidthMm - a.bodyDepthMm, headroomMm: s.heightMm - a.personHeightMm} : {clearWidthMm, clearHeightMm: s.heightMm}
+  if (a) {
+    need(access.sidewaysSpareMm >= 100, `the ${clearWidthMm} mm clear opening is too narrow to pass even sideways (body about ${a.bodyDepthMm} mm deep)`)
+    need(access.headroomMm >= a.headroomMm, `the ${s.heightMm} mm door head is under ${a.headroomMm} mm above a ${a.personHeightMm} mm person`)
+  }
 
   // Footprints standing against the north wall in front of the doors, per layout (z1 = 0 at the wall).
   const f = room.cornerLayout.furniture, t = room.tvWall
@@ -33,9 +41,12 @@ export function checkWallStorage(room, cavity, use) {
     {layouts: ['cornerSofas', 'cornerConsole', 'cornerProjector'], item: 'north sofa', x1: f.northSofa.centerXmm - f.northSofa.lengthMm / 2, x2: f.northSofa.centerXmm + f.northSofa.lengthMm / 2},
     {layouts: ['northTv'], item: 'TV wall cabinet', x1: t.fromWestMm, x2: t.fromWestMm + t.widthMm},
   ]
-  const blockedBy = fronts.filter(r => r.x1 < x2 && r.x2 > x1).map(r => ({layouts: r.layouts, item: r.item, overlapMm: Math.round(Math.min(r.x2, x2) - Math.max(r.x1, x1))}))
+  // Layout C hides the door on purpose behind the loose end module of the TV console, which rolls out of the way.
+  const k = room.southLayout?.console
+  if (k?.movable) fronts.push({layouts: ['southSofas'], item: 'movable TV console module (rolls out)', movable: true, x1: k.fromWestMm, x2: k.fromWestMm + k.movable.lengthMm})
+  const blockedBy = fronts.filter(r => r.x1 < x2 && r.x2 > x1).map(r => ({layouts: r.layouts, item: r.item, movable: !!r.movable, overlapMm: Math.round(Math.min(r.x2, x2) - Math.max(r.x1, x1))}))
   const litres = cab.widthMm * (room.heightMm - DOOR_HEAD_CLEAR_MM) * s.depthMm / 1e6
-  return {ok: issues.length === 0, issues, blockedBy, doorMm: s.widthMm, leafMm: Math.round(s.widthMm / s.doorCount), topMm: top, grossLitres: Math.round(litres)}
+  return {ok: issues.length === 0, issues, blockedBy, access, doorMm: s.widthMm, leafMm: Math.round(s.widthMm / s.doorCount), topMm: top, grossLitres: Math.round(litres)}
 }
 
 /**
