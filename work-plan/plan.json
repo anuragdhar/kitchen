@@ -763,7 +763,8 @@
         "window-wood-finish"
       ],
       "status": "todo",
-      "needs": "Measure how far the cover above the window projects (450 mm or more is needed) and the width of one shutter leaf. Bamboo or outdoor PVC/HDPE screen; cord, crank or motor. Society rules on the outside look"
+      "needs": "Measure how far the cover above the window projects (450 mm or more is needed) and the width of one shutter leaf. Bamboo or outdoor PVC/HDPE screen; cord, crank or motor. Society rules on the outside look",
+      "source": "docs/drawings/south-window-chick-cord.png"
     },
     {
       "id": "furniture",

@@ -1,0 +1,97 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 900" font-family="Segoe UI, Arial, sans-serif" font-size="15">
+  <defs>
+    <pattern id="bamboo" width="6" height="8" patternUnits="userSpaceOnUse"><rect width="6" height="8" fill="#d9a85a"/><line x1="0" y1="7.5" x2="6" y2="7.5" stroke="#9a6a24" stroke-width="1.2"/></pattern>
+    <pattern id="bambooWide" width="10" height="9" patternUnits="userSpaceOnUse"><rect width="10" height="9" fill="#e3bd7a"/><line x1="0" y1="8.4" x2="10" y2="8.4" stroke="#a9792f" stroke-width="1.1"/></pattern>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#f59e0b"/></marker>
+    <marker id="dot" markerWidth="8" markerHeight="8" refX="4" refY="4"><circle cx="4" cy="4" r="3" fill="#dc2626"/></marker>
+  </defs>
+  <rect width="1400" height="900" fill="#ffffff"/>
+  <text x="40" y="44" font-size="25" font-weight="700" fill="#172033">Outside sun screen on the south-west window: the cord comes inside through the frame</text>
+  <text x="40" y="70" fill="#475569">Proposal. The shutters open outward, so the screen hangs from the edge of the cover, beyond their swing. Sizes are estimates until measured.</text>
+
+  <!-- ================= SECTION ================= -->
+  <text x="40" y="112" font-size="18" font-weight="700" fill="#172033">1. Cut through the wall, seen from the side</text>
+  <text x="60" y="150" font-size="16" font-weight="700" fill="#b45309">OUTSIDE</text>
+  <text x="720" y="150" font-size="16" font-weight="700" fill="#0f766e">INSIDE (Drawing Room)</text>
+
+  <!-- wall above and below the window -->
+  <rect x="600" y="120" width="70" height="80" fill="#cbd5e1" stroke="#475569"/>
+  <rect x="600" y="665" width="70" height="165" fill="#cbd5e1" stroke="#475569"/>
+  <!-- floor -->
+  <rect x="600" y="830" width="330" height="18" fill="#e2e8f0" stroke="#475569"/>
+  <!-- cover above the window -->
+  <rect x="440" y="165" width="160" height="20" fill="#94a3b8" stroke="#475569"/>
+  <!-- wooden frame head and sill -->
+  <rect x="600" y="200" width="70" height="18" fill="#8a5b37" stroke="#4d3220"/>
+  <rect x="600" y="647" width="70" height="18" fill="#8a5b37" stroke="#4d3220"/>
+  <!-- glass line when shut (faint) -->
+  <line x1="612" y1="218" x2="612" y2="647" stroke="#93c5fd" stroke-width="3" stroke-dasharray="5 5"/>
+  <!-- shutter swung open, seen edge-on as it sticks out -->
+  <rect x="483" y="222" width="117" height="421" fill="#8a5b37" fill-opacity=".18" stroke="#8a5b37" stroke-width="2" stroke-dasharray="7 4"/>
+  <!-- the chick -->
+  <rect x="451" y="185" width="8" height="452" fill="url(#bamboo)" stroke="#9a6a24"/>
+  <circle cx="455" cy="645" r="13" fill="#d9a85a" stroke="#9a6a24" stroke-width="2"/>
+  <circle cx="455" cy="190" r="5" fill="#334155"/>
+  <!-- cord: up the chick, to the pulley, back under the cover, through the eyelet, down to the cleat -->
+  <polyline points="455,632 446,410 446,192 455,190 600,192 670,192 694,196 694,470" fill="none" stroke="#dc2626" stroke-width="2.5"/>
+  <circle cx="600" cy="192" r="5" fill="#fff" stroke="#b45309" stroke-width="2.5"/>
+  <circle cx="670" cy="192" r="5" fill="#fff" stroke="#b45309" stroke-width="2.5"/>
+  <path d="M686 470 h16 M690 462 v16 M698 462 v16" stroke="#334155" stroke-width="3"/>
+  <!-- mosquito roller net inside -->
+  <rect x="672" y="220" width="16" height="14" fill="#64748b"/>
+  <line x1="680" y1="234" x2="680" y2="647" stroke="#64748b" stroke-width="1.5" stroke-dasharray="2 4"/>
+  <!-- sofa under the window -->
+  <path d="M700 553 h40 v170 h130 v107 h-170 z" fill="#f1e4cf" stroke="#b08a5a"/>
+  <!-- sun -->
+  <g stroke="#f59e0b" stroke-width="3" marker-end="url(#arrow)">
+    <line x1="150" y1="220" x2="438" y2="330"/><line x1="150" y1="320" x2="438" y2="430"/><line x1="150" y1="420" x2="438" y2="530"/>
+  </g>
+  <circle cx="110" cy="250" r="34" fill="#fbbf24"/>
+  <text x="60" y="500" fill="#b45309" font-weight="700">summer sun and heat</text>
+  <text x="60" y="520" fill="#b45309">are stopped here,</text>
+  <text x="60" y="540" fill="#b45309">before the glass</text>
+
+  <!-- labels -->
+  <g fill="#172033">
+    <line x1="500" y1="165" x2="440" y2="150" stroke="#475569"/><text x="260" y="154" font-weight="700">cover above the window</text>
+    <line x1="455" y1="560" x2="330" y2="600" stroke="#9a6a24"/><text x="200" y="606" fill="#7c4a12" font-weight="700">roll-up screen</text><text x="200" y="626" fill="#7c4a12">hangs from the</text><text x="200" y="646" fill="#7c4a12">edge of the cover</text>
+    <line x1="540" y1="640" x2="540" y2="700" stroke="#8a5b37"/><text x="380" y="720" fill="#6b3f1d" font-weight="700">shutter, opened outward</text><text x="380" y="740" fill="#6b3f1d">(about 390 mm): it swings</text><text x="380" y="760" fill="#6b3f1d">behind the screen</text>
+    <line x1="636" y1="192" x2="760" y2="186" stroke="#b45309"/><text x="766" y="184" fill="#92400e" font-weight="700">small lined hole (eyelet) through</text><text x="766" y="204" fill="#92400e">the top of the wooden frame,</text><text x="766" y="224" fill="#92400e">above the shutters</text>
+    <line x1="702" y1="470" x2="770" y2="440" stroke="#dc2626"/><text x="776" y="430" fill="#b91c1c" font-weight="700">you pull the cord here,</text><text x="776" y="450" fill="#b91c1c">from inside, and tie it</text><text x="776" y="470" fill="#b91c1c">on the hook</text>
+    <line x1="688" y1="300" x2="770" y2="300" stroke="#64748b"/><text x="776" y="305" fill="#475569">roller mosquito net (inside)</text>
+    <text x="760" y="770" fill="#8a6d3b">south sofa</text>
+    <text x="606" y="760" fill="#334155" font-size="13">wall</text>
+  </g>
+  <!-- dimension: screen distance from wall -->
+  <g stroke="#334155" fill="#334155"><line x1="455" y1="800" x2="600" y2="800"/><line x1="455" y1="792" x2="455" y2="808"/><line x1="600" y1="792" x2="600" y2="808"/></g>
+  <text x="528" y="822" text-anchor="middle" fill="#334155">450 mm or more</text>
+
+  <!-- ================= FROM INSIDE ================= -->
+  <text x="1000" y="112" font-size="18" font-weight="700" fill="#172033">2. Seen from inside the room</text>
+  <rect x="1000" y="150" width="360" height="330" fill="#f8fafc" stroke="#cbd5e1"/>
+  <!-- frame -->
+  <rect x="1020" y="190" width="320" height="220" fill="url(#bambooWide)" stroke="#4d3220" stroke-width="7"/>
+  <g stroke="#4d3220" stroke-width="5"><line x1="1127" y1="190" x2="1127" y2="410"/><line x1="1233" y1="190" x2="1233" y2="410"/></g>
+  <g stroke="#4d3220" stroke-width="2"><line x1="1073" y1="190" x2="1073" y2="410"/><line x1="1180" y1="190" x2="1180" y2="410"/><line x1="1286" y1="190" x2="1286" y2="410"/></g>
+  <!-- eyelet and cord -->
+  <circle cx="1032" cy="186" r="5" fill="#fff" stroke="#b45309" stroke-width="2.5"/>
+  <polyline points="1032,186 1012,200 1012,330" fill="none" stroke="#dc2626" stroke-width="2.5"/>
+  <path d="M1004 330 h16 M1008 322 v16 M1016 322 v16" stroke="#334155" stroke-width="3"/>
+  <text x="1010" y="440" fill="#475569">Three sections, two shutters each.</text>
+  <text x="1010" y="460" fill="#475569">The screen shows through the glass.</text>
+  <line x1="1012" y1="270" x2="1000" y2="520" stroke="#dc2626"/>
+  <text x="1000" y="540" fill="#b91c1c" font-weight="700">Cord and hook at one top corner,</text>
+  <text x="1000" y="560" fill="#b91c1c">on the frame, within reach.</text>
+
+  <!-- notes -->
+  <rect x="980" y="600" width="390" height="250" rx="10" fill="#f8fafc" stroke="#cbd5e1"/>
+  <text x="1000" y="630" font-weight="700" fill="#172033">Why this works</text>
+  <text x="1000" y="656" fill="#334155">1. The hole is above the shutters, so</text>
+  <text x="1018" y="676" fill="#334155">closing them never traps the cord.</text>
+  <text x="1000" y="702" fill="#334155">2. The screen hangs past the shutter</text>
+  <text x="1018" y="722" fill="#334155">swing, so shutters open behind it.</text>
+  <text x="1000" y="748" fill="#334155">3. You never lean out of the window.</text>
+  <text x="1000" y="782" font-weight="700" fill="#991b1b">To measure first</text>
+  <text x="1000" y="806" fill="#991b1b">How far the cover sticks out, and the</text>
+  <text x="1000" y="826" fill="#991b1b">width of one shutter leaf.</text>
+</svg>
