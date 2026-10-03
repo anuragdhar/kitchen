@@ -335,6 +335,19 @@
       "needs": "Plan not made yet"
     },
     {
+      "id": "elec-entry-ceiling",
+      "phase": "electrical-rough",
+      "trade": "electrical",
+      "title": "Entry ceiling: run the wiring for the lights and their switch",
+      "room": "Main entry",
+      "detail": "Owner 2026-10-04 (electrician). Before the PVC ceiling goes up: chase a conduit from a switch box beside the main door up the wall, and run it on the slab above the ceiling line to each light position, leaving about 300 mm of spare wire at each point. Two light points are proposed, on one switch. Take the supply from the nearest lighting circuit. Mark the light positions on the slab from the plank layout so they land where the cut-outs will be.",
+      "dependsOn": [
+        "entry-ceiling-plan"
+      ],
+      "status": "todo",
+      "needs": "Light count and positions, and the switch position, from the entry ceiling plan"
+    },
+    {
       "id": "plaster",
       "phase": "surfaces",
       "trade": "civil",
@@ -383,13 +396,14 @@
       "trade": "ceiling",
       "title": "Fit the entry ceiling: long PVC planks on a frame",
       "room": "Main entry",
-      "detail": "Fix a level frame of battens or metal channels to the slab, run the light wiring above it first, then clip the PVC planks on and finish the edges with trim. The entry is about 2.1 m long by 1.0 m clear wide on the plan. Set the planks out from the centre line so the two edge planks are cut to the same width. Fit the recessed LED panel lights in round cut-outs; place each cut-out within one plank or centred on a joint, and add a batten above each light to carry it.",
+      "detail": "Fix a level frame of battens or metal channels to the slab, then clip the PVC planks on and finish the edges with trim. The light wiring must already be in place above (electrician). The entry is about 2.1 m long by 1.0 m clear wide on the plan. Set the planks out from the centre line so the two edge planks are cut to the same width, and add a batten above each light position to carry the light. The electrician cuts the light openings and fits the lights afterwards.",
       "dependsOn": [
         "entry-ceiling-plan",
-        "plaster"
+        "plaster",
+        "elec-entry-ceiling"
       ],
       "status": "todo",
-      "needs": "Plank chosen; light wiring for the entry run before the planks go on"
+      "needs": "Plank chosen"
     },
     {
       "id": "carp-west-cabinet",
@@ -510,6 +524,19 @@
       "dependsOn": [
         "elec-second-fix",
         "carp-tv-console"
+      ],
+      "status": "todo"
+    },
+    {
+      "id": "elec-entry-lights",
+      "phase": "second-fix",
+      "trade": "electrical",
+      "title": "Entry ceiling: fit the lights and the switch, and test",
+      "room": "Main entry",
+      "detail": "Owner 2026-10-04 (electrician). Cut the round openings in the PVC planks, connect and clip in the recessed LED panel lights (single colour; neutral white proposed), fit the switch plate at the door and test. Each driver sits above the ceiling on the batten, not resting on the PVC.",
+      "dependsOn": [
+        "elec-entry-ceiling",
+        "entry-ceiling"
       ],
       "status": "todo"
     },
