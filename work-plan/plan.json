@@ -335,7 +335,7 @@
       "id": "skirting",
       "phase": "surfaces",
       "trade": "civil",
-      "title": "Replace the old projecting skirting with modern flush skirting",
+      "title": "Optional: replace the old projecting skirting with modern flush skirting",
       "room": "Whole home",
       "detail": "Owner 2026-10-04: the present skirting is the old type that sticks out from the wall, so dust collects on its top edge and in the corners. Replace it along the walls with a modern skirting that sits in line with the wall. Options to price: (1) flush skirting, a tile or stone strip set into the plaster so its face is level with the wall, with a thin groove above it; (2) a recessed aluminium profile that leaves a shadow gap; (3) a slim 50-60 mm tile skirting with a straight top edge, the cheapest and least dusty of the surface types. Options 1 and 2 need the wall base chased and re-plastered, so they are done with the plaster work and before painting. Running length not yet measured.",
       "dependsOn": [
@@ -343,7 +343,8 @@
         "flooring"
       ],
       "status": "todo",
-      "needs": "Choose the type; measure the running length; decide which rooms"
+      "needs": "OPTIONAL (owner 2026-10-04: a lot of work for the whole home). Decide before plaster work starts: do it, do only some rooms, or skip",
+      "notes": "If done, it must be finished before painting. Skipping it does not hold up anything else."
     },
     {
       "id": "carp-west-cabinet",
@@ -408,8 +409,7 @@
       "dependsOn": [
         "plaster",
         "carp-west-cabinet",
-        "carp-tv-console",
-        "skirting"
+        "carp-tv-console"
       ],
       "status": "todo"
     },
