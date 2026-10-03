@@ -17,37 +17,37 @@ Positions are measured inside the room: **x** from the west wall, **z** from the
 | --- | --- | --- | --- | --- |
 | N1 | TV box (behind the screen) | north wall, x 1600, 1000 high | 2 x 6 A sockets in a recessed media box + 1 CAT6 + end of the HDMI conduit | TV and a streaming stick; recessed so the plugs do not push the TV off the wall |
 | N2 | Media point in the TV console | north wall, x 1300, 400 high | 3 x 6 A sockets + 1 TV coax (DTH/cable) + 1 CAT6 (spare) | behind the console back: Bass Module 500, set-top box and Soundbar 300; a 50 mm conduit runs up inside the wall to N1 for HDMI (eARC) |
+| N4 | Router, phone and intercom point | north wall, x 990, 400 high | 2 x 6 A sockets + fibre/broadband entry + telephone line + intercom cable + 1 CAT6 to N1 | behind the router bay of the TV console: router and landline base, intercom wiring to the desk intercom on the console top |
 | N3 | West cabinet light | inside the west cabinet, x 380, 2450 high | LED batten with a door-contact switch | lights the winter-clothes closet when its doors open; nothing to remember to switch off |
 | E1 | Main switchboard + drop-zone charger | east wall, z 1250, 1200 high | switches for chandelier, uplight, reading light (2-way), sofa glow; 1 x 6 A socket; 1 USB-A + USB-C charger | first wall on the left after the entry door swing (850 mm); phones and keys can charge on arrival |
-| E2 | Router cabinet | east wall, z 1090, 1560 high | 2 x 6 A sockets + fibre/broadband entry + telephone line + 2 CAT6 out (to N1 and N2) | router and landline base inside the lattice cell of the east-wall cabinet |
-| E3 | Intercom | east wall, z 1810, 1775 high | building intercom cable + 1 x 6 A socket if the handset needs mains | intercom handset in the third cell of the cabinet, near the entry door |
 | E4 | Utility socket | east wall, z 1850, 300 high | 1 x 6/16 A combined socket | vacuum cleaner, festival lights, a room heater in winter |
 | W1 | AC point | west wall, z 3080, 2300 high | 1 x 16 A socket (or isolator) on its own circuit | the existing split AC indoor unit (centred z 2420); keep beside the unit, not behind it |
 | W2 | Wall uplight | west wall, z 850, 1800 high | light point | west wall uplight (drawingLightingConfig), switched at E1 |
 | W3 | Lamp + charging, west sofa north end | west wall, z 1835, 300 high | 1 x 6 A socket + 1 USB-A + USB-C | side-table lamp and phones at the end of the west sofa |
 | W4 | Charging above the west sofa | west wall, z 3800, 1000 high | 1 USB-A + USB-C charger + 1 x 6 A socket | reachable from the west sofa seats without getting up; just above the sofa back (about 925 mm) |
-| W5 | Reading light | west wall, z 4645, 1550 high | light point with a local switch (2-way with E1) | reading light over the corner seat of the L |
-| S1 | Sofa glow driver | south wall, x 1155, 300 high | 1 x 6 A switched socket (switched at E1) | LED driver for the low glow strip under the south sofa |
-| S2 | Lamp + charging, south sofa east end | south wall, x 2450, 300 high | 1 x 6 A socket + 1 USB-A + USB-C + 2-way chandelier switch | side-table lamp and phones at the open end of the south sofa |
-| S3 | Spare / heater socket | south wall, x 3050, 300 high | 1 x 6/16 A combined socket | room heater, air purifier or decorative lights by the window |
+| W6 | Lamp + charging at the corner table | west wall, z 4835, 700 high | 1 x 6 A socket + 1 USB-A + USB-C | just above the corner lamp table (550 high), for its lamp and phones at the west end of the south sofa |
+| W5 | Reading light | west wall, z 4645, 1550 high | light point with a local switch (2-way with E1) | reading light over the corner lamp table and the west end of the south sofa |
+| S1 | Sofa glow driver | south wall, x 1605, 300 high | 1 x 6 A switched socket (switched at E1) | LED driver for the low glow strip under the south sofa |
+| S2 | Lamp + charging, south sofa east end | south wall, x 2850, 300 high | 1 x 6 A socket + 1 USB-A + USB-C + 2-way chandelier switch | side-table lamp and phones at the open end of the south sofa |
+| S3 | Spare / heater socket | south wall, x 3200, 300 high | 1 x 6/16 A combined socket | room heater, air purifier or decorative lights by the window |
 | C1 | Chandelier | ceiling, x 1745, z 3425 | ceiling light point with a hook rated for the fitting | over the coffee table; 2-way switched at E1 and S2. Moves 125 mm south of the layout A point |
 | F1 | Floor box at the coffee table (optional) | floor, x 1230, z 3425 | flush floor box: 1 x 6 A + USB-A/C, lid closes over plugs | charging at the table and the west sofa; must be chased into the floor before tiling, under the rug |
 
-Totals: 17 points: 5 socket points, 4 charging points (1 optional), 5 lighting and switch points, 2 data points and 1 dedicated AC point.
+Totals: 17 points: 5 socket points, 5 charging points (1 optional), 5 lighting and switch points, 1 data point and 1 dedicated AC point.
 
 ## Phone charging
 
 Every sofa seat has a USB charging point within 1.5 m, not counting the optional floor box:
 
-- south sofa seat at x 405: 1111 mm
-- south sofa seat at x 1155: 1388 mm
-- south sofa seat at x 1905: 740 mm
+- south sofa seat at x 855: 855 mm
+- south sofa seat at x 1605: 1342 mm
+- south sofa seat at x 2355: 704 mm
 - west sofa seat at z 2470: 860 mm
 - west sofa seat at z 3220: 820 mm
 - west sofa seat at z 3970: 604 mm
 
 Also: the drop-zone charger at the main switchboard (E1) for phones on arrival. The middle seat of the south sofa is the
-furthest (about 1.4 m): the window takes the wall behind it, so the optional floor box F1, or a 2 m cable, covers it best.
+furthest (about 1.35 m): the window takes the wall behind it, so the optional floor box F1, or a 2 m cable, covers it best.
 
 ## Circuits
 
@@ -66,7 +66,7 @@ All sockets three-pin with an effective earth, BIS-marked (IS 1293); modular box
 The checks confirm that no box sits in a door opening (the entry door, the west cabinet door), in the window, in the lobby
 opening, behind the open entry door, or behind the AC unit. They confirm that every reachable socket is clear of the sofas
 and 150-1100 mm high, that the switchboard is 1100-1400 mm high, that the TV box stays hidden behind both the 55- and 65-inch
-TV, and that the router point is inside its cabinet.
+TV, and that the router point is behind the TV console's router bay.
 
 Not checked or not known: the existing points and wiring in the room, where the building's intercom, broadband and DTH cables
 enter, the AC's actual rating, and whether the floor can be chased for F1. Decide F1 before any flooring work. If the

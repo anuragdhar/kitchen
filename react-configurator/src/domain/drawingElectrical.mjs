@@ -1,6 +1,6 @@
 // Checks and positions for the Drawing Room electrical plan (pure: no React or Three.js). Millimetres, room frame: x from the
 // west wall, z from the north wall, y up. Points: DRAWING_ELECTRICAL in config/drawingElectricalConfig.js.
-import {southTvGeometry, southRouterCabinet, WALL_FACE_MM} from './drawingRoomLayout.mjs'
+import {southTvGeometry, WALL_FACE_MM} from './drawingRoomLayout.mjs'
 
 const SOFA_BACK_MM = 950 // a point lower than this, behind a sofa standing against the wall, cannot be reached
 const NEAR_WALL_MM = 250 // a sofa within this of a wall line counts as standing against it
@@ -37,7 +37,7 @@ function againstWalls(room) {
 export function checkElectricalPlan(room, plan) {
   const issues = [], need = (ok, message) => { if (!ok) issues.push(message) }
   const door = room.doors.find(d => d.wall === 'north'), ws = room.wallStorage, win = room.windows.find(w => w.wall === 'south')
-  const tvs = Object.keys(room.southLayout.tv.tvs).map(key => southTvGeometry(room, key)), rc = southRouterCabinet(room)
+  const tvs = Object.keys(room.southLayout.tv.tvs).map(key => southTvGeometry(room, key)), console = tvs[0].console
   const blockers = againstWalls(room)
   const ac = {z1: room.furniture.sofa.centerZmm - 510, z2: room.furniture.sofa.centerZmm + 510, y1: 2230, y2: 2510} // RoomAirConditioning.js
   const ids = new Set()
@@ -61,16 +61,16 @@ export function checkElectricalPlan(room, plan) {
     if (!p.hidden && ['north', 'south', 'east', 'west'].includes(p.wall)) {
       for (const b of blockers) if (b.wall === p.wall && along > b.a - 50 && along < b.b + 50 && h < b.top) issues.push(`${label} is hidden behind the ${b.name}`)
       if (p.wall === 'north') for (const g of tvs) if (along > g.x1 && along < g.x2 && h > g.bottomMm && h < g.topMm) issues.push(`${label} is hidden behind the ${g.tv.diagonalInches}-inch TV`)
-      if (p.wall === 'east') need(!(along > rc.z1 && along < rc.z2 && h > rc.bottomMm && h < rc.bottomMm + rc.heightMm), `${label} is hidden inside the router cabinet`)
+      if (p.wall === 'north') need(!(along > console.x1 && along < console.x2 && h > console.bottomMm && h < console.topMm), `${label} is hidden behind the TV console`)
       if (p.kind === 'power' || p.kind === 'charging') need(h >= 150 && h <= 1100, `${label} at ${h} mm is outside the 150-1100 mm reach for a socket`)
     }
     if (p.kind === 'lighting' && /switchboard/i.test(p.name)) need(h >= 1100 && h <= 1400, `${label} at ${h} mm is outside the 1100-1400 mm switch height`)
   }
-  // The TV box must stay hidden behind every TV size, and the router point inside its cabinet.
+  // The TV box must stay hidden behind every TV size, and the router point behind the console's router bay.
   const tvBox = plan.points.find(p => p.id === 'N1')
   if (tvBox) for (const g of tvs) need(tvBox.alongMm > g.x1 + 100 && tvBox.alongMm < g.x2 - 100 && tvBox.heightMm > g.bottomMm + 100 && tvBox.heightMm < g.topMm - 100, `N1 is not hidden behind the ${g.tv.diagonalInches}-inch TV`)
-  const router = plan.points.find(p => p.id === 'E2')
-  if (router) need(router.alongMm > rc.z1 && router.alongMm < rc.z2 && router.heightMm > rc.bottomMm && router.heightMm < rc.bottomMm + rc.heightMm, 'E2 is not inside the router cabinet')
+  const router = plan.points.find(p => p.id === 'N4'), bay = tvs[0].routerBay
+  if (router) need(router.wall === 'north' && router.alongMm > bay.x1 && router.alongMm < bay.x2 && router.heightMm > console.bottomMm && router.heightMm < console.topMm, 'N4 is not behind the router bay of the TV console')
   // Every seat needs a charging point within reach (about 1.5 m of the seat centre).
   const f = room.southLayout.furniture, seats = [
     ...[-750, 0, 750].map(o => ({name: `south sofa seat at x ${f.southSofa.centerXmm + o}`, x: f.southSofa.centerXmm + o, z: f.southSofa.centerZmm})),

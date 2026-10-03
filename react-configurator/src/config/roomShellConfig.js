@@ -128,15 +128,17 @@ export const EMPTY_ROOM_SHELLS={
     // Layout "C" (owner, 2026-10-03; the default): the former north-wall sofa moves to the SOUTH wall, back against the wall under
     // the window, facing north; the west sofa slides south to meet it in an L in the south-west corner; the coffee table sits
     // inside the L; the TV is wall-mounted on the NORTH wall, on the free stretch between the west cabinet door (wallStorage,
-    // x 80-680) and the entry door (x 2150). Nothing stands in front of the west cabinet door any more. The router, landline and
-    // intercom cabinet (cornerLayout.routerCabinet, same box) moves to the solid stretch of the EAST wall, past the swing of the
-    // entry door and near it, where an intercom belongs. Sofas keep the 880 x 2250 footprint.
+    // x 80-680) and the entry door (x 2150). Nothing stands in front of the west cabinet door any more. Sofas keep 880 x 2250.
+    // Owner, later 2026-10-03: the south sofa moves 450 mm east and a small lamp table stands at its west end, in the corner
+    // (cornerTable); the east-wall router cabinet is removed and the router, landline and intercom go in the TV console.
     southLayout:{
       furniture:{
-        southSofa:{centerXmm:1155,centerZmm:4835,widthMm:880,lengthMm:2250},
+        southSofa:{centerXmm:1605,centerZmm:4835,widthMm:880,lengthMm:2250},
         westSofa:{centerXmm:580,centerZmm:3220,widthMm:880,lengthMm:2250},
         coffeeTable:{centerXmm:1745,centerZmm:3425,widthMm:600,lengthMm:1100},
         rug:{centerXmm:1500,centerZmm:3585,widthMm:2100,lengthMm:2500},
+        // Round lamp table in the south-west corner, between the west wall and the south sofa's west arm.
+        cornerTable:{centerXmm:255,centerZmm:4835,diameterMm:400,heightMm:550},
       },
       // Flat on the wall, centred on the free stretch (x 680-2150). The TV centre is at seated eye height; both sizes are listed
       // as in B2 (the owner has a 55-inch now and may fit a 65-inch later). 65 inches is the widest that fits the stretch: it
@@ -144,12 +146,15 @@ export const EMPTY_ROOM_SHELLS={
       tv:{centerFromWestMm:1415,centerHeightMm:1150,mountMm:35,installedTv:'55',
         tvs:{'55':{diagonalInches:55,widthMm:1230,heightMm:710,depthMm:45},'65':{diagonalInches:65,widthMm:1450,heightMm:830,depthMm:55}}},
       // TV cabinet below the TV (owner, 2026-10-03): a wall-hung low console, centred under the TV, clear of the west cabinet
-      // door and the entry door frame by 85 mm each. Bass Module 500 behind an open lattice in its east bay (a closed door would
-      // muffle it); a storage bay with a lattice door for the set-top box and media; the Soundbar 300 stands on top.
-      console:{centerFromWestMm:1415,lengthMm:1300,depthMm:400,heightMm:400,bottomMm:200,panelMm:18,backMm:12,moduleBayMm:420},
+      // door and the entry door frame by 85 mm each. It holds everything that used to be in the east-wall cabinet:
+      //  west bay   the Wi-Fi router behind an open lattice (the signal and its heat get out), routerBayMm wide;
+      //  middle     storage behind a lattice door: set-top box, remotes, media;
+      //  east bay   the Bass Module 500 behind an open lattice (a closed door would muffle it), moduleBayMm wide;
+      //  top        Soundbar 300 centred under the TV, the landline at the west end, a desk intercom at the east end.
+      // The device sizes are cornerLayout.routerCabinet's router, landline and intercom.
+      console:{centerFromWestMm:1415,lengthMm:1300,depthMm:400,heightMm:400,bottomMm:200,panelMm:18,backMm:12,routerBayMm:420,moduleBayMm:420},
       soundbar:{model:'Bose Smart Soundbar 300',widthMm:699,heightMm:58,depthMm:102,frontSetbackMm:60},
       bassModule:{model:'Bose Bass Module 500',widthMm:254,heightMm:254,depthMm:241},
-      routerCabinet:{wall:'east',fromNorthMm:900},
     },
     // The northeast corner of this wall backs Bedroom 1's northEastRecessWardrobe
     // (roomShellConfig.js bedroom1.furniture), not a door into Drawing Room -

@@ -239,8 +239,9 @@ function LiveWholeHome3D({onOpenRoom}){
       return group
     }
     const localBox=(group,w,h,d,x,y,z,material)=>addBox(w/1000,h/1000,d/1000,x/1000,y/1000,z/1000,material,group)
+    const boundsNames=new Map() // room frames that are not a HOME_ROOM_LAYOUTS bounds array
     const roomEdge=(bounds,width,length,side,holes=[])=>{
-      const roomName=ROOMS.find(room=>room.bounds===bounds)?.name||'Whole home'
+      const roomName=boundsNames.get(bounds)||ROOMS.find(room=>room.bounds===bounds)?.name||'Whole home'
       const total=side==='north'||side==='south'?width:length
       const valid=holes.map(h=>({...h,start:Math.max(0,h.start),end:Math.min(total,h.end)})).filter(h=>h.end>h.start).sort((a,b)=>a.start-b.start)
       const line=(start,end,bottom=0,top=HEIGHT,material=roomName==='Drawing Room'?drawingWallMaterial:wallMaterial)=>{
@@ -413,7 +414,13 @@ function LiveWholeHome3D({onOpenRoom}){
     localBox(og,280,190,440,155,410,od.lengthMm-rear.widthMm/2,screen) // Printer on the centre pull-out shelf.
     localBox(og,office.equipment.laptop.depthMm,18,office.equipment.laptop.widthMm,560,deskHeight+18,od.lengthMm-500,screen)
 
-    const bedroom=EMPTY_ROOM_SHELLS.bedroom1,bbounds=boundsFor('Bedroom 1')
+    // Bedroom 1's plan bounds (HOME_ROOM_LAYOUTS) include its east balcony (plan x 273-339). The room frame is the bedroom
+    // itself, west wall (plan x 515) to east wall (plan x 339, the balcony's inner edge); the balcony extension continues past
+    // widthMm at the same scale. Fitting widthMm to the whole bounds stretched the room 1.39x east, so the bed ran into the
+    // Pooja Ghar and the east wall was drawn through it (owner report 2026-10-03).
+    const bedroomPlan=boundsFor('Bedroom 1'),bbounds=[ROOMS.find(room=>room.key==='bedroom1-balcony').bounds[2],...bedroomPlan.slice(1)]
+    boundsNames.set(bbounds,'Bedroom 1')
+    const bedroom=EMPTY_ROOM_SHELLS.bedroom1
     const bg=roomGroup(bbounds,bedroom.widthMm,bedroom.lengthMm)
     bg.add(createRoomAirConditioning(bedroom))
     const poojaWardrobe=bedroom.balconyExtension?.poojaWallWardrobe

@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import {checkSouthLayout, southTvGeometry, southRouterCabinet} from '../src/domain/drawingRoomLayout.mjs'
+import {checkSouthLayout, southTvGeometry} from '../src/domain/drawingRoomLayout.mjs'
 import {checkWallStorage} from '../src/domain/wallStorage.mjs'
 import {cavityGeometry, usableDepth} from '../src/domain/entryCavity.mjs'
 import {buildRoomReview} from '../src/domain/roomReview.mjs'
@@ -34,11 +34,25 @@ test('the TV is on the north wall between the west cabinet door and the entry do
   assert.equal(checkSouthLayout(room).clearances.tvMarginsMm['55'], 120)
 })
 
-test('nothing stands in front of the west cabinet door, and the router cabinet clears the entry door swing', () => {
-  const r = checkSouthLayout(room)
-  assert.ok(r.clearances.cabinetDoorFrontClearMm >= 600)
-  const rc = southRouterCabinet(room), door = room.doors.find(d => d.wall === 'north')
-  assert.ok(rc.z1 >= door.leafMm && rc.z2 <= room.wallOpenings.east.fromMm)
+test('nothing stands in front of the west cabinet door', () => {
+  assert.ok(checkSouthLayout(room).clearances.cabinetDoorFrontClearMm >= 600)
+})
+
+test('the TV console holds the router, landline and intercom; there is no east-wall cabinet', () => {
+  const g = southTvGeometry(room), k = room.southLayout.console
+  assert.equal(room.southLayout.routerCabinet, undefined)
+  assert.ok(g.routerBay.x1 >= g.console.x1 && g.routerBay.x2 < g.bay.x1, 'router bay at the west end, Bass Module bay at the east end')
+  assert.ok(g.landlineX < g.soundbar.x1 && g.intercomX > g.soundbar.x2, 'landline west of the soundbar, intercom east of it')
+  assert.ok(g.console.x1 >= room.wallStorage.fromWestMm + room.wallStorage.widthMm && g.console.x2 <= room.doors[0].fromMm)
+  assert.ok(k.routerBayMm >= g.router.widthMm + 40)
+})
+
+test('the south sofa moved east and a small lamp table stands at its west end', () => {
+  const f = room.southLayout.furniture, r = checkSouthLayout(room)
+  assert.equal(f.southSofa.centerXmm, 1605)
+  assert.ok(f.cornerTable.centerXmm < f.southSofa.centerXmm - f.southSofa.lengthMm / 2)
+  assert.ok(r.clearances.cornerTable.southSofa >= 0 && r.clearances.cornerTable.southSofa <= 80)
+  assert.ok(r.clearances.cornerTable.westWall >= 0 && r.clearances.cornerTable.westSofa >= 0)
 })
 
 test('the west cabinet leaves open inward and clear the shelves; no layout C furniture blocks them', () => {

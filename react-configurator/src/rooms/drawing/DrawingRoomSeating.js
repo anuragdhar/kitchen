@@ -77,14 +77,21 @@ function buildSeating(spec, {wallFaceMm = 0} = {}) {
   }
 
   const decor = new THREE.Group(); decor.name = 'seating decor'; decor.userData.archvizExclude = true; group.add(decor)
-  const {xMm, zMm} = spec.sideTable
-  const sideTop = new THREE.Mesh(new THREE.CylinderGeometry(.19, .19, .04, 32), wood); sideTop.position.set(mm(xMm), .55, mm(zMm)); decor.add(sideTop)
-  const sideLeg = new THREE.Mesh(new THREE.CylinderGeometry(.03, .04, .53, 16), wood); sideLeg.position.set(mm(xMm), .265, mm(zMm)); decor.add(sideLeg)
-  const lampBody = new THREE.Mesh(new THREE.CylinderGeometry(.07, .09, .26, 24), new THREE.MeshStandardMaterial({color: '#3b2a1e', roughness: .5}))
-  lampBody.position.set(mm(xMm), .7, mm(zMm)); decor.add(lampBody)
   const shadeMaterial = new THREE.MeshStandardMaterial({color: '#f3dfbf', emissive: '#ffcf8b', emissiveIntensity: .55, roughness: .9, side: THREE.DoubleSide})
   shadeMaterial.userData.taskLightGlow = true
-  const shade = new THREE.Mesh(new THREE.CylinderGeometry(.13, .19, .22, 32, 1, true), shadeMaterial); shade.position.set(mm(xMm), .95, mm(zMm)); decor.add(shade)
+  // Round lamp tables: spec.sideTable, plus any spec.lampTables ({xMm, zMm, diameterMm, heightMm}). A furnished table (not decor)
+  // when it is part of the layout's plan, so it reaches the Blender export.
+  const lampTable = ({xMm, zMm, diameterMm = 380, heightMm = 550}, parent) => {
+    const r = mm(diameterMm) / 2, h = mm(heightMm)
+    const top = new THREE.Mesh(new THREE.CylinderGeometry(r, r, .04, 32), wood); top.position.set(mm(xMm), h, mm(zMm)); top.castShadow = true; parent.add(top)
+    const leg = new THREE.Mesh(new THREE.CylinderGeometry(.03, .04, h - .02, 16), wood); leg.position.set(mm(xMm), (h - .02) / 2, mm(zMm)); leg.castShadow = true; parent.add(leg)
+    const foot = new THREE.Mesh(new THREE.CylinderGeometry(r * .62, r * .66, .025, 32), wood); foot.position.set(mm(xMm), .0125, mm(zMm)); parent.add(foot)
+    const lampBody = new THREE.Mesh(new THREE.CylinderGeometry(.07, .09, .26, 24), new THREE.MeshStandardMaterial({color: '#3b2a1e', roughness: .5}))
+    lampBody.position.set(mm(xMm), h + .15, mm(zMm)); decor.add(lampBody)
+    const shade = new THREE.Mesh(new THREE.CylinderGeometry(.13, .19, .22, 32, 1, true), shadeMaterial); shade.position.set(mm(xMm), h + .4, mm(zMm)); decor.add(shade)
+  }
+  lampTable(spec.sideTable, decor)
+  for (const t of spec.lampTables ?? []) lampTable(t, group)
 
   for (const z of spec.panelsZ) {
     const panel = framedPanel(600, 900); panel.position.set(mm(wallFaceMm) + .02, 1.5, mm(z)); decor.add(panel)
@@ -120,8 +127,10 @@ export function createDrawingRoomSouthSeating(room, {wallFaceMm = 0} = {}) {
   return buildSeating({
     sofas: [{...f.southSofa, faces: 'north'}, {...f.westSofa, faces: 'east'}],
     table: f.coffeeTable, rug: f.rug,
-    // Side table and lamp just north of the west sofa, where the L opens toward the TV.
+    // Side table and lamp just north of the west sofa, where the L opens toward the TV; the corner lamp table at the south
+    // sofa's west end (room.southLayout.furniture.cornerTable).
     sideTable: {xMm: wallFaceMm + 260, zMm: f.westSofa.centerZmm - f.westSofa.lengthMm / 2 - 260},
+    lampTables: [{xMm: f.cornerTable.centerXmm, zMm: f.cornerTable.centerZmm, diameterMm: f.cornerTable.diameterMm, heightMm: f.cornerTable.heightMm}],
     panelsZ: [f.westSofa.centerZmm - 350, f.westSofa.centerZmm + 350],
   }, {wallFaceMm})
 }

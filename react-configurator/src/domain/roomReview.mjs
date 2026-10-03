@@ -2,7 +2,7 @@
 // config the 3D scenes use. Pure: no React, Three.js or DOM. Units are millimetres unless stated.
 import {BEDROOM1_CLOSED_DOOR, closedDoorSpanMm} from '../config/bedroom1ClosedDoor.js'
 import {HOME_ROOM_LAYOUTS} from '../config/homeRoomViews.js'
-import {checkDrawingRoomLayout, checkCornerLayout, checkCornerConsole, checkCornerProjector, checkSouthLayout, southRouterCabinet, consoleGeometry, projectorPlacement, tvWallGeometry, cornerTvFrontX, WALL_FACE_MM} from './drawingRoomLayout.mjs'
+import {checkDrawingRoomLayout, checkCornerLayout, checkCornerConsole, checkCornerProjector, checkSouthLayout, consoleGeometry, projectorPlacement, tvWallGeometry, cornerTvFrontX, WALL_FACE_MM} from './drawingRoomLayout.mjs'
 
 const mm = v => `${Math.round(v)} mm`
 const size = (a, b) => `${Math.round(a)} x ${Math.round(b)}`
@@ -106,7 +106,7 @@ function drawingLayoutB(room) {
 
 
 function drawingLayoutC(room) {
-  const s = room.southLayout, f = s.furniture, check = checkSouthLayout(room), g = check.tv, rc = southRouterCabinet(room), bm = s.bassModule
+  const s = room.southLayout, f = s.furniture, check = checkSouthLayout(room), g = check.tv, ct = s.furniture.cornerTable
   const sofa = (r, along) => along === 'x' ? {x1: r.centerXmm - r.lengthMm / 2, x2: r.centerXmm + r.lengthMm / 2, z1: r.centerZmm - r.widthMm / 2, z2: r.centerZmm + r.widthMm / 2} : {x1: r.centerXmm - r.widthMm / 2, x2: r.centerXmm + r.widthMm / 2, z1: r.centerZmm - r.lengthMm / 2, z2: r.centerZmm + r.lengthMm / 2}
   const south = sofa(f.southSofa, 'x'), west = sofa(f.westSofa, 'z'), t = f.coffeeTable
   return {
@@ -115,8 +115,8 @@ function drawingLayoutC(room) {
       `West-wall 3-seater: centre (${f.westSofa.centerXmm}, ${f.westSofa.centerZmm}), ${size(f.westSofa.widthMm, f.westSofa.lengthMm)}, back on the west wall, faces east, ${mm(check.clearances.sofaToSofa)} north of the south sofa (an L in the south-west corner).`,
       `Oval coffee table: centre (${t.centerXmm}, ${t.centerZmm}), ${size(t.widthMm, t.lengthMm)}, inside the L. Rug under it.`,
       `TV: ${g.tv.diagonalInches}-inch (${g.tv.widthMm} x ${g.tv.heightMm}) flat on the north wall, x ${g.x1}-${g.x2}, bottom edge ${mm(g.bottomMm)}, centre ${mm(s.tv.centerHeightMm)} high; it fits between the west cabinet door and the entry door with ${mm(check.clearances.tvMarginsMm[s.tv.installedTv])} to spare (a 65-inch leaves ${mm(check.clearances.tvMarginsMm['65'])}).`,
-      `TV cabinet below the TV: wall-hung console x ${g.console.x1}-${g.console.x2}, ${mm(s.console.depthMm)} deep, ${mm(g.console.bottomMm)}-${mm(g.console.topMm)} high (open below for cleaning). Bose Bass Module 500 behind an open lattice in its east bay, set-top box storage behind a lattice door, Bose Smart Soundbar 300 on top under the TV.`,
-      `Router, landline and intercom cabinet on the solid east wall: z ${rc.z1}-${rc.z2}, ${mm(rc.bottomMm)}-${mm(rc.bottomMm + rc.heightMm)} high, ${mm(rc.depthMm)} deep, past the entry door's swing.`,
+      `TV cabinet below the TV: wall-hung console x ${g.console.x1}-${g.console.x2}, ${mm(s.console.depthMm)} deep, ${mm(g.console.bottomMm)}-${mm(g.console.topMm)} high (open below for cleaning). It holds everything: the Wi-Fi router behind an open lattice (west bay), set-top box storage behind a lattice door, the Bose Bass Module 500 behind an open lattice (east bay); on top the Bose Smart Soundbar 300 under the TV, the landline at the west end and a desk intercom at the east end. There is no cabinet on the east wall.`,
+      `Round lamp table in the south-west corner at the south sofa's west end: centre (${ct.centerXmm}, ${ct.centerZmm}), ${mm(ct.diameterMm)} across, ${mm(ct.heightMm)} high, with a table lamp.`,
       `Nothing stands in front of the west cabinet door (x ${room.wallStorage.fromWestMm}-${room.wallStorage.fromWestMm + room.wallStorage.widthMm}); its two leaves open into the closet.`,
     ],
     items: [
@@ -125,7 +125,7 @@ function drawingLayoutC(room) {
       {label: `Table ${t.lengthMm}x${t.widthMm}`, x1: t.centerXmm - t.widthMm / 2, z1: t.centerZmm - t.lengthMm / 2, x2: t.centerXmm + t.widthMm / 2, z2: t.centerZmm + t.lengthMm / 2, kind: 'table'},
       {label: `TV ${g.tv.widthMm}`, x1: g.x1, z1: 0, x2: g.x2, z2: g.frontZ, kind: 'fixed'},
       {label: `TV console ${s.console.lengthMm}x${s.console.depthMm}`, x1: g.console.x1, z1: g.console.z1, x2: g.console.x2, z2: g.console.z2, kind: 'fixed'},
-      {label: `Router cabinet ${rc.widthMm}`, x1: rc.x1, z1: rc.z1, x2: rc.x2, z2: rc.z2, kind: 'fixed'},
+      {label: `Lamp table ${ct.diameterMm}`, x1: ct.centerXmm - ct.diameterMm / 2, z1: ct.centerZmm - ct.diameterMm / 2, x2: ct.centerXmm + ct.diameterMm / 2, z2: ct.centerZmm + ct.diameterMm / 2, kind: 'table'},
       {label: `West cabinet door ${room.wallStorage.widthMm}`, x1: room.wallStorage.fromWestMm, z1: 0, x2: room.wallStorage.fromWestMm + room.wallStorage.widthMm, z2: 40, kind: 'fixed'},
     ],
     measured: [

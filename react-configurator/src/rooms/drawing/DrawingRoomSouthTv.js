@@ -1,10 +1,9 @@
 import * as THREE from 'three'
 import {southTvGeometry} from '../../domain/drawingRoomLayout.mjs'
-import {createRouterCabinet} from './DrawingRoomCornerTv.js'
 
-// Layout C built-ins (room.southLayout): the TV flat on the north wall between the west cabinet door and the entry door, a
-// wall-hung TV console below it (Bass Module 500 behind a lattice in its east bay, a lattice-door storage bay, the Soundbar 300
-// on top), and the router | landline | intercom cabinet turned onto the solid stretch of the east wall. Room frame: millimetres in the config, metres in the scene; x from the west wall,
+// Layout C built-ins (room.southLayout): the TV flat on the north wall between the west cabinet door and the entry door, and a
+// wall-hung TV console below it holding everything else: the router (open lattice, west bay), set-top storage (lattice door),
+// the Bass Module 500 (open lattice, east bay), and on top the Soundbar 300, the landline and a desk intercom. Room frame: millimetres in the config, metres in the scene; x from the west wall,
 // z from the north wall. `wallFaceMm` is the distance from the nominal wall line to its drawn inside face.
 export function createDrawingRoomSouthTv(room, {wallFaceMm = 0} = {}) {
   const s = room.southLayout, sb = s.soundbar, bm = s.bassModule, k = s.console
@@ -58,36 +57,51 @@ export function createDrawingRoomSouthTv(room, {wallFaceMm = 0} = {}) {
     box(k.lengthMm, p, k.depthMm, midX, y1 - p / 2, midZ, carcass)                                // top
     box(k.lengthMm, p, k.depthMm, midX, y0 + p / 2, midZ, carcass)                                // bottom
     box(k.lengthMm, k.heightMm, k.backMm, midX, (y0 + y1) / 2, z0 + k.backMm / 2, inside)         // back
-    for (const x of [x1 + p / 2, x2 - p / 2, g.bay.x1 - p / 2]) box(p, k.heightMm - 2 * p, k.depthMm, x, (y0 + y1) / 2, midZ, carcass) // ends and bay divider
+    for (const x of [x1 + p / 2, x2 - p / 2, g.routerBay.x2 + p / 2, g.bay.x1 - p / 2]) box(p, k.heightMm - 2 * p, k.depthMm, x, (y0 + y1) / 2, midZ, carcass) // ends and bay dividers
     const innerH = k.heightMm - 2 * p, innerY = (y0 + y1) / 2
-    // Bass Module bay: open lattice so it can be heard; the module stands behind it.
-    const bay = g.bay, bayW = bay.x2 - bay.x1
-    for (let i = 0; i <= 9; i++) box(6, innerH - 8, 5, bay.x1 + 8 + (bayW - 16) * i / 9, innerY, z1 - 2, bars, false)
-    for (let j = 0; j <= 4; j++) box(bayW - 16, 6, 6, (bay.x1 + bay.x2) / 2, y0 + p + 6 + (innerH - 12) * j / 4, z1 - 2.5, bars, false)
+    // Open lattice over a bay: the router's signal and heat and the Bass Module's sound get out through it.
+    const lattice = ({x1: a, x2: b}) => {
+      const w = b - a
+      for (let i = 0; i <= 9; i++) box(6, innerH - 8, 5, a + 8 + (w - 16) * i / 9, innerY, z1 - 2, bars, false)
+      for (let j = 0; j <= 4; j++) box(w - 16, 6, 6, (a + b) / 2, y0 + p + 6 + (innerH - 12) * j / 4, z1 - 2.5, bars, false)
+    }
+    const white = mat('#e9ecee', {roughness: .5}), led = new THREE.MeshBasicMaterial({color: '#7bd88f'}), glass = mat('#15181b', {roughness: .1, metalness: .4})
+    // West bay: the Wi-Fi router, antennas up.
+    lattice(g.routerBay)
+    const rt = g.router, rx = (g.routerBay.x1 + g.routerBay.x2) / 2, rz = z0 + k.backMm + 40 + rt.depthMm / 2, ry = y0 + p + rt.heightMm / 2
+    box(rt.widthMm, rt.heightMm, rt.depthMm, rx, ry, rz, white)
+    for (const dx of [-rt.widthMm / 2 + 25, rt.widthMm / 2 - 25]) box(10, rt.antennaMm, 10, rx + dx, y0 + p + rt.heightMm + rt.antennaMm / 2, rz - rt.depthMm / 2 + 20, white)
+    box(8, 4, 2, rx - 60, ry, rz + rt.depthMm / 2 + 1, led, false)
+    // East bay: the Bass Module 500.
+    lattice(g.bay)
     const bassY = y0 + p + bm.heightMm / 2, bassZ = (g.bass.z1 + g.bass.z2) / 2
     box(bm.widthMm, bm.heightMm, bm.depthMm, (g.bass.x1 + g.bass.x2) / 2, bassY, bassZ, black)
     box(bm.widthMm - 30, bm.heightMm - 30, 2, (g.bass.x1 + g.bass.x2) / 2, bassY, g.bass.z2 + 1, grille, false)
-    // Storage bay: one door with the same lattice, for the set-top box, remotes and media.
-    const dx1 = x1 + p, dx2 = bay.x1 - p, dw = dx2 - dx1 - 6, dh = innerH - 6
+    // Middle bay: one door with the same lattice, for the set-top box, remotes and media.
+    const dx1 = g.storageBay.x1, dx2 = g.storageBay.x2, dw = dx2 - dx1 - 6, dh = innerH - 6
     box(dw, dh, p, (dx1 + dx2) / 2, innerY, z1 - p / 2, doorPanel)
-    const cols = Math.round(dw / 70), rows = Math.round(dh / 70)
+    const cols = Math.max(2, Math.round(dw / 70)), rows = Math.round(dh / 70)
     for (let i = 0; i <= cols; i++) box(6, dh - 16, 7, dx1 + 3 + 8 + (dw - 16) * i / cols, innerY, z1 + 3, bars, false)
     for (let j = 0; j <= rows; j++) box(dw - 16, 6, 7, (dx1 + dx2) / 2, y0 + p + 3 + 8 + (dh - 16) * j / rows, z1 + 3.5, bars, false)
-    // Soundbar 300 on the console top, centred under the TV.
+    // On the top: Soundbar 300 centred under the TV, the landline to its west, the desk intercom to its east.
     const sbZ = z1 - sb.frontSetbackMm - sb.depthMm / 2
     box(sb.widthMm, sb.heightMm, sb.depthMm, cx, g.soundbarY, sbZ, black)
     box(sb.widthMm - 12, sb.heightMm - 14, 2, cx, g.soundbarY, sbZ + sb.depthMm / 2 + 1, grille, false)
-    label(`TV console ${k.lengthMm} x ${k.depthMm}`, midX - 250, y0 - 120, z1 + 300)
+    const ll = g.landline, llZ = z1 - 60 - ll.depthMm / 2
+    box(ll.widthMm, ll.heightMm, ll.depthMm, g.landlineX, y1 + ll.heightMm / 2, llZ, white)
+    box(ll.widthMm - 40, 25, ll.depthMm - 30, g.landlineX, y1 + ll.heightMm + 12, llZ, white)
+    // Desk intercom: the handset unit on a small angled stand, screen toward the room.
+    const ic = g.intercom, icZ = z1 - 80
+    box(ic.widthMm, ic.heightMm, ic.depthMm, g.intercomX, y1 + ic.heightMm / 2, icZ, white)
+    box(ic.widthMm - 40, ic.heightMm * .45, 2, g.intercomX, y1 + ic.heightMm * .62, icZ + ic.depthMm / 2 + 1, glass, false)
+    box(ic.widthMm, 12, 90, g.intercomX, y1 + 6, icZ - 20, white)
+    label(`TV console ${k.lengthMm} x ${k.depthMm}`, midX, y0 - 120, z1 + 300)
     label('Soundbar 300', cx, y1 + 180, z1 + 300)
-    label('Bass Module 500 (inside)', (bay.x1 + bay.x2) / 2 + 150, y0 - 260, z1 + 300)
+    label('Router (inside)', rx - 100, y0 - 260, z1 + 300)
+    label('Bass Module 500 (inside)', (g.bay.x1 + g.bay.x2) / 2 + 150, y0 - 260, z1 + 300)
+    label('Landline', g.landlineX - 80, y1 + 330, z1 + 250)
+    label('Intercom', g.intercomX + 80, y1 + 420, z1 + 250)
   }
-
-  // Router | landline | intercom cabinet on the east wall: built in a wall frame (x along the wall), then turned so that frame's
-  // x runs south along the east wall and its z points west into the room.
-  const east = new THREE.Group(); east.name = 'router cabinet on the east wall'
-  east.position.set((room.widthMm - wallFaceMm) / 1000, 0, 0); east.rotation.y = -Math.PI / 2
-  east.add(createRouterCabinet({...room.cornerLayout.routerCabinet, fromWestMm: s.routerCabinet.fromNorthMm}, {label: labelsIn(east)}))
-  group.add(east)
 
   group.userData.setLabels = visible => { for (const labels of labelGroups) labels.visible = visible }
   group.userData.setTvSize = key => { if (tvGroups[key]) { shown = key; showTv() } }

@@ -19,9 +19,9 @@ test('every sofa seat has a charging point within 1.5 m, without counting the op
   assert.ok(reach.every(r => r.nearestMm <= 1500), JSON.stringify(reach))
 })
 
-test('the TV box stays hidden behind both TV sizes and the router point is inside its cabinet', () => {
+test('the TV box stays hidden behind both TV sizes and the router point is behind the console router bay', () => {
   assert.match(checkElectricalPlan(room, withPoint('N1', {alongMm: 900})).issues.join(' '), /N1 is not hidden/)
-  assert.match(checkElectricalPlan(room, withPoint('E2', {alongMm: 2100})).issues.join(' '), /E2 is not inside the router cabinet/)
+  assert.match(checkElectricalPlan(room, withPoint('N4', {alongMm: 1700})).issues.join(' '), /N4 is not behind the router bay/)
 })
 
 test('the checks catch points in openings, behind furniture or out of reach', () => {

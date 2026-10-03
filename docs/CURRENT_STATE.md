@@ -167,3 +167,9 @@ to the east wall. The west cabinet's two leaves open inward. Details: `docs/DRAW
 Drawing Room electrical plan (2026-10-03, layout C): 17 proposed points (TV box, media point, router and intercom, main
 switchboard with a drop-zone charger, AC, lamps, USB charging within 1.5 m of every seat, closet light, spares, optional
 floor box), shown with "Show electrical points". Planning only, for a licensed electrician: `docs/DRAWING_ROOM_ELECTRICAL.md`.
+
+Drawing Room layout C update (2026-10-03): a wall-hung TV console under the TV now holds the router, set-top storage and the Bass
+Module, with the soundbar, landline and a desk intercom on top; the east-wall cabinet is gone. The south sofa moved 450 mm east
+with a round lamp table at its west end.
+Whole home 3D: Bedroom 1 is fitted to its own walls (plan x 339-515), not stretched over its balcony, which had pushed the bed
+and the east wall into the Pooja Ghar.
