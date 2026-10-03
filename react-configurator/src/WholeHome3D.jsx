@@ -33,6 +33,8 @@ import {ENTRY,ENTRY_WALL_SEGMENTS,entryPocketEastWallSpans,PLAN_IMAGE} from './c
 import {createEntryArrivalDoor} from './rooms/entry/EntryArrivalDoor.js'
 import {createEntryFoldSeat} from './rooms/entry/EntryFoldSeat.js'
 import WallSelectionPanel from './WallSelectionPanel.jsx'
+import ItemDimensionsPanel from './ItemDimensionsPanel.jsx'
+import {pickItem,selectionOutline} from './render/dimensionPick.js'
 import PlanMarkPanel from './PlanMarkPanel.jsx'
 import HomeLightingGallery from './HomeLightingGallery.jsx'
 import BlenderHomeView from './BlenderHomeView.jsx'
@@ -94,6 +96,7 @@ function LiveWholeHome3D({onOpenRoom}){
   const [armOut,setArmOut]=useState(false),[tvSize,setTvSize]=useState('55'),[doorSwing,setDoorSwing]=useState(true),[storageOpen,setStorageOpen]=useState(false),[showElectrical,setShowElectrical]=useState(false)
   const [storageCoverOpen,setStorageCoverOpen]=useState(false)
   const [wallSelection,setWallSelection]=useState(null)
+  const [pickedItem,setPickedItem]=useState(null)
   const [wallNote,setWallNote]=useState('')
   const [markMode,setMarkMode]=useState(false)
   // null = existing studio lighting; a decimal hour drives the daylight sun.
@@ -235,6 +238,7 @@ function LiveWholeHome3D({onOpenRoom}){
       group.position.set(X(bounds[2]),0,Z(bounds[3]))
       group.rotation.y=Math.PI
       group.scale.set(X(bounds[2]-bounds[0])/(width/1000),1,Z(bounds[3]-bounds[1])/(length/1000))
+      group.userData.roomScale={x:group.scale.x,y:1,z:group.scale.z} // lets a clicked item report room millimetres (dimensionPick.js)
       model.add(group)
       return group
     }
@@ -690,6 +694,10 @@ function LiveWholeHome3D({onOpenRoom}){
     const raycaster=new THREE.Raycaster(),pointer=new THREE.Vector2()
     let pressedAt=null,markedMesh=null,markedMaterial=null
     const clearMark=()=>{if(markedMesh)markedMesh.material=markedMaterial;markedMesh=null;markedMaterial=null;setWallSelection(null);setWallNote('')}
+    // Click furniture or a cabinet: outline it and report its size (render/dimensionPick.js).
+    let itemOutline=null
+    const clearItem=()=>{if(itemOutline){scene.remove(itemOutline);itemOutline.userData.dispose();itemOutline=null}setPickedItem(null)}
+    const showItem=item=>{clearItem();itemOutline=selectionOutline(item.box);scene.add(itemOutline);const {box,object,...rest}=item;setPickedItem(rest)}
     // Tape measure: click a first point on any surface, then the line, the three axis legs and a tooltip follow the mouse
     // live until the second click (Esc cancels). World units are metres; readings snap to 5 mm.
     const measureGroup=new THREE.Group();measureGroup.name='measure overlay';scene.add(measureGroup)
@@ -780,6 +788,9 @@ function LiveWholeHome3D({onOpenRoom}){
         if(anyHit)handleMeasureClick(anyHit.point)
         return
       }
+      const item=pickItem(raycaster,[model],{stopAt:new Set(wallMeshes)})
+      if(item){clearMark();showItem(item);return}
+      clearItem()
       const hit=raycaster.intersectObjects(wallMeshes.filter(mesh=>mesh.visible&&mesh.parent.visible),false)[0]
       if(!hit)return
       if(markedMesh)markedMesh.material=markedMaterial
@@ -809,7 +820,7 @@ function LiveWholeHome3D({onOpenRoom}){
     const interiorRoomIds=['bedroom3','study','balcony','terrace','kitchen','lobby','drawing','bedroom1','bedroom1-balcony','entry']
     const interiorScene=registerInteriorScene({id:'whole-home',scene,camera,renderer,zones:ROOMS.map((r,index)=>({id:interiorRoomIds[index],min:[X(r.bounds[0]),0,Z(r.bounds[1])],max:[X(r.bounds[2]),HEIGHT,Z(r.bounds[3])]}))})
     let raf=0;const render=()=>{controls.update();designerRender.render();raf=requestAnimationFrame(render)};render()
-    sceneRef.current={setDesigner:on=>designerRender.setEnabled(on),setCavity:visible=>{cavityGroup.visible=visible},setRoomLight,setTvLabels:visible=>drawingLayouts.setLabels(visible),setDrawingLayout:key=>drawingLayouts.setLayout(key),setDrawingArm:pulled=>drawingLayouts.setArm(pulled),setElectrical:visible=>drawingLayouts?.setElectrical(visible),setDoorSwing:visible=>drawingLayouts.setDoorSwing(visible),setStorageOpen:open=>drawingLayouts.setStorageOpen(open),setDrawingTv:key=>drawingLayouts.setTvSize(key),setMedicineCabinetOpen:value=>doorInfill.userData.setOpen(value),setStorageCoverOpen:value=>storeStorage.userData.setCoverOpen(value),setMirrorOpen:value=>vanity.userData.setMirrorOpen?.(value),setPartitionOpen:value=>partition.userData.setOpen?.(value),setCamera,setWallsVisible:visible=>{walls.visible=visible},setBoardOpen:value=>{ironingStorage.userData.setBoardOpen(value)},setPoojaPersonVisible:visible=>{seatedPerson.visible=visible},setPoojaDoorsOpen:value=>{poojaDoors.userData.setDoorsOpen(value)},clearMark,setDaylight,setMeasure,clearMeasure}
+    sceneRef.current={clearItem,setDesigner:on=>designerRender.setEnabled(on),setCavity:visible=>{cavityGroup.visible=visible},setRoomLight,setTvLabels:visible=>drawingLayouts.setLabels(visible),setDrawingLayout:key=>drawingLayouts.setLayout(key),setDrawingArm:pulled=>drawingLayouts.setArm(pulled),setElectrical:visible=>drawingLayouts?.setElectrical(visible),setDoorSwing:visible=>drawingLayouts.setDoorSwing(visible),setStorageOpen:open=>drawingLayouts.setStorageOpen(open),setDrawingTv:key=>drawingLayouts.setTvSize(key),setMedicineCabinetOpen:value=>doorInfill.userData.setOpen(value),setStorageCoverOpen:value=>storeStorage.userData.setCoverOpen(value),setMirrorOpen:value=>vanity.userData.setMirrorOpen?.(value),setPartitionOpen:value=>partition.userData.setOpen?.(value),setCamera,setWallsVisible:visible=>{walls.visible=visible},setBoardOpen:value=>{ironingStorage.userData.setBoardOpen(value)},setPoojaPersonVisible:visible=>{seatedPerson.visible=visible},setPoojaDoorsOpen:value=>{poojaDoors.userData.setDoorsOpen(value)},clearMark,setDaylight,setMeasure,clearMeasure}
     setRoomLight(roomLightRef.current/100)
     setDaylight(sunHourRef.current)
     return()=>{interiorScene.dispose();cancelAnimationFrame(raf);designerRender.dispose();observer.disconnect();renderer.domElement.removeEventListener('pointerdown',onPointerDown);renderer.domElement.removeEventListener('pointerup',onPointerUp);renderer.domElement.removeEventListener('pointermove',onPointerMove);window.removeEventListener('keydown',onMeasureKey);cancelAnimationFrame(moveFrame);tip.remove();controls.dispose();model.traverse(object=>{object.geometry?.dispose?.();object.material?.dispose?.()});markedWallMaterial.dispose();texture.dispose();environment.dispose();pmrem.dispose();renderer.dispose();renderer.domElement.remove();sceneRef.current=null}
@@ -826,6 +837,8 @@ function LiveWholeHome3D({onOpenRoom}){
   useEffect(()=>{drawingLayoutRef.current=drawingLayout;sceneRef.current?.setDrawingLayout(drawingLayout)},[drawingLayout])
   useEffect(()=>{sceneRef.current?.setDrawingArm(armOut)},[armOut])
   useEffect(()=>{sceneRef.current?.setDoorSwing(doorSwing)},[doorSwing])
+  // A picked item's outline would be stale once the room, layout or visibility changes.
+  useEffect(()=>{sceneRef.current?.clearItem?.();setPickedItem(null)},[drawingLayout,showWalls])
   useEffect(()=>{sceneRef.current?.setElectrical(showElectrical)},[showElectrical])
   useEffect(()=>{sceneRef.current?.setStorageOpen(storageOpen)},[storageOpen])
   useEffect(()=>{sceneRef.current?.setDrawingTv(tvSize)},[tvSize])
@@ -904,7 +917,7 @@ function LiveWholeHome3D({onOpenRoom}){
     </div>}
     <div ref={mountRef} style={{height:'clamp(620px,82vh,1050px)',width:'100%',display:markMode?'none':'block'}}/>
     {markMode?<PlanMarkPanel image={floorPlanImage} width={PLAN_WIDTH} height={PLAN_HEIGHT} rooms={ROOMS} mark={planMark} onChange={setPlanMark} onClose={()=>setMarkMode(false)}/>
-      :<WallSelectionPanel selection={wallSelection} note={wallNote} onNoteChange={setWallNote} onClear={()=>sceneRef.current?.clearMark()}/>}
+      :<><ItemDimensionsPanel item={pickedItem} onClear={()=>sceneRef.current?.clearItem()}/><WallSelectionPanel selection={wallSelection} note={wallNote} onNoteChange={setWallNote} onClear={()=>sceneRef.current?.clearMark()}/></>}
     <div style={{display:'flex',gap:8,flexWrap:'wrap',padding:'12px 16px 16px',borderTop:'1px solid #e2e8f0'}}>
       {[
         ['Bedroom 3','bedroom3'],['Study','study'],['Kitchen','kitchen'],['Lobby / Dining','lobby'],

@@ -173,3 +173,8 @@ Module, with the soundbar, landline and a desk intercom on top; the east-wall ca
 with a round lamp table at its west end.
 Whole home 3D: Bedroom 1 is fitted to its own walls (plan x 339-515), not stretched over its balcony, which had pushed the bed
 and the east wall into the Pooja Ghar.
+
+Click for dimensions (2026-10-03): in Whole home 3D (editable) and the room pages, clicking furniture or a cabinet outlines it
+and shows its width (east-west), depth (north-south), height and height off the floor in room millimetres
+(`src/render/dimensionPick.js`, `ItemDimensionsPanel.jsx`). Sizes are the modelled outer box, not site measurements. Clicking a
+wall still marks the wall. Not in the kitchen planner, Study, Balcony office, Entry or Storage views.

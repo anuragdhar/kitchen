@@ -27,6 +27,8 @@ import inspirationSeed from '../../inspiration/library.json'
 import {createLobbyConcealedDoor} from './rooms/lobby/LobbyConcealedDoor.js'
 import {createBedroom3DressingTable} from './rooms/bedroom3/Bedroom3DressingTable.js'
 import WallSelectionPanel from './WallSelectionPanel.jsx'
+import ItemDimensionsPanel from './ItemDimensionsPanel.jsx'
+import {pickItem,selectionOutline} from './render/dimensionPick.js'
 
 const mm=value=>value/1000
 
@@ -54,6 +56,7 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
   const [showBedroom3Renders,setShowBedroom3Renders]=useState(initialRoomKey==='bedroom3')
   const [showDrawingRender,setShowDrawingRender]=useState(initialRoomKey==='drawing')
   const [wallSelection,setWallSelection]=useState(null)
+  const [pickedItem,setPickedItem]=useState(null)
   const [wallNote,setWallNote]=useState('')
   // Daytime natural light is the default per the owner's 2026-09-28 request
   // ("I see only the night time view"); Evening restores the warm task-light mood.
@@ -446,6 +449,10 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
     const raycaster=new THREE.Raycaster(),pointer=new THREE.Vector2()
     let pressedAt=null,markedMesh=null,markedMaterial=null
     const clearMark=()=>{if(markedMesh)markedMesh.material=markedMaterial;markedMesh=null;markedMaterial=null;setWallSelection(null);setWallNote('')}
+    // Click furniture or a cabinet: outline it and report its size (render/dimensionPick.js).
+    let itemOutline=null
+    const clearItem=()=>{if(itemOutline){scene.remove(itemOutline);itemOutline.userData.dispose();itemOutline=null}setPickedItem(null)}
+    const showItem=item=>{clearItem();itemOutline=selectionOutline(item.box);scene.add(itemOutline);const {box,object,...rest}=item;setPickedItem(rest)}
     const onPointerDown=event=>{pressedAt={x:event.clientX,y:event.clientY}}
     const onPointerUp=event=>{
       if(!pressedAt||Math.hypot(event.clientX-pressedAt.x,event.clientY-pressedAt.y)>6){pressedAt=null;return}
@@ -453,6 +460,9 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
       const rect=renderer.domElement.getBoundingClientRect()
       pointer.set((event.clientX-rect.left)/rect.width*2-1,-(event.clientY-rect.top)/rect.height*2+1)
       raycaster.setFromCamera(pointer,camera)
+      const item=pickItem(raycaster,[shell],{stopAt:new Set(wallMeshes)})
+      if(item){clearMark();showItem(item);return}
+      clearItem()
       const hit=raycaster.intersectObjects(wallMeshes.filter(mesh=>mesh.visible&&mesh.parent.visible),false)[0]
       if(!hit)return
       if(markedMesh)markedMesh.material=markedMaterial
@@ -503,7 +513,7 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
       }
       return {views,project}
     }
-    sceneRef.current={setDesigner:on=>designerRender.setEnabled(on),captureReview,setTvLabels:visible=>drawingLayouts?.setLabels(visible),setDrawingLayout:key=>drawingLayouts?.setLayout(key),setDrawingArm:pulled=>drawingLayouts?.setArm(pulled),setElectrical:visible=>drawingLayouts?.setElectrical(visible),setDoorSwing:visible=>drawingLayouts?.setDoorSwing(visible),setStorageOpen:open=>drawingLayouts?.setStorageOpen(open),setDrawingTv:key=>drawingLayouts?.setTvSize(key),setMirrorOpen:value=>vanity.userData.setMirrorOpen?.(value),setPartitionOpen:value=>partition.userData.setOpen?.(value),setCamera,setSouthVisible:value=>{southWall.visible=value},setFurnitureVisible:value=>{furniture.visible=value},setBoardOpen:value=>{ironingStorage?.userData.setBoardOpen(value)},setPoojaDoorsOpen:value=>{poojaDoors?.userData.setDoorsOpen(value)},clearMark,setDaylight}
+    sceneRef.current={clearItem,setDesigner:on=>designerRender.setEnabled(on),captureReview,setTvLabels:visible=>drawingLayouts?.setLabels(visible),setDrawingLayout:key=>drawingLayouts?.setLayout(key),setDrawingArm:pulled=>drawingLayouts?.setArm(pulled),setElectrical:visible=>drawingLayouts?.setElectrical(visible),setDoorSwing:visible=>drawingLayouts?.setDoorSwing(visible),setStorageOpen:open=>drawingLayouts?.setStorageOpen(open),setDrawingTv:key=>drawingLayouts?.setTvSize(key),setMirrorOpen:value=>vanity.userData.setMirrorOpen?.(value),setPartitionOpen:value=>partition.userData.setOpen?.(value),setCamera,setSouthVisible:value=>{southWall.visible=value},setFurnitureVisible:value=>{furniture.visible=value},setBoardOpen:value=>{ironingStorage?.userData.setBoardOpen(value)},setPoojaDoorsOpen:value=>{poojaDoors?.userData.setDoorsOpen(value)},clearMark,setDaylight}
     return()=>{interiorScene.dispose();cancelAnimationFrame(raf);designerRender.dispose();observer.disconnect();renderer.domElement.removeEventListener('pointerdown',onPointerDown);renderer.domElement.removeEventListener('pointerup',onPointerUp);controls.dispose();labelTextures.forEach(texture=>texture.dispose());shell.traverse(object=>{object.geometry?.dispose?.();if(Array.isArray(object.material))object.material.forEach(material=>material.dispose());else object.material?.dispose?.()});markedWallMaterial.dispose();environment.dispose();pmrem.dispose();renderer.dispose();renderer.domElement.remove();sceneRef.current=null}
   },[roomKey,initialView])
 
@@ -514,6 +524,8 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
   useEffect(()=>{drawingLayoutRef.current=drawingLayout;sceneRef.current?.setDrawingLayout(drawingLayout);sceneRef.current?.setCamera(view)},[drawingLayout])
   useEffect(()=>{sceneRef.current?.setDrawingArm(armOut)},[armOut,roomKey])
   useEffect(()=>{sceneRef.current?.setDoorSwing(doorSwing)},[doorSwing,roomKey])
+  // A picked item's outline would be stale once the room, layout or visibility changes.
+  useEffect(()=>{sceneRef.current?.clearItem?.();setPickedItem(null)},[roomKey,drawingLayout,showFurniture])
   useEffect(()=>{sceneRef.current?.setElectrical(showElectrical)},[showElectrical,roomKey])
   useEffect(()=>{sceneRef.current?.setStorageOpen(storageOpen)},[storageOpen,roomKey])
   useEffect(()=>{sceneRef.current?.setDrawingTv(tvSize)},[tvSize,roomKey])
@@ -628,6 +640,7 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
         <figure style={{margin:0}}><img src="/renders/bedroom3-vanity.png" alt="Bedroom 3 rendered wardrobe vanity with honey oak finish" style={{display:'block',width:'100%',height:'auto',borderRadius:12}}/><figcaption style={{fontSize:12,color:'#5b5147',marginTop:5}}>Integrated vanity</figcaption></figure>
       </div>
     </div>}
+    <ItemDimensionsPanel item={pickedItem} onClear={()=>sceneRef.current?.clearItem()}/>
     <WallSelectionPanel selection={wallSelection} note={wallNote} onNoteChange={setWallNote} onClear={()=>sceneRef.current?.clearMark()}/>
     </section>
   </>

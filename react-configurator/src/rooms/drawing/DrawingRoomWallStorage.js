@@ -16,7 +16,7 @@ export function createDrawingRoomWallStorage(room, {wallFaceMm = 0} = {}) {
   const shell = mat('#6a4429', {transparent: true, opacity: .3, depthWrite: false}), doorPanel = mat('#4d3220', {roughness: .7})
   const frame = mat('#3b2717', {roughness: .6}), shelfMat = mat('#8a5b37', {roughness: .55}), pull = mat('#b89a5c', {roughness: .3, metalness: .7})
 
-  const storage = new THREE.Group(); storage.name = 'Entry pocket west cabinet (door in the Drawing Room north wall)'
+  const storage = new THREE.Group(); storage.name = 'West cabinet (closet behind the north wall)'
   const box = (sx, sy, sz, cx, cy, cz, material, parent = storage) => {
     const mesh = new THREE.Mesh(new THREE.BoxGeometry(sx / 1000, sy / 1000, sz / 1000), material)
     mesh.position.set(cx / 1000, cy / 1000, cz / 1000); mesh.castShadow = true; mesh.receiveShadow = true

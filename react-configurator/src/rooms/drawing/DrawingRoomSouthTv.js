@@ -51,7 +51,11 @@ export function createDrawingRoomSouthTv(room, {wallFaceMm = 0} = {}) {
   showTv()
 
   // TV console: wall-hung, its back on the wall face. Frame in mm: x along the wall, y up, z out from the wall face.
+  // Its own group, so a click anywhere on it reports the whole console (render/dimensionPick.js).
+  const consoleGroup = new THREE.Group(); consoleGroup.name = 'TV console'; group.add(consoleGroup)
+  const roomBox = box
   {
+    const box = (sx, sy, sz, cx, cy, cz, material, cast = true) => roomBox(sx, sy, sz, cx, cy, cz, material, cast, consoleGroup)
     const g = southTvGeometry(room), p = k.panelMm, x1 = g.console.x1, x2 = g.console.x2, y0 = k.bottomMm, y1 = y0 + k.heightMm
     const z0 = wallFaceMm, z1 = wallFaceMm + k.depthMm, midX = (x1 + x2) / 2, midZ = (z0 + z1) / 2, label = labelsIn(group)
     box(k.lengthMm, p, k.depthMm, midX, y1 - p / 2, midZ, carcass)                                // top
@@ -83,18 +87,21 @@ export function createDrawingRoomSouthTv(room, {wallFaceMm = 0} = {}) {
     const cols = Math.max(2, Math.round(dw / 70)), rows = Math.round(dh / 70)
     for (let i = 0; i <= cols; i++) box(6, dh - 16, 7, dx1 + 3 + 8 + (dw - 16) * i / cols, innerY, z1 + 3, bars, false)
     for (let j = 0; j <= rows; j++) box(dw - 16, 6, 7, (dx1 + dx2) / 2, y0 + p + 3 + 8 + (dh - 16) * j / rows, z1 + 3.5, bars, false)
-    // On the top: Soundbar 300 centred under the TV, the landline to its west, the desk intercom to its east.
+    // On the top: Soundbar 300 centred under the TV, the landline to its west, the desk intercom to its east. Their own
+    // group, so the console reports its own size.
+    const onTop = new THREE.Group(); onTop.name = 'Soundbar, landline and intercom (on the TV console)'; group.add(onTop)
+    const topBox = (sx, sy, sz, cx, cy, cz, material, cast = true) => roomBox(sx, sy, sz, cx, cy, cz, material, cast, onTop)
     const sbZ = z1 - sb.frontSetbackMm - sb.depthMm / 2
-    box(sb.widthMm, sb.heightMm, sb.depthMm, cx, g.soundbarY, sbZ, black)
-    box(sb.widthMm - 12, sb.heightMm - 14, 2, cx, g.soundbarY, sbZ + sb.depthMm / 2 + 1, grille, false)
+    topBox(sb.widthMm, sb.heightMm, sb.depthMm, cx, g.soundbarY, sbZ, black)
+    topBox(sb.widthMm - 12, sb.heightMm - 14, 2, cx, g.soundbarY, sbZ + sb.depthMm / 2 + 1, grille, false)
     const ll = g.landline, llZ = z1 - 60 - ll.depthMm / 2
-    box(ll.widthMm, ll.heightMm, ll.depthMm, g.landlineX, y1 + ll.heightMm / 2, llZ, white)
-    box(ll.widthMm - 40, 25, ll.depthMm - 30, g.landlineX, y1 + ll.heightMm + 12, llZ, white)
+    topBox(ll.widthMm, ll.heightMm, ll.depthMm, g.landlineX, y1 + ll.heightMm / 2, llZ, white)
+    topBox(ll.widthMm - 40, 25, ll.depthMm - 30, g.landlineX, y1 + ll.heightMm + 12, llZ, white)
     // Desk intercom: the handset unit on a small angled stand, screen toward the room.
     const ic = g.intercom, icZ = z1 - 80
-    box(ic.widthMm, ic.heightMm, ic.depthMm, g.intercomX, y1 + ic.heightMm / 2, icZ, white)
-    box(ic.widthMm - 40, ic.heightMm * .45, 2, g.intercomX, y1 + ic.heightMm * .62, icZ + ic.depthMm / 2 + 1, glass, false)
-    box(ic.widthMm, 12, 90, g.intercomX, y1 + 6, icZ - 20, white)
+    topBox(ic.widthMm, ic.heightMm, ic.depthMm, g.intercomX, y1 + ic.heightMm / 2, icZ, white)
+    topBox(ic.widthMm - 40, ic.heightMm * .45, 2, g.intercomX, y1 + ic.heightMm * .62, icZ + ic.depthMm / 2 + 1, glass, false)
+    topBox(ic.widthMm, 12, 90, g.intercomX, y1 + 6, icZ - 20, white)
     label(`TV console ${k.lengthMm} x ${k.depthMm}`, midX, y0 - 120, z1 + 300)
     label('Soundbar 300', cx, y1 + 180, z1 + 300)
     label('Router (inside)', rx - 100, y0 - 260, z1 + 300)

@@ -11,7 +11,7 @@ const mm = v => v / 1000
 const FACING = {east: 0, north: Math.PI / 2, south: -Math.PI / 2, west: Math.PI}
 
 function sofa(widthMm, lengthMm) {
-  const group = new THREE.Group(); group.name = 'three-seater sofa'
+  const group = new THREE.Group(); group.name = 'Three-seater sofa'
   const D = mm(widthMm), Ln = mm(lengthMm)
   const cream = new THREE.MeshStandardMaterial({color: '#e6dac6', roughness: .95})
   const seat = new THREE.MeshStandardMaterial({color: '#efe5d3', roughness: .97})
@@ -68,12 +68,12 @@ function buildSeating(spec, {wallFaceMm = 0} = {}) {
     item.position.set(mm(s.centerXmm), 0, mm(s.centerZmm)); item.rotation.y = FACING[s.faces]; group.add(item)
   }
 
-  const t = spec.table
+  const t = spec.table, tableGroup = new THREE.Group(); tableGroup.name = 'Coffee table'; group.add(tableGroup)
   const top = new THREE.Mesh(new THREE.CylinderGeometry(1, 1, .055, 48), wood)
-  top.scale.set(mm(t.widthMm) / 2, 1, mm(t.lengthMm) / 2); top.position.set(mm(t.centerXmm), .43, mm(t.centerZmm)); top.castShadow = top.receiveShadow = true; group.add(top)
+  top.scale.set(mm(t.widthMm) / 2, 1, mm(t.lengthMm) / 2); top.position.set(mm(t.centerXmm), .43, mm(t.centerZmm)); top.castShadow = top.receiveShadow = true; tableGroup.add(top)
   for (const dx of [-.2, .2]) for (const dz of [-.3, .3]) {
     const leg = new THREE.Mesh(new THREE.BoxGeometry(.04, .4, .04), wood)
-    leg.position.set(mm(t.centerXmm) + dx, .2, mm(t.centerZmm) + dz); leg.castShadow = true; group.add(leg)
+    leg.position.set(mm(t.centerXmm) + dx, .2, mm(t.centerZmm) + dz); leg.castShadow = true; tableGroup.add(leg)
   }
 
   const decor = new THREE.Group(); decor.name = 'seating decor'; decor.userData.archvizExclude = true; group.add(decor)
@@ -91,7 +91,7 @@ function buildSeating(spec, {wallFaceMm = 0} = {}) {
     const shade = new THREE.Mesh(new THREE.CylinderGeometry(.13, .19, .22, 32, 1, true), shadeMaterial); shade.position.set(mm(xMm), h + .4, mm(zMm)); decor.add(shade)
   }
   lampTable(spec.sideTable, decor)
-  for (const t of spec.lampTables ?? []) lampTable(t, group)
+  for (const t of spec.lampTables ?? []) { const item = new THREE.Group(); item.name = 'Lamp table'; group.add(item); lampTable(t, item) }
 
   for (const z of spec.panelsZ) {
     const panel = framedPanel(600, 900); panel.position.set(mm(wallFaceMm) + .02, 1.5, mm(z)); decor.add(panel)
