@@ -38,7 +38,7 @@ import {pickItem,selectionOutline} from './render/dimensionPick.js'
 import PlanMarkPanel from './PlanMarkPanel.jsx'
 import HomeLightingGallery from './HomeLightingGallery.jsx'
 import BlenderHomeView from './BlenderHomeView.jsx'
-import {HOME_ROOM_LAYOUTS} from './config/homeRoomViews.js'
+import {HOME_ROOM_LAYOUTS,BLENDER_ROOM_VIEWS} from './config/homeRoomViews.js'
 import {daylightPreset} from './render/daylight.mjs'
 import {TRUE_NORTH_OFFSET_DEG,SITE_LATITUDE_DEG} from './config/orientationConfig.js'
 import {wallPiecesAroundStorage} from './domain/wallStorage.mjs'
@@ -443,6 +443,15 @@ function LiveWholeHome3D({onOpenRoom}){
         front.userData={balconyPoojaWall:true};wallMeshes.push(front)
         localBox(bg,18,310,22,panelX+(i===0?width*.17:-width*.17),1150,z-9,cabinetPull)
       }
+    }
+    // Masonry between the Pooja Ghar and Bedroom 1 (owner report 2026-10-03: "weird gap"). The Pooja Ghar is modelled to plan
+    // x 317 and Bedroom 1 starts at x 339; the A501 plan draws a thick wall there, not a space. Filled solid from the Pooja east
+    // wall to the bedroom wall, north wall to the balcony's north end, so nothing reads as an empty slot. An assumption from
+    // the drawing: the exact thickness (about 420 mm here) is not measured.
+    {
+      const pooja=BLENDER_ROOM_VIEWS.pooja.bounds,balconyNorth=ROOMS.find(room=>room.key==='bedroom1-balcony').bounds[1]
+      const block=addBox(X(bbounds[0]-pooja[2]),HEIGHT,Z(balconyNorth-pooja[1]),X((pooja[2]+bbounds[0])/2),HEIGHT/2,Z((pooja[1]+balconyNorth)/2),wallMaterial)
+      block.name='Masonry between Pooja Ghar and Bedroom 1';wallMeshes.push(block);block.userData={planWall:[pooja[2],pooja[1],bbounds[0],balconyNorth]}
     }
     roomEdge(bbounds,bedroom.widthMm,bedroom.lengthMm,'east',[{start:bedroom.wallOpenings.east.fromMm,end:bedroom.wallOpenings.east.toMm,top:HEIGHT}])
     const washroomDoor=bedroom.doors.find(door=>door.leadsTo==='Bedroom 1 washroom')
@@ -930,15 +939,18 @@ function LiveWholeHome3D({onOpenRoom}){
 function buttonStyle(active){return{padding:'8px 12px',borderRadius:9,border:'1px solid #cbd5e1',background:active?'#172033':'#fff',color:active?'#fff':'#172033',fontWeight:800,cursor:'pointer'}}
 
 export default function WholeHome3D({onOpenRoom}){
-  const [source,setSource]=useState('blender-model')
+  // Editable 3D first (owner 2026-10-03: "can they always be in sync?"): it is built from the current config on every load, so it
+  // can never be out of date. The Blender model is a baked file from an earlier design and only changes when it is re-baked.
+  const [source,setSource]=useState('live')
   return <div>
     <nav aria-label="Whole-home 3D source" style={{display:'flex',gap:8,flexWrap:'wrap',marginBottom:12}}>
       {[
+        ['live','Editable 3D'],
         ['blender-model','Blender model'],
         ['blender-renders','Blender renders and tour'],
-        ['live','Editable 3D'],
       ].map(([value,label])=><button key={value} aria-pressed={source===value} onClick={()=>setSource(value)} style={buttonStyle(source===value)}>{label}</button>)}
     </nav>
+    <p style={{fontSize:12,color:'#64748b',margin:'-4px 2px 12px'}}>{source==='live'?'Editable 3D is always the current design: it is rebuilt from the saved settings every time it opens.':'This Blender view is a saved snapshot of an earlier design (its lighting was computed once). Furniture moved since then is only up to date in Editable 3D.'}</p>
     {source==='blender-model'&&<BlenderHomeView/>}
     {source==='blender-renders'&&<HomeLightingGallery/>}
     {source==='live'&&<LiveWholeHome3D onOpenRoom={onOpenRoom}/>}

@@ -90,6 +90,8 @@ async function main(){
         }
       }
       await page.getByRole('button',{name:'Whole home 3D',exact:true}).first().click()
+      // Whole home 3D opens on Editable 3D since 2026-10-03; the baked model is one click away.
+      await page.getByRole('button',{name:'Blender model',exact:true}).click()
       await ready()
       await page.screenshot({path:path.join(output,`${label}-whole-home.png`),fullPage:true})
       await page.getByRole('button',{name:'Blender renders and tour',exact:true}).click()

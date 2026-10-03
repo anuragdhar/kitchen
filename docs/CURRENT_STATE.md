@@ -186,3 +186,8 @@ Inspiration applied (2026-10-03; details in each entry's notes in `inspiration/l
 (replaces the three pottery planters), kitchen default wood is white oak, Drawing Room curtains and floor plant, and a
 Bedroom 3 bedside-cabinet preview toggle (idea only, layout unchanged). The appliance-garage door/tray and the full-height
 spice pull-out are not modelled: positions are undecided.
+
+Whole home 3D sync (2026-10-03): the page now opens on Editable 3D, which is always the current design. The Blender model tab
+is a baked snapshot of an earlier design; its Drawing Room TV meshes are moved onto the north wall at load time
+(`ArchivedBlenderHomeView.jsx`), but its sofas, kitchen and everything else stay as baked until the whole home is re-baked in
+Blender. The slot between the Pooja Ghar and Bedroom 1 (plan x 317-339) is filled as masonry, an assumption from the drawing.

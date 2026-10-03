@@ -4,6 +4,27 @@ import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js'
 import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader.js'
 import {RoomEnvironment} from 'three/examples/jsm/environments/RoomEnvironment.js'
 import {ENTRY} from './config/entryConfig.js'
+import {HOME_ROOM_LAYOUTS} from './config/homeRoomViews.js'
+import {EMPTY_ROOM_SHELLS} from './config/roomShellConfig.js'
+
+// The baked whole-home files were made before Drawing Room layout C and still hold the TV on an arm on the east wall, turned
+// 45 degrees. A bake cannot be edited here, so its TV meshes are moved at load time onto the north wall at the position the
+// current config gives (room.southLayout.tv), and the old wall rail, plate and arm are hidden (owner 2026-10-03). Node names
+// are the same in A501-home-baked.glb and A501-blender-lighting.glb. Everything else in the bake (sofas, kitchen) is still the
+// older design: the Editable 3D tab is the current one.
+const BAKED_DRAWING_TV={move:['Element_147','Element_148','Element_149'],hide:['Element_144','Element_145','Element_146'],body:'Element_147',yawDeg:45.3}
+function moveBakedDrawingTv(model){
+  const body=model.getObjectByName(BAKED_DRAWING_TV.body);if(!body)return
+  const drawing=EMPTY_ROOM_SHELLS.drawing,tv=drawing.southLayout.tv,bounds=HOME_ROOM_LAYOUTS.find(room=>room.key==='drawing').bounds
+  const sx=ENTRY.planScale.xMetresPerPixel,sz=ENTRY.planScale.zMetresPerPixel
+  const box=new THREE.Box3().setFromObject(body),centre=box.getCenter(new THREE.Vector3()),depth=.06
+  // Room x runs from the west wall (plan x2) toward plan x1; the north wall is at plan y2. The bake draws walls about 2 px thick.
+  const target=new THREE.Vector3((bounds[2]-tv.centerFromWestMm/drawing.widthMm*(bounds[2]-bounds[0]))*sx,tv.centerHeightMm/1000,(bounds[3]-2)*sz-tv.mountMm/1000-depth/2)
+  const yaw=THREE.MathUtils.degToRad(BAKED_DRAWING_TV.yawDeg),axis=new THREE.Vector3(0,1,0)
+  const offset=target.clone().sub(centre.clone().applyAxisAngle(axis,yaw))
+  for(const name of BAKED_DRAWING_TV.move){const mesh=model.getObjectByName(name);if(mesh){mesh.rotation.y=yaw;mesh.position.copy(offset)}}
+  for(const name of BAKED_DRAWING_TV.hide){const mesh=model.getObjectByName(name);if(mesh)mesh.visible=false}
+}
 
 export default function BlenderHomeView({room=null}){
   const mountRef=useRef(null)
@@ -120,6 +141,7 @@ export default function BlenderHomeView({room=null}){
         }
       })
       bakedMaterials.forEach((_,source)=>source.dispose())
+      if(!dedicated)moveBakedDrawingTv(model)
       scene.add(model)
       const bounds=new THREE.Box3().setFromObject(model)
       if(dedicated){
