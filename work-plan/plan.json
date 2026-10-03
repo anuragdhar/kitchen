@@ -183,7 +183,7 @@
       "trade": "general",
       "title": "Drawing Room AC: choose the size, the indoor position and where the outdoor unit goes",
       "room": "Drawing Room",
-      "detail": "Owner 2026-10-04: the Drawing Room has no AC; one has to be bought. The room is about 3.35 x 5.34 m (18 sq m, 193 sq ft), but its east side is open to the Lobby/Dining (about 16 sq m more), so the AC cools both unless that opening can be closed. Starting point: an inverter split AC of 1.5 ton if only the Drawing Room is cooled, 2 ton if the opening stays open; ask the dealer to confirm for the top-floor heat and sun on the south window. The electrical plan already has the AC point on the west wall, 3,080 mm from the north wall and 2,300 high, above the west sofa. Decide where the outdoor unit hangs, because that fixes the pipe route and its length.",
+      "detail": "Owner 2026-10-04: the Drawing Room has no AC; one has to be bought. The room is about 3.35 x 5.34 m (18 sq m, 193 sq ft), but its east side is open to the Lobby/Dining (about 16 sq m more), so the AC cools both unless that opening can be closed. Starting point: an inverter split AC of 1.5 ton if only the Drawing Room is cooled, 2 ton if the opening stays open; ask the dealer to confirm for the top-floor heat and sun on the south window. The electrical plan already has the AC point on the west wall, 3,080 mm from the north wall and 2,300 high, above the west sofa. Decide where the outdoor unit hangs, because that fixes the pipe route and its length. Update 2026-10-04: a shutter between the Drawing Room and the Lobby is planned, so the AC can be sized for the Drawing Room alone if the shutter seals reasonably well (a glass sliding door does; a PVC folding door only partly).",
       "dependsOn": [
         "site-measure"
       ],
@@ -737,6 +737,19 @@
       ],
       "status": "todo",
       "needs": "Measure the clear opening of each section after the centre shutters are made; cassette at the top (pull down) or at the side (pull across)"
+    },
+    {
+      "id": "lobby-shutter",
+      "phase": "second-fix",
+      "trade": "windows",
+      "title": "Shutter between the Drawing Room and the Lobby",
+      "room": "Drawing Room / Lobby",
+      "detail": "Owner 2026-10-04: a shutter separates the Drawing Room (east side) from the Lobby; it is not fitted yet. The opening is about 3,280 mm wide and about 2,395 mm high under the hanging beam (model sizes, not measured). Options: (1) PVC folding (accordion) door: cheapest and quick, but flimsy, poor at holding in AC cooling and sound, and looks dated; (2) \"crystal\" clear PVC or polycarbonate folding door: lets light through, still cheap, but scratches and yellows in a few years; (3) proposed: sliding doors in a slim aluminium frame with toughened glass, three panels on three tracks hung from the beam, stacking to one side so two thirds of the opening is clear; fluted or frosted glass if privacy is wanted. Option 3 costs more but lasts, seals much better for the AC and keeps daylight in the Lobby. The 3D model currently draws a 10-panel folding partition in a wood tone. Whichever type: hang it from the beam with only a small floor guide, so there is no raised track to trip over.",
+      "dependsOn": [
+        "paint"
+      ],
+      "status": "todo",
+      "needs": "Owner decision: PVC folding, crystal folding, or aluminium and glass sliding; measure the opening width and the height under the beam; check the beam can take the track fixings"
     },
     {
       "id": "furniture",

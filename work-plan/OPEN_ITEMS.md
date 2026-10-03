@@ -17,6 +17,7 @@ page). Write the answer next to the item or just tell the assistant; the task an
 | A8 | Existing cabinet in the east part of the entry pocket: real width, depth, height, doors and shelves | 3D model only (drawn from the plan) |
 | A9 | Skirting: running length, only if the skirting is being replaced | Optional skirting |
 | A10 | Drawing Room south window: width of each of the three sections, and the shutter height | Centre window shutters |
+| A11 | Opening between the Drawing Room and the Lobby: width, and height under the beam | Lobby shutter |
 
 ## B. Things to look at or find out
 
@@ -47,7 +48,7 @@ page). Write the answer next to the item or just tell the assistant; the task an
 | C13 | Fold-down seat at the entry: exact wall and position, seat finish | west wall beside the shoe rack | Fold-down seat |
 | C14 | Modular switch range and colour | none yet | Replace the old switchboard |
 | C15 | Drawing Room AC: tonnage and model, indoor wall, outdoor unit position | 1.5 ton if only the Drawing Room, 2 ton if the opening to the Lobby stays open; indoor unit on the west wall | Choose the AC |
-| C16 | Can the opening between the Drawing Room and the Lobby/Dining be closed (door or curtain) when the AC runs? | not decided | Choose the AC |
+| C16 | Shutter between the Drawing Room and the Lobby: PVC folding, crystal folding, or aluminium and glass sliding | aluminium frame with toughened glass, three sliding panels hung from the beam | Lobby shutter; Choose the AC |
 | C17 | Track lights: type (230 V or slim 48 V magnetic), colour, number of heads | two surface tracks, warm white, dimmable | Layered lighting |
 | C18 | Is there a ceiling fan in the Drawing Room, and where? | not known | Layered lighting |
 | C19 | South window: which wood shade; glass type for the new shutters; roller net cassette at the top or the side (roller net per section is DECIDED) | match the TV panel wall; 5 mm clear glass | Window wooden shade; mosquito net; centre shutters |
