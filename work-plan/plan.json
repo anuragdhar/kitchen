@@ -129,12 +129,12 @@
       "trade": "general",
       "title": "Finalise the entry ceiling: 24 x 24 inch PVC ceiling panels",
       "room": "Main entry",
-      "detail": "Owner 2026-10-04: the entry ceiling will be 24 x 24 inch (about 610 x 610 mm) PVC ceiling panels. The owner will finalise the panel after visiting some shops. Still to decide: the panel design and colour, the frame it sits in (exposed grid or concealed), the height the ceiling drops to, the lights (panel lights that fit one 24 x 24 opening, or downlights) and where their switch goes, and whether anything above must stay reachable. Nothing is drawn in the 3D model yet.",
+      "detail": "Owner 2026-10-04: the entry ceiling will be 24 x 24 inch (about 610 x 610 mm) PVC ceiling panels, finalised after visiting some shops. Lights: recessed round LED panel lights, the type already used in the home (Orient Electric 12 W recessed panel, 1,200 lumens), but single-colour, not the 3-in-1 colour-changing version. Proposed, not yet agreed by the owner: neutral white (4000 K), two lights of 6-8 W each along the length of the entry, each centred in a panel, on one switch at the door. Still to decide: the panel design and colour, the frame it sits in (exposed grid or concealed), the height the ceiling drops to, and whether anything above must stay reachable. Nothing is drawn in the 3D model yet.",
       "dependsOn": [
         "site-measure"
       ],
       "status": "todo",
-      "needs": "Owner to visit shops and choose the panel; then fix the drop height and the lights"
+      "needs": "Owner to visit shops and choose the panel; confirm light colour (neutral white proposed) and count (two proposed)"
     },
     {
       "id": "electrician-survey",
@@ -383,7 +383,7 @@
       "trade": "ceiling",
       "title": "Fit the entry ceiling: 24 x 24 inch PVC panels on a frame",
       "room": "Main entry",
-      "detail": "Hang the frame level from the slab, run the light wiring above it first, then lay the 24 x 24 inch PVC panels and fit the lights. The entry is about 2.1 m long by 1.0 m clear wide on the plan, so it takes only a few panels and the edge panels will be cut; set the grid out so the cut pieces are equal on both sides.",
+      "detail": "Hang the frame level from the slab, run the light wiring above it first, then lay the 24 x 24 inch PVC panels and fit the recessed LED panel lights, each in a round cut-out at the centre of a panel. The entry is about 2.1 m long by 1.0 m clear wide on the plan, so it takes only a few panels and the edge panels will be cut; set the grid out so the cut pieces are equal on both sides and the lights land on whole panels.",
       "dependsOn": [
         "entry-ceiling-plan",
         "plaster"
