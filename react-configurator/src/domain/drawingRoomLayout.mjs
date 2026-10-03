@@ -177,7 +177,7 @@ export function checkCornerLayout(room) {
   need(rc.router.heightMm + rc.router.antennaMm + 40 <= rc.heightMm - 2 * rc.panelMm, 'router antennas do not fit')
 
   issues.push(...doorSwingIssues(room, {
-    'north sofa': northSofa, 'west sofa': westSofa, 'coffee table': table, 'wall-mounted TV': {x1: tvFront, z1: tvZ1, x2: room.widthMm, z2: tvZ2},
+    'north sofa': northSofa, 'west sofa': westSofa, 'coffee table': table, 'wall-mounted TV': {x1: tvFront, z1: tvZ1, x2: room.widthMm, z2: tvZ2}, 'north cabinet': {x1: rc.fromWestMm, z1: 0, x2: rc.fromWestMm + rc.widthMm, z2: rc.depthMm},
   }))
   const seats = [-750, 0, 750]
   const views = {

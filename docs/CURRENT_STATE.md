@@ -145,3 +145,14 @@ Whole home 3D (Editable) shows the empty pocket on the Main Entry side of the Dr
 Drawing Room corner layouts (B, B2, B3) now have a wall storage opening cut through the north wall into the cavity: x 200-2050, 1000-2350 high, 1105 deep, with the router, landline and intercom bay recessed flush in its middle; layout A keeps the wall closed. Details, limits and the on-site checks it still needs: `docs/ENTRY_WALL_CAVITY.md`. New: `Open wall storage doors` and, on the Drawing Room page, `North wall view`.
 
 Entry pocket east opening (2026-09-30): the editable 3D (Whole home 3D and Main entry) now builds the pocket as a walled box with an east opening in its plan-left wall (plan x 575, y 729-769, 2100 mm high; working size, not measured) next to the north opening from the Drawing Room. The cavity ghost is hidden by default. Details and the open storage-panel conflict: `docs/ENTRY_WALL_CAVITY.md`.
+
+## Entry pocket: two separate cabinets; Whole home 3D starts south-up (2026-10-03)
+
+Owner: the pocket behind the Drawing Room north wall is two separate cabinets, as the Blender model shows. Editable 3D now has a
+full-height partition at plan x 650; the east cabinet is open over its whole east side onto the Entry gallery; the west cabinet
+is entered from the Drawing Room by a two-leaf door at the west end of the north wall (x 80-680, 2,100 high) with shelves at
+the back. This replaces the 2026-09-30 wide wall storage opening (x 200-2050) and the door-height east opening; the router
+cabinet is wall-hung again at x 800-1900. The north sofa (B, B2, B3) and the TV cabinet (A) stand in front of the new door; this is
+reported, not fixed. Details: `docs/ENTRY_WALL_CAVITY.md`. The Whole home 3D Blender model now opens looking from the north, so
+south is at the top like the plan, with a compass in the corner.
+

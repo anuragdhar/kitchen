@@ -59,7 +59,9 @@ export default function BlenderHomeView({room=null}){
     const frameModel=()=>{
       if(!modelCenter)return
       const zoomOut=Math.max(1,(room?1.2:.95)/(mount.clientWidth/mount.clientHeight))
-      const [dx,dy,dz]=room?.camera||[.55,.95,.8]
+      // Whole home: look from the north straight toward the south (camera on +z, plan y down = north), so the picture matches the
+      // south-up A501 plan: south at the top, north at the bottom, east left, west right (owner 2026-10-03).
+      const [dx,dy,dz]=room?.camera||[0,.95,.8]
       camera.position.set(modelCenter.x+modelSpan*dx*zoomOut,modelCenter.y+modelSpan*dy*zoomOut,modelCenter.z+modelSpan*dz*zoomOut)
       controls.target.copy(modelCenter)
       controls.maxDistance=modelSpan*5
@@ -199,6 +201,11 @@ export default function BlenderHomeView({room=null}){
       {lighting==='baked'&&<div style={{fontSize:12,color:'#64748b',marginTop:7}}>Lighting is precomputed for this layout. Moving furniture or changing lights requires a new lighting bake.</div>}
     </div>
     {error&&<div role="alert" style={{padding:16,color:'#b91c1c'}}>{error}</div>}
-    <div ref={mountRef} style={{height:'clamp(620px,82vh,1050px)',width:'100%'}}/>
+    <div style={{position:'relative'}}>
+      <div ref={mountRef} style={{height:'clamp(620px,82vh,1050px)',width:'100%'}}/>
+      {!room&&<div aria-label="Compass at the starting view: south up, north down, east left, west right" style={{position:'absolute',right:12,bottom:12,display:'grid',gridTemplateColumns:'repeat(3,24px)',gridTemplateRows:'repeat(3,22px)',placeItems:'center',padding:'6px 8px',borderRadius:10,background:'rgba(255,255,255,.9)',border:'1px solid rgba(23,32,51,.3)',color:'#172033',fontSize:11,fontWeight:900,pointerEvents:'none'}}>
+        <span/><span>S</span><span/><span>E</span><span>•</span><span>W</span><span/><span style={{color:'#b91c1c'}}>N</span><span/>
+      </div>}
+    </div>
   </section>
 }

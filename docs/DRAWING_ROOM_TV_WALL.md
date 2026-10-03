@@ -101,7 +101,7 @@ Where things go in B (millimetres, room frame):
 | 65-inch TV | wall-mounted on the east wall, centred 1080 from the north wall (355-1805), bottom edge 730; sticks out 90 mm |
 | Soundbar 300 | on the wall under the TV, 20 mm below it, sticks out 102 mm |
 | Bass Module 500 | on the floor under the TV, centre 1560 from the north wall, 100 mm off the wall |
-| Router bay | recessed flush into the north-wall storage opening above the north sofa (see `docs/ENTRY_WALL_CAVITY.md`), x 500-1600, 1450-2100 high, 250 deep: router (open lattice) / landline / intercom |
+| Router bay | wall-hung above the north sofa, x 800-1900, 1,450-2,100 high, 250 deep (2026-10-03: the wall behind is the closed east cabinet of the entry pocket; moved from x 500 to clear the west cabinet door, see `docs/ENTRY_WALL_CAVITY.md`) |
 
 The TV must stay on the solid part of the east wall: the wall is solid only from the north wall to z 2058,
 after which the folding partition opens to the lobby. That leaves a 355 mm gap between the TV and the door wall
@@ -193,7 +193,7 @@ not modelled).
   the west sofa and the coffee table; a shorter throw ratio moves it toward the wall. It needs a power and HDMI or network
   run to the ceiling. A projector picture is visible from wide angles, so the side-sofa picture problem goes away, but
   the neck turn does not.
-- Kept from B2: the console (soundbar on top, Bass Module inside) and the router and phones bay, now recessed into the wall storage opening.
+- Kept from B2: the console (soundbar on top, Bass Module inside) and the router and phones bay, wall-hung on the north wall (`docs/ENTRY_WALL_CAVITY.md`).
 - Daylight matters: this room has a large south window, so plan blackout curtains or an ambient-light-rejecting screen.
 
 ### 5. The ten-year-old TV

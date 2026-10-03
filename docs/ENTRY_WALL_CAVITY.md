@@ -36,57 +36,54 @@ All figures come from `src/domain/entryCavity.mjs` (`recessOptions`), tested in 
 | --- | --- | --- |
 | **Recess the layout A TV bay** (x 280-1820) so the TV sits in the wall | yes | a 305 mm or the 18-inch (457 mm) unit sits fully inside; the wall face stays flat |
 | **Hidden AV closet** behind a door in the wall: router, landline, intercom, Bass Module 500, cable box, with a vent | yes | 925 mm deep gives room to stand the Bass Module and route all cabling; doors face the Drawing Room |
-| **Recess the small router and phone cabinet** in layout B/B2/B3 (x 500-1600) | yes | disappears into the wall; the north sofa can sit against a flat wall |
+| **Recess the small router and phone cabinet** in layout B/B2/B3 (then x 500-1600; now wall-hung at x 800-1900, see below) | yes | disappears into the wall; the north sofa can sit against a flat wall |
 | **Full-height storage** flush with the wall | yes | up to about 1 m deep by 2 m wide |
 | **Recess the whole 2100 mm cabinet** | no | its west 116 mm is outside the cavity |
 | **Keep the wall** | shallow only | about 110 mm: a slim shelf or cable chase |
 
 The drawing shows no door onto the Entry, but the owner (2026-09-30, from the Blender render) says the pocket has **two openings**:
-one on its **east** side and the north one to be cut from the Drawing Room (below). The Blender top view shows the pocket open on
+one on its **east** side and one cut from the Drawing Room; on 2026-10-03 they made clear these belong to two separate cabinets (below). The Blender top view shows the pocket open on
 the plan-left side toward the Entry gallery, which is the east side in the Drawing Room frame (the plan is drawn south-up).
 
-## Wall storage (built in the model, 2026-09-30)
+## Two separate cabinets (owner, 2026-10-03; supersedes the 2026-09-30 wall storage and east opening)
 
-Owner decision: open the wall and use the depth for storage, with the router and phones at the front. Corner layouts B, B2 and
-B3 only; layout A keeps the wall closed behind its cabinet (a plug fills the opening).
+The owner marked plan x 575-682, y 726-773 and said the pocket is **two separate cabinets opening in different directions**:
+one opens on the **east** side, the other is entered from the **south** side (the Drawing Room) at the **extreme west** end,
+"as the Blender model shows". The Blender model (`public/models/A501-blender-lighting.glb`) was read mesh by mesh and the
+editable 3D now matches it:
 
-| Part | Size (Drawing Room frame: x from the west wall, height from the floor) |
-| --- | --- |
-| Opening through the north wall | x 200-2050 (1,850 wide), 1,000-2,350 high (1,350), **1,105 deep** from the room face, i.e. through the 221 mm wall and into the cavity |
-| Router, landline and intercom bay, **in front** | x 500-1600, 1,450-2,100 high, 250 deep, recessed so its face is flush with the wall; open lattice so the router's signal is not blocked |
-| Storage either side and behind | left bay 300 wide, right bay 450 wide, both 1,105 deep; the space behind the router bay is reached from the sides; shelves at 1,350, 1,700 and 2,050 |
-| Doors | flush panels either side of the router bay and above and below it |
-| Gross volume | about 2,600 litres (2.6 m3) |
+| Part | Blender model (plan pixels) | Editable 3D |
+| --- | --- | --- |
+| Partition, floor to ceiling | x 649-650, y 716-773 | `ENTRY.wallCavity.partitionPlanX` = 650, a wall in `ENTRY_WALL_SEGMENTS`; about 736 mm from the Drawing Room west wall |
+| East cabinet | x 577-649, whole east side open (no wall, no lintel at x 575) | `eastOpening` covers y 715-775 floor to ceiling, so no wall is drawn on that side |
+| West cabinet door, through the Drawing Room wall | x 653-684, 0-2,100 high, two leaves, pulls on the room side | `room.wallStorage`: x 80-680 (600 wide, two 300 mm leaves), 0-2,100 high |
+| West cabinet closet | x 650-688, to the back of the pocket | x 40-690, 1,105 deep from the room face |
+| West cabinet shelves | y 754-773, at 0.12, 0.55, 1.00, 1.45, 1.90, 2.35 m | 380 mm deep against the back, same heights |
 
-Limits, stated plainly:
-- The opening starts at 1,000 mm because the north sofa back is about 900 mm; you reach it by kneeling on the sofa or with a
-  step, so it suits things used a few times a year (bedding, luggage, festival items), not daily storage.
-- Both side bays are narrow (300 and 450 mm) but very deep; use deep shelves or boxes on runners.
-- The router bay is at eye level with no door; the router's antennas and cables sit at the back, with power from the cavity side.
-- Not confirmed on site: that the cavity is hollow and that the 9-inch wall may be opened. Do not cut until the builder or
-  engineer agrees. Checks live in `src/domain/wallStorage.mjs`, tests in `tests/wall-storage.test.mjs`.
+Source: `ENTRY.wallCavity` in `src/config/entryConfig.js` (plan reference) and `wallStorage` in `src/config/roomShellConfig.js`
+(Drawing Room frame), checked against each other and the pocket in `tests/wall-storage.test.mjs` and
+`tests/entry-cavity.test.mjs`. Checks: `checkWallStorage()` in `src/domain/wallStorage.mjs`. The door is cut through the shared
+wall in Whole home 3D, the Main entry workspace and the Drawing Room page (`wallPiecesAroundStorage()`), in every layout.
 
-In the app: "Open wall storage doors" (Whole home 3D and the Drawing Room page) hides the doors to show the shelves, and the
-Drawing Room page has a "North wall view" button.
+Consequences, stated plainly:
+- The wide 2026-09-30 opening above the north sofa (x 200-2050, 1,000-2,350 high) is gone: it would have opened into the east
+  cabinet too. The router, landline and intercom cabinet is wall-hung again, moved from x 500 to **x 800-1900** so it clears the
+  new door by 120 mm.
+- **The new door is blocked by furniture in every Drawing Room layout**: the north sofa (B, B2, B3; x 30-2280) stands in front of
+  all 600 mm of it, and in layout A the TV wall cabinet covers it. `checkWallStorage().blockedBy` reports this; nothing was
+  moved. To use the door, shorten or shift the north sofa east by about 700 mm, or accept a door used only with the sofa pulled out.
+- The east cabinet has no doors or shelves in the Blender model, so none are drawn.
+- Sizes come from the Blender model and the plan, not from site measurement. Whether the pocket is hollow and whether the 9-inch
+  wall may be opened still need the builder or engineer.
+
+In the app: "Open west cabinet doors" (Whole home 3D and the Drawing Room page) hides the two leaves to show the shelves; the
+Drawing Room page's "North wall view" faces the door.
 
 ## What the model does and does not show
 
-- Shown: the cavity as a teal translucent volume and the wall as an amber ghost, with labels. The measure tool ignores both.
-  In the corner layouts the opening is cut through the Drawing Room wall and the shared Entry wall, and the storage stands in the cavity.
-- Layout A still has no opening; recessing its TV bay into the cavity is possible (see the table above) but not modelled.
+- Shown: the cavity as a teal translucent volume and the wall as an amber ghost, with labels (toggle: Show entry wall cavity,
+  hidden by default). The measure tool ignores both. The west cabinet's closet is drawn translucent so it reads from the
+  Drawing Room page too, where the pocket walls are not part of the scene.
 - The Drawing Room's north wall is still drawn 85 mm thick like every other wall in the model, so the real 221 mm thickness
   is only visible through the amber ghost.
-
-## East opening (editable 3D, 2026-09-30)
-
-The editable 3D (Whole home 3D and the Main entry workspace) now draws the pocket as a closed box, not just a translucent volume:
-Drawing Room wall (plan y 715), outer wall (x 688), shaft box (y 775) and a new **east wall at plan x 575** with the east opening in
-it. Source: `ENTRY.wallCavity.eastOpening` and `entryPocketEastWallSpans()` in `src/config/entryConfig.js`; test in
-`tests/entry-cavity.test.mjs`. The teal/amber cavity ghost is now hidden by default (toggle: Show entry wall cavity).
-
-- Working size: plan y 729-769 (about 800 mm of the 925 mm depth), 2100 mm high. **Not measured**; the Blender render shows the
-  side open over most of the depth. Change the numbers in `eastOpening` to match the render or the site.
-- The north opening is unchanged (layouts B, B2, B3; layout A keeps a plug). It has no effect on the east wall.
-- Conflict to decide: the wall storage's east side panel stands at x 2050 and the pocket ends at x 2149, so the east opening lands
-  on a 100 mm slot in front of a closed storage side, not on a bay you can step into. Either move the storage or open its east side.
-- Blender exports and renders were not regenerated (the repo's Blender scene predates the cavity work).
+- Blender exports and renders were not regenerated; the Blender model already had this layout.

@@ -119,7 +119,9 @@ export const EMPTY_ROOM_SHELLS={
         screenDiagonalInches:80,widthMm:1771,heightMm:996,centerFromNorthMm:1029,bottomMm:700,
         throwRatio:1.2,ceilingDropMm:200,body:{widthMm:330,heightMm:120,depthMm:250},
       },
-      routerCabinet:{fromWestMm:500,widthMm:1100,bottomMm:1450,heightMm:650,depthMm:250,panelMm:18,
+      // Wall-hung again (2026-10-03): the wall behind it now backs the closed east cabinet of the entry pocket. Moved east from
+      // x 500 so it clears the west cabinet's door (room.wallStorage, x 80-680) by 120 mm.
+      routerCabinet:{fromWestMm:800,widthMm:1100,bottomMm:1450,heightMm:650,depthMm:250,panelMm:18,
         router:{widthMm:260,heightMm:45,depthMm:190,antennaMm:230},
         landline:{widthMm:140,heightMm:110,depthMm:140},intercom:{widthMm:130,heightMm:230,depthMm:35}},
     },
@@ -132,12 +134,18 @@ export const EMPTY_ROOM_SHELLS={
     // leaf is about 855 mm wide or less, so those are recorded here. hingeKnown means the hinge side is settled (inferred, not
     // measured); leafMm is a working value: measure the real leaf on site. With hingeKnown false every check tests both sides.
     doors:[{wall:'north',fromMm:2150,widthMm:1000,heightMm:2100,leadsTo:'Main entry',opensInto:'Drawing Room',hinge:'east',hingeKnown:true,leafMm:850}],
-    // Owner decision 2026-09-30: open the north wall into the empty 3 ft cavity on the Entry side (docs/ENTRY_WALL_CAVITY.md) for deep
-    // storage, with the router, landline and intercom (cornerLayout.routerCabinet) recessed in the front of it. depthMm is measured
-    // from the Drawing Room face: the 221 mm wall plus the 925 mm cavity less a 40 mm skin. The opening sits above the north sofa
-    // (its back is about 900 mm high), so it is for things reached rarely. Used by the corner-sofa layouts only; layout A keeps
-    // the wall closed behind its cabinet. Not yet confirmed on site: that the cavity is hollow and the wall may be opened.
-    wallStorage:{layouts:['cornerSofas','cornerConsole','cornerProjector'],fromWestMm:200,widthMm:1850,bottomMm:1000,heightMm:1350,depthMm:1105,panelMm:18,shelves:[1350,1700,2050]},
+    // The WEST cabinet of the entry-side pocket behind this wall (owner 2026-10-03, matching the Blender model; ENTRY.wallCavity
+    // and docs/ENTRY_WALL_CAVITY.md). The pocket is two separate cabinets: the east one opens onto the Entry gallery, this one is
+    // reached from the Drawing Room through a two-leaf door at the extreme west end of the north wall. It replaces the
+    // 2026-09-30 wide opening above the north sofa (x 200-2050), which would have opened into the east cabinet too.
+    // fromWestMm/widthMm/bottomMm/heightMm: the door opening through the wall (Blender plan x 653-684, 2100 high).
+    // cabinet: the closet behind it, from the outer wall to the partition (plan x 688-650) less the drawn wall faces.
+    // depthMm: from the Drawing Room face to the back of the pocket (the 221 mm wall plus the 925 mm pocket less a 40 mm skin).
+    // shelves: Blender shelf board heights, 380 mm deep against the back (plan y 754-773). Same in every layout (it is part of
+    // the building), but the north sofa (layouts B, B2, B3) and the TV cabinet (layout A) stand in front of the doors: see
+    // checkWallStorage().blockedBy. Not confirmed on site: that the pocket is hollow and the 9-inch wall may be opened.
+    wallStorage:{fromWestMm:80,widthMm:600,bottomMm:0,heightMm:2100,doorCount:2,cabinet:{fromWestMm:40,widthMm:650},depthMm:1105,panelMm:18,
+      shelves:{depthMm:380,heightsMm:[120,550,1000,1450,1900,2350]}},
     windows:[{wall:'south',fromMm:471,widthMm:2298,bottomMm:550,topMm:2100,frameStyle:'dark',mullionFractions:[.62],source:'clipboard screenshot'}],
   },
   kitchenShell:{name:'Kitchen shell',widthMm:2324,lengthMm:3070,heightMm:2700,color:'#b45309',source:'A501 floor plan'},

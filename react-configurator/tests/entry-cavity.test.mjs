@@ -1,7 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import {cavityGeometry, usableDepth, recessOptions} from '../src/domain/entryCavity.mjs'
-import {ENTRY, entryPocketEastWallSpans} from '../src/config/entryConfig.js'
+import {ENTRY, ENTRY_WALL_SEGMENTS, entryPocketEastWallSpans} from '../src/config/entryConfig.js'
 import {HOME_ROOM_LAYOUTS} from '../src/config/homeRoomViews.js'
 import {EMPTY_ROOM_SHELLS} from '../src/config/roomShellConfig.js'
 
@@ -51,14 +51,18 @@ test('recess options: the TV bay and the router cabinet fit the pocket completel
   assert.ok(deep.ifKept.protrudesMm > 340, 'if the wall must stay, an 18-inch bay still sticks out about 350 mm')
 })
 
-test('the pocket has an east opening onto the Entry gallery, door height, inside the pocket depth, and the wall is solid elsewhere', () => {
-  const c = ENTRY.wallCavity, o = c.eastOpening, spans = entryPocketEastWallSpans(2.7)
-  assert.ok(o.fromPlanY >= c.planY1 && o.toPlanY <= c.planY2, 'opening lies within the pocket depth')
-  assert.ok(o.wallPlanX < c.planX1, 'the opening is in the plan-left (east) wall, west of the pocket')
-  const zmm = ENTRY.planScale.zMetresPerPixel * 1000, width = (o.toPlanY - o.fromPlanY) * zmm
-  assert.ok(width > 700 && width < 900, `opening width ${width}`)
-  const [before, lintel, after] = spans
-  assert.deepEqual([before[0][1], before[0][3], before[1], before[2]], [c.wallPlanY1, o.fromPlanY, 0, 2.7])
-  assert.deepEqual([after[0][1], after[0][3], after[1], after[2]], [o.toPlanY, ENTRY.shaft.planY1, 0, 2.7])
-  assert.deepEqual([lintel[0][1], lintel[0][3], lintel[1], lintel[2]], [o.fromPlanY, o.toPlanY, o.heightMm / 1000, 2.7])
+test('the east cabinet is open over its whole east side onto the Entry gallery, as in the Blender model', () => {
+  const c = ENTRY.wallCavity, o = c.eastOpening
+  assert.ok(o.wallPlanX < c.planX1, 'the opening is in the plan-left (east) wall of the pocket')
+  assert.deepEqual([o.fromPlanY, o.toPlanY, o.heightMm], [c.wallPlanY1, ENTRY.shaft.planY1, c.heightMm])
+  // Every wall piece left on that side is empty (zero length or zero height), so neither 3D view draws one.
+  const empty = ([[x1, y1, x2, y2], bottom, top]) => Math.hypot(x2 - x1, y2 - y1) < 0.01 || top <= bottom
+  assert.ok(entryPocketEastWallSpans(2.7).every(empty))
+})
+
+test('a full-height partition splits the pocket into an east and a west cabinet', () => {
+  const c = ENTRY.wallCavity, x = c.partitionPlanX
+  assert.ok(x > c.planX1 + 50 && x < c.planX2, 'the partition is inside the pocket, nearer its west end')
+  assert.ok(ENTRY_WALL_SEGMENTS.some(([x1, y1, x2, y2]) => x1 === x && x2 === x && y1 === c.wallPlanY1 && y2 === ENTRY.shaft.planY1))
+  assert.ok(Math.abs(geometry.partitionRoomXMm - 736) < 20, `partition ${geometry.partitionRoomXMm} mm from the Drawing Room west wall`)
 })

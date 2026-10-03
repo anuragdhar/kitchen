@@ -251,7 +251,7 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
     const furniture=new THREE.Group();shell.add(furniture)
     shell.add(createRoomAirConditioning(room))
     shell.add(createRoomTaskLighting(room))
-    const drawingLayouts=roomKey==='drawing'?createDrawingRoomLayouts(room,{wallFaceMm:37,wallThicknessMm:T*1000,wallMaterial,initial:drawingLayoutRef.current}):null
+    const drawingLayouts=roomKey==='drawing'?createDrawingRoomLayouts(room,{wallFaceMm:37,initial:drawingLayoutRef.current}):null
     if(drawingLayouts){drawingLayouts.setLabels(tvLabelsRef.current);shell.add(drawingLayouts.built)}
     const vanity=createBedroom3DressingTable(room);vanity.userData.setMirrorOpen?.(mirrorOpen)
     const partition=createDrawingLobbyPartition(room,roomKey);shell.add(partition)
@@ -566,7 +566,7 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
           <select value={drawingLayout} onChange={event=>setDrawingLayout(event.target.value)} style={{padding:'7px 8px',borderRadius:9,border:'1px solid #cbd5e1',maxWidth:360}}>{DRAWING_LAYOUTS.map(layout=><option key={layout.key} value={layout.key}>{layout.label}</option>)}</select>
         </label>}
         {roomKey==='drawing'&&<button onClick={()=>setDoorSwing(value=>!value)} aria-pressed={doorSwing} style={buttonStyle(doorSwing)} title="The entry door opens into the room: red is the area its leaf sweeps">{doorSwing?'Hide entry door swing':'Show entry door swing'}</button>}
-        {roomKey==='drawing'&&<button onClick={()=>setStorageOpen(value=>!value)} aria-pressed={storageOpen} style={buttonStyle(storageOpen)} title="The deep storage cut into the cavity behind the Drawing Room north wall (corner layouts): doors hidden to show the shelves">{storageOpen?'Close wall storage doors':'Open wall storage doors'}</button>}
+        {roomKey==='drawing'&&<button onClick={()=>setStorageOpen(value=>!value)} aria-pressed={storageOpen} style={buttonStyle(storageOpen)} title="The west cabinet of the entry pocket, entered through a door at the west end of the north wall: doors hidden to show the shelves">{storageOpen?'Close west cabinet doors':'Open west cabinet doors'}</button>}
         {roomKey==='drawing'&&drawingLayout==='cornerConsole'&&<>
           <button onClick={()=>setArmOut(value=>!value)} aria-pressed={armOut} style={buttonStyle(armOut)}>{armOut?'Park TV flat on the wall':'Pull TV out and turn it toward the north sofa'}</button>
           <button onClick={()=>setTvSize(value=>value==='55'?'65':'55')} style={buttonStyle(tvSize==='65')}>TV size: {tvSize} inch (click for {tvSize==='55'?'65':'55'})</button>

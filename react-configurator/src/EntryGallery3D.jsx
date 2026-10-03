@@ -5,6 +5,9 @@ import * as THREE from 'three'
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js'
 import {RoomEnvironment} from 'three/examples/jsm/environments/RoomEnvironment.js'
 import {ENTRY,ENTRY_WALL_SEGMENTS,entryPocketEastWallSpans} from './config/entryConfig.js'
+import {HOME_ROOM_LAYOUTS} from './config/homeRoomViews.js'
+import {EMPTY_ROOM_SHELLS} from './config/roomShellConfig.js'
+import {wallPiecesAroundStorage} from './domain/wallStorage.mjs'
 import {createEntryArrivalDoor} from './rooms/entry/EntryArrivalDoor.js'
 import {createEntryFoldSeat} from './rooms/entry/EntryFoldSeat.js'
 import shoeRackWoodTexture from '../../Interior/entry-textures/shoe-rack-wood.png'
@@ -60,7 +63,9 @@ export default function EntryGallery3D(){
       const mesh=addBox(span,top-bottom,.085,(a+b)/2,(bottom+top)/2,(c+d)/2,wallMaterial)
       mesh.rotation.y=-Math.atan2(d-c,b-a)
     }
-    ENTRY_WALL_SEGMENTS.forEach(segment=>addSpan(segment))
+    // The shared Drawing Room wall has the door of the pocket's west cabinet cut through it (opened from the Drawing Room side).
+    const drawingBounds=HOME_ROOM_LAYOUTS.find(room=>room.key==='drawing').bounds
+    ENTRY_WALL_SEGMENTS.forEach(segment=>(wallPiecesAroundStorage(segment,EMPTY_ROOM_SHELLS.drawing,drawingBounds,height)||[[segment,0,height]]).forEach(([piece,bottom,top])=>addSpan(piece,bottom,top)))
     entryPocketEastWallSpans(height).forEach(([segment,bottom,top])=>addSpan(segment,bottom,top))
     model.add(createEntryArrivalDoor(x,z))
     model.add(createEntryFoldSeat(x,z))

@@ -39,6 +39,7 @@ import BlenderHomeView from './BlenderHomeView.jsx'
 import {HOME_ROOM_LAYOUTS} from './config/homeRoomViews.js'
 import {daylightPreset} from './render/daylight.mjs'
 import {TRUE_NORTH_OFFSET_DEG,SITE_LATITUDE_DEG} from './config/orientationConfig.js'
+import {wallPiecesAroundStorage} from './domain/wallStorage.mjs'
 
 // The A501 plan is south-up: image right is west and image down is north.
 const PLAN_WIDTH=PLAN_IMAGE.widthPx,PLAN_HEIGHT=PLAN_IMAGE.heightPx
@@ -172,24 +173,13 @@ function LiveWholeHome3D({onOpenRoom}){
       wallMeshes.push(beam)
       return beam
     }
-    // The wall shared with the Drawing Room has the storage opening cut through it (the Drawing Room's own north edge is cut in roomEdge).
-    const storageCut=(()=>{
-      const b=ROOMS.find(room=>room.name==='Drawing Room').bounds,d=EMPTY_ROOM_SHELLS.drawing,st=d.wallStorage
-      const planX=mm=>b[2]-(mm/d.widthMm)*(b[2]-b[0])
-      return {y:b[3],x1:planX(st.fromWestMm+st.widthMm),x2:planX(st.fromWestMm),bottom:st.bottomMm/1000,top:(st.bottomMm+st.heightMm)/1000}
-    })()
+    // The wall shared with the Drawing Room has the door of the pocket's west cabinet cut through it (the Drawing Room's own north edge is cut in roomEdge).
+    const drawingBounds=ROOMS.find(room=>room.name==='Drawing Room').bounds
     WALLS.forEach(segment=>{
-      const [ax,ay,bx,by]=segment
-      if(ay===storageCut.y&&by===storageCut.y&&Math.min(ax,bx)<storageCut.x1&&Math.max(ax,bx)>storageCut.x2){
-        const lo=Math.min(ax,bx),hi=Math.max(ax,bx)
-        for(const [pieceA,pieceB,bottom,top] of [[lo,storageCut.x1,0,HEIGHT],[storageCut.x1,storageCut.x2,0,storageCut.bottom],[storageCut.x1,storageCut.x2,storageCut.top,HEIGHT],[storageCut.x2,hi,0,HEIGHT]]){
-          const mesh=addSpan([pieceA,ay,pieceB,by],bottom,top);if(mesh)mesh.userData={planWall:segment}
-        }
-        return
-      }
-      const mesh=addSpan(segment);if(mesh)mesh.userData={planWall:segment}
+      const pieces=wallPiecesAroundStorage(segment,EMPTY_ROOM_SHELLS.drawing,drawingBounds,HEIGHT)
+      for(const [piece,bottom,top] of pieces||[[segment,0,HEIGHT]]){const mesh=addSpan(piece,bottom,top);if(mesh)mesh.userData={planWall:segment}}
     })
-    // The pocket's east wall (plan-left) with its east opening onto the Entry gallery; the north opening is cut above.
+    // The pocket's east wall (plan-left): the east cabinet is open onto the Entry gallery (ENTRY.wallCavity.eastOpening).
     for(const [segment,bottom,top] of entryPocketEastWallSpans(HEIGHT)){const mesh=addSpan(segment,bottom,top);if(mesh)mesh.userData={planWall:segment}}
     model.add(createEntryArrivalDoor(X,Z))
     model.add(createEntryFoldSeat(X,Z))
@@ -304,7 +294,7 @@ function LiveWholeHome3D({onOpenRoom}){
     const drawing=EMPTY_ROOM_SHELLS.drawing,db=boundsFor('Drawing Room')
     const dg=roomGroup(db,drawing.widthMm,drawing.lengthMm)
     dg.add(createRoomAirConditioning(drawing))
-    const drawingLayouts=createDrawingRoomLayouts(drawing,{wallFaceMm:WALL_THICKNESS_M*500,wallThicknessMm:WALL_THICKNESS_M*1000,wallMaterial:drawingWallMaterial,initial:drawingLayoutRef.current});dg.add(drawingLayouts.built,drawingLayouts.furniture)
+    const drawingLayouts=createDrawingRoomLayouts(drawing,{wallFaceMm:WALL_THICKNESS_M*500,initial:drawingLayoutRef.current});dg.add(drawingLayouts.built,drawingLayouts.furniture)
     drawingLayouts.setLabels(tvLabelsRef.current)
     const partition=createDrawingLobbyPartition(drawing,'drawing');dg.add(partition)
     partition.userData.setOpen(partitionOpen)
@@ -851,7 +841,7 @@ function LiveWholeHome3D({onOpenRoom}){
           <select value={drawingLayout} onChange={event=>setDrawingLayout(event.target.value)} style={{padding:'7px 8px',borderRadius:9,border:'1px solid #cbd5e1',maxWidth:340}}>{DRAWING_LAYOUTS.map(layout=><option key={layout.key} value={layout.key}>{layout.label}</option>)}</select>
         </label>
         <button onClick={()=>setDoorSwing(value=>!value)} aria-pressed={doorSwing} style={buttonStyle(doorSwing)} title="The Drawing Room entry door opens into the room: red is the area its leaf sweeps">{doorSwing?'Hide entry door swing':'Show entry door swing'}</button>
-        <button onClick={()=>setStorageOpen(value=>!value)} aria-pressed={storageOpen} style={buttonStyle(storageOpen)} title="The deep storage cut into the cavity behind the Drawing Room north wall (corner layouts): doors hidden to show the shelves">{storageOpen?'Close wall storage doors':'Open wall storage doors'}</button>
+        <button onClick={()=>setStorageOpen(value=>!value)} aria-pressed={storageOpen} style={buttonStyle(storageOpen)} title="The west cabinet of the entry pocket, entered from the Drawing Room through a door at the west end of its north wall: doors hidden to show the shelves">{storageOpen?'Close west cabinet doors':'Open west cabinet doors'}</button>
         {drawingLayout==='cornerConsole'&&<>
           <button onClick={()=>setArmOut(value=>!value)} aria-pressed={armOut} style={buttonStyle(armOut)}>{armOut?'Park TV flat on the wall':'Pull TV out and turn it toward the north sofa'}</button>
           <button onClick={()=>setTvSize(value=>value==='55'?'65':'55')} style={buttonStyle(tvSize==='65')}>TV size: {tvSize} inch (click for {tvSize==='55'?'65':'55'})</button>

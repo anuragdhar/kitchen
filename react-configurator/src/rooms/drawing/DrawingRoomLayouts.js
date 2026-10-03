@@ -19,7 +19,7 @@ export const DRAWING_LAYOUTS = [
  * Add both groups to the scene; setLayout switches which layout is visible.
  * The three corner-sofa layouts share one seating group and one set of ceiling fixtures.
  */
-export function createDrawingRoomLayouts(room, {wallFaceMm = 0, initial = 'cornerConsole', wallMaterial, wallThicknessMm} = {}) {
+export function createDrawingRoomLayouts(room, {wallFaceMm = 0, initial = 'cornerConsole'} = {}) {
   const built = new THREE.Group(); built.name = 'Drawing Room fixed pieces'
   const furniture = new THREE.Group(); furniture.name = 'Drawing Room furniture'
   const tvNorth = createDrawingRoomTvWall(room, {insetMm: wallFaceMm})
@@ -30,7 +30,7 @@ export function createDrawingRoomLayouts(room, {wallFaceMm = 0, initial = 'corne
   }
   const CORNER = Object.keys(corner)
   const doorSwing = createDrawingRoomDoorSwing(room, {wallFaceMm})
-  const wallStorage = createDrawingRoomWallStorage(room, {wallFaceMm, wallMaterial, wallThicknessMm})
+  const wallStorage = createDrawingRoomWallStorage(room, {wallFaceMm}) // part of the building: shown in every layout
   const registry = [
     {part: tvNorth, layouts: ['northTv'], into: built},
     {part: createDrawingLayoutLights(room, 'northTv'), layouts: ['northTv'], into: built},
@@ -38,10 +38,8 @@ export function createDrawingRoomLayouts(room, {wallFaceMm = 0, initial = 'corne
     ...Object.entries(corner).map(([key, part]) => ({part, layouts: [key], into: built})),
     {part: createDrawingLayoutLights(room, 'cornerSofas'), layouts: CORNER, into: built},
     {part: createDrawingRoomCornerSeating(room, {wallFaceMm}), layouts: CORNER, into: furniture},
-    {part: wallStorage.storage, layouts: room.wallStorage.layouts, into: built},
-    {part: wallStorage.plug, layouts: DRAWING_LAYOUTS.map(l => l.key).filter(key => !room.wallStorage.layouts.includes(key)), into: built},
   ]
-  built.add(doorSwing)
+  built.add(doorSwing, wallStorage.storage)
   registry.forEach(({part, into}) => into.add(part))
   let current = initial
   const setLayout = key => {

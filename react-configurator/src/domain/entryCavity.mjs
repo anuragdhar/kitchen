@@ -18,6 +18,8 @@ export function cavityGeometry(entry, drawing) {
     // Position along the Drawing Room's north wall, measured from its west wall (x = 0), the same frame as roomShellConfig.
     roomX1Mm: (bx2 - c.planX2) * mmPerPx,
     roomX2Mm: (bx2 - c.planX1) * mmPerPx,
+    // The partition between the pocket's two cabinets; the west cabinet lies west of it (x below this).
+    partitionRoomXMm: c.partitionPlanX == null ? null : (bx2 - c.partitionPlanX) * mmPerPx,
     // 9 inches is 229 mm: a drawn wall that thick is a normal solid wall, so opening it needs the builder or engineer.
     nearNineInchWall: Math.abs(wallMm - 229) < 30,
   }

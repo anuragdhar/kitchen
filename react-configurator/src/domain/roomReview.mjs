@@ -25,6 +25,8 @@ for (const d of room.doors ?? []) {
   }
   for (const w of room.windows ?? []) lines.push(`Window on the ${w.wall} wall: ${mm(w.widthMm)} wide, sill ${mm(w.bottomMm)}, head ${mm(w.topMm)}, starting ${mm(w.fromMm)} from the west end.`)
   for (const [wall, o] of Object.entries(room.wallOpenings ?? {})) lines.push(`Open (no wall) on the ${wall} side from ${mm(o.fromMm)} to ${mm(o.toMm)}.`)
+  const ws = room.wallStorage
+  if (ws) lines.push(`Cabinet door on the north wall: ${mm(ws.widthMm)} wide (${ws.doorCount} leaves) x ${mm(ws.heightMm)} high, starting ${mm(ws.fromWestMm)} from the west end, into a closet ${mm(ws.depthMm)} deep behind the wall (the west half of the pocket on the Main Entry side; its east half is a separate cabinet that opens onto the Entry, not into this room). Shelves ${mm(ws.shelves.depthMm)} deep at the back. Not confirmed on site.`)
   for (const b of room.hangingBeams ?? []) lines.push(`Ceiling beam along the ${b.wall} side from ${mm(b.fromMm)} to ${mm(b.toMm)}, drops ${mm(b.dropMm)}.`)
   return lines
 }
@@ -48,6 +50,7 @@ function drawingLayoutA(room) {
       `65-inch TV (${w.tv.widthMm} x ${w.tv.heightMm} mm) recessed in the centre bay, bottom edge ${mm(w.tv.bottomMm)}, set back ${mm(w.tv.setbackMm)}; Bose Smart Soundbar 300 (${w.soundbar.widthMm} x ${w.soundbar.heightMm} x ${w.soundbar.depthMm}) on the bay floor below it.`,
       `Bose Bass Module 500 (${w.bassModule.widthMm} x ${w.bassModule.heightMm} x ${w.bassModule.depthMm}) in the west half of the base behind an open lattice, next to the soundbar.`,
       `Wi-Fi router in a ventilated lattice bay above the TV; landline phone and intercom in an open niche at the east end of the cabinet (door side).`,
+      `The TV cabinet covers the west cabinet door in the north wall (x ${room.wallStorage.fromWestMm}-${room.wallStorage.fromWestMm + room.wallStorage.widthMm}): with this layout that closet cannot be reached.`,
       `West 3-seater: centre (${f.sofa.centerXmm}, ${f.sofa.centerZmm}), ${size(f.sofa.widthMm, f.sofa.lengthMm)}, back on the west wall, faces east.`,
       `South 3-seater: centre (${f.southSofa.centerXmm}, ${f.southSofa.centerZmm}), same size, back on the south wall under the window, faces north.`,
       `Oval coffee table: centre (${f.coffeeTable.centerXmm}, ${f.coffeeTable.centerZmm}), ${size(f.coffeeTable.widthMm, f.coffeeTable.lengthMm)}. Rug under the seating.`,
@@ -78,7 +81,8 @@ function drawingLayoutB(room) {
       `Oval coffee table: centre (${f.coffeeTable.centerXmm}, ${f.coffeeTable.centerZmm}), ${size(f.coffeeTable.widthMm, f.coffeeTable.lengthMm)}. Rug under the L.`,
       `65-inch TV (${c.tv.widthMm} x ${c.tv.heightMm} mm) wall-mounted flat on the solid east wall, z ${Math.round(tvZ1)}-${Math.round(tvZ2)}, bottom edge ${mm(c.tv.bottomMm)}, sticks out ${mm(c.tv.depthMm + c.tv.mountMm)}. The east wall is solid only from z=0 to ${room.wallOpenings.east.fromMm}; beyond that it opens to the Lobby.`,
       `Bose Smart Soundbar 300 (${c.soundbar.widthMm} x ${c.soundbar.heightMm} x ${c.soundbar.depthMm}) on the wall under the TV; Bose Bass Module 500 (${bm.widthMm} x ${bm.heightMm} x ${bm.depthMm}) on the floor below it, centre z ${bm.centerFromNorthMm}.`,
-      `Opening cut through the north wall above the north sofa into the empty cavity behind it: x ${ws.fromWestMm}-${ws.fromWestMm + ws.widthMm}, ${mm(ws.bottomMm)}-${mm(ws.bottomMm + ws.heightMm)} high, ${mm(ws.depthMm)} deep from the room face, closed by flush doors (storage for rarely used things; the sofa is below it). In its middle, recessed ${mm(rc.depthMm)} and flush with the wall: x ${rc.fromWestMm}-${rc.fromWestMm + rc.widthMm}, ${mm(rc.bottomMm)}-${mm(rc.bottomMm + rc.heightMm)} high, an open bay holding the Wi-Fi router (lattice), a landline phone and an intercom. The wall behind is unchecked on site (hollow? may it be opened?).`,
+      `Small wall-hung cabinet above the north sofa: x ${rc.fromWestMm}-${rc.fromWestMm + rc.widthMm}, ${mm(rc.bottomMm)}-${mm(rc.bottomMm + rc.heightMm)} high, ${mm(rc.depthMm)} deep, holding the Wi-Fi router (open lattice), a landline phone and an intercom.`,
+      `The north sofa stands in front of the west cabinet door (x ${ws.fromWestMm}-${ws.fromWestMm + ws.widthMm}): the door cannot be used while the sofa is against the wall there.`,
     ],
     items: [
       {label: `Sofa ${f.northSofa.lengthMm}x${f.northSofa.widthMm}`, x1: f.northSofa.centerXmm - f.northSofa.lengthMm / 2, z1: f.northSofa.centerZmm - f.northSofa.widthMm / 2, x2: f.northSofa.centerXmm + f.northSofa.lengthMm / 2, z2: f.northSofa.centerZmm + f.northSofa.widthMm / 2, kind: 'seat'},
@@ -86,7 +90,8 @@ function drawingLayoutB(room) {
       {label: `Table ${f.coffeeTable.lengthMm}x${f.coffeeTable.widthMm}`, x1: f.coffeeTable.centerXmm - f.coffeeTable.widthMm / 2, z1: f.coffeeTable.centerZmm - f.coffeeTable.lengthMm / 2, x2: f.coffeeTable.centerXmm + f.coffeeTable.widthMm / 2, z2: f.coffeeTable.centerZmm + f.coffeeTable.lengthMm / 2, kind: 'table'},
       {label: `TV ${c.tv.widthMm}`, x1: frontX, z1: tvZ1, x2: room.widthMm - WALL_FACE_MM, z2: tvZ2, kind: 'fixed'},
       {label: 'Bass Module', x1: bmX2 - bm.depthMm, z1: bm.centerFromNorthMm - bm.widthMm / 2, x2: bmX2, z2: bm.centerFromNorthMm + bm.widthMm / 2, kind: 'fixed'},
-      {label: `Wall storage ${ws.widthMm} (in the wall, ${ws.depthMm} deep)`, x1: ws.fromWestMm, z1: 0, x2: ws.fromWestMm + ws.widthMm, z2: 40, kind: 'fixed'},
+      {label: `Cabinet ${rc.widthMm}x${rc.depthMm}`, x1: rc.fromWestMm, z1: 0, x2: rc.fromWestMm + rc.widthMm, z2: rc.depthMm, kind: 'fixed'},
+      {label: `West cabinet door ${ws.widthMm}`, x1: ws.fromWestMm, z1: 0, x2: ws.fromWestMm + ws.widthMm, z2: 40, kind: 'fixed'},
     ],
     measured: [
       `West sofa seats: ${spread(check.views.westSofa)}.`,
