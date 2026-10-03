@@ -65,6 +65,10 @@
       "name": "False ceiling"
     },
     {
+      "id": "ac",
+      "name": "Air conditioning"
+    },
+    {
       "id": "painting",
       "name": "Painting"
     },
@@ -168,6 +172,32 @@
       "dependsOn": [],
       "status": "todo",
       "source": "docs/DRAWING_ROOM_TV_WALL.md"
+    },
+    {
+      "phase": "measure",
+      "id": "ac-choose",
+      "trade": "general",
+      "title": "Drawing Room AC: choose the size, the indoor position and where the outdoor unit goes",
+      "room": "Drawing Room",
+      "detail": "Owner 2026-10-04: the Drawing Room has no AC; one has to be bought. The room is about 3.35 x 5.34 m (18 sq m, 193 sq ft), but its east side is open to the Lobby/Dining (about 16 sq m more), so the AC cools both unless that opening can be closed. Starting point: an inverter split AC of 1.5 ton if only the Drawing Room is cooled, 2 ton if the opening stays open; ask the dealer to confirm for the top-floor heat and sun on the south window. The electrical plan already has the AC point on the west wall, 3,080 mm from the north wall and 2,300 high, above the west sofa. Decide where the outdoor unit hangs, because that fixes the pipe route and its length.",
+      "dependsOn": [
+        "site-measure"
+      ],
+      "status": "todo",
+      "needs": "Owner decision: tonnage and model; indoor wall; outdoor unit position (society rules may apply)"
+    },
+    {
+      "phase": "measure",
+      "id": "lighting-plan-drawing",
+      "trade": "general",
+      "title": "Drawing Room: finalise layered lighting with track lights (no false ceiling)",
+      "room": "Drawing Room",
+      "detail": "Owner 2026-10-04: layered lighting is wanted, with lights on the walls, and there is no false ceiling. Proposal: surface-mounted track lights fixed straight to the slab do the job of several ceiling lights from a single power point each. Track 1, about 2 m long, parallel to the TV wall and about 700 mm in front of it: three small spot heads grazing the fluted panel, none aimed at the screen. Track 2, about 2.5 m long, along the west wall about 600 mm off it, over the west sofa: spot heads on the wall and one for reading. Use a track that also takes diffused (linear or flood) heads for soft general light, so spots are not the only source. Layers: general light from the diffused heads and the wall uplight; accent from the spot heads and the panel cap strip; task light from the reading light and lamps; the chandelier over the coffee table. All warm white (2700-3000 K), dimmable, each layer on its own switch. Keep tracks and spots clear of the ceiling fan's sweep, or the blades will make the light flicker.",
+      "dependsOn": [
+        "finalise-layouts"
+      ],
+      "status": "todo",
+      "needs": "Owner decision: track type (230 V track with no driver, or slim 48 V magnetic track with a driver to hide), colour (white or black), number of heads; is there a ceiling fan and where"
     },
     {
       "id": "shoe-rack-wall",
@@ -392,6 +422,46 @@
       "needs": "Light count and positions, and the switch position, from the entry ceiling plan"
     },
     {
+      "phase": "electrical-rough",
+      "id": "ac-piping",
+      "trade": "ac",
+      "title": "Drawing Room AC: lay the copper pipes, drain pipe and cable before plaster",
+      "room": "Drawing Room",
+      "detail": "AC installer, before plastering and painting. Core a 65-75 mm hole through the outer wall, sloping slightly down to the outside. Run the insulated copper pipe pair, the drain pipe and the link cable from the indoor position to the outdoor unit, either chased into the wall or in a neat PVC casing. The drain must fall all the way (at least 1 in 100) and end at a proper drain point, not drip on a neighbour. Keep the pipe run as short as possible (ideally under 5 m) with few bends. Leave the pipe ends sealed and labelled.",
+      "dependsOn": [
+        "ac-choose",
+        "society-permission"
+      ],
+      "status": "todo",
+      "needs": "The AC model, so the pipe sizes match; the outdoor unit position"
+    },
+    {
+      "phase": "electrical-rough",
+      "id": "elec-ac-point",
+      "trade": "electrical",
+      "title": "Drawing Room AC: dedicated power line and socket",
+      "room": "Drawing Room",
+      "detail": "Electrician. A separate circuit for the AC from the distribution board: its own 20 A breaker, 4 sq mm copper wire with earth, to a 20/25 A AC socket or a switch with indicator beside the indoor unit (planned on the west wall, 2,300 high). Nothing else on this circuit. Add a voltage stabiliser point only if the chosen AC needs one.",
+      "dependsOn": [
+        "ac-choose",
+        "electrician-survey"
+      ],
+      "status": "todo"
+    },
+    {
+      "phase": "electrical-rough",
+      "id": "elec-track-feed",
+      "trade": "electrical",
+      "title": "Drawing Room: power feed points for the track lights and wall lights",
+      "room": "Drawing Room",
+      "detail": "Electrician. One feed point at the wall end of each track, brought up inside the wall and across the wall-ceiling corner, so no wire shows on the slab; the track itself carries the power along its length. A separate switched line for each layer back to the switchboard, with dimmers where wanted. If a 48 V magnetic track is chosen, fix its driver where it can be reached, for example inside the cap of the panel wall. Wall light points as in the electrical plan (uplight and reading light on the west wall).",
+      "dependsOn": [
+        "lighting-plan-drawing",
+        "electrician-survey"
+      ],
+      "status": "todo"
+    },
+    {
       "id": "plaster",
       "phase": "surfaces",
       "trade": "civil",
@@ -402,7 +472,9 @@
         "elec-chase-drawing",
         "elec-data",
         "plumbing-rough",
-        "debris"
+        "debris",
+        "ac-piping",
+        "elec-track-feed"
       ],
       "status": "todo"
     },
@@ -556,12 +628,13 @@
       "trade": "electrical",
       "title": "Fit switches, sockets, USB chargers and light fittings; test every circuit",
       "room": "Drawing Room",
-      "detail": "Includes the RCBO test, earth test and labelling the board.",
+      "detail": "Includes the RCBO test, earth test and labelling the board. Also fix the track lights to the slab, clip in and aim the heads after the furniture is in place.",
       "dependsOn": [
         "paint",
         "elec-chase-drawing",
         "elec-tv-wall",
-        "elec-drawing-switchboard"
+        "elec-drawing-switchboard",
+        "elec-track-feed"
       ],
       "status": "todo",
       "source": "docs/DRAWING_ROOM_ELECTRICAL.md"
@@ -602,6 +675,20 @@
       "dependsOn": [
         "elec-entry-ceiling",
         "entry-ceiling"
+      ],
+      "status": "todo"
+    },
+    {
+      "phase": "second-fix",
+      "id": "ac-install",
+      "trade": "ac",
+      "title": "Drawing Room AC: fit the indoor and outdoor units and commission",
+      "room": "Drawing Room",
+      "detail": "After painting. Fix the indoor unit level on its plate and the outdoor unit on a rust-proof stand, connect the pipes, vacuum the lines, release the gas, check the drain by pouring water, and run a cooling test. Keep the warranty card and the installer's details in the task notes.",
+      "dependsOn": [
+        "ac-piping",
+        "elec-ac-point",
+        "paint"
       ],
       "status": "todo"
     },

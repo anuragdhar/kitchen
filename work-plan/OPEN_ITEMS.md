@@ -44,6 +44,10 @@ page). Write the answer next to the item or just tell the assistant; the task an
 | C12 | TV size to plan for: 55 inch only, or keep room for 65 inch | both drawn; affects whether the switchboard is covered | TV wall points |
 | C13 | Fold-down seat at the entry: exact wall and position, seat finish | west wall beside the shoe rack | Fold-down seat |
 | C14 | Modular switch range and colour | none yet | Replace the old switchboard |
+| C15 | Drawing Room AC: tonnage and model, indoor wall, outdoor unit position | 1.5 ton if only the Drawing Room, 2 ton if the opening to the Lobby stays open; indoor unit on the west wall | Choose the AC |
+| C16 | Can the opening between the Drawing Room and the Lobby/Dining be closed (door or curtain) when the AC runs? | not decided | Choose the AC |
+| C17 | Track lights: type (230 V or slim 48 V magnetic), colour, number of heads | two surface tracks, warm white, dimmable | Layered lighting |
+| C18 | Is there a ceiling fan in the Drawing Room, and where? | not known | Layered lighting |
 
 ## D. People to arrange
 
