@@ -752,6 +752,20 @@
       "needs": "Measure the opening width and the height under the beam; engineer or fabricator to confirm the beam takes about 180 kg on anchors; which side the panels park on (Drawing Room or Lobby face of the wall); frame colour"
     },
     {
+      "id": "window-outside-chick",
+      "phase": "second-fix",
+      "trade": "windows",
+      "title": "Drawing Room south window: roll-up sun screen (bamboo chick) on the outside",
+      "room": "Drawing Room",
+      "detail": "Owner 2026-10-04: the window faces south-west and takes a lot of sun and heat in the Delhi summer; a curtain is used now. Idea: a bamboo chick outside that rolls up and down. Shade on the outside stops the heat before it comes through the glass, which a curtain inside cannot do. The six shutters open outward, so the chick must hang clear of their swing: from the edge of the sunshade above the window if there is one, or from brackets standing out about 450-500 mm from the wall. Width about 2.5 m, drop about 1.7 m. Fix it with stainless steel hooks and tie the bottom rail down at both ends, or wind will slam it against the shutters. Plain bamboo lasts two or three monsoons outside; a PVC-coated or HDPE outdoor roll-up screen looks similar and lasts longer. Work it with a cord that can be reached from the window. If it cannot be hung clear of the shutters, the fallback is a heat-control film on the glass.",
+      "dependsOn": [
+        "carp-window-centre",
+        "window-wood-finish"
+      ],
+      "status": "todo",
+      "needs": "Is there a sunshade (chajja) above the window, and how far does it project? Bamboo or outdoor PVC/HDPE screen? Society rules on the outside look of the building"
+    },
+    {
       "id": "furniture",
       "phase": "finish",
       "trade": "general",

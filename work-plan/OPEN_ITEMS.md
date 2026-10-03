@@ -28,6 +28,7 @@ page). Write the answer next to the item or just tell the assistant; the task an
 | B3 | Is the society permission to close the shaft in writing? Does the society also need to approve the new main door and the shaft cover? | Society permission |
 | B4 | Is the present shaft cover at the entry ventilated (holes or louvres)? | Shaft cover |
 | B5 | ANSWERED 2026-10-04: the south window frame is wood, in three sections, shutters open outward, centre section fixed (to be replaced by two shutters). Nothing outside blocks the centre shutters (owner). | Centre window shutters |
+| B6 | Drawing Room south window: is there a sunshade (chajja) above it outside, and how far does it stick out? | Outside sun screen |
 
 ## C. Decisions
 
@@ -52,6 +53,7 @@ page). Write the answer next to the item or just tell the assistant; the task an
 | C17 | Track lights: type (230 V or slim 48 V magnetic), colour, number of heads | two surface tracks, warm white, dimmable | Layered lighting |
 | C18 | Is there a ceiling fan in the Drawing Room, and where? | not known | Layered lighting |
 | C19 | South window: which wood shade; glass type for the new shutters; roller net cassette at the top or the side (roller net per section is DECIDED) | match the TV panel wall; 5 mm clear glass | Window wooden shade; mosquito net; centre shutters |
+| C20 | Outside sun screen on the south window: plain bamboo, or an outdoor PVC/HDPE roll-up screen | outdoor screen lasts longer; bamboo looks warmer | Outside sun screen |
 
 ## D. People to arrange
 
