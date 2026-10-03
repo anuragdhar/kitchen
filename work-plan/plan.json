@@ -311,6 +311,34 @@
       "source": "docs/DRAWING_ROOM_ELECTRICAL.md"
     },
     {
+      "id": "elec-tv-wall",
+      "phase": "electrical-rough",
+      "trade": "electrical",
+      "title": "TV wall: power and cable points behind the TV and the console",
+      "room": "Drawing Room",
+      "detail": "Owner 2026-10-04 (electrician): power for the TV, the router and the music system, with no cables showing. Do this before the panelling goes on. (1) Behind the TV, inside its outline but clear of the bracket: a recessed box with 2 sockets for the TV and one spare. (2) Behind the console, about 400 mm high: a box with 2 sockets (one feeds the power strip inside the console, one spare), and beside it the data box for broadband, LAN, phone and intercom. (3) A 50 mm flexible conduit from the TV box down to the console box, with a pull wire, for HDMI, optical and LAN cables, so they can be changed later without opening the wall. (4) Feed these sockets by their own cable from the distribution board on a 16 A breaker with earth-leakage protection, not looped off the old switchboard. Conduits can be clipped to the wall surface because the panelling stands 20-25 mm off the wall on battens; chase only where there is no panel.",
+      "dependsOn": [
+        "electrician-survey",
+        "finalise-layouts"
+      ],
+      "status": "todo",
+      "needs": "Final TV size and bracket position, so the box is hidden for both the 55 and the 65 inch TV",
+      "source": "docs/DRAWING_ROOM_ELECTRICAL.md"
+    },
+    {
+      "id": "elec-drawing-switchboard",
+      "phase": "electrical-rough",
+      "trade": "electrical",
+      "title": "Replace the old Drawing Room switchboard with a modular switch plate",
+      "room": "Drawing Room",
+      "detail": "Owner 2026-10-04 (electrician): the existing switchboard on the east side of the TV controls this room's fans and lights and has a power socket. Replace it in the same place with a modular plate: take out the old board, fit a modular metal box of the right size (count the modules: one per light switch, two per fan regulator, two per socket, plus one or two spare), re-terminate the existing wires and check each for damaged insulation and a proper earth. Use step or electronic fan regulators of the same modular range. If the board falls inside the panelled area, set the box forward so the plate sits flush on the panel. The plate itself is fitted after painting. Note: the earlier electrical plan put a new main switchboard on the east wall (point E1); keeping the board where it is avoids rewiring, so E1 is now only needed if the owner wants switches there as well.",
+      "dependsOn": [
+        "electrician-survey"
+      ],
+      "status": "todo",
+      "needs": "Exact position and size of the existing board; how many fans, lights and sockets it controls; choose the modular range and colour"
+    },
+    {
       "id": "elec-floor-box",
       "phase": "electrical-rough",
       "trade": "electrical",
@@ -425,9 +453,9 @@
       "id": "carp-west-cabinet",
       "phase": "carpentry",
       "trade": "carpentry",
-      "title": "West cabinet: one hidden outward-opening door and shelves",
+      "title": "West cabinet: build the box on the steel floor, shelves and the hidden door",
       "room": "Drawing Room",
-      "detail": "One flush 500 x 1800 leaf on concealed hinges, hinged on its west edge, no handle (push latch), opening into the room, faced with the same fluted slats as the wall panelling; shelves 380 deep at the back. For winter clothes, opened about twice a year. The carpenter also lays the floor board on the iron frame first: 19 mm waterproof (BWP) plywood screwed to the frame.",
+      "detail": "Owner 2026-10-04 (carpenter). On the steel floor over the shaft: lay the 19 mm waterproof (BWP) plywood floor board, then build the cabinet box (two sides, back and top, in 18 mm waterproof plywood, laminated inside) so nothing is open to the shaft, and fit shelves 380 deep at the back. Door: one flush 500 x 1800 leaf on concealed hinges, hinged on its west edge, no handle (push latch), opening OUT into the Drawing Room, faced with the same fluted slats as the wall panelling so it cannot be seen. For winter clothes, opened about twice a year. Leave a small vent at the top and bottom of the box so clothes do not get musty.",
       "dependsOn": [
         "north-wall-door",
         "plaster",
@@ -437,14 +465,32 @@
       "source": "docs/ENTRY_WALL_CAVITY.md"
     },
     {
+      "id": "carp-tv-panel",
+      "phase": "carpentry",
+      "trade": "carpentry",
+      "title": "Clean panel wall behind the TV that hides the cabinet door",
+      "room": "Drawing Room",
+      "detail": "Owner 2026-10-04 (carpenter). Fluted panelling on the north wall from 40 to 2100 mm from the west wall, floor to 1800 high, 18 thick, a groove every 100 mm set out from the hidden door so both door edges fall on a groove; a slim cap with a light strip on top. Fix it on 20-25 mm battens, not straight on the wall: the gap behind is where the electrician runs the TV and console cables, so the wall need not be chased. Cut neat openings for the socket boxes behind the TV and behind the console, and for the switch plate if it falls inside the panelled area, and bring those boxes forward flush with the panel face. Fix a plywood backing piece behind the panel where the TV bracket bolts through into the wall.",
+      "dependsOn": [
+        "plaster",
+        "carp-west-cabinet",
+        "elec-tv-wall",
+        "elec-drawing-switchboard"
+      ],
+      "status": "todo",
+      "needs": "Panel finish and colour; socket and switch positions marked by the electrician first",
+      "source": "docs/DRAWING_ROOM_TV_WALL.md"
+    },
+    {
       "id": "carp-tv-console",
       "phase": "carpentry",
       "trade": "carpentry",
-      "title": "TV console under the TV (one piece, drag-out) and fluted wall panelling",
+      "title": "TV console under the TV (one piece, drag-out)",
       "room": "Drawing Room",
-      "detail": "Console 1600 x 400 x 400 on 200 legs with glides, 500-2100 from the west wall, free-standing so it can be dragged 600 out (leave 1 m cable slack): router bay and Bass Module bay with open lattice, storage with a lattice door. Wall panelling behind it: fluted, 40-2100 from the west wall, floor to 1800, 18 thick, a groove every 100 set out from the hidden door's edge, cap with a light strip.",
+      "detail": "Console 1600 x 400 x 400 on 200 legs with glides, 500-2100 from the west wall, free-standing so it can be dragged 600 out when the hidden door is used: router bay and Bass Module bay with open lattice, storage with a lattice door. Inside, screw a 6-way surge-protected power strip to the back panel; the router, set-top box, soundbar and Bass Module plug into it, so only ONE mains lead, one LAN cable and one HDMI or optical cable leave the console, each with about 1 m of slack. Cut a 60 mm cable hole with a brush grommet in the back panel and in each bay divider, and leave vent slots behind the router and Bass Module.",
       "dependsOn": [
-        "plaster"
+        "plaster",
+        "carp-tv-panel"
       ],
       "status": "todo",
       "source": "docs/DRAWING_ROOM_TV_WALL.md"
@@ -513,7 +559,9 @@
       "detail": "Includes the RCBO test, earth test and labelling the board.",
       "dependsOn": [
         "paint",
-        "elec-chase-drawing"
+        "elec-chase-drawing",
+        "elec-tv-wall",
+        "elec-drawing-switchboard"
       ],
       "status": "todo",
       "source": "docs/DRAWING_ROOM_ELECTRICAL.md"
@@ -537,7 +585,7 @@
       "trade": "electrical",
       "title": "Mount the TV and connect the soundbar, Bass Module, router, landline and intercom",
       "room": "Drawing Room",
-      "detail": "",
+      "detail": "Bolt the TV bracket through the panel and its backing into the wall. Plug the TV into the box behind it. Run HDMI, optical and LAN through the conduit down to the console. Everything in the console plugs into the power strip inside it, which plugs into the wall socket behind. Tie the three leads that leave the console into one loom with 1 m of slack, so the console can be dragged out.",
       "dependsOn": [
         "elec-second-fix",
         "carp-tv-console"
