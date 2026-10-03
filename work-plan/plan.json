@@ -204,6 +204,19 @@
       "needs": "MEASURE: where the two fans and the chandelier are (distance from the walls) and the fan blade diameter. DECIDE at the shop: how the reading heads are dimmed separately (smart heads or a two-circuit track). Buy track, heads and driver from one maker so they fit each other"
     },
     {
+      "phase": "measure",
+      "id": "lighting-plan-lobby",
+      "trade": "general",
+      "title": "Lobby / Dining: finalise track lighting (no false ceiling)",
+      "room": "Lobby / Dining",
+      "detail": "Owner 2026-10-04: track lights in the Lobby too, for flexibility. Drawn in the 3D model: the same 48 V magnetic surface track as the Drawing Room, white, fixed to the slab, in two runs that hug the walls so the middle of the ceiling stays free. Track 1, 2.6 m, along the south wall about 500 mm off it, east of the toilet door: two 7 W spots on the wall and two 15 W diffused heads for general light. Track 2, 1.5 m, in front of the ironing storage on the east wall: one 7 W spot on the storage doors and one 12 W down spot over the pulled-out ironing board. The linear pendant over the dining table stays. Totals: 4.1 m of track, 6 heads, 63 W, about 5,600 lumens, one 48 V 100 W driver, all dimmable, warm white 3000 K. Use the same maker as the Drawing Room so heads can be swapped between rooms.",
+      "dependsOn": [
+        "finalise-layouts"
+      ],
+      "status": "todo",
+      "needs": "Is there a ceiling fan in the Lobby, and where? Confirm the two track positions; where the driver hides"
+    },
+    {
       "id": "shoe-rack-wall",
       "phase": "civil",
       "trade": "civil",
@@ -466,6 +479,19 @@
       "status": "todo"
     },
     {
+      "phase": "electrical-rough",
+      "id": "elec-track-feed-lobby",
+      "trade": "electrical",
+      "title": "Lobby / Dining: power feed points for the track lights",
+      "room": "Lobby / Dining",
+      "detail": "Electrician. One feed point at the wall end of each of the two tracks, brought up inside the wall, each track on its own dimmed line; the dining pendant on a separate switch. Fix the 48 V 100 W driver where it can be reached.",
+      "dependsOn": [
+        "lighting-plan-lobby",
+        "electrician-survey"
+      ],
+      "status": "todo"
+    },
+    {
       "id": "plaster",
       "phase": "surfaces",
       "trade": "civil",
@@ -478,7 +504,8 @@
         "plumbing-rough",
         "debris",
         "ac-piping",
-        "elec-track-feed"
+        "elec-track-feed",
+        "elec-track-feed-lobby"
       ],
       "status": "todo"
     },
@@ -666,7 +693,8 @@
         "elec-chase-drawing",
         "elec-tv-wall",
         "elec-drawing-switchboard",
-        "elec-track-feed"
+        "elec-track-feed",
+        "elec-track-feed-lobby"
       ],
       "status": "todo",
       "source": "docs/DRAWING_ROOM_ELECTRICAL.md"

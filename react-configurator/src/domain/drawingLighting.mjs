@@ -25,13 +25,23 @@ function seatRectangles(room) {
   ]
 }
 
+/** Layout C of the Drawing Room: tracks, two ceiling fans, the chandelier; reading heads must be over the sofas. */
 export function checkDrawingLighting(room, config) {
+  return checkTrackLighting(room, config, {downTargets: seatRectangles(room), needsReading: true})
+}
+
+/**
+ * Checks any room's track lights: runs inside the room and off the walls, clear of ceiling fans (config.ceilingFans, optional),
+ * diffused and down-pointing heads away from the blades, wall spots aimed at the wall beside their run, each down-pointing
+ * ('reading') head over one of `downTargets` ({x1,x2,z1,z2}), and the driver not overloaded.
+ */
+export function checkTrackLighting(room, config, {downTargets = [], needsReading = false} = {}) {
   const issues = [], need = (ok, message) => { if (!ok) issues.push(message) }
-  const fans = config.ceilingFans, tracks = config.tracks, radius = fans.bladeDiameterMm / 2
-  const chandelier = config.ambient[0], fanPoints = fans.fans.map(f => ({x: f.xMm, z: f.zMm, label: f.label}))
+  const fans = config.ceilingFans ?? {fans: [], bladeDiameterMm: 0, chandelierRadiusMm: 0}, tracks = config.tracks, radius = fans.bladeDiameterMm / 2
+  const chandelier = config.ambient?.[0], fanPoints = fans.fans.map(f => ({x: f.xMm, z: f.zMm, label: f.label}))
   const clearances = {}
 
-  for (const fan of fanPoints) {
+  for (const fan of chandelier ? fanPoints : []) {
     const toChandelier = Math.hypot(fan.x - chandelier.xMm, fan.z - chandelier.zMm) - radius - fans.chandelierRadiusMm
     clearances[`${fan.label} to chandelier`] = Math.round(toChandelier)
     need(toChandelier >= 100, `${fan.label}: the blades come within ${Math.round(toChandelier)} mm of the chandelier (needs 100)`)
@@ -39,7 +49,7 @@ export function checkDrawingLighting(room, config) {
   }
 
   let watts = 0, lumens = 0, spots = 0, diffused = 0, reading = 0
-  const sofas = seatRectangles(room)
+  const sofas = downTargets
   for (const run of tracks.runs) {
     const limit = run.axis === 'x' ? room.widthMm : room.lengthMm, across = run.axis === 'x' ? room.lengthMm : room.widthMm
     need(run.fromMm >= 100 && run.toMm <= limit - 100 && run.toMm > run.fromMm, `${run.id}: the run leaves the room`)
@@ -61,7 +71,7 @@ export function checkDrawingLighting(room, config) {
           need(gap >= DIFFUSE_TO_BLADE_MM, `${run.id}: a ${name} head is ${Math.round(gap)} mm from the blades of the ${fan.label}; it would flicker (needs ${DIFFUSE_TO_BLADE_MM})`)
         }
         // A reading head points straight down, so it must be over a sofa seat.
-        if (head.kind === 'reading') need(sofas.some(r => at.x >= r.x1 && at.x <= r.x2 && at.z >= r.z1 && at.z <= r.z2), `${run.id}: the reading head at ${head.atMm} is not over a sofa`)
+        if (head.kind === 'reading') need(sofas.some(r => at.x >= r.x1 && at.x <= r.x2 && at.z >= r.z1 && at.z <= r.z2), `${run.id}: the down-pointing head at ${head.atMm} is not over a sofa or work spot`)
       } else {
         spots++
         // A spot must point at the wall nearest its run, away from the middle of the room where the fans are.
@@ -72,7 +82,7 @@ export function checkDrawingLighting(room, config) {
   }
   need(watts <= tracks.driverWatts * DRIVER_LOAD_FRACTION, `the heads draw ${watts} W, over ${DRIVER_LOAD_FRACTION * 100}% of the ${tracks.driverWatts} W driver`)
   need(spots > 0 && diffused > 0, 'the tracks need both spot and diffused heads for layered light')
-  need(config.reading || reading > 0, 'no reading light: neither a wall reading light nor a reading head over a seat')
+  if (needsReading) need(config.reading || reading > 0, 'no reading light: neither a wall reading light nor a reading head over a seat')
   const areaM2 = room.widthMm * room.lengthMm / 1e6
   return {ok: issues.length === 0, issues, clearances, totals: {watts, lumens, spots, diffused, reading, heads: spots + diffused + reading, lumensPerM2: Math.round(lumens / areaM2), trackMetres: tracks.runs.reduce((sum, run) => sum + (run.toMm - run.fromMm), 0) / 1000}}
 }

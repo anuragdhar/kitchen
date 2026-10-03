@@ -55,6 +55,7 @@ page). Write the answer next to the item or just tell the assistant; the task an
 | C19 | South window: which wood shade; glass type for the new shutters; roller net cassette at the top or the side (roller net per section is DECIDED) | match the TV panel wall; 5 mm clear glass | Window wooden shade; mosquito net; centre shutters |
 | C20 | Outside sun screen on the south window: plain bamboo or an outdoor PVC/HDPE screen | outdoor screen lasts longer; bamboo looks warmer. Hung close to the wall, cord brought inside | Outside sun screen |
 | C21 | Reading heads on Track 2 (DECIDED 2026-10-04: stronger dimmable heads over the seats, no swing-arm lights). Still open: how they are dimmed separately from the diffused heads | smart heads, or a two-circuit track | Layered lighting |
+| C22 | Lobby / Dining: is there a ceiling fan, and where? Confirm the two track positions (south wall; in front of the ironing storage) | tracks hug the walls so the centre stays free | Lobby track lighting |
 
 ## D. People to arrange
 

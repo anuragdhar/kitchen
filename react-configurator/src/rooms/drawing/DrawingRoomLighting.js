@@ -23,7 +23,9 @@ function ceilingFans(config, ceiling) {
 
 // Surface track lights (config.tracks): a slim white track on the slab per run, spot heads tilted toward their wall and
 // diffused linear heads pointing down. Each head carries a small real light so the layers show in the live view.
-function trackLights(config, ceiling) {
+// `room` (metres: {x, z} = width, length) is needed only to aim spots at the east or south wall.
+export function createTrackLights(config, ceiling, {realLights = true, room = null} = {}) {
+  const wallAhead = room ?? {x: 0, z: 0}
   const group = new THREE.Group(); group.name = 'Track lights'
   const white = new THREE.MeshStandardMaterial({color: '#f4f2ee', roughness: .5}), head = new THREE.MeshStandardMaterial({color: '#ecebe7', roughness: .4, metalness: .2})
   // One glowing-lens material per kind of head, so each kind can be dimmed on its own (setLevel).
@@ -41,22 +43,28 @@ function trackLights(config, ceiling) {
         const len = h.lengthMm / 1000
         const body = new THREE.Mesh(new THREE.BoxGeometry(alongX ? len : .03, .03, alongX ? .03 : len), head); body.position.set(x, y - .015, z); part.add(body)
         const glow = new THREE.Mesh(new THREE.BoxGeometry(alongX ? len - .02 : .024, .004, alongX ? .024 : len - .02), lenses.diffuse); glow.position.set(x, y - .032, z); part.add(glow)
-        const light = new THREE.PointLight('#ffd9a8', .9, 4.2, 1.6); light.position.set(x, y - .06, z); part.add(light); dimmable.diffuse.push({light, base: light.intensity})
+        if (realLights) { const light = new THREE.PointLight('#ffd9a8', .9, 4.2, 1.6); light.position.set(x, y - .06, z); part.add(light); dimmable.diffuse.push({light, base: light.intensity}) }
       } else if (h.kind === 'reading') {
         // A stronger spot pointing straight down at the seat below.
         const stem = new THREE.Mesh(new THREE.CylinderGeometry(.008, .008, .04, 10), head); stem.position.set(x, y - .02, z); part.add(stem)
         const can = new THREE.Mesh(new THREE.CylinderGeometry(.03, .034, .1, 20), head); can.position.set(x, y - .09, z); part.add(can)
         const face = new THREE.Mesh(new THREE.CylinderGeometry(.026, .026, .004, 20), lenses.reading); face.position.set(x, y - .142, z); part.add(face)
-        const light = new THREE.SpotLight('#ffe2bd', 4.2, 3.6, .5, .6, 1.3); light.position.set(x, y - .14, z)
-        light.target.position.set(x, .6, z); part.add(light, light.target); dimmable.reading.push({light, base: light.intensity})
+        if (realLights) {
+          const light = new THREE.SpotLight('#ffe2bd', 4.2, 3.6, .5, .6, 1.3); light.position.set(x, y - .14, z)
+          light.target.position.set(x, .6, z); part.add(light, light.target); dimmable.reading.push({light, base: light.intensity})
+        }
       } else {
         const [dx, dz] = AIM[h.aim]
         const stem = new THREE.Mesh(new THREE.CylinderGeometry(.008, .008, .05, 10), head); stem.position.set(x, y - .025, z); part.add(stem)
         const can = new THREE.Mesh(new THREE.CylinderGeometry(.026, .03, .09, 20), head); can.position.set(x + dx * .02, y - .075, z + dz * .02)
         can.rotation.z = -dx * .5; can.rotation.x = dz * .5; part.add(can)
         const face = new THREE.Mesh(new THREE.CylinderGeometry(.022, .022, .004, 20), lenses.spot); face.position.set(x + dx * .042, y - .118, z + dz * .042); face.rotation.copy(can.rotation); part.add(face)
-        const light = new THREE.SpotLight('#ffd6a0', 2.4, 3.4, .42, .7, 1.4); light.position.set(x, y - .1, z)
-        light.target.position.set(x + dx * (at - .04 + .02), 1.25, z + dz * (at - .04 + .02)); part.add(light, light.target); dimmable.spot.push({light, base: light.intensity})
+        if (realLights) {
+          // Aimed at the wall beside the run: `reach` is the distance from the run to that wall.
+          const reach = dx < 0 ? x : dx > 0 ? wallAhead.x - x : dz < 0 ? z : wallAhead.z - z
+          const light = new THREE.SpotLight('#ffd6a0', 2.4, 3.4, .42, .7, 1.4); light.position.set(x, y - .1, z)
+          light.target.position.set(x + dx * (reach - .02), 1.25, z + dz * (reach - .02)); part.add(light, light.target); dimmable.spot.push({light, base: light.intensity})
+        }
       }
     }
   }
@@ -113,7 +121,7 @@ export function createDrawingLayoutLights(room, layoutKey) {
     box(.10, .008, .10, .27, 1.507, z, warm)
   }
   if (config.ceilingFans) group.add(ceilingFans(config.ceilingFans, ceiling))
-  const tracks = config.tracks ? trackLights(config.tracks, ceiling) : null
+  const tracks = config.tracks ? createTrackLights(config.tracks, ceiling) : null
   if (tracks) group.add(tracks)
   // Dimmer: kind is 'chandelier', 'spot' or 'diffuse'; level 0 = off, 1 = planned. The level is also kept on each light
   // (userData.dimLevel) so a page that rescales lights for day and evening can keep it.

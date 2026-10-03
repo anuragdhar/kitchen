@@ -35,7 +35,7 @@ test('reading is done by stronger dimmable heads over the seats, not by a swing-
   assert.equal(reading.length, 3)
   assert.ok(reading.every(h => h.lumens >= 1000))
   const bad = patch => { const c = structuredClone(config); patch(c); return checkDrawingLighting(room, c).issues.join(' | ') }
-  assert.match(bad(c => { c.tracks.runs[1].heads[0].atMm = 2050 }), /not over a sofa/)
+  assert.match(bad(c => { c.tracks.runs[1].heads[0].atMm = 2050 }), /not over a sofa or work spot/)
   assert.match(bad(c => { c.tracks.runs[1].heads = c.tracks.runs[1].heads.filter(h => h.kind !== 'reading') }), /no reading light/)
 })
 
