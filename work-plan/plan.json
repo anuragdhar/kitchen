@@ -169,15 +169,29 @@
       "id": "shoe-rack-wall",
       "phase": "civil",
       "trade": "civil",
-      "title": "Remove the wall on the left after the entry and add a support for the new shoe rack",
+      "title": "Remove the window on the left after the main door, and part of the wall below it, for the shoe rack",
       "room": "Main entry",
-      "detail": "Owner 2026-10-03: on the north side, after entering, the wall on the left is removed and a support is added so a new shoe rack can be built there. Exact wall and support size to be marked on the plan; not yet drawn in the 3D model.",
+      "detail": "Owner 2026-10-03, detailed 2026-10-04: on the left after entering the main door there is now a window. Take out the window and some of the wall below it so the new shoe rack can stand in that opening. Keep or add a lintel over the opening, make the cut edges straight and plastered, and close off anything left open to the outside. How far down the wall is cut is not decided. The 3D model draws the rack as 865 wide x 2134 high, projecting 305 mm outward; that is the model size, not a site measurement.",
       "dependsOn": [
         "engineer-check",
         "society-permission"
       ],
       "status": "todo",
-      "needs": "Structural approval; mark the exact wall on the plan"
+      "needs": "Structural approval; decide how much wall below the window comes out; measure the opening"
+    },
+    {
+      "id": "shoe-rack-support",
+      "phase": "civil",
+      "trade": "fabrication",
+      "title": "Fix an iron-angle support frame for the shoe rack to stand on",
+      "room": "Main entry",
+      "detail": "Owner 2026-10-04: before the shoe rack goes in, something has to carry it, ideally an iron angle. A welded angle frame (a base the size of the rack, with brackets or legs) anchored into the wall and the slab edge, set level. Because it sits in an opening to the outside, use galvanised or stainless angle, or mild steel with anti-rust primer and two coats of paint. The fabricator sizes the angle for a full rack of shoes plus the cabinet itself; ask the engineer to confirm the fixing into the wall.",
+      "dependsOn": [
+        "shoe-rack-wall",
+        "engineer-check"
+      ],
+      "status": "todo",
+      "needs": "Final shoe rack size, so the frame matches it"
     },
     {
       "id": "north-wall-door",
@@ -390,11 +404,11 @@
       "id": "carp-shoe-rack",
       "phase": "carpentry",
       "trade": "carpentry",
-      "title": "New shoe rack on the north side of the entry",
+      "title": "New shoe rack on the left after the main door, on the iron-angle support",
       "room": "Main entry",
-      "detail": "Size after the wall is removed and the support is in.",
+      "detail": "Built to sit on the support frame in the opening where the window was. The back and sides that face outside need a weatherproof finish (exterior-grade board or a metal or tile cladding) and a sealed joint to the wall. Size after the opening is cut and the frame is in.",
       "dependsOn": [
-        "shoe-rack-wall",
+        "shoe-rack-support",
         "plaster"
       ],
       "status": "todo"
