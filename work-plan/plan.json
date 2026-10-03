@@ -618,12 +618,12 @@
       "trade": "carpentry",
       "title": "Drawing Room south window: replace the fixed centre section with two outward-opening shutters, and glaze them",
       "room": "Drawing Room",
-      "detail": "Owner 2026-10-04 (carpenter). The south window has a wooden frame in three sections; the two side sections have shutters opening outward and the centre section is fixed. Take out the fixed centre panel and make two wooden shutters for it that open outward, so all three sections match: two shutters each, six in all. Copy the existing shutters exactly (wood, section sizes, mouldings, rail heights) so the new pair cannot be told apart. Hardware to match the old: hinges, a tower bolt top and bottom, a handle, and a stay or hook to hold each shutter open in wind. Glass: 5 mm clear glass, toughened if the pane is large or low, bedded in sealant and fixed with wooden beading; check the old panes at the same time and replace any that are cracked or loose. Check from outside that nothing (a grille, a pipe, the AC outdoor unit) stops the centre shutters swinging open. The window is about 2.3 m wide and from 550 to 2,100 mm above the floor in the model; the three section widths are not measured.",
+      "detail": "Owner 2026-10-04 (carpenter). The south window has a wooden frame in three sections; the two side sections have shutters opening outward and the centre section is fixed. Take out the fixed centre panel and make two wooden shutters for it that open outward, so all three sections match: two shutters each, six in all. Copy the existing shutters exactly (wood, section sizes, mouldings, rail heights) so the new pair cannot be told apart. Hardware to match the old: hinges, a tower bolt top and bottom, a handle, and a stay or hook to hold each shutter open in wind. Glass: 5 mm clear glass, toughened if the pane is large or low, bedded in sealant and fixed with wooden beading; check the old panes at the same time and replace any that are cracked or loose. The owner confirms (2026-10-04) that nothing outside blocks the centre shutters; keep it that way when the AC outdoor unit is placed. The window is about 2.3 m wide and from 550 to 2,100 mm above the floor in the model; the three section widths are not measured.",
       "dependsOn": [
         "site-measure"
       ],
       "status": "todo",
-      "needs": "Measure the three sections; confirm nothing outside blocks the centre shutters; glass type (clear, frosted or tinted)"
+      "needs": "Measure the three sections; glass type (clear, frosted or tinted)"
     },
     {
       "id": "paint",
@@ -728,15 +728,15 @@
       "phase": "second-fix",
       "id": "window-mosquito-net",
       "trade": "windows",
-      "title": "Drawing Room south window: fit a mosquito net",
+      "title": "Drawing Room south window: fit a roller mosquito net on each of the three sections",
       "room": "Drawing Room",
-      "detail": "Owner 2026-10-04. All six shutters open outward, so the net goes on the room side and must let a hand reach the shutter handles and bolts. Best fit: a pleated or roller mesh in a slim frame for each of the three sections, which slides aside when a shutter has to be opened or closed. Cheaper: three mesh frames hinged to open into the room, or fixed mesh frames held by magnets that lift off. Use stainless steel or fibreglass mesh in a frame coloured to match the new wooden shade. The south sofa stands under this window, so choose a type that can be worked by reaching over the sofa back.",
+      "detail": "Owner 2026-10-04, decided: a roller mesh for each of the three sections, on the room side, because all six shutters open outward and a hand must reach their handles and bolts. Each roller has its cassette at the top or at one side of the section, side guide channels so the mesh cannot blow out or leave a gap, and a bottom bar that latches. Fibreglass mesh; cassette and channels coloured to match the new wooden shade. Fix them to the wooden frame after it is polished. The south sofa stands under this window, so place the pull or latch where it can be reached over the sofa back.",
       "dependsOn": [
         "window-wood-finish",
         "carp-window-centre"
       ],
       "status": "todo",
-      "needs": "Net type (pleated or roller proposed)"
+      "needs": "Measure the clear opening of each section after the centre shutters are made; cassette at the top (pull down) or at the side (pull across)"
     },
     {
       "id": "furniture",
