@@ -103,9 +103,9 @@
       "id": "pocket-check",
       "phase": "measure",
       "trade": "civil",
-      "title": "Check that the entry pocket is really hollow",
+      "title": "Inspect the shaft behind the Drawing Room north wall before any work",
       "room": "Main entry",
-      "detail": "Test-drill from the Drawing Room side. Look for shaft services and a beam above. The drawing shows only a closed rectangle.",
+      "detail": "Owner 2026-10-04: it is an open shaft with no floor (first floor); permission to close it has been received. Before cutting: confirm from the entry side how wide and deep the opening is, where the concrete slab edges are at the south and north ends and how thick they are, and whether any pipes, cables or ducts run in the shaft and need access later. The east part of the pocket holds an existing cabinet, so find out what it stands on.",
       "dependsOn": [
         "site-measure"
       ],
@@ -203,7 +203,7 @@
       "trade": "civil",
       "title": "Cut the cabinet door opening in the Drawing Room north wall",
       "room": "Drawing Room",
-      "detail": "Opening 500 wide x 1800 high at the west end of the north wall (100-600 mm from the west wall), with a lintel, into the west half of the entry pocket. Kept only as wide as a person needs (490 clear) so it can be hidden in the wall panelling.",
+      "detail": "Opening 500 wide x 1800 high at the west end of the north wall (100-600 mm from the west wall), with a lintel, into the west half of the entry pocket. Kept only as wide as a person needs (490 clear) so it can be hidden in the wall panelling. Behind this wall is an open shaft with no floor: fix a barrier across the opening as soon as it is cut and keep it until the steel floor is in.",
       "dependsOn": [
         "engineer-check",
         "pocket-check"
@@ -216,16 +216,16 @@
       "id": "west-cabinet-frame",
       "phase": "civil",
       "trade": "fabrication",
-      "title": "West cabinet: iron support frame for the floor board",
+      "title": "West cabinet: steel floor over the open shaft",
       "room": "Drawing Room",
-      "detail": "Owner 2026-10-04: after the mason cuts the wall, an iron support goes in below, and the board the storage stands on is laid on it. It must take a person walking on it, about 100 kg. Proposal (drawing: docs/drawings/west-cabinet-platform.png): A, a 50 x 50 x 6 angle bolted along the west wall with M10 anchor fasteners every 300 mm; B, on the east side where there is no wall to fasten into, a 50 x 50 x 3 square hollow section spanning north to south and bolted down to the concrete floor at both ends on 100 x 100 x 6 base plates; C, 40 x 40 x 5 angles across the north and south ends on the concrete; D, 40 x 40 x 3 cross members between A and B, no more than 300 mm apart. Anti-rust primer and two coats of paint. Frame about 650 wide x 1,100 front to back, from the model, not measured.",
+      "detail": "Owner 2026-10-04: the space behind the Drawing Room north wall is an open shaft on the first floor with NO floor, and permission to close it has been received. After the mason cuts the wall, a steel floor is built across the shaft and the storage stands on it. Proposal (pictures: docs/drawings/west-cabinet-platform-steps.png, and the measured drawing docs/drawings/west-cabinet-platform.png): A, a 50 x 50 x 6 angle bolted along the west wall with M10 anchors every 300 mm, its ends also resting 150 mm on the concrete; B, on the east side where there is no wall, a 50 x 50 x 3 square hollow section spanning north to south, resting 150 mm on the concrete floor at each end on a base plate, anchors at least 100 mm in from the slab edge; C, angles across the two ends; D, cross members between A and B no more than 300 mm apart; then a 5 mm chequered steel plate welded on, and 19 mm waterproof plywood over it. Anti-rust primer and paint. About 650 wide x 1,100 front to back, from the model, not measured. Alternative to price: a cast concrete slab doweled into the slab edges, which also seals smell, noise and pests from the shaft.",
       "dependsOn": [
         "north-wall-door",
         "engineer-check",
         "pocket-check"
       ],
       "status": "todo",
-      "needs": "Fabricator or engineer to confirm the member sizes, anchors and real span; measure the gap and the level of the two floors",
+      "needs": "SAFETY: this is a floor over a drop. A structural engineer must design and sign it off (as a floor, typically 200-300 kg per square metre, not for one 100 kg person). Keep the society permission in writing. Check for pipes or cables in the shaft that still need access. Barrier the opening and stop anything falling down the shaft while work is open.",
       "source": "docs/drawings/west-cabinet-platform.png"
     },
     {

@@ -1,0 +1,142 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1500 900" font-family="Segoe UI, Arial, sans-serif">
+<rect width="1500" height="900" fill="#ffffff"/>
+<text x="40" y="46" font-size="26" font-weight="700" fill="#172033">Closing the shaft behind the Drawing Room north wall: the idea in three steps</text>
+<text x="40" y="74" font-size="15" fill="#475569">Seen from the south-east, from above. The Drawing Room wall is left out so you can see in; its position is the yellow strip.</text>
+<polygon points="65.1,550.4 84.9,561.9 84.9,412.0 65.1,400.5" fill="#a6aeb8" stroke="#334155" stroke-width="1" fill-opacity="1"/>
+<polygon points="84.9,561.9 269.6,455.2 269.6,305.4 84.9,412.0" fill="#8a9099" stroke="#334155" stroke-width="1" fill-opacity="1"/>
+<polygon points="65.1,400.5 84.9,412.0 269.6,305.4 249.8,293.9" fill="#cbd5e1" stroke="#334155" stroke-width="1" fill-opacity="1"/>
+<polygon points="225.2,480.9 359.7,558.5 359.7,536.9 225.2,459.2" fill="#b9bec4" stroke="#334155" stroke-width="1" fill-opacity="1"/>
+<polygon points="359.7,558.5 404.1,532.8 404.1,511.2 359.7,536.9" fill="#999da3" stroke="#334155" stroke-width="1" fill-opacity="1"/>
+<polygon points="225.2,459.2 359.7,536.9 404.1,511.2 269.6,433.6" fill="#e2e8f0" stroke="#334155" stroke-width="1" fill-opacity="1"/>
+<polygon points="120.0,520.0 225.2,459.2 225.2,543.0 120.0,603.7" fill="#475569" stroke="#334155" stroke-width="1" fill-opacity="1"/>
+<polygon points="225.2,459.2 359.7,536.9 359.7,620.6 225.2,543.0" fill="#334155" stroke="#334155" stroke-width="1" fill-opacity="1"/>
+<polygon points="120.0,603.7 254.4,681.3 359.7,620.6 225.2,543.0" fill="#0f172a" stroke="#334155" stroke-width="1" fill-opacity="1"/>
+<polygon points="59.2,576.7 193.7,654.3 193.7,632.7 59.2,555.1" fill="#b9bec4" stroke="#334155" stroke-width="1" fill-opacity="1"/>
+<polygon points="193.7,654.3 254.4,619.2 254.4,597.6 193.7,632.7" fill="#999da3" stroke="#334155" stroke-width="1" fill-opacity="1"/>
+<polygon points="59.2,555.1 193.7,632.7 254.4,597.6 120.0,520.0" fill="#e2e8f0" stroke="#334155" stroke-width="1" fill-opacity="1"/>
+<polygon points="94.2,534.9 228.6,612.5 254.4,597.6 120.0,520.0" fill="#fde68a" stroke="#b45309" stroke-width="1" fill-opacity="0.55" stroke-dasharray="6 4"/>
+<text x="100" y="120" font-size="22" fill="#172033" font-weight="700" text-anchor="start">1. Today</text>
+<text x="100" y="146" font-size="15" fill="#475569" font-weight="400" text-anchor="start">An open shaft. No floor: a drop to the floor below.</text>
+<line x1="221.7" y1="572.0" x2="370" y2="640" stroke="#dc2626" stroke-width="1.5"/>
+<circle cx="221.7" cy="572.0" r="3.5" fill="#dc2626"/>
+<text x="375" y="645" font-size="15" fill="#dc2626" font-weight="700" text-anchor="start">open shaft, no floor</text>
+<line x1="166.8" y1="601.0" x2="350" y2="720" stroke="#334155" stroke-width="1.5"/>
+<circle cx="166.8" cy="601.0" r="3.5" fill="#334155"/>
+<text x="355" y="725" font-size="14" fill="#172033" font-weight="400" text-anchor="start">Drawing Room floor (concrete, SOUTH)</text>
+<line x1="329.3" y1="493.7" x2="420" y2="250" stroke="#334155" stroke-width="1.5"/>
+<circle cx="329.3" cy="493.7" r="3.5" fill="#334155"/>
+<text x="370" y="240" font-size="14" fill="#172033" font-weight="400" text-anchor="start">concrete floor (NORTH)</text>
+<line x1="121.8" y1="379.3" x2="140" y2="250" stroke="#334155" stroke-width="1.5"/>
+<circle cx="121.8" cy="379.3" r="3.5" fill="#334155"/>
+<text x="140" y="240" font-size="14" fill="#172033" font-weight="400" text-anchor="start">west wall (solid)</text>
+<line x1="142.2" y1="547.7" x2="180" y2="770" stroke="#b45309" stroke-width="1.5"/>
+<circle cx="142.2" cy="547.7" r="3.5" fill="#b45309"/>
+<text x="185" y="775" font-size="14" fill="#92400e" font-weight="400" text-anchor="start">Drawing Room wall stands here; the mason cuts the door in it</text>
+<line x1="248.6" y1="560.5" x2="510" y2="560" stroke="#dc2626" stroke-width="1.5"/>
+<circle cx="248.6" cy="560.5" r="3.5" fill="#dc2626"/>
+<text x="420" y="580" font-size="14" fill="#dc2626" font-weight="400" text-anchor="start">east side: no wall</text>
+<polygon points="555.1,550.4 574.9,561.9 574.9,412.0 555.1,400.5" fill="#a6aeb8" stroke="#334155" stroke-width="1" fill-opacity="1"/>
+<polygon points="574.9,561.9 759.6,455.2 759.6,305.4 574.9,412.0" fill="#8a9099" stroke="#334155" stroke-width="1" fill-opacity="1"/>
+<polygon points="555.1,400.5 574.9,412.0 759.6,305.4 739.8,293.9" fill="#cbd5e1" stroke="#334155" stroke-width="1" fill-opacity="1"/>
+<polygon points="715.2,480.9 849.7,558.5 849.7,536.9 715.2,459.2" fill="#b9bec4" stroke="#334155" stroke-width="1" fill-opacity="1"/>
+<polygon points="849.7,558.5 894.1,532.8 894.1,511.2 849.7,536.9" fill="#999da3" stroke="#334155" stroke-width="1" fill-opacity="1"/>
+<polygon points="715.2,459.2 849.7,536.9 894.1,511.2 759.6,433.6" fill="#e2e8f0" stroke="#334155" stroke-width="1" fill-opacity="1"/>
+<polygon points="610.0,520.0 715.2,459.2 715.2,543.0 610.0,603.7" fill="#475569" stroke="#334155" stroke-width="1" fill-opacity="1"/>
+<polygon points="715.2,459.2 849.7,536.9 849.7,620.6 715.2,543.0" fill="#334155" stroke="#334155" stroke-width="1" fill-opacity="1"/>
+<polygon points="610.0,603.7 744.4,681.3 849.7,620.6 715.2,543.0" fill="#0f172a" stroke="#334155" stroke-width="1" fill-opacity="1"/>
+<polygon points="549.2,576.7 683.7,654.3 683.7,632.7 549.2,555.1" fill="#b9bec4" stroke="#334155" stroke-width="1" fill-opacity="1"/>
+<polygon points="683.7,654.3 744.4,619.2 744.4,597.6 683.7,632.7" fill="#999da3" stroke="#334155" stroke-width="1" fill-opacity="1"/>
+<polygon points="549.2,555.1 683.7,632.7 744.4,597.6 610.0,520.0" fill="#e2e8f0" stroke="#334155" stroke-width="1" fill-opacity="1"/>
+<polygon points="584.2,534.9 718.6,612.5 744.4,597.6 610.0,520.0" fill="#fde68a" stroke="#b45309" stroke-width="1" fill-opacity="0.55" stroke-dasharray="6 4"/>
+<polygon points="592.5,530.1 598.3,533.5 598.3,526.8 592.5,523.4" fill="#1e51c0" stroke="#334155" stroke-width="1" fill-opacity="1"/>
+<polygon points="598.3,533.5 738.6,452.5 738.6,445.8 598.3,526.8" fill="#19439f" stroke="#334155" stroke-width="1" fill-opacity="1"/>
+<polygon points="592.5,523.4 598.3,526.8 738.6,445.8 732.8,442.4" fill="#2563eb" stroke="#334155" stroke-width="1" fill-opacity="1"/>
+<polygon points="725.7,459.9 790.0,497.1 790.0,491.6 725.7,454.5" fill="#0c605a" stroke="#334155" stroke-width="1" fill-opacity="1"/>
+<polygon points="790.0,497.1 794.7,494.4 794.7,488.9 790.0,491.6" fill="#0a504a" stroke="#334155" stroke-width="1" fill-opacity="1"/>
+<polygon points="725.7,454.5 790.0,491.6 794.7,488.9 730.4,451.8" fill="#0f766e" stroke="#334155" stroke-width="1" fill-opacity="1"/>
+<polygon points="698.9,475.4 763.2,512.6 763.2,507.2 698.9,470.1" fill="#652fc2" stroke="#334155" stroke-width="1" fill-opacity="1"/>
+<polygon points="763.2,512.6 767.8,509.9 767.8,504.5 763.2,507.2" fill="#5427a1" stroke="#334155" stroke-width="1" fill-opacity="1"/>
+<polygon points="698.9,470.1 763.2,507.2 767.8,504.5 703.5,467.4" fill="#7c3aed" stroke="#334155" stroke-width="1" fill-opacity="1"/>
+<polygon points="670.8,491.6 735.1,528.8 735.1,523.4 670.8,486.2" fill="#652fc2" stroke="#334155" stroke-width="1" fill-opacity="1"/>
+<polygon points="735.1,528.8 739.8,526.1 739.8,520.7 735.1,523.4" fill="#5427a1" stroke="#334155" stroke-width="1" fill-opacity="1"/>
+<polygon points="670.8,486.2 735.1,523.4 739.8,520.7 675.5,483.6" fill="#7c3aed" stroke="#334155" stroke-width="1" fill-opacity="1"/>
+<polygon points="642.7,507.9 707.0,545.0 707.0,539.6 642.7,502.4" fill="#652fc2" stroke="#334155" stroke-width="1" fill-opacity="1"/>
+<polygon points="707.0,545.0 711.7,542.3 711.7,536.9 707.0,539.6" fill="#5427a1" stroke="#334155" stroke-width="1" fill-opacity="1"/>
+<polygon points="642.7,502.4 707.0,539.6 711.7,536.9 647.4,499.8" fill="#7c3aed" stroke="#334155" stroke-width="1" fill-opacity="1"/>
+<polygon points="606.5,528.8 670.8,565.9 670.8,560.5 606.5,523.4" fill="#0c605a" stroke="#334155" stroke-width="1" fill-opacity="1"/>
+<polygon points="670.8,565.9 675.5,563.2 675.5,557.8 670.8,560.5" fill="#0a504a" stroke="#334155" stroke-width="1" fill-opacity="1"/>
+<polygon points="606.5,523.4 670.8,560.5 675.5,557.8 611.2,520.7" fill="#0f766e" stroke="#334155" stroke-width="1" fill-opacity="1"/>
+<polygon points="662.6,570.6 668.5,574.0 668.5,567.2 662.6,563.9" fill="#b41f1f" stroke="#334155" stroke-width="1" fill-opacity="1"/>
+<polygon points="668.5,574.0 808.7,493.0 808.7,486.2 668.5,567.2" fill="#951919" stroke="#334155" stroke-width="1" fill-opacity="1"/>
+<polygon points="662.6,563.9 668.5,567.2 808.7,486.2 802.9,482.9" fill="#dc2626" stroke="#334155" stroke-width="1" fill-opacity="1"/>
+<text x="590" y="120" font-size="22" fill="#172033" font-weight="700" text-anchor="start">2. Steel frame across the shaft</text>
+<text x="590" y="146" font-size="15" fill="#475569" font-weight="400" text-anchor="start">The two long bars carry everything, and both rest on concrete.</text>
+<line x1="648.0" y1="494.7" x2="600" y2="300" stroke="#2563eb" stroke-width="1.5"/>
+<circle cx="648.0" cy="494.7" r="3.5" fill="#2563eb"/>
+<text x="600" y="276" font-size="14" fill="#2563eb" font-weight="700" text-anchor="start">A: angle bolted to the west wall,</text>
+<text x="600" y="293" font-size="14" fill="#2563eb" font-weight="400" text-anchor="start">ends resting on the concrete</text>
+<line x1="706.5" y1="541.9" x2="910" y2="640" stroke="#dc2626" stroke-width="1.5"/>
+<circle cx="706.5" cy="541.9" r="3.5" fill="#dc2626"/>
+<text x="915" y="638" font-size="14" fill="#dc2626" font-weight="700" text-anchor="start">B: box bar, no wall needed.</text>
+<text x="915" y="656" font-size="14" fill="#dc2626" font-weight="400" text-anchor="start">It sits on the concrete at both ends</text>
+<text x="915" y="674" font-size="14" fill="#dc2626" font-weight="400" text-anchor="start">and is bolted down.</text>
+<line x1="708.2" y1="505.1" x2="860" y2="730" stroke="#7c3aed" stroke-width="1.5"/>
+<circle cx="708.2" cy="505.1" r="3.5" fill="#7c3aed"/>
+<text x="865" y="735" font-size="14" fill="#7c3aed" font-weight="700" text-anchor="start">D: cross bars every 300 mm</text>
+<line x1="763.2" y1="473.4" x2="940" y2="300" stroke="#0f766e" stroke-width="1.5"/>
+<circle cx="763.2" cy="473.4" r="3.5" fill="#0f766e"/>
+<text x="945" y="296" font-size="14" fill="#0f766e" font-weight="700" text-anchor="start">C: end bars on the concrete</text>
+<polygon points="1035.1,550.4 1054.9,561.9 1054.9,412.0 1035.1,400.5" fill="#a6aeb8" stroke="#334155" stroke-width="1" fill-opacity="1"/>
+<polygon points="1054.9,561.9 1239.6,455.2 1239.6,305.4 1054.9,412.0" fill="#8a9099" stroke="#334155" stroke-width="1" fill-opacity="1"/>
+<polygon points="1035.1,400.5 1054.9,412.0 1239.6,305.4 1219.8,293.9" fill="#cbd5e1" stroke="#334155" stroke-width="1" fill-opacity="1"/>
+<polygon points="1195.2,480.9 1329.7,558.5 1329.7,536.9 1195.2,459.2" fill="#b9bec4" stroke="#334155" stroke-width="1" fill-opacity="1"/>
+<polygon points="1329.7,558.5 1374.1,532.8 1374.1,511.2 1329.7,536.9" fill="#999da3" stroke="#334155" stroke-width="1" fill-opacity="1"/>
+<polygon points="1195.2,459.2 1329.7,536.9 1374.1,511.2 1239.6,433.6" fill="#e2e8f0" stroke="#334155" stroke-width="1" fill-opacity="1"/>
+<polygon points="1090.0,520.0 1195.2,459.2 1195.2,543.0 1090.0,603.7" fill="#475569" stroke="#334155" stroke-width="1" fill-opacity="1"/>
+<polygon points="1195.2,459.2 1329.7,536.9 1329.7,620.6 1195.2,543.0" fill="#334155" stroke="#334155" stroke-width="1" fill-opacity="1"/>
+<polygon points="1090.0,603.7 1224.4,681.3 1329.7,620.6 1195.2,543.0" fill="#0f172a" stroke="#334155" stroke-width="1" fill-opacity="1"/>
+<polygon points="1029.2,576.7 1163.7,654.3 1163.7,632.7 1029.2,555.1" fill="#b9bec4" stroke="#334155" stroke-width="1" fill-opacity="1"/>
+<polygon points="1163.7,654.3 1224.4,619.2 1224.4,597.6 1163.7,632.7" fill="#999da3" stroke="#334155" stroke-width="1" fill-opacity="1"/>
+<polygon points="1029.2,555.1 1163.7,632.7 1224.4,597.6 1090.0,520.0" fill="#e2e8f0" stroke="#334155" stroke-width="1" fill-opacity="1"/>
+<polygon points="1064.2,534.9 1198.6,612.5 1224.4,597.6 1090.0,520.0" fill="#fde68a" stroke="#b45309" stroke-width="1" fill-opacity="0.55" stroke-dasharray="6 4"/>
+<polygon points="1072.5,530.1 1078.3,533.5 1078.3,526.8 1072.5,523.4" fill="#1e51c0" stroke="#334155" stroke-width="1" fill-opacity="1"/>
+<polygon points="1078.3,533.5 1218.6,452.5 1218.6,445.8 1078.3,526.8" fill="#19439f" stroke="#334155" stroke-width="1" fill-opacity="1"/>
+<polygon points="1072.5,523.4 1078.3,526.8 1218.6,445.8 1212.8,442.4" fill="#2563eb" stroke="#334155" stroke-width="1" fill-opacity="1"/>
+<polygon points="1205.7,459.9 1270.0,497.1 1270.0,491.6 1205.7,454.5" fill="#0c605a" stroke="#334155" stroke-width="1" fill-opacity="1"/>
+<polygon points="1270.0,497.1 1274.7,494.4 1274.7,488.9 1270.0,491.6" fill="#0a504a" stroke="#334155" stroke-width="1" fill-opacity="1"/>
+<polygon points="1205.7,454.5 1270.0,491.6 1274.7,488.9 1210.4,451.8" fill="#0f766e" stroke="#334155" stroke-width="1" fill-opacity="1"/>
+<polygon points="1178.9,475.4 1243.2,512.6 1243.2,507.2 1178.9,470.1" fill="#652fc2" stroke="#334155" stroke-width="1" fill-opacity="1"/>
+<polygon points="1243.2,512.6 1247.8,509.9 1247.8,504.5 1243.2,507.2" fill="#5427a1" stroke="#334155" stroke-width="1" fill-opacity="1"/>
+<polygon points="1178.9,470.1 1243.2,507.2 1247.8,504.5 1183.5,467.4" fill="#7c3aed" stroke="#334155" stroke-width="1" fill-opacity="1"/>
+<polygon points="1150.8,491.6 1215.1,528.8 1215.1,523.4 1150.8,486.2" fill="#652fc2" stroke="#334155" stroke-width="1" fill-opacity="1"/>
+<polygon points="1215.1,528.8 1219.8,526.1 1219.8,520.7 1215.1,523.4" fill="#5427a1" stroke="#334155" stroke-width="1" fill-opacity="1"/>
+<polygon points="1150.8,486.2 1215.1,523.4 1219.8,520.7 1155.5,483.6" fill="#7c3aed" stroke="#334155" stroke-width="1" fill-opacity="1"/>
+<polygon points="1122.7,507.9 1187.0,545.0 1187.0,539.6 1122.7,502.4" fill="#652fc2" stroke="#334155" stroke-width="1" fill-opacity="1"/>
+<polygon points="1187.0,545.0 1191.7,542.3 1191.7,536.9 1187.0,539.6" fill="#5427a1" stroke="#334155" stroke-width="1" fill-opacity="1"/>
+<polygon points="1122.7,502.4 1187.0,539.6 1191.7,536.9 1127.4,499.8" fill="#7c3aed" stroke="#334155" stroke-width="1" fill-opacity="1"/>
+<polygon points="1086.5,528.8 1150.8,565.9 1150.8,560.5 1086.5,523.4" fill="#0c605a" stroke="#334155" stroke-width="1" fill-opacity="1"/>
+<polygon points="1150.8,565.9 1155.5,563.2 1155.5,557.8 1150.8,560.5" fill="#0a504a" stroke="#334155" stroke-width="1" fill-opacity="1"/>
+<polygon points="1086.5,523.4 1150.8,560.5 1155.5,557.8 1091.2,520.7" fill="#0f766e" stroke="#334155" stroke-width="1" fill-opacity="1"/>
+<polygon points="1142.6,570.6 1148.5,574.0 1148.5,567.2 1142.6,563.9" fill="#b41f1f" stroke="#334155" stroke-width="1" fill-opacity="1"/>
+<polygon points="1148.5,574.0 1288.7,493.0 1288.7,486.2 1148.5,567.2" fill="#951919" stroke="#334155" stroke-width="1" fill-opacity="1"/>
+<polygon points="1142.6,563.9 1148.5,567.2 1288.7,486.2 1282.9,482.9" fill="#dc2626" stroke="#334155" stroke-width="1" fill-opacity="1"/>
+<polygon points="1072.5,523.4 1148.5,567.2 1148.5,565.6 1072.5,521.8" fill="#798596" stroke="#334155" stroke-width="1" fill-opacity="1"/>
+<polygon points="1148.5,567.2 1288.7,486.2 1288.7,484.6 1148.5,565.6" fill="#646e7d" stroke="#334155" stroke-width="1" fill-opacity="1"/>
+<polygon points="1072.5,521.8 1148.5,565.6 1288.7,484.6 1212.8,440.8" fill="#94a3b8" stroke="#334155" stroke-width="1" fill-opacity="1"/>
+<polygon points="1072.5,521.8 1148.5,565.6 1148.5,562.7 1072.5,518.8" fill="#af8856" stroke="#334155" stroke-width="1" fill-opacity="1"/>
+<polygon points="1148.5,565.6 1288.7,484.6 1288.7,481.7 1148.5,562.7" fill="#917048" stroke="#334155" stroke-width="1" fill-opacity="1"/>
+<polygon points="1072.5,518.8 1148.5,562.7 1288.7,481.7 1212.8,437.8" fill="#d6a66a" stroke="#334155" stroke-width="1" fill-opacity="1"/>
+<text x="1070" y="120" font-size="22" fill="#172033" font-weight="700" text-anchor="start">3. Steel plate, then plywood</text>
+<text x="1070" y="146" font-size="15" fill="#475569" font-weight="400" text-anchor="start">Now it is a floor. The cabinet and shelves stand on it.</text>
+<line x1="1201.1" y1="536.1" x2="1260" y2="700" stroke="#475569" stroke-width="1.5"/>
+<circle cx="1201.1" cy="536.1" r="3.5" fill="#475569"/>
+<text x="1265" y="700" font-size="14" fill="#334155" font-weight="700" text-anchor="start">5 mm chequered steel plate,</text>
+<text x="1265" y="718" font-size="14" fill="#334155" font-weight="400" text-anchor="start">welded to the frame</text>
+<line x1="1177.7" y1="502.6" x2="1150" y2="300" stroke="#92400e" stroke-width="1.5"/>
+<circle cx="1177.7" cy="502.6" r="3.5" fill="#92400e"/>
+<text x="1080" y="280" font-size="14" fill="#92400e" font-weight="700" text-anchor="start">19 mm waterproof plywood on top</text>
+<g stroke="#172033" stroke-width="4" fill="none" stroke-linecap="round"><circle cx="1173" cy="413" r="10" fill="#172033"/><line x1="1173" y1="425" x2="1173" y2="470"/><line x1="1173" y1="470" x2="1162" y2="505"/><line x1="1173" y1="470" x2="1184" y2="505"/><line x1="1159" y1="443" x2="1187" y2="443"/></g>
+<rect x="40" y="806" width="1420" height="70" rx="10" fill="#fef2f2" stroke="#fecaca"/>
+<text x="60" y="834" font-size="15" font-weight="700" fill="#991b1b">This is a floor over a drop, so a structural engineer must size the steel and the anchors and sign it off.</text>
+<text x="60" y="858" font-size="15" fill="#991b1b">Until the plate is welded on, the opening needs a barrier, and nothing must be allowed to fall down the shaft onto the floors below.</text>
+</svg>
