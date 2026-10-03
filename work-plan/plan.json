@@ -757,13 +757,13 @@
       "trade": "windows",
       "title": "Drawing Room south window: roll-up sun screen (bamboo chick) on the outside",
       "room": "Drawing Room",
-      "detail": "Owner 2026-10-04: the window faces south-west and takes a lot of sun and heat in the Delhi summer; a curtain is used now. Idea: a bamboo chick outside that rolls up and down. Shade on the outside stops the heat before it comes through the glass, which a curtain inside cannot do. The six shutters open outward, so the chick must hang clear of their swing: from the edge of the sunshade above the window if there is one, or from brackets standing out about 450-500 mm from the wall. Width about 2.5 m, drop about 1.7 m. Fix it with stainless steel hooks and tie the bottom rail down at both ends, or wind will slam it against the shutters. Plain bamboo lasts two or three monsoons outside; a PVC-coated or HDPE outdoor roll-up screen looks similar and lasts longer. Work it with a cord that can be reached from the window. If it cannot be hung clear of the shutters, the fallback is a heat-control film on the glass.",
+      "detail": "Owner 2026-10-04: the window faces south-west and takes a lot of sun and heat in the Delhi summer; a curtain is used now. A roll-up chick on the outside stops the heat before it comes through the glass. There is a cover (sunshade) above the window (owner). The six shutters open outward, so the chick hangs from the outer edge of that cover, clear of the shutter swing: each shutter leaf is roughly 380-400 mm wide, so the chick must hang at least 450 mm out from the wall. HOW IT IS WORKED: the pull cord runs from the roller's pulleys back to the window and comes INTO the room through a small sleeved hole (a brass or ceramic eyelet) at the top corner of the wooden frame, above the shutters, and ties off on a cleat inside. So it is rolled up and down from inside with the shutters shut or open, and the cord is never trapped by a shutter. Alternatives: a crank-operated outdoor blind with the crank rod through the wall, or a motorised one with a remote (needs a power point outside). Simplest of all: lower it in April and leave it down until the monsoon ends; the shutters still open behind it for air. Width about 2.5 m, drop about 1.7 m. Stainless steel hooks; tie the bottom rail down at both ends so wind cannot slam it into the shutters. Plain bamboo lasts two or three monsoons outside; a PVC-coated or HDPE outdoor screen looks similar and lasts longer. Fallback if the cover does not project far enough: heat-control film on the glass.",
       "dependsOn": [
         "carp-window-centre",
         "window-wood-finish"
       ],
       "status": "todo",
-      "needs": "Is there a sunshade (chajja) above the window, and how far does it project? Bamboo or outdoor PVC/HDPE screen? Society rules on the outside look of the building"
+      "needs": "Measure how far the cover above the window projects (450 mm or more is needed) and the width of one shutter leaf. Bamboo or outdoor PVC/HDPE screen; cord, crank or motor. Society rules on the outside look"
     },
     {
       "id": "furniture",
