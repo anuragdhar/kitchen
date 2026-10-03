@@ -14,7 +14,9 @@ export const ENTRY = {
   wallHeightMm: 2700,
   shoeRack: {
     planX1: 522, planX2: 567, planNorthY: 874,
-    widthMm: 865, heightMm: 2134, projectionMm: 305, doorCount: 2, projects: 'north-outside',
+    // projectionMm is the rack's depth. Owner 2026-10-04: 15 in (381 mm), so shoes go in lengthwise (was 305). The height is
+    // still the earlier 7 ft; the owner is considering about 6 1/2 ft and will confirm (work-plan task carp-shoe-rack).
+    widthMm: 865, heightMm: 2134, projectionMm: 381, doorCount: 2, projects: 'north-outside',
   },
   shaft: {planX1: 575, planY1: 775, planX2: 688, planY2: 810},
   arrivalDoor: {wallPlanX:575,fromPlanY:810,toPlanY:874,heightMm:2200,openAngleDegrees:80,hinge:'north',opens:'west-outside'},
