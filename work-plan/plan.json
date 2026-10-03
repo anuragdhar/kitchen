@@ -61,6 +61,10 @@
       "name": "Steel fabrication"
     },
     {
+      "id": "ceiling",
+      "name": "False ceiling"
+    },
+    {
       "id": "painting",
       "name": "Painting"
     },
@@ -123,14 +127,14 @@
       "id": "entry-ceiling-plan",
       "phase": "measure",
       "trade": "general",
-      "title": "Decide a definite plan for the entry ceiling",
+      "title": "Finalise the entry ceiling: 24 x 24 inch PVC ceiling panels",
       "room": "Main entry",
-      "detail": "Owner 2026-10-04: the entry ceiling needs a firm plan before work starts. To decide: leave the slab as it is and only repaint, or add a false ceiling (gypsum, wood or slats); the ceiling height that remains; the lights (downlights, a cove or a single feature light) and where their switch goes; and whether anything in the ceiling has to stay reachable. Nothing is drawn in the 3D model yet.",
+      "detail": "Owner 2026-10-04: the entry ceiling will be 24 x 24 inch (about 610 x 610 mm) PVC ceiling panels. The owner will finalise the panel after visiting some shops. Still to decide: the panel design and colour, the frame it sits in (exposed grid or concealed), the height the ceiling drops to, the lights (panel lights that fit one 24 x 24 opening, or downlights) and where their switch goes, and whether anything above must stay reachable. Nothing is drawn in the 3D model yet.",
       "dependsOn": [
         "site-measure"
       ],
       "status": "todo",
-      "needs": "Owner decision; the wiring and any false-ceiling work for the entry wait on this"
+      "needs": "Owner to visit shops and choose the panel; then fix the drop height and the lights"
     },
     {
       "id": "electrician-survey",
@@ -169,15 +173,15 @@
       "id": "shoe-rack-wall",
       "phase": "civil",
       "trade": "civil",
-      "title": "Remove the window on the left after the main door, and part of the wall below it, for the shoe rack",
+      "title": "Remove the window on the left after the main door and the wall below it, for the shoe rack",
       "room": "Main entry",
-      "detail": "Owner 2026-10-03, detailed 2026-10-04: on the left after entering the main door there is now a window. Take out the window and some of the wall below it so the new shoe rack can stand in that opening. Keep or add a lintel over the opening, make the cut edges straight and plastered, and close off anything left open to the outside. How far down the wall is cut is not decided. The 3D model draws the rack as 865 wide x 2134 high, projecting 305 mm outward; that is the model size, not a site measurement.",
+      "detail": "Owner 2026-10-04: on the left after entering the main door there is a window with about 4 ft (about 1,220 mm) of wall below it. The window and that wall both come out, so the opening runs from the floor, and the shoe rack replaces them. Keep or add a lintel over the opening, make the cut edges straight and plastered, and close off anything left open to the outside. The opening width is not measured yet.",
       "dependsOn": [
         "engineer-check",
         "society-permission"
       ],
       "status": "todo",
-      "needs": "Structural approval; decide how much wall below the window comes out; measure the opening"
+      "needs": "Structural approval; measure the opening width and the window height"
     },
     {
       "id": "shoe-rack-support",
@@ -191,7 +195,7 @@
         "engineer-check"
       ],
       "status": "todo",
-      "needs": "Final shoe rack size, so the frame matches it"
+      "needs": "Final shoe rack size, so the frame matches it (about 6 1/2 ft high for now, to be confirmed)"
     },
     {
       "id": "north-wall-door",
@@ -374,6 +378,20 @@
       "notes": "If done, it must be finished before painting. Skipping it does not hold up anything else."
     },
     {
+      "id": "entry-ceiling",
+      "phase": "surfaces",
+      "trade": "ceiling",
+      "title": "Fit the entry ceiling: 24 x 24 inch PVC panels on a frame",
+      "room": "Main entry",
+      "detail": "Hang the frame level from the slab, run the light wiring above it first, then lay the 24 x 24 inch PVC panels and fit the lights. The entry is about 2.1 m long by 1.0 m clear wide on the plan, so it takes only a few panels and the edge panels will be cut; set the grid out so the cut pieces are equal on both sides.",
+      "dependsOn": [
+        "entry-ceiling-plan",
+        "plaster"
+      ],
+      "status": "todo",
+      "needs": "Panel chosen; light wiring for the entry run before the panels go in"
+    },
+    {
       "id": "carp-west-cabinet",
       "phase": "carpentry",
       "trade": "carpentry",
@@ -406,12 +424,13 @@
       "trade": "carpentry",
       "title": "New shoe rack on the left after the main door, on the iron-angle support",
       "room": "Main entry",
-      "detail": "Built to sit on the support frame in the opening where the window was. The back and sides that face outside need a weatherproof finish (exterior-grade board or a metal or tile cladding) and a sealed joint to the wall. Size after the opening is cut and the frame is in.",
+      "detail": "Built to sit on the support frame in the opening where the window and the wall below it were. Height about 6 1/2 ft (about 1,980 mm): the owner will confirm, so treat it as provisional. Width to suit the opening. The back and sides that face outside need a weatherproof finish (exterior-grade board or a metal or tile cladding) and a sealed joint to the wall. The 3D model still draws the rack 865 wide x 2,134 (7 ft) high; it is updated once the size is confirmed.",
       "dependsOn": [
         "shoe-rack-support",
         "plaster"
       ],
-      "status": "todo"
+      "status": "todo",
+      "needs": "TO BE CONFIRMED: shoe rack size (height about 6 1/2 ft for now)"
     },
     {
       "id": "carp-other",
