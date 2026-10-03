@@ -28,7 +28,7 @@ function trackLights(config, ceiling) {
   const white = new THREE.MeshStandardMaterial({color: '#f4f2ee', roughness: .5}), head = new THREE.MeshStandardMaterial({color: '#ecebe7', roughness: .4, metalness: .2})
   // One glowing-lens material per kind of head, so each kind can be dimmed on its own (setLevel).
   const lensFor = () => { const m = new THREE.MeshStandardMaterial({color: '#fff3dc', emissive: '#ffd9a1', emissiveIntensity: .9, roughness: .9}); m.userData.taskLightGlow = true; return m }
-  const lenses = {spot: lensFor(), diffuse: lensFor()}, dimmable = {spot: [], diffuse: []}
+  const lenses = {spot: lensFor(), diffuse: lensFor(), reading: lensFor()}, dimmable = {spot: [], diffuse: [], reading: []}
   const s = config.sectionMm / 1000, AIM = {north: [0, -1], south: [0, 1], west: [-1, 0], east: [1, 0]}
   for (const run of config.runs) {
     const part = new THREE.Group(); part.name = run.label; group.add(part)
@@ -42,6 +42,13 @@ function trackLights(config, ceiling) {
         const body = new THREE.Mesh(new THREE.BoxGeometry(alongX ? len : .03, .03, alongX ? .03 : len), head); body.position.set(x, y - .015, z); part.add(body)
         const glow = new THREE.Mesh(new THREE.BoxGeometry(alongX ? len - .02 : .024, .004, alongX ? .024 : len - .02), lenses.diffuse); glow.position.set(x, y - .032, z); part.add(glow)
         const light = new THREE.PointLight('#ffd9a8', .9, 4.2, 1.6); light.position.set(x, y - .06, z); part.add(light); dimmable.diffuse.push({light, base: light.intensity})
+      } else if (h.kind === 'reading') {
+        // A stronger spot pointing straight down at the seat below.
+        const stem = new THREE.Mesh(new THREE.CylinderGeometry(.008, .008, .04, 10), head); stem.position.set(x, y - .02, z); part.add(stem)
+        const can = new THREE.Mesh(new THREE.CylinderGeometry(.03, .034, .1, 20), head); can.position.set(x, y - .09, z); part.add(can)
+        const face = new THREE.Mesh(new THREE.CylinderGeometry(.026, .026, .004, 20), lenses.reading); face.position.set(x, y - .142, z); part.add(face)
+        const light = new THREE.SpotLight('#ffe2bd', 4.2, 3.6, .5, .6, 1.3); light.position.set(x, y - .14, z)
+        light.target.position.set(x, .6, z); part.add(light, light.target); dimmable.reading.push({light, base: light.intensity})
       } else {
         const [dx, dz] = AIM[h.aim]
         const stem = new THREE.Mesh(new THREE.CylinderGeometry(.008, .008, .05, 10), head); stem.position.set(x, y - .025, z); part.add(stem)

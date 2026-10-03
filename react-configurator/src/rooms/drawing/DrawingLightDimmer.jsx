@@ -4,10 +4,10 @@ import React,{useState} from 'react'
 // kind of fitting in the live 3D view, from off to 150% of the planned level, the way a wall dimmer would. "Dark room"
 // switches off every other source (daylight, sky light, the generic preview lights) so only these light the room.
 // Preview only: nothing is saved, and the brightness is not photometric.
-const KINDS=[['chandelier','Chandelier'],['spot','Track spots (on the walls)'],['diffuse','Track diffused (general light)']]
+const KINDS=[['chandelier','Chandelier'],['spot','Track spots (on the TV wall)'],['diffuse','Track diffused (general light)'],['reading','Reading spots (over the seats)']]
 
 export default function DrawingLightDimmer({onChange,onDarkRoom}){
-  const [levels,setLevels]=useState({chandelier:100,spot:100,diffuse:100}),[dark,setDark]=useState(false)
+  const [levels,setLevels]=useState({chandelier:100,spot:100,diffuse:100,reading:100}),[dark,setDark]=useState(false)
   const set=(kind,value)=>{setLevels(current=>({...current,[kind]:value}));onChange(kind,value/100)}
   return <div role="group" aria-label="Track light brightness" style={{display:'flex',gap:18,flexWrap:'wrap',alignItems:'center',padding:'8px 12px',margin:'8px 0',borderRadius:10,background:'#fff7ed',border:'1px solid #fed7aa',fontSize:13,color:'#7c2d12'}}>
     <b>Room lights</b>

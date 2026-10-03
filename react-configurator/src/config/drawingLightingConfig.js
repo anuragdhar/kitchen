@@ -14,7 +14,8 @@ export const DRAWING_LIGHTING = {
     ambient: [{xMm: 1676, zMm: 2850, label: 'Existing chandelier, midway between the two fans'}],
     // Owner 2026-10-04: the old small wall light in the north-west comes off; the track lights replace it.
     wallUplight: null,
-    reading: {fromNorthMm: 4645, heightMm: 1550, label: 'South sofa reading light'},
+    // Owner 2026-10-04: no swing-arm wall reading light; brighter dimmable track heads over the seats do that job instead.
+    reading: null,
     sofaGlow: {xMm: 1605, lengthMm: 2250, fromNorthMm: 4835, heightMm: 120, label: 'South sofa low glow'},
     // Owner, 2026-10-04: the room has two ceiling fans, one at each end, and the chandelier between them; there is no false
     // ceiling. Fan positions, blade size and drop are ASSUMED until measured (work-plan/OPEN_ITEMS.md, C18).
@@ -23,17 +24,20 @@ export const DRAWING_LIGHTING = {
     // Layered lighting without a false ceiling (owner 2026-10-04): surface magnetic track fixed to the slab, with spot heads
     // on the walls and diffused heads for soft general light, placed clear of both fans. `axis` is the direction the run
     // goes: 'x' runs east-west at z = atMm, 'z' runs north-south at x = atMm. A head's atMm is its place along the run;
-    // `aim` is the wall a spot points at. Watts and lumens are typical catalogue figures for such heads.
-    tracks: {type: '48 V magnetic surface track', colour: 'white', kelvin: 3000, driverWatts: 100, sectionMm: 22, runs: [
+    // `aim` is the wall a spot points at. A 'reading' head is a stronger spot pointing straight down at a sofa seat: turned
+    // up for reading, dimmed otherwise (owner 2026-10-04, instead of swing-arm wall lights). Watts and lumens are typical
+    // catalogue figures for such heads.
+    tracks: {type: '48 V magnetic surface track', colour: 'white', kelvin: 3000, driverWatts: 150, sectionMm: 22, runs: [
       {id: 'T1', label: 'Track 1: grazes the TV panel wall', axis: 'x', atMm: 440, fromMm: 300, toMm: 2300, heads: [
         {kind: 'spot', atMm: 700, watts: 7, lumens: 600, aim: 'north'},
         {kind: 'spot', atMm: 1300, watts: 7, lumens: 600, aim: 'north'},
         {kind: 'spot', atMm: 1900, watts: 7, lumens: 600, aim: 'north'}]},
       {id: 'T2', label: 'Track 2: west wall, over the west sofa', axis: 'z', atMm: 640, fromMm: 2000, toMm: 4700, heads: [
-        {kind: 'diffuse', atMm: 2400, watts: 12, lumens: 1100, lengthMm: 300},
-        {kind: 'diffuse', atMm: 3050, watts: 12, lumens: 1100, lengthMm: 300},
-        {kind: 'spot', atMm: 3700, watts: 7, lumens: 600, aim: 'west'},
-        {kind: 'spot', atMm: 4400, watts: 7, lumens: 600, aim: 'west'}]},
+        {kind: 'reading', atMm: 2470, watts: 12, lumens: 1000},
+        {kind: 'diffuse', atMm: 2950, watts: 15, lumens: 1400, lengthMm: 300},
+        {kind: 'diffuse', atMm: 3500, watts: 15, lumens: 1400, lengthMm: 300},
+        {kind: 'reading', atMm: 3970, watts: 12, lumens: 1000},
+        {kind: 'reading', atMm: 4600, watts: 12, lumens: 1000}]},
     ]},
   },
   cornerSofas: {
