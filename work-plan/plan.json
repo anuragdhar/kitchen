@@ -183,7 +183,7 @@
       "trade": "general",
       "title": "Drawing Room AC: choose the size, the indoor position and where the outdoor unit goes",
       "room": "Drawing Room",
-      "detail": "Owner 2026-10-04: the Drawing Room has no AC; one has to be bought. The room is about 3.35 x 5.34 m (18 sq m, 193 sq ft), but its east side is open to the Lobby/Dining (about 16 sq m more), so the AC cools both unless that opening can be closed. Starting point: an inverter split AC of 1.5 ton if only the Drawing Room is cooled, 2 ton if the opening stays open; ask the dealer to confirm for the top-floor heat and sun on the south window. The electrical plan already has the AC point on the west wall, 3,080 mm from the north wall and 2,300 high, above the west sofa. Decide where the outdoor unit hangs, because that fixes the pipe route and its length. Update 2026-10-04: a shutter between the Drawing Room and the Lobby is planned, so the AC can be sized for the Drawing Room alone if the shutter seals reasonably well (a glass sliding door does; a PVC folding door only partly).",
+      "detail": "Owner 2026-10-04: the Drawing Room has no AC; one has to be bought. The room is about 3.35 x 5.34 m (18 sq m, 193 sq ft), but its east side is open to the Lobby/Dining (about 16 sq m more), so the AC cools both unless that opening can be closed. Starting point: an inverter split AC of 1.5 ton if only the Drawing Room is cooled, 2 ton if the opening stays open; ask the dealer to confirm for the top-floor heat and sun on the south window. The electrical plan already has the AC point on the west wall, 3,080 mm from the north wall and 2,300 high, above the west sofa. Decide where the outdoor unit hangs, because that fixes the pipe route and its length. Update 2026-10-04: glass sliding doors between the Drawing Room and the Lobby are decided, so the AC can be sized for the Drawing Room alone (about 1.5 ton), to be confirmed by the dealer.",
       "dependsOn": [
         "site-measure"
       ],
@@ -742,14 +742,14 @@
       "id": "lobby-shutter",
       "phase": "second-fix",
       "trade": "windows",
-      "title": "Shutter between the Drawing Room and the Lobby",
+      "title": "Sliding doors between the Drawing Room and the Lobby: aluminium frame, fluted glass, nothing on the floor",
       "room": "Drawing Room / Lobby",
-      "detail": "Owner 2026-10-04: a shutter separates the Drawing Room (east side) from the Lobby; it is not fitted yet. The opening is about 3,280 mm wide and about 2,395 mm high under the hanging beam (model sizes, not measured). Options: (1) PVC folding (accordion) door: cheapest and quick, but flimsy, poor at holding in AC cooling and sound, and looks dated; (2) \"crystal\" clear PVC or polycarbonate folding door: lets light through, still cheap, but scratches and yellows in a few years; (3) proposed: sliding doors in a slim aluminium frame with toughened glass, three panels on three tracks hung from the beam, stacking to one side so two thirds of the opening is clear; fluted or frosted glass if privacy is wanted. Option 3 costs more but lasts, seals much better for the AC and keeps daylight in the Lobby. The 3D model currently draws a 10-panel folding partition in a wood tone. Whichever type: hang it from the beam with only a small floor guide, so there is no raised track to trip over.",
+      "detail": "Owner 2026-10-04, decided: slim aluminium frame with fluted glass, and NOTHING on the floor. The opening is about 3,280 mm wide and about 2,395 mm high under the hanging beam (model sizes, not measured). How to build it: top-hung sliding panels, all the weight carried by a track fixed under the beam, no floor track. Three panels of about 1,100 mm on a three-line (telescopic) track, linked panel to panel at the bottom so they steady each other; the only guide is one small fitting at the parking end, beside the wall and out of the walking line. Proposed: extend the track about 1.1 m past the opening along the solid wall north of it, so the panels park in front of that wall and the whole opening is clear. Glass: 8 mm toughened, fluted (vertical flutes); if toughened fluted glass is hard to find locally, use clear toughened glass with a fluted film. Soft-close dampers; brush seals at the top and between panels and a brush strip along each bottom edge, to hold the AC cooling; recessed flush pulls. Each panel weighs roughly 55-60 kg, about 180 kg in all, hanging from the beam. PVC folding and crystal folding were considered and dropped. The 3D model still draws a 10-panel folding partition.",
       "dependsOn": [
         "paint"
       ],
       "status": "todo",
-      "needs": "Owner decision: PVC folding, crystal folding, or aluminium and glass sliding; measure the opening width and the height under the beam; check the beam can take the track fixings"
+      "needs": "Measure the opening width and the height under the beam; engineer or fabricator to confirm the beam takes about 180 kg on anchors; which side the panels park on (Drawing Room or Lobby face of the wall); frame colour"
     },
     {
       "id": "furniture",

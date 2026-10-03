@@ -47,8 +47,8 @@ page). Write the answer next to the item or just tell the assistant; the task an
 | C12 | TV size to plan for: 55 inch only, or keep room for 65 inch | both drawn; affects whether the switchboard is covered | TV wall points |
 | C13 | Fold-down seat at the entry: exact wall and position, seat finish | west wall beside the shoe rack | Fold-down seat |
 | C14 | Modular switch range and colour | none yet | Replace the old switchboard |
-| C15 | Drawing Room AC: tonnage and model, indoor wall, outdoor unit position | 1.5 ton if only the Drawing Room, 2 ton if the opening to the Lobby stays open; indoor unit on the west wall | Choose the AC |
-| C16 | Shutter between the Drawing Room and the Lobby: PVC folding, crystal folding, or aluminium and glass sliding | aluminium frame with toughened glass, three sliding panels hung from the beam | Lobby shutter; Choose the AC |
+| C15 | Drawing Room AC: model, indoor wall, outdoor unit position | about 1.5 ton now that the Lobby opening gets glass doors; indoor unit on the west wall | Choose the AC |
+| C16 | Sliding doors to the Lobby (aluminium, fluted glass, nothing on the floor: DECIDED): which side the panels park on, and the frame colour | park in front of the solid wall north of the opening, so the whole opening is clear | Lobby sliding doors |
 | C17 | Track lights: type (230 V or slim 48 V magnetic), colour, number of heads | two surface tracks, warm white, dimmable | Layered lighting |
 | C18 | Is there a ceiling fan in the Drawing Room, and where? | not known | Layered lighting |
 | C19 | South window: which wood shade; glass type for the new shutters; roller net cassette at the top or the side (roller net per section is DECIDED) | match the TV panel wall; 5 mm clear glass | Window wooden shade; mosquito net; centre shutters |
