@@ -54,6 +54,7 @@ page). Write the answer next to the item or just tell the assistant; the task an
 | C18 | ANSWERED 2026-10-04: two ceiling fans (south end and north end) and a chandelier in the centre. Still to measure: each fan's and the chandelier's distance from the walls, and the fan blade diameter | tracks placed clear of the blades | Layered lighting |
 | C19 | South window: which wood shade; glass type for the new shutters; roller net cassette at the top or the side (roller net per section is DECIDED) | match the TV panel wall; 5 mm clear glass | Window wooden shade; mosquito net; centre shutters |
 | C20 | Outside sun screen on the south window: plain bamboo or an outdoor PVC/HDPE screen | outdoor screen lasts longer; bamboo looks warmer. Hung close to the wall, cord brought inside | Outside sun screen |
+| C21 | Drawing Room reading light: add a second wall-mounted swing-arm light at the north end of the west sofa? (table lamps are removed) | yes, one more, on the socket already planned there | Layered lighting |
 
 ## D. People to arrange
 

@@ -86,6 +86,7 @@ function buildSeating(spec, {wallFaceMm = 0} = {}) {
     const top = new THREE.Mesh(new THREE.CylinderGeometry(r, r, .04, 32), wood); top.position.set(mm(xMm), h, mm(zMm)); top.castShadow = true; parent.add(top)
     const leg = new THREE.Mesh(new THREE.CylinderGeometry(.03, .04, h - .02, 16), wood); leg.position.set(mm(xMm), (h - .02) / 2, mm(zMm)); leg.castShadow = true; parent.add(leg)
     const foot = new THREE.Mesh(new THREE.CylinderGeometry(r * .62, r * .66, .025, 32), wood); foot.position.set(mm(xMm), .0125, mm(zMm)); parent.add(foot)
+    if (spec.lamps === false) return // tables without table lamps (layout C, owner 2026-10-04)
     const lampBody = new THREE.Mesh(new THREE.CylinderGeometry(.07, .09, .26, 24), new THREE.MeshStandardMaterial({color: '#3b2a1e', roughness: .5}))
     lampBody.position.set(mm(xMm), h + .15, mm(zMm)); decor.add(lampBody)
     const shade = new THREE.Mesh(new THREE.CylinderGeometry(.13, .19, .22, 32, 1, true), shadeMaterial); shade.position.set(mm(xMm), h + .4, mm(zMm)); decor.add(shade)
@@ -127,8 +128,10 @@ export function createDrawingRoomSouthSeating(room, {wallFaceMm = 0} = {}) {
   const group = buildSeating({
     sofas: [{...f.southSofa, faces: 'north'}, {...f.westSofa, faces: 'east'}],
     table: f.coffeeTable, rug: f.rug,
-    // Side table and lamp just north of the west sofa, where the L opens toward the TV; the corner lamp table at the south
-    // sofa's west end (room.southLayout.furniture.cornerTable).
+    // Side table just north of the west sofa, where the L opens toward the TV; the corner table at the south sofa's west
+    // end (room.southLayout.furniture.cornerTable). Owner 2026-10-04: no table lamps; reading is done by the wall-mounted
+    // reading light and the track lights, so the tables stay clear for a cup or a phone.
+    lamps: false,
     sideTable: {xMm: wallFaceMm + 260, zMm: f.westSofa.centerZmm - f.westSofa.lengthMm / 2 - 260},
     lampTables: [{xMm: f.cornerTable.centerXmm, zMm: f.cornerTable.centerZmm, diameterMm: f.cornerTable.diameterMm, heightMm: f.cornerTable.heightMm}],
     panelsZ: [f.westSofa.centerZmm - 350, f.westSofa.centerZmm + 350],
