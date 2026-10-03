@@ -156,3 +156,6 @@ cabinet is wall-hung again at x 800-1900. The north sofa (B, B2, B3) and the TV 
 reported, not fixed. Details: `docs/ENTRY_WALL_CAVITY.md`. The Whole home 3D Blender model now opens looking from the north, so
 south is at the top like the plan, with a compass in the corner.
 
+
+Designer render (2026-10-03): the live 3D views now default to an ambient-occlusion render (switch: "Designer render") that
+grounds furniture and shades corners without changing any geometry, material or colour. Details: `docs/LIGHTING.md`.

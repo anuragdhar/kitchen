@@ -1,4 +1,6 @@
 import {registerInteriorScene} from './render/interiorScene.js'
+import {createDesignerRender} from './render/designerRender.js'
+import {useDesignerRender} from './render/useDesignerRender.js'
 import {tagSurfaceMaterial} from './render/surfaceRoles.mjs'
 import {createDrawingLobbyPartition} from './rooms/drawing/DrawingLobbyPartition.js'
 import React,{useEffect,useRef,useState} from 'react'
@@ -59,6 +61,7 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
   const daylightRef=useRef(true)
   const mountRef=useRef(null)
   const sceneRef=useRef(null)
+  const designer=useDesignerRender(sceneRef)
   const room=EMPTY_ROOM_SHELLS[roomKey]
 
   useEffect(()=>{
@@ -72,6 +75,7 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
     renderer.setPixelRatio(Math.min(window.devicePixelRatio,2.2));renderer.outputColorSpace=THREE.SRGBColorSpace
     renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=.95;renderer.shadowMap.enabled=true
     mount.appendChild(renderer.domElement)
+    const designerRender=createDesignerRender(renderer,scene,camera,{enabled:designer.ref.current})
     const pmrem=new THREE.PMREMGenerator(renderer),environment=pmrem.fromScene(new RoomEnvironment(renderer),.04).texture
     scene.environment=environment
     const controls=new OrbitControls(camera,renderer.domElement);controls.enableDamping=true
@@ -436,7 +440,7 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
       camera.lookAt(controls.target);controls.update()
     }
     setCamera(initialView)
-    const resize=()=>{const width=mount.clientWidth,height=mount.clientHeight;renderer.setSize(width,height,false);camera.aspect=width/height;camera.updateProjectionMatrix()}
+    const resize=()=>{const width=mount.clientWidth,height=mount.clientHeight;renderer.setSize(width,height,false);designerRender.setSize(width,height);camera.aspect=width/height;camera.updateProjectionMatrix()}
     const observer=new ResizeObserver(resize);observer.observe(mount);resize()
     const raycaster=new THREE.Raycaster(),pointer=new THREE.Vector2()
     let pressedAt=null,markedMesh=null,markedMaterial=null
@@ -466,14 +470,14 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
     renderer.domElement.addEventListener('pointerdown',onPointerDown)
     renderer.domElement.addEventListener('pointerup',onPointerUp)
     const interiorScene=registerInteriorScene({id:roomKey,scene,camera,renderer,zones:[{id:roomKey,min:[0,0,0],max:[W,H,L]}]})
-    let raf=0;const render=()=>{controls.update();renderer.render(scene,camera);raf=requestAnimationFrame(render)};render()
+    let raf=0;const render=()=>{controls.update();designerRender.render();raf=requestAnimationFrame(render)};render()
     // Renders the six review-sheet views (top plan, overview, four walls from inside) at fixed sizes, then restores the camera.
     const captureReview=()=>{
       const saved={pos:camera.position.clone(),up:camera.up.clone(),target:controls.target.clone(),fov:camera.fov,aspect:camera.aspect,size:renderer.getSize(new THREE.Vector2()),ratio:renderer.getPixelRatio()}
       const views={};let project=null
       const shoot=(name,width,height,place)=>{
-        renderer.setPixelRatio(1);renderer.setSize(width,height,false);camera.aspect=width/height
-        place();camera.updateProjectionMatrix();camera.lookAt(controls.target);renderer.render(scene,camera)
+        renderer.setPixelRatio(1);renderer.setSize(width,height,false);designerRender.setSize(width,height);camera.aspect=width/height
+        place();camera.updateProjectionMatrix();camera.lookAt(controls.target);designerRender.render()
         const canvas=document.createElement('canvas');canvas.width=width;canvas.height=height
         canvas.getContext('2d').drawImage(renderer.domElement,0,0,width,height);views[name]=canvas
         return camera.clone()
@@ -492,14 +496,14 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
         inside('north',W/2,0,78);inside('south',W/2,L,78);inside('east',W,L/2,84);inside('west',0,L/2,84)
       }finally{
         drawingLayouts?.setLabels(tvLabelsRef.current)
-        renderer.setPixelRatio(saved.ratio);renderer.setSize(saved.size.x,saved.size.y,false)
+        renderer.setPixelRatio(saved.ratio);renderer.setSize(saved.size.x,saved.size.y,false);designerRender.setSize(saved.size.x,saved.size.y)
         camera.aspect=saved.aspect;camera.fov=saved.fov;camera.position.copy(saved.pos);camera.up.copy(saved.up);controls.target.copy(saved.target)
         camera.updateProjectionMatrix();camera.lookAt(controls.target);controls.update()
       }
       return {views,project}
     }
-    sceneRef.current={captureReview,setTvLabels:visible=>drawingLayouts?.setLabels(visible),setDrawingLayout:key=>drawingLayouts?.setLayout(key),setDrawingArm:pulled=>drawingLayouts?.setArm(pulled),setDoorSwing:visible=>drawingLayouts?.setDoorSwing(visible),setStorageOpen:open=>drawingLayouts?.setStorageOpen(open),setDrawingTv:key=>drawingLayouts?.setTvSize(key),setMirrorOpen:value=>vanity.userData.setMirrorOpen?.(value),setPartitionOpen:value=>partition.userData.setOpen?.(value),setCamera,setSouthVisible:value=>{southWall.visible=value},setFurnitureVisible:value=>{furniture.visible=value},setBoardOpen:value=>{ironingStorage?.userData.setBoardOpen(value)},setPoojaDoorsOpen:value=>{poojaDoors?.userData.setDoorsOpen(value)},clearMark,setDaylight}
-    return()=>{interiorScene.dispose();cancelAnimationFrame(raf);observer.disconnect();renderer.domElement.removeEventListener('pointerdown',onPointerDown);renderer.domElement.removeEventListener('pointerup',onPointerUp);controls.dispose();labelTextures.forEach(texture=>texture.dispose());shell.traverse(object=>{object.geometry?.dispose?.();if(Array.isArray(object.material))object.material.forEach(material=>material.dispose());else object.material?.dispose?.()});markedWallMaterial.dispose();environment.dispose();pmrem.dispose();renderer.dispose();renderer.domElement.remove();sceneRef.current=null}
+    sceneRef.current={setDesigner:on=>designerRender.setEnabled(on),captureReview,setTvLabels:visible=>drawingLayouts?.setLabels(visible),setDrawingLayout:key=>drawingLayouts?.setLayout(key),setDrawingArm:pulled=>drawingLayouts?.setArm(pulled),setDoorSwing:visible=>drawingLayouts?.setDoorSwing(visible),setStorageOpen:open=>drawingLayouts?.setStorageOpen(open),setDrawingTv:key=>drawingLayouts?.setTvSize(key),setMirrorOpen:value=>vanity.userData.setMirrorOpen?.(value),setPartitionOpen:value=>partition.userData.setOpen?.(value),setCamera,setSouthVisible:value=>{southWall.visible=value},setFurnitureVisible:value=>{furniture.visible=value},setBoardOpen:value=>{ironingStorage?.userData.setBoardOpen(value)},setPoojaDoorsOpen:value=>{poojaDoors?.userData.setDoorsOpen(value)},clearMark,setDaylight}
+    return()=>{interiorScene.dispose();cancelAnimationFrame(raf);designerRender.dispose();observer.disconnect();renderer.domElement.removeEventListener('pointerdown',onPointerDown);renderer.domElement.removeEventListener('pointerup',onPointerUp);controls.dispose();labelTextures.forEach(texture=>texture.dispose());shell.traverse(object=>{object.geometry?.dispose?.();if(Array.isArray(object.material))object.material.forEach(material=>material.dispose());else object.material?.dispose?.()});markedWallMaterial.dispose();environment.dispose();pmrem.dispose();renderer.dispose();renderer.domElement.remove();sceneRef.current=null}
   },[roomKey,initialView])
 
   useEffect(()=>{sceneRef.current?.setCamera(view)},[view,roomKey])
@@ -556,6 +560,7 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
         <button onClick={()=>setView('top')} aria-pressed={view==='top'} style={buttonStyle(view==='top')}>Top</button>
         <button onClick={makeReview} disabled={reviewBusy} style={buttonStyle(false)} title="One image with a dimensioned top plan, an overview and the four walls, plus a text brief, for sharing with an online AI">{reviewBusy?'Building review sheet…':'Review sheet for AI'}</button>
         {roomKey==='drawing'&&<button onClick={()=>setView('tvWall')} aria-pressed={view==='tvWall'} style={buttonStyle(view==='tvWall')}>TV wall view</button>}
+        <button {...designer.button(buttonStyle(designer.on))}/>
         {roomKey==='drawing'&&<button onClick={()=>setView('northWall')} aria-pressed={view==='northWall'} style={buttonStyle(view==='northWall')}>North wall view</button>}
         {roomKey==='bedroom3'&&<button onClick={()=>{setShowSouthWall(true);setView('southOpenings')}} aria-pressed={view==='southOpenings'} style={buttonStyle(view==='southOpenings')}>Balcony door + window</button>}
         {room.poojaAlcove&&<button onClick={()=>{setView('pooja');setPoojaDoorsOpen(true)}} aria-pressed={view==='pooja'} style={buttonStyle(view==='pooja')}>Pooja view</button>}

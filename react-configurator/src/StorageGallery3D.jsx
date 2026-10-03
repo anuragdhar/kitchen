@@ -4,14 +4,18 @@ import * as THREE from 'three'
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js'
 import {createStoreStorage} from './rooms/shared/StoreStorage.js'
 import {KITCHEN_REFRIGERATOR as FRIDGE} from './config/kitchenConfig.js'
+import {createDesignerRender} from './render/designerRender.js'
+import {useDesignerRender} from './render/useDesignerRender.js'
 
 export default function StorageGallery3D(){
  const mountRef=useRef(null),sceneRef=useRef(null)
+ const designer=useDesignerRender(sceneRef)
  const [open,setOpen]=useState(false)
  useEffect(()=>{
   const mount=mountRef.current,scene=new THREE.Scene();scene.background=new THREE.Color('#f0ede7')
   const renderer=new THREE.WebGLRenderer({antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio,2));mount.appendChild(renderer.domElement)
   const camera=new THREE.PerspectiveCamera(45,1,.01,50),controls=new OrbitControls(camera,renderer.domElement);controls.enableDamping=true
+  const designerRender=createDesignerRender(renderer,scene,camera,{enabled:designer.ref.current})
   const model=createStoreStorage();scene.add(model)
   const box=(w,h,d,x,y,z,color)=>{const mesh=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),new THREE.MeshStandardMaterial({color,roughness:.6}));mesh.position.set(x,y,z);scene.add(mesh)}
   box(3,.04,2.5,1,.0,1.1,'#d7c9b5')
@@ -22,11 +26,11 @@ export default function StorageGallery3D(){
   const light=new THREE.DirectionalLight('#fff1d6',3);light.position.set(-2,5,3);scene.add(light)
   const setView=view=>{controls.target.set(1.25,.9,1.2);camera.up.set(0,1,0);if(view==='top'){camera.position.set(1.25,6,1.2);camera.up.set(0,0,1)}else if(view==='front')camera.position.set(-3,1.5,1.2);else camera.position.set(-2.5,3.2,3.9);camera.lookAt(controls.target);controls.update()}
   setView('overview')
-  const resize=()=>{renderer.setSize(mount.clientWidth,mount.clientHeight);camera.aspect=mount.clientWidth/mount.clientHeight;camera.updateProjectionMatrix()};const observer=new ResizeObserver(resize);observer.observe(mount);resize()
+  const resize=()=>{renderer.setSize(mount.clientWidth,mount.clientHeight);designerRender.setSize(mount.clientWidth,mount.clientHeight);camera.aspect=mount.clientWidth/mount.clientHeight;camera.updateProjectionMatrix()};const observer=new ResizeObserver(resize);observer.observe(mount);resize()
   const interiorScene=registerInteriorScene({id:'storage',scene,camera,renderer,zones:[{id:'storage',min:[0,0,0],max:[3,2.7,2.5]}]})
-  let raf;const render=()=>{controls.update();renderer.render(scene,camera);raf=requestAnimationFrame(render)};render()
-  sceneRef.current={setView,setOpen:model.userData.setCoverOpen}
-  return()=>{interiorScene.dispose();cancelAnimationFrame(raf);observer.disconnect();controls.dispose();scene.traverse(o=>{o.geometry?.dispose();o.material?.dispose?.()});renderer.dispose();renderer.domElement.remove();sceneRef.current=null}
+  let raf;const render=()=>{controls.update();designerRender.render();raf=requestAnimationFrame(render)};render()
+  sceneRef.current={setDesigner:on=>designerRender.setEnabled(on),setView,setOpen:model.userData.setCoverOpen}
+  return()=>{interiorScene.dispose();cancelAnimationFrame(raf);designerRender.dispose();observer.disconnect();controls.dispose();scene.traverse(o=>{o.geometry?.dispose();o.material?.dispose?.()});renderer.dispose();renderer.domElement.remove();sceneRef.current=null}
  },[])
  useEffect(()=>{sceneRef.current?.setOpen(open)},[open])
  const style={padding:'9px 14px',borderRadius:8,border:'1px solid #b6a793',background:'#fff',cursor:'pointer'}

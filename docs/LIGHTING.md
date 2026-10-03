@@ -32,3 +32,18 @@ Tests cover every room, schedule boundaries/midnight, CCT range, per-layer switc
 room inheritance, real day/night rendered differences, cabinet switch and unchanged
 authored geometry. These checks are not an artistic approval or installation-safety
 certificate. Camera, emissive display and monitor colour affect the perceived warmth.
+
+## Designer render (live views, 2026-10-03)
+
+Every live 3D view except the kitchen planner (Whole home 3D editable, the room pages, Main entry, Study, Storage, and the
+Balcony office through its existing High quality switch) has a **Designer render** switch, on by default and remembered across
+views (`home-interior.designer-render.v1`). It adds screen-space ambient occlusion (three.js GTAO, about a 1.2 m radius) so room
+corners, skirting lines, the floor under sofas and cabinets, and cabinet interiors get the soft contact shading of real
+indirect light. Source: `react-configurator/src/render/designerRender.js`.
+
+It changes shading only. Geometry, materials, lights, tone mapping (ACES, as each view had), exposure and visibility are
+unchanged. Labels, measuring lines, translucent ghosts, glass and the background colour are drawn after the AO, exactly as
+before, so the AO never darkens or recolours them. AgX and Khronos Neutral tone mapping were tried and rejected: AgX greyed the
+wood and floors, and Neutral showed the warm lighting rigs as pink. Cost: one extra depth/normal pass per frame; turn it off on
+a slow computer. Not covered: the kitchen planner (`App.jsx`), the Blender views, and Blender/Cycles output, which already has
+real global illumination.

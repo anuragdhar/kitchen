@@ -8,12 +8,15 @@ import {RoomEnvironment} from 'three/examples/jsm/environments/RoomEnvironment.j
 import {STUDY_ROOM} from './config/studyRoomConfig.js'
 import {createRug,createPottedPlant,createWallArt,createFloorLamp} from './rooms/shared/RoomDecor.js'
 import {createStudyTerrace} from './rooms/study/StudyTerrace.js'
+import {createDesignerRender} from './render/designerRender.js'
+import {useDesignerRender} from './render/useDesignerRender.js'
 
 const mm=value=>value/1000
 
 export default function StudyRoom3D(){
   const mountRef=useRef(null)
   const sceneRef=useRef(null)
+  const designer=useDesignerRender(sceneRef)
   const [preset,setPreset]=useState('kids')
   const [showEastWall,setShowEastWall]=useState(false)
   const [showNorthWall,setShowNorthWall]=useState(false)
@@ -34,6 +37,7 @@ export default function StudyRoom3D(){
     renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=.88
     renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap
     mount.appendChild(renderer.domElement)
+    const designerRender=createDesignerRender(renderer,scene,camera,{enabled:designer.ref.current})
     const pmrem=new THREE.PMREMGenerator(renderer)
     const environment=pmrem.fromScene(new RoomEnvironment(renderer),.04).texture
     scene.environment=environment
@@ -207,13 +211,13 @@ export default function StudyRoom3D(){
       camera.lookAt(controls.target);controls.update()
     }
     setCamera('kids')
-    const resize=()=>{const width=mount.clientWidth,height=mount.clientHeight;renderer.setSize(width,height,false);camera.aspect=width/height;camera.updateProjectionMatrix()}
+    const resize=()=>{const width=mount.clientWidth,height=mount.clientHeight;renderer.setSize(width,height,false);designerRender.setSize(width,height);camera.aspect=width/height;camera.updateProjectionMatrix()}
     const observer=new ResizeObserver(resize);observer.observe(mount);resize()
     const interiorScene=registerInteriorScene({id:'study',scene,camera,renderer,zones:[{id:'study',min:[0,0,0],max:[W,H,L]}]})
-    let raf=0;const render=()=>{controls.update();renderer.render(scene,camera);raf=requestAnimationFrame(render)};render()
+    let raf=0;const render=()=>{controls.update();designerRender.render();raf=requestAnimationFrame(render)};render()
     eastGroup.visible=showEastWall;northGroup.visible=showNorthWall
-    sceneRef.current={setCamera,setEastVisible:value=>{eastGroup.visible=value},setNorthVisible:value=>{northGroup.visible=value},setKidsPreview:value=>{kidsGroup.visible=value!=='off';nightBeds.visible=value==='night';daySeats.visible=value==='day'},setLabelsVisible:value=>{labels.forEach(({sprite})=>{sprite.visible=value})},setDirectionsVisible:value=>{directionGroup.visible=value}}
-    return()=>{interiorScene.dispose();cancelAnimationFrame(raf);observer.disconnect();controls.dispose();labels.forEach(({texture})=>texture.dispose());directionTextures.forEach(texture=>texture.dispose());room.traverse(object=>{object.geometry?.dispose?.();if(Array.isArray(object.material))object.material.forEach(m=>m.dispose());else object.material?.dispose?.()});environment.dispose();pmrem.dispose();renderer.dispose();renderer.domElement.remove();sceneRef.current=null}
+    sceneRef.current={setDesigner:on=>designerRender.setEnabled(on),setCamera,setEastVisible:value=>{eastGroup.visible=value},setNorthVisible:value=>{northGroup.visible=value},setKidsPreview:value=>{kidsGroup.visible=value!=='off';nightBeds.visible=value==='night';daySeats.visible=value==='day'},setLabelsVisible:value=>{labels.forEach(({sprite})=>{sprite.visible=value})},setDirectionsVisible:value=>{directionGroup.visible=value}}
+    return()=>{interiorScene.dispose();cancelAnimationFrame(raf);designerRender.dispose();observer.disconnect();controls.dispose();labels.forEach(({texture})=>texture.dispose());directionTextures.forEach(texture=>texture.dispose());room.traverse(object=>{object.geometry?.dispose?.();if(Array.isArray(object.material))object.material.forEach(m=>m.dispose());else object.material?.dispose?.()});environment.dispose();pmrem.dispose();renderer.dispose();renderer.domElement.remove();sceneRef.current=null}
   },[])
   useEffect(()=>{sceneRef.current?.setCamera(preset)},[preset])
   useEffect(()=>{sceneRef.current?.setEastVisible(showEastWall)},[showEastWall])
@@ -228,6 +232,7 @@ export default function StudyRoom3D(){
       <div style={{display:'flex',gap:7,flexWrap:'wrap'}}>
         {[['kids','Kids layout'],['overview','Overview'],['top','Top'],['office','Office connection'],['southCabinet','South cabinet'],['mainEntry','Main entry'],['northBookshelf','North bookshelf']].map(([key,label])=><button key={key} onClick={()=>{setPreset(key);if(key==='mainEntry')setShowEastWall(true);if(key==='kids')setShowEastWall(false)}} style={{padding:'7px 10px',borderRadius:9,border:'1px solid #cbd5e1',background:preset===key?'#172033':'#fff',color:preset===key?'#fff':'#172033',fontWeight:800,cursor:'pointer'}}>{label}</button>)}
         {[['night','Bed out'],['day','Day seat'],['off','Hide preview']].map(([key,label])=><button key={key} onClick={()=>setKidsPreview(key)} style={{padding:'7px 10px',borderRadius:9,border:'1px solid #a78bfa',background:kidsPreview===key?'#6d28d9':'#fff',color:kidsPreview===key?'#fff':'#6d28d9',fontWeight:800,cursor:'pointer'}}>{label}</button>)}
+        <button {...designer.button({padding:'7px 10px',borderRadius:9,border:'1px solid #cbd5e1',background:designer.on?'#172033':'#fff',color:designer.on?'#fff':'#172033',fontWeight:800,cursor:'pointer'})}/>
         <button onClick={()=>setShowEastWall(value=>!value)} style={{padding:'7px 10px',borderRadius:9,border:'1px solid #cbd5e1',background:showEastWall?'#fff':'#fee2e2',color:'#172033',fontWeight:800,cursor:'pointer'}}>{showEastWall?'Hide east wall':'Show east wall'}</button>
         <button onClick={()=>setShowNorthWall(value=>!value)} style={{padding:'7px 10px',borderRadius:9,border:'1px solid #cbd5e1',background:showNorthWall?'#fff':'#fee2e2',color:'#172033',fontWeight:800,cursor:'pointer'}}>{showNorthWall?'Hide north wall':'Show north wall'}</button>
         <button onClick={()=>setShowLabels(value=>!value)} style={{padding:'7px 10px',borderRadius:9,border:'1px solid #cbd5e1',background:showLabels?'#dbeafe':'#fff',color:'#172033',fontWeight:800,cursor:'pointer'}}>{showLabels?'Hide labels':'Show labels'}</button>

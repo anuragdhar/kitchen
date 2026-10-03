@@ -6,6 +6,7 @@ import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js'
 import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader.js'
 import {RoomEnvironment} from 'three/examples/jsm/environments/RoomEnvironment.js'
 import {BALCONY_OFFICE,BALCONY_DESK_HEIGHT_KEY} from './config/balconyOfficeConfig.js'
+import {createDesignerRender} from './render/designerRender.js'
 
 const mm=value=>value/1000
 const feetInches=valueMm=>{
@@ -69,6 +70,8 @@ export default function BalconyOffice3D(){
     renderer.toneMapping=THREE.ACESFilmicToneMapping
     renderer.toneMappingExposure=1.08
     mount.appendChild(renderer.domElement)
+    // Designer render (ambient occlusion) is part of this page's existing High quality switch.
+    const designerRender=createDesignerRender(renderer,scene,camera,{enabled:false})
     const pmrem=new THREE.PMREMGenerator(renderer)
     const environment=pmrem.fromScene(new RoomEnvironment(renderer),.04).texture
     scene.environment=environment
@@ -695,10 +698,10 @@ export default function BalconyOffice3D(){
     const setQuality=enabled=>{
       renderer.setPixelRatio(Math.min(window.devicePixelRatio,enabled?2.5:1.25))
       renderer.shadowMap.enabled=enabled
-      renderer.toneMappingExposure=enabled?1.08:1
+      designerRender.setExposure(enabled?1.08:1);designerRender.setEnabled(enabled)
       sun.shadow.mapSize.set(enabled?2048:1024,enabled?2048:1024)
       sun.shadow.map?.dispose?.()
-      renderer.setSize(mount.clientWidth,mount.clientHeight,false)
+      renderer.setSize(mount.clientWidth,mount.clientHeight,false);designerRender.setSize(mount.clientWidth,mount.clientHeight)
     }
     let selectionHelper=null
     const clearSelection=()=>{
@@ -729,7 +732,7 @@ export default function BalconyOffice3D(){
       controls.update()
     }
     const captureScreenshot=()=>{
-      renderer.render(scene,camera)
+      designerRender.render()
       return new Promise((resolve,reject)=>renderer.domElement.toBlob(blob=>blob?resolve(blob):reject(new Error('Unable to capture the 3D view.')),'image/png'))
     }
     setCamera(preset)
@@ -767,7 +770,7 @@ export default function BalconyOffice3D(){
     const resize=()=>{
       const width=mount.clientWidth
       const height=mount.clientHeight
-      renderer.setSize(width,height,false)
+      renderer.setSize(width,height,false);designerRender.setSize(width,height)
       camera.aspect=width/height
       camera.updateProjectionMatrix()
     }
@@ -781,10 +784,10 @@ export default function BalconyOffice3D(){
       lowerLeftSlider.position.x=THREE.MathUtils.lerp(lowerLeftSlider.position.x,THREE.MathUtils.lerp(lowerLeftSliderClosedX,lowerRightSliderX,cabinetOpenTarget),.12)
       liftGroup.rotation.x=THREE.MathUtils.lerp(liftGroup.rotation.x,THREE.MathUtils.degToRad(-58)*cabinetOpenTarget,.12)
       for(const {group,angle} of westDoorGroups)group.rotation.y=THREE.MathUtils.lerp(group.rotation.y,angle*cabinetOpenTarget,.12)
-      controls.update();renderer.render(scene,camera)
+      controls.update();designerRender.render()
     }
     animate()
-    return ()=>{interiorScene.dispose();
+    return ()=>{interiorScene.dispose();designerRender.dispose()
       cancelAnimationFrame(frame)
       observer.disconnect()
       controls.dispose()
