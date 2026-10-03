@@ -2,15 +2,15 @@
   "schema": "a501.current-room",
   "version": 1,
   "room": "kitchen",
-  "job": "2a22e76dec964697",
+  "job": "ba80217a2ac9429c",
   "sceneId": "kitchen",
   "sourceKind": "editable-snapshot",
-  "sourceSha256": "61e602817fd039b45f9292462c9bf6d189b8ab2604dc994e8f46c492717bc463",
-  "capturedAt": "2026-09-28T12:33:50.751Z",
-  "quality": "final",
+  "sourceSha256": "4b66586696f4ccf3439f4f48e0cc842647977e1b41ae4b056bcd6e38fa8befef",
+  "capturedAt": "2026-10-03T17:37:25.752Z",
+  "quality": "draft",
   "model": {
-    "url": "/renders/archviz/2a22e76dec964697/source.glb",
-    "sha256": "61e602817fd039b45f9292462c9bf6d189b8ab2604dc994e8f46c492717bc463",
+    "url": "/renders/archviz/ba80217a2ac9429c/source.glb",
+    "sha256": "4b66586696f4ccf3439f4f48e0cc842647977e1b41ae4b056bcd6e38fa8befef",
     "shading": "studio-unbaked"
   },
   "camera": {
@@ -45,35 +45,35 @@
   "images": [
     {
       "label": "Current editable camera",
-      "url": "/renders/archviz/2a22e76dec964697/current.png",
-      "sha256": "47af3972b13b60ea867f0584a7e6fe95f1a476c1e945512b4d1bc6d66ad2d00b",
+      "url": "/renders/archviz/ba80217a2ac9429c/current.png",
+      "sha256": "2a86e9ff20273431a3cb8250a18617de16f47edf6dabaf4e2cc6e021ff613555",
       "size": [
-        1920,
-        1191
+        960,
+        595
       ]
     },
     {
       "label": "Room composition",
-      "url": "/renders/archviz/2a22e76dec964697/hero.png",
-      "sha256": "bcfe38f62ae08ba54e49898c35292fa985f835a947d5e71766061b9be871853c",
+      "url": "/renders/archviz/ba80217a2ac9429c/hero.png",
+      "sha256": "01b692d1b1a25c45aa4291c8efa4d7316a07710af1e7aca8b6b8ac205d6d306f",
       "size": [
-        1920,
-        1280
+        960,
+        640
       ]
     },
     {
       "label": "Reverse room view",
-      "url": "/renders/archviz/2a22e76dec964697/reverse.png",
-      "sha256": "0bb361c99762eaa0d69dc56949949291852f55c80b0e7f7ebc7124a7fa180a07",
+      "url": "/renders/archviz/ba80217a2ac9429c/reverse.png",
+      "sha256": "87b09843165739fb2d4671d1408d28c6095c1341038f5df7d37d5c0e516ad03c",
       "size": [
-        1920,
-        1280
+        960,
+        640
       ]
     }
   ],
   "geometryAudit": {
-    "sourceObjects": 550,
-    "importedMeshes": 550,
+    "sourceObjects": 563,
+    "importedMeshes": 563,
     "maximumBoundsErrorMetres": 4.418611529999339e-07,
     "triangleCountsMatch": true,
     "scope": "Source IDs, per-object world bounds and triangle counts; not a construction/collision certificate."

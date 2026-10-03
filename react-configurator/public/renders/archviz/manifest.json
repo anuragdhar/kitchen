@@ -3,43 +3,6 @@
   "version": 1,
   "renders": [
     {
-      "room": "kitchen",
-      "job": "2a22e76dec964697",
-      "sourceKind": "editable-snapshot",
-      "quality": "final",
-      "lighting": "day",
-      "images": [
-        {
-          "label": "Current editable camera",
-          "url": "/renders/archviz/2a22e76dec964697/current.png",
-          "sha256": "47af3972b13b60ea867f0584a7e6fe95f1a476c1e945512b4d1bc6d66ad2d00b",
-          "size": [
-            1920,
-            1191
-          ]
-        },
-        {
-          "label": "Room composition",
-          "url": "/renders/archviz/2a22e76dec964697/hero.png",
-          "sha256": "bcfe38f62ae08ba54e49898c35292fa985f835a947d5e71766061b9be871853c",
-          "size": [
-            1920,
-            1280
-          ]
-        },
-        {
-          "label": "Reverse room view",
-          "url": "/renders/archviz/2a22e76dec964697/reverse.png",
-          "sha256": "0bb361c99762eaa0d69dc56949949291852f55c80b0e7f7ebc7124a7fa180a07",
-          "size": [
-            1920,
-            1280
-          ]
-        }
-      ],
-      "reviewStatus": "reviewed"
-    },
-    {
       "room": "lobby",
       "job": "35cd93acafea4a49",
       "sourceKind": "editable-snapshot",
@@ -235,6 +198,43 @@
           "label": "Reverse room view",
           "url": "/renders/archviz/78a55262e06d49c1/reverse.png",
           "sha256": "a4199edbb984efb818ee931c4a1784a9b2e2ee800b018981a3aeefdd93b56d93",
+          "size": [
+            960,
+            640
+          ]
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "room": "kitchen",
+      "job": "ba80217a2ac9429c",
+      "sourceKind": "editable-snapshot",
+      "quality": "draft",
+      "lighting": "day",
+      "images": [
+        {
+          "label": "Current editable camera",
+          "url": "/renders/archviz/ba80217a2ac9429c/current.png",
+          "sha256": "2a86e9ff20273431a3cb8250a18617de16f47edf6dabaf4e2cc6e021ff613555",
+          "size": [
+            960,
+            595
+          ]
+        },
+        {
+          "label": "Room composition",
+          "url": "/renders/archviz/ba80217a2ac9429c/hero.png",
+          "sha256": "01b692d1b1a25c45aa4291c8efa4d7316a07710af1e7aca8b6b8ac205d6d306f",
+          "size": [
+            960,
+            640
+          ]
+        },
+        {
+          "label": "Reverse room view",
+          "url": "/renders/archviz/ba80217a2ac9429c/reverse.png",
+          "sha256": "87b09843165739fb2d4671d1408d28c6095c1341038f5df7d37d5c0e516ad03c",
           "size": [
             960,
             640
