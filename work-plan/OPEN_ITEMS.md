@@ -16,6 +16,7 @@ page). Write the answer next to the item or just tell the assistant; the task an
 | A7 | Entry: size of the main door opening, and size of the iron shaft cover on the right | Stainless steel door; shaft cover |
 | A8 | Existing cabinet in the east part of the entry pocket: real width, depth, height, doors and shelves | 3D model only (drawn from the plan) |
 | A9 | Skirting: running length, only if the skirting is being replaced | Optional skirting |
+| A10 | Drawing Room south window: width of each of the three sections, and the shutter height | Centre window shutters |
 
 ## B. Things to look at or find out
 
@@ -25,7 +26,7 @@ page). Write the answer next to the item or just tell the assistant; the task an
 | B2 | What does the existing east cabinet stand on (is there a floor under it)? | Inspect the shaft |
 | B3 | Is the society permission to close the shaft in writing? Does the society also need to approve the new main door and the shaft cover? | Society permission |
 | B4 | Is the present shaft cover at the entry ventilated (holes or louvres)? | Shaft cover |
-| B5 | Drawing Room south window: is the frame wood, steel or aluminium? How does it open (swing or slide, in or out)? | Window wooden shade; mosquito net |
+| B5 | ANSWERED 2026-10-04: the south window frame is wood, in three sections, shutters open outward, centre section fixed (to be replaced by two shutters). Still to check: does anything outside (grille, pipe, AC unit) block the centre shutters? | Centre window shutters |
 
 ## C. Decisions
 
@@ -49,7 +50,7 @@ page). Write the answer next to the item or just tell the assistant; the task an
 | C16 | Can the opening between the Drawing Room and the Lobby/Dining be closed (door or curtain) when the AC runs? | not decided | Choose the AC |
 | C17 | Track lights: type (230 V or slim 48 V magnetic), colour, number of heads | two surface tracks, warm white, dimmable | Layered lighting |
 | C18 | Is there a ceiling fan in the Drawing Room, and where? | not known | Layered lighting |
-| C19 | South window: which wood shade; which type of mosquito net | match the TV panel wall; net type depends on how the window opens | Window wooden shade; mosquito net |
+| C19 | South window: which wood shade; which type of mosquito net; glass type for the new shutters | match the TV panel wall; pleated or roller net on the room side; 5 mm clear glass | Window wooden shade; mosquito net; centre shutters |
 
 ## D. People to arrange
 
