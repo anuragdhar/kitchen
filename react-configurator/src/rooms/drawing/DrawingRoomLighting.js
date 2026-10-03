@@ -8,7 +8,7 @@ function ceilingFans(config, ceiling) {
   const radius = config.bladeDiameterMm / 2000, y = ceiling - config.dropMm / 1000
   for (const fan of config.fans) {
     const one = new THREE.Group(); one.name = fan.label; one.position.set(fan.xMm / 1000, 0, fan.zMm / 1000); group.add(one)
-    const add = (geometry, material, py) => { const mesh = new THREE.Mesh(geometry, material); mesh.position.y = py; mesh.castShadow = true; one.add(mesh); return mesh }
+    const add = (geometry, material, py) => { const mesh = new THREE.Mesh(geometry, material); mesh.position.y = py; one.add(mesh); return mesh } // no shadow: nothing shines from above a fan
     add(new THREE.CylinderGeometry(.06, .06, .05, 24), body, ceiling - .025)
     add(new THREE.CylinderGeometry(.012, .012, config.dropMm / 1000 - .08, 12), body, ceiling - config.dropMm / 2000)
     add(new THREE.CylinderGeometry(.11, .09, .08, 28), body, y)
@@ -26,7 +26,9 @@ function ceilingFans(config, ceiling) {
 function trackLights(config, ceiling) {
   const group = new THREE.Group(); group.name = 'Track lights'
   const white = new THREE.MeshStandardMaterial({color: '#f4f2ee', roughness: .5}), head = new THREE.MeshStandardMaterial({color: '#ecebe7', roughness: .4, metalness: .2})
-  const lens = new THREE.MeshStandardMaterial({color: '#fff3dc', emissive: '#ffd9a1', emissiveIntensity: .9, roughness: .9}); lens.userData.taskLightGlow = true
+  // One glowing-lens material per kind of head, so each kind can be dimmed on its own (setLevel).
+  const lensFor = () => { const m = new THREE.MeshStandardMaterial({color: '#fff3dc', emissive: '#ffd9a1', emissiveIntensity: .9, roughness: .9}); m.userData.taskLightGlow = true; return m }
+  const lenses = {spot: lensFor(), diffuse: lensFor()}, dimmable = {spot: [], diffuse: []}
   const s = config.sectionMm / 1000, AIM = {north: [0, -1], south: [0, 1], west: [-1, 0], east: [1, 0]}
   for (const run of config.runs) {
     const part = new THREE.Group(); part.name = run.label; group.add(part)
@@ -38,18 +40,24 @@ function trackLights(config, ceiling) {
       if (h.kind === 'diffuse') {
         const len = h.lengthMm / 1000
         const body = new THREE.Mesh(new THREE.BoxGeometry(alongX ? len : .03, .03, alongX ? .03 : len), head); body.position.set(x, y - .015, z); part.add(body)
-        const glow = new THREE.Mesh(new THREE.BoxGeometry(alongX ? len - .02 : .024, .004, alongX ? .024 : len - .02), lens); glow.position.set(x, y - .032, z); part.add(glow)
-        const light = new THREE.PointLight('#ffd9a8', .9, 4.2, 1.6); light.position.set(x, y - .06, z); part.add(light)
+        const glow = new THREE.Mesh(new THREE.BoxGeometry(alongX ? len - .02 : .024, .004, alongX ? .024 : len - .02), lenses.diffuse); glow.position.set(x, y - .032, z); part.add(glow)
+        const light = new THREE.PointLight('#ffd9a8', .9, 4.2, 1.6); light.position.set(x, y - .06, z); part.add(light); dimmable.diffuse.push({light, base: light.intensity})
       } else {
         const [dx, dz] = AIM[h.aim]
         const stem = new THREE.Mesh(new THREE.CylinderGeometry(.008, .008, .05, 10), head); stem.position.set(x, y - .025, z); part.add(stem)
         const can = new THREE.Mesh(new THREE.CylinderGeometry(.026, .03, .09, 20), head); can.position.set(x + dx * .02, y - .075, z + dz * .02)
         can.rotation.z = -dx * .5; can.rotation.x = dz * .5; part.add(can)
-        const face = new THREE.Mesh(new THREE.CylinderGeometry(.022, .022, .004, 20), lens); face.position.set(x + dx * .042, y - .118, z + dz * .042); face.rotation.copy(can.rotation); part.add(face)
+        const face = new THREE.Mesh(new THREE.CylinderGeometry(.022, .022, .004, 20), lenses.spot); face.position.set(x + dx * .042, y - .118, z + dz * .042); face.rotation.copy(can.rotation); part.add(face)
         const light = new THREE.SpotLight('#ffd6a0', 2.4, 3.4, .42, .7, 1.4); light.position.set(x, y - .1, z)
-        light.target.position.set(x + dx * (at - .04 + .02), 1.25, z + dz * (at - .04 + .02)); part.add(light, light.target)
+        light.target.position.set(x + dx * (at - .04 + .02), 1.25, z + dz * (at - .04 + .02)); part.add(light, light.target); dimmable.spot.push({light, base: light.intensity})
       }
     }
+  }
+  // level 0 = off, 1 = the planned brightness; scales the real lights and the lens glow of one kind of head.
+  group.userData.setLevel = (kind, level) => {
+    if (!dimmable[kind]) return
+    for (const {light, base} of dimmable[kind]) { light.userData.dimLevel = level; light.intensity = base * level }
+    lenses[kind].emissiveIntensity = .9 * Math.min(level, 1.5)
   }
   return group
 }
@@ -70,6 +78,7 @@ export function createDrawingLayoutLights(room, layoutKey) {
     const mesh = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), material)
     mesh.position.set(x, y, z); group.add(mesh)
   }
+  const chandelierLights = []
   for (const fixture of config.ambient) {
     const x = fixture.xMm / 1000, z = fixture.zMm / 1000
     const canopy = new THREE.Mesh(new THREE.CylinderGeometry(.085, .085, .025, 32), bronze)
@@ -79,6 +88,10 @@ export function createDrawingLayoutLights(room, layoutKey) {
     ring.rotation.x = Math.PI / 2; ring.position.set(x, ceiling - .43, z); group.add(ring)
     const lens = new THREE.Mesh(new THREE.TorusGeometry(.305, .014, 8, 48), diffuser)
     lens.rotation.x = Math.PI / 2; lens.position.set(x, ceiling - .455, z); group.add(lens)
+    if (config.tracks) {
+      const light = new THREE.PointLight('#ffd9a8', 1.5, 6.5, 1.5); light.position.set(x, ceiling - .5, z); group.add(light)
+      chandelierLights.push({light, base: light.intensity})
+    }
   }
   const up = config.wallUplight
   if (up) {
@@ -93,7 +106,14 @@ export function createDrawingLayoutLights(room, layoutKey) {
     box(.10, .008, .10, .27, 1.507, z, warm)
   }
   if (config.ceilingFans) group.add(ceilingFans(config.ceilingFans, ceiling))
-  if (config.tracks) group.add(trackLights(config.tracks, ceiling))
+  const tracks = config.tracks ? trackLights(config.tracks, ceiling) : null
+  if (tracks) group.add(tracks)
+  // Dimmer: kind is 'chandelier', 'spot' or 'diffuse'; level 0 = off, 1 = planned. The level is also kept on each light
+  // (userData.dimLevel) so a page that rescales lights for day and evening can keep it.
+  group.userData.setTrackLight = (kind, level) => {
+    if (kind === 'chandelier') for (const {light, base} of chandelierLights) { light.userData.dimLevel = level; light.intensity = base * level }
+    else tracks?.userData.setLevel(kind, level)
+  }
   const glow = config.sofaGlow
   box((glow.lengthMm - 160) / 1000, .012, .025, glow.xMm / 1000, glow.heightMm / 1000, glow.fromNorthMm / 1000, diffuser)
   return group

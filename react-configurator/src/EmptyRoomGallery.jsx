@@ -20,6 +20,7 @@ import {createRoomAirConditioning} from './rooms/shared/RoomAirConditioning.js'
 import {createRoomTaskLighting} from './rooms/shared/RoomTaskLighting.js'
 import {createRug,createPottedPlant,createWallArt,createFloorLamp,createCushion,createLaundryHamper} from './rooms/shared/RoomDecor.js'
 import {createDrawingRoomLayouts,DRAWING_LAYOUTS} from './rooms/drawing/DrawingRoomLayouts.js'
+import DrawingLightDimmer from './rooms/drawing/DrawingLightDimmer.jsx'
 import {buildRoomReview} from './domain/roomReview.mjs'
 import {composeReviewSheet,canvasToBlob} from './render/reviewSheet.js'
 import {parseInspiration,validateInspiration} from './home/inspiration.mjs'
@@ -431,19 +432,24 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
     // Every other light in the scene is warm task/accent mood lighting; in
     // daylight mode those are dimmed instead of removed so fixtures stay lit.
     const moodLights=[];scene.traverse(object=>{if(object.isLight&&object!==hemi&&object!==sun)moodLights.push({light:object,base:object.intensity})})
+    let darkRoom=false // Drawing Room dimmer: only the room's own fittings light the room
     const setDaylight=on=>{
       if(on){
         hemi.color.set('#e9f2ff');hemi.groundColor.set('#b3a897');hemi.intensity=1.7
         sun.color.set('#fff9ec');sun.intensity=2.6
         scene.background.set('#f2f6f9')
-        moodLights.forEach(({light,base})=>{light.intensity=base*.1})
+        moodLights.forEach(({light,base})=>{light.intensity=base*.1*(light.userData.dimLevel??1)})
       }else{
         // A real dusk mood, so the warm task lighting reads as the room's light.
         hemi.color.set('#c3d2e8');hemi.groundColor.set('#4e463e');hemi.intensity=.5
         sun.color.set('#ffd9a8');sun.intensity=.55
         scene.background.set('#242a33')
-        moodLights.forEach(({light,base})=>{light.intensity=base*1.25})
+        moodLights.forEach(({light,base})=>{light.intensity=base*1.25*(light.userData.dimLevel??1)})
       }
+      // Dark room: no sun, sky, environment or generic preview lights, so the dimmer sliders show their own effect.
+      const overlay=scene.getObjectByName('Home Interior proposed lighting');if(overlay)overlay.visible=!darkRoom
+      scene.environmentIntensity=darkRoom?.02:1
+      if(darkRoom){hemi.intensity=.03;sun.intensity=0;scene.background.set('#0b0d10');moodLights.forEach(({light,base})=>{light.intensity=base*1.25*(light.userData.dimLevel??1)})}
     }
     setDaylight(daylightRef.current)
     controls.target.set(W/2,H*.38,L/2)
@@ -533,7 +539,7 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
       }
       return {views,project}
     }
-    sceneRef.current={setBedsideIdea:visible=>{if(bedsideIdea)bedsideIdea.visible=visible},clearItem,setDesigner:on=>designerRender.setEnabled(on),captureReview,setTvLabels:visible=>drawingLayouts?.setLabels(visible),setDrawingLayout:key=>drawingLayouts?.setLayout(key),setDrawingArm:pulled=>drawingLayouts?.setArm(pulled),setElectrical:visible=>drawingLayouts?.setElectrical(visible),setDoorSwing:visible=>drawingLayouts?.setDoorSwing(visible),setStorageOpen:open=>drawingLayouts?.setStorageOpen(open),setDrawingTv:key=>drawingLayouts?.setTvSize(key),setMirrorOpen:value=>vanity.userData.setMirrorOpen?.(value),setPartitionOpen:value=>partition.userData.setOpen?.(value),setCamera,setSouthVisible:value=>{southWall.visible=value},setFurnitureVisible:value=>{furniture.visible=value},setBoardOpen:value=>{ironingStorage?.userData.setBoardOpen(value)},setPoojaDoorsOpen:value=>{poojaDoors?.userData.setDoorsOpen(value)},clearMark,setDaylight}
+    sceneRef.current={setBedsideIdea:visible=>{if(bedsideIdea)bedsideIdea.visible=visible},clearItem,setDesigner:on=>designerRender.setEnabled(on),captureReview,setTrackLight:(kind,level)=>{drawingLayouts?.setTrackLight(kind,level);setDaylight(daylightRef.current)},setDarkRoom:on=>{darkRoom=on;setDaylight(daylightRef.current)},setTvLabels:visible=>drawingLayouts?.setLabels(visible),setDrawingLayout:key=>drawingLayouts?.setLayout(key),setDrawingArm:pulled=>drawingLayouts?.setArm(pulled),setElectrical:visible=>drawingLayouts?.setElectrical(visible),setDoorSwing:visible=>drawingLayouts?.setDoorSwing(visible),setStorageOpen:open=>drawingLayouts?.setStorageOpen(open),setDrawingTv:key=>drawingLayouts?.setTvSize(key),setMirrorOpen:value=>vanity.userData.setMirrorOpen?.(value),setPartitionOpen:value=>partition.userData.setOpen?.(value),setCamera,setSouthVisible:value=>{southWall.visible=value},setFurnitureVisible:value=>{furniture.visible=value},setBoardOpen:value=>{ironingStorage?.userData.setBoardOpen(value)},setPoojaDoorsOpen:value=>{poojaDoors?.userData.setDoorsOpen(value)},clearMark,setDaylight}
     return()=>{interiorScene.dispose();cancelAnimationFrame(raf);designerRender.dispose();observer.disconnect();renderer.domElement.removeEventListener('pointerdown',onPointerDown);renderer.domElement.removeEventListener('pointerup',onPointerUp);controls.dispose();labelTextures.forEach(texture=>texture.dispose());shell.traverse(object=>{object.geometry?.dispose?.();if(Array.isArray(object.material))object.material.forEach(material=>material.dispose());else object.material?.dispose?.()});markedWallMaterial.dispose();environment.dispose();pmrem.dispose();renderer.dispose();renderer.domElement.remove();sceneRef.current=null}
   },[roomKey,initialView])
 
@@ -608,6 +614,7 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
         </label>}
         {roomKey==='drawing'&&<button onClick={()=>setDoorSwing(value=>!value)} aria-pressed={doorSwing} style={buttonStyle(doorSwing)} title="The entry door opens into the room: red is the area its leaf sweeps">{doorSwing?'Hide entry door swing':'Show entry door swing'}</button>}
         {roomKey==='drawing'&&<button onClick={()=>setStorageOpen(value=>!value)} aria-pressed={storageOpen} style={buttonStyle(storageOpen)} title="The west cabinet of the entry pocket, entered through a narrow hidden door at the west end of the Drawing Room's north wall: the TV console is dragged out and the door, hidden in the wall panelling, swings outward to show the shelves">{storageOpen?'Close hidden west cabinet':'Open hidden west cabinet'}</button>}
+        {roomKey==='drawing'&&drawingLayout==='southSofas'&&<DrawingLightDimmer onChange={(kind,level)=>sceneRef.current?.setTrackLight?.(kind,level)} onDarkRoom={on=>sceneRef.current?.setDarkRoom?.(on)}/>}
         {roomKey==='drawing'&&drawingLayout==='southSofas'&&<button onClick={()=>setShowElectrical(value=>!value)} aria-pressed={showElectrical} style={buttonStyle(showElectrical)} title="Proposed sockets, charging, switch, light and data points for layout C (docs/DRAWING_ROOM_ELECTRICAL.md)">{showElectrical?'Hide electrical points':'Show electrical points'}</button>}
         {roomKey==='drawing'&&(drawingLayout==='cornerConsole'||drawingLayout==='southSofas')&&<>
           {drawingLayout==='cornerConsole'&&<button onClick={()=>setArmOut(value=>!value)} aria-pressed={armOut} style={buttonStyle(armOut)}>{armOut?'Park TV flat on the wall':'Pull TV out and turn it toward the north sofa'}</button>}

@@ -8,9 +8,10 @@ export const DRAWING_LIGHTING = {
     reading: {fromNorthMm: 4645, heightMm: 1550, label: 'South sofa reading light'},
     sofaGlow: {xMm: 1140, lengthMm: 2250, fromNorthMm: 4810, heightMm: 120, label: 'South sofa low glow'},
   },
-  // Layout C: the chandelier stays over the coffee table; reading light over the corner lamp table, low glow under the south sofa.
+  // Layout C: reading light over the corner lamp table, low glow under the south sofa. Owner 2026-10-04: the chandelier hangs
+  // midway between the two ceiling fans (it was drawn over the coffee table at 1745, 3425).
   southSofas: {
-    ambient: [{xMm: 1745, zMm: 3425, label: 'Existing chandelier over oval table'}],
+    ambient: [{xMm: 1676, zMm: 2850, label: 'Existing chandelier, midway between the two fans'}],
     // Owner 2026-10-04: the old small wall light in the north-west comes off; the track lights replace it.
     wallUplight: null,
     reading: {fromNorthMm: 4645, heightMm: 1550, label: 'South sofa reading light'},

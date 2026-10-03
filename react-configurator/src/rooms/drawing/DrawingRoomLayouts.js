@@ -39,6 +39,7 @@ export function createDrawingRoomLayouts(room, {wallFaceMm = 0, initial = 'south
   const electricalPoints = createDrawingRoomElectrical(room, DRAWING_ELECTRICAL, {wallFaceMm}); electricalPoints.visible = false; electrical.add(electricalPoints)
   const doorSwing = createDrawingRoomDoorSwing(room, {wallFaceMm})
   const wallStorage = createDrawingRoomWallStorage(room, {wallFaceMm}) // part of the building: shown in every layout
+  const southLights = createDrawingLayoutLights(room, 'southSofas')
   const registry = [
     {part: tvNorth, layouts: ['northTv'], into: built},
     {part: createDrawingLayoutLights(room, 'northTv'), layouts: ['northTv'], into: built},
@@ -48,7 +49,7 @@ export function createDrawingRoomLayouts(room, {wallFaceMm = 0, initial = 'south
     {part: createDrawingRoomCornerSeating(room, {wallFaceMm}), layouts: CORNER, into: furniture},
     {part: south, layouts: ['southSofas'], into: built},
     {part: electrical, layouts: [DRAWING_ELECTRICAL.layout], into: built},
-    {part: createDrawingLayoutLights(room, 'southSofas'), layouts: ['southSofas'], into: built},
+    {part: southLights, layouts: ['southSofas'], into: built},
     {part: createDrawingRoomSouthSeating(room, {wallFaceMm}), layouts: ['southSofas'], into: furniture},
   ]
   built.add(doorSwing, wallStorage.storage)
@@ -65,6 +66,8 @@ export function createDrawingRoomLayouts(room, {wallFaceMm = 0, initial = 'south
     built, furniture, setLayout, setLabels, layout: () => current,
     setDoorSwing: visible => { doorSwing.visible = visible },
     setElectrical: visible => { electricalPoints.visible = visible },
+    // Dims one kind of track head in layout C ('spot' or 'diffuse'); level 0 = off, 1 = planned brightness.
+    setTrackLight: (kind, level) => southLights.userData.setTrackLight(kind, level),
     // Opening the hidden west cabinet door also drags the TV console (layout C) out of its way.
     setStorageOpen: open => { wallStorage.storage.userData.setOpen(open); south.userData.setAccess(open) },
     setArm: pulled => corner.cornerConsole.userData.setArm(pulled),

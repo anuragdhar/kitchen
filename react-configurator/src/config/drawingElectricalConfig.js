@@ -54,8 +54,8 @@ export const DRAWING_ELECTRICAL = {
     {id: 'S3', name: 'Spare / heater socket', kind: 'power', wall: 'south', alongMm: 3200, heightMm: 300,
       outlets: '1 x 6/16 A combined socket', use: 'room heater, air purifier or decorative lights by the window'},
     // ---- Ceiling and floor ----
-    {id: 'C1', name: 'Chandelier', kind: 'lighting', wall: 'ceiling', xMm: 1745, zMm: 3425,
-      outlets: 'ceiling light point with a hook rated for the fitting', use: 'over the coffee table; 2-way switched at E1 and S2. Moves 125 mm south of the layout A point'},
+    {id: 'C1', name: 'Chandelier', kind: 'lighting', wall: 'ceiling', xMm: 1676, zMm: 2850,
+      outlets: 'ceiling light point with a hook rated for the fitting', use: 'existing chandelier, midway between the two ceiling fans (owner 2026-10-04); position assumed until measured'},
     {id: 'F1', name: 'Floor box at the coffee table', kind: 'charging', wall: 'floor', xMm: 1230, zMm: 3425, optional: true,
       outlets: 'flush floor box: 1 x 6 A + USB-A/C, lid closes over plugs',
       use: 'charging at the table and the west sofa; must be chased into the floor before tiling, under the rug'},

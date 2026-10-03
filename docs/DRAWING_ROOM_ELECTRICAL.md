@@ -30,7 +30,7 @@ Positions are measured inside the room: **x** from the west wall, **z** from the
 | S1 | Sofa glow driver | south wall, x 1605, 300 high | 1 x 6 A switched socket (switched at E1) | LED driver for the low glow strip under the south sofa |
 | S2 | Lamp + charging, south sofa east end | south wall, x 2850, 300 high | 1 x 6 A socket + 1 USB-A + USB-C + 2-way chandelier switch | side-table lamp and phones at the open end of the south sofa |
 | S3 | Spare / heater socket | south wall, x 3200, 300 high | 1 x 6/16 A combined socket | room heater, air purifier or decorative lights by the window |
-| C1 | Chandelier | ceiling, x 1745, z 3425 | ceiling light point with a hook rated for the fitting | over the coffee table; 2-way switched at E1 and S2. Moves 125 mm south of the layout A point |
+| C1 | Chandelier | ceiling, x 1676, z 2850 | ceiling light point with a hook rated for the fitting | existing chandelier, midway between the two ceiling fans (owner 2026-10-04); position assumed until measured |
 | F1 | Floor box at the coffee table (optional) | floor, x 1230, z 3425 | flush floor box: 1 x 6 A + USB-A/C, lid closes over plugs | charging at the table and the west sofa; must be chased into the floor before tiling, under the rug |
 
 Totals: 17 points: 5 socket points, 5 charging points (1 optional), 5 lighting and switch points, 1 data point and 1 dedicated AC point.

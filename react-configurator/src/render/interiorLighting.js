@@ -32,7 +32,7 @@ export function bindInteriorLighting(record,onUpdate){
    const area=new THREE.RectAreaLight('#ffffff',0,spec.width,spec.height);area.position.fromArray(position);area.lookAt(new THREE.Vector3(...target));if(spec.alongZ)area.rotateZ(Math.PI/2);area.userData={...group.userData};
    // The whole-home preview aggregates layers per room to cap shader light count.
    if(!multi||spec.layer==='ambient'){group.add(area);lights.push({area,room:zone.id,layer:spec.layer,power:spec.power,aggregate:multi});}
-   if(['cove','cabinet','accent'].includes(spec.layer)){
+   if(['cove','cabinet','accent'].includes(spec.layer)&&!p.ownFixtures){
     const material=new THREE.MeshStandardMaterial({color:'#faf8f1',emissive:'#ffffff',emissiveIntensity:0,roughness:.35});
     const mesh=new THREE.Mesh(new THREE.BoxGeometry(spec.width,.012/unit,spec.height),material);mesh.position.fromArray(position);if(spec.alongZ)mesh.rotation.y=Math.PI/2;mesh.userData={...group.userData};group.add(mesh);strips.push({mesh,material,room:zone.id,layer:spec.layer});
    }

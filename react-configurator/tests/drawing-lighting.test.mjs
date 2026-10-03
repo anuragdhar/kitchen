@@ -35,5 +35,5 @@ test('the checks catch a track under a fan, a diffused head near the blades, a s
   assert.match(bad(c => { c.tracks.runs[1].atMm = 1000; c.tracks.runs[1].heads[0].atMm = 4300 }), /would flicker/)
   assert.match(bad(c => { c.tracks.runs[0].heads[0].aim = 'south' }), /across the room/)
   assert.match(bad(c => { c.tracks.driverWatts = 60 }), /over 80% of the 60 W driver/)
-  assert.match(bad(c => { c.ceilingFans.fans[1].zMm = 4185 }), /blades come within .* of the chandelier/)
+  assert.match(bad(c => { c.ceilingFans.fans[1].zMm = 3600 }), /blades come within .* of the chandelier/)
 })
