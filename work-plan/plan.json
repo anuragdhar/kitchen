@@ -120,6 +120,19 @@
       "needs": "Society permission"
     },
     {
+      "id": "entry-ceiling-plan",
+      "phase": "measure",
+      "trade": "general",
+      "title": "Decide a definite plan for the entry ceiling",
+      "room": "Main entry",
+      "detail": "Owner 2026-10-04: the entry ceiling needs a firm plan before work starts. To decide: leave the slab as it is and only repaint, or add a false ceiling (gypsum, wood or slats); the ceiling height that remains; the lights (downlights, a cove or a single feature light) and where their switch goes; and whether anything in the ceiling has to stay reachable. Nothing is drawn in the 3D model yet.",
+      "dependsOn": [
+        "site-measure"
+      ],
+      "status": "todo",
+      "needs": "Owner decision; the wiring and any false-ceiling work for the entry wait on this"
+    },
+    {
       "id": "electrician-survey",
       "phase": "measure",
       "trade": "electrical",
