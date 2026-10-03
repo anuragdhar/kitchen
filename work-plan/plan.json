@@ -433,6 +433,20 @@
       "needs": "TO BE CONFIRMED: height (about 6 1/2 ft) and width; measure the opening and the wall thickness"
     },
     {
+      "id": "carp-entry-seat",
+      "phase": "carpentry",
+      "trade": "carpentry",
+      "title": "Fold-down seat at the entry for changing shoes",
+      "room": "Main entry",
+      "detail": "Owner 2026-09-29, added to the plan 2026-10-04: a wall-hinged seat a person can sit on to change shoes, which folds flat against the wall when not in use. As drawn in the 3D model: on the west wall beside the shoe rack, seat 360 wide x 340 deep, 460 mm above the floor, on two folding support brackets with a hinge along the wall edge; these are model sizes, not site measurements. Use heavy-duty folding brackets rated for at least 120 kg and fix them into solid masonry with anchor bolts, not into plaster alone. Folded, it should project no more than about 60 mm so the 1.0 m wide entry stays clear.",
+      "dependsOn": [
+        "plaster",
+        "carp-shoe-rack"
+      ],
+      "status": "todo",
+      "needs": "Confirm the wall and position once the shoe rack is in; choose the seat finish"
+    },
+    {
       "id": "carp-other",
       "phase": "carpentry",
       "trade": "carpentry",
