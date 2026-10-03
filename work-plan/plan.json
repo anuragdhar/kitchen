@@ -195,7 +195,7 @@
         "engineer-check"
       ],
       "status": "todo",
-      "needs": "Final shoe rack size, so the frame matches it (about 6 1/2 ft high for now, to be confirmed)"
+      "needs": "Final shoe rack size, so the frame matches it (about 6 1/2 ft high and 380 mm deep for now, to be confirmed)"
     },
     {
       "id": "north-wall-door",
@@ -424,13 +424,13 @@
       "trade": "carpentry",
       "title": "New shoe rack on the left after the main door, on the iron-angle support",
       "room": "Main entry",
-      "detail": "Built to sit on the support frame in the opening where the window and the wall below it were. Height about 6 1/2 ft (about 1,980 mm): the owner will confirm, so treat it as provisional. Width to suit the opening. The back and sides that face outside need a weatherproof finish (exterior-grade board or a metal or tile cladding) and a sealed joint to the wall. The 3D model still draws the rack 865 wide x 2,134 (7 ft) high; it is updated once the size is confirmed.",
+      "detail": "Built to sit on the support frame in the opening where the window and the wall below it were. Height about 6 1/2 ft (about 1,980 mm): the owner will confirm, so treat it as provisional. Width to suit the opening. Depth (owner 2026-10-04: shoes stored lengthwise, toe to the back): proposed 380 mm (15 in) overall, which leaves about 340 mm clear inside after an 18 mm door and the back panel; a large men's shoe is about 300-310 mm long. Not yet agreed by the owner. The back and sides that face outside need a weatherproof finish (exterior-grade board or a metal or tile cladding) and a sealed joint to the wall. The 3D model still draws the rack 865 wide x 2,134 (7 ft) high x 305 deep; it is updated once the size is confirmed.",
       "dependsOn": [
         "shoe-rack-support",
         "plaster"
       ],
       "status": "todo",
-      "needs": "TO BE CONFIRMED: shoe rack size (height about 6 1/2 ft for now)"
+      "needs": "TO BE CONFIRMED: shoe rack size (height about 6 1/2 ft, depth 380 mm proposed); measure the longest shoe and the wall thickness"
     },
     {
       "id": "carp-other",
