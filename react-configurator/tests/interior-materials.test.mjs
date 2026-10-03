@@ -15,7 +15,7 @@ test('four independently sourced wood species and plaster finishes exist',()=>{
 });
 test('appearance roundtrip and inheritance preserve distinct room overrides',()=>{
  const data=copy();data.rooms.entry={wood:'white-oak'};const clean=validateAppearance(data);
- assert.deepEqual(parseAppearance(JSON.stringify(clean)),clean);assert.equal(effectiveMaterials(clean,'entry').wood,'white-oak');assert.equal(effectiveMaterials(clean,'kitchen').wood,'teak');
+ assert.deepEqual(parseAppearance(JSON.stringify(clean)),clean);assert.equal(effectiveMaterials(clean,'entry').wood,'white-oak');assert.equal(effectiveMaterials(clean,'study').wood,'teak');assert.equal(effectiveMaterials(clean,'kitchen').wood,'white-oak','the kitchen defaults to white oak (owner inspiration 2026-10-03)');
  data.rooms.entry.wood='red-oak';assert.equal(clean.rooms.entry.wood,'white-oak');assert.ok(Object.isFrozen(clean.rooms.entry));
 });
 test('unknown IDs, room and invalid grain scales fail closed',()=>{

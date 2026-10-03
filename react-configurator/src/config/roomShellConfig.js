@@ -33,6 +33,11 @@ export const EMPTY_ROOM_SHELLS={
     },
     furniture:{
       bed:{lengthMm:1829,widthMm:1829,headWall:'east',centerFromNorthMm:1863},
+      // IDEA ONLY (owner inspiration "Cabinet beside the bed", 2026-10-03: "explore before changing the layout"). Shown by a
+      // toggle, off by default; nothing else moves. A tall mirror-door cabinet on the east wall north of the bed, and a bridge of
+      // overhead cabinets across the headboard. depthMm 380 keeps it 33 mm clear of the toilet door frame (north wall, to x 3550).
+      bedsideCabinetIdea:{status:'idea',side:'north',depthMm:380,widthMm:880,heightMm:2400,mirrorDoor:true,
+        bridge:{depthMm:350,bottomMm:1900,heightMm:500,doorCount:4},shelf:{depthMm:250,heightMm:1500}},
       dressingTable:{wall:'west',integratedWithWardrobe:true,fromNorthMm:1050,widthMm:600,depthMm:580,heightMm:2500,doorBottomMm:500,doorTopMm:2350,doorConstruction:'lightweight framed',mirrorWidthMm:420,mirrorHeightMm:1550,mirrorBottomMm:600},
       // Continue the west run to the projecting south cabinet to form an L.
       westWardrobe:{fromNorthMm:1050,lengthMm:2676,depthMm:580,heightMm:2500,doorType:'sliding',doorCount:3,vanityBayWidthMm:600},

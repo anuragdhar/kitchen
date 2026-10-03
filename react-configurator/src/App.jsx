@@ -1186,9 +1186,29 @@ ${westRows}
           addBox('visible matching 600x1200 patterned tile cladding on shaft front return',12,KITCHEN.shaft.y-26,0,KITCHEN.shaft.w+26,26,KITCHEN.height,makeLargePatternTileMat(KITCHEN.shaft.w+26,KITCHEN.height))
           addBox('shaft tile wall front edge trim',KITCHEN.shaft.w+1,KITCHEN.shaft.y+6,0,20,14,KITCHEN.height,surface.dark)
           addBox('shaft tile wall north edge trim',KITCHEN.shaft.w+1,KITCHEN.shaft.y+KITCHEN.shaft.l-20,0,20,14,KITCHEN.height,surface.dark)
-          addPotteryWallPlanter('lower turquoise pottery wall planter',KITCHEN.shaft.w+82,KITCHEN.shaft.y+240,1140,.88,{body:'#3d9fb5',blue:'#082f6f',flower:'#d9e8aa',filler:'#cfe5b4'})
-          addPotteryWallPlanter('middle rose pottery wall planter',KITCHEN.shaft.w+92,KITCHEN.shaft.y+500,1360,1.02,{body:'#102f76',blue:'#071f58',flower:'#c1121f',filler:'#f0eee2'})
-          addPotteryWallPlanter('upper blue floral pottery wall planter',KITCHEN.shaft.w+86,KITCHEN.shaft.y+745,1610,.96,{body:'#f7f3e7',blue:'#0f3f8f',flower:'#eef2df',filler:'#f6f4e8'})
+          // Herb wall (owner inspiration "Kitchen shaft wall treatment", applied 2026-10-03): a black wire grid on the shaft's
+          // east face with hanging herb pots, replacing the three pottery wall planters that were here. Decoration only: the
+          // shaft, its cladding and every cabinet position are unchanged. Sizes in mm; the grid stands 34 mm off the shaft face.
+          {
+            const gx=KITCHEN.shaft.w+34,gy0=KITCHEN.shaft.y+90,gy1=KITCHEN.shaft.y+KITCHEN.shaft.l-90,gz0=950,gz1=2250,bar=8
+            const cols=Math.round((gy1-gy0)/110),rows=Math.round((gz1-gz0)/130)
+            for(let i=0;i<=cols;i++)addBox(`shaft herb grid vertical bar ${i+1}`,gx,gy0+(gy1-gy0)*i/cols-bar/2,gz0,bar,bar,gz1-gz0,surface.dark)
+            for(let j=0;j<=rows;j++)addBox(`shaft herb grid horizontal bar ${j+1}`,gx,gy0,gz0+(gz1-gz0)*j/rows-bar/2,bar,gy1-gy0,bar,surface.dark)
+            for(const z of [gz0+60,gz1-60])for(const y of [gy0+30,gy1-50])addBox('shaft herb grid wall standoff',KITCHEN.shaft.w+26,y,z,12,20,20,surface.dark)
+            const potMat=makeMat('#2b2f33',1,{roughness:.6,metalness:.15}),soilMat=makeMat('#352317',1,{roughness:.9})
+            const leaves=['#3f7d3a','#5a9a45','#2f6b3a','#6fa558'].map(color=>makeMat(color,1,{roughness:.85}))
+            // [along the wall from the grid's south edge, height of the pot rim, pot width, leaf spread]
+            const pots=[[70,2050,300,1.25],[400,2020,220,1.0],[150,1660,240,1.1],[430,1600,200,1.35],[90,1280,260,1.0],[380,1180,230,1.2]]
+            pots.forEach(([dy,z,w,spread],index)=>{
+              const y=gy0+dy,name=`shaft herb pot ${index+1}`
+              addBox(`${name} hook`,gx+bar,y+w/2-6,z,10,12,34,surface.dark)
+              addBox(name,gx+bar+6,y,z-110,110,w,110,potMat)
+              addBox(`${name} soil`,gx+bar+12,y+8,z-6,98,w-16,8,soilMat)
+              for(let k=0;k<5;k++)addSphere(`${name} leaves ${k+1}`,gx+bar+60+(k%2?22:-8),y+w*(.12+k*.19),z+34+(k%3)*22,46*spread,leaves[(index+k)%leaves.length],1,[1,1.15-(k%2)*.3,1])
+              // trailing stems below the pot, as in the reference
+              for(let k=0;k<3;k++)addSphere(`${name} trailing herb ${k+1}`,gx+bar+70,y+w*(.2+k*.3),z-150-k*38,26*spread,leaves[(index+k+1)%leaves.length],1,[.8,1.6,.8])
+            })
+          }
         }
         else if(it.id==='washing'){
           addBox('west open washing machine body',0,it.y,0,it.d,it.w,it.h||880,surface.metal)

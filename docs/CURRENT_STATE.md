@@ -181,3 +181,8 @@ wall still marks the wall. Not in the kitchen planner, Study, Balcony office, En
 
 Work plan (2026-10-03): `work-plan/plan.json` tracks renovation tasks by phase and trade with dependencies and status; the
 Work plan page (header button) edits it and saves to the file when run locally. Details: `docs/WORK_PLAN.md`.
+
+Inspiration applied (2026-10-03; details in each entry's notes in `inspiration/library.json`): kitchen shaft wall herb grid
+(replaces the three pottery planters), kitchen default wood is white oak, Drawing Room curtains and floor plant, and a
+Bedroom 3 bedside-cabinet preview toggle (idea only, layout unchanged). The appliance-garage door/tray and the full-height
+spice pull-out are not modelled: positions are undecided.

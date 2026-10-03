@@ -124,7 +124,7 @@ export function createDrawingRoomCornerSeating(room, {wallFaceMm = 0} = {}) {
 /** Layout C: south-wall sofa (faces north, back under the window) and west-wall sofa (faces east) in an L in the south-west. */
 export function createDrawingRoomSouthSeating(room, {wallFaceMm = 0} = {}) {
   const f = room.southLayout.furniture
-  return buildSeating({
+  const group = buildSeating({
     sofas: [{...f.southSofa, faces: 'north'}, {...f.westSofa, faces: 'east'}],
     table: f.coffeeTable, rug: f.rug,
     // Side table and lamp just north of the west sofa, where the L opens toward the TV; the corner lamp table at the south
@@ -133,4 +133,41 @@ export function createDrawingRoomSouthSeating(room, {wallFaceMm = 0} = {}) {
     lampTables: [{xMm: f.cornerTable.centerXmm, zMm: f.cornerTable.centerZmm, diameterMm: f.cornerTable.diameterMm, heightMm: f.cornerTable.heightMm}],
     panelsZ: [f.westSofa.centerZmm - 350, f.westSofa.centerZmm + 350],
   }, {wallFaceMm})
+  group.add(southWindowDressing(room, {wallFaceMm}))
+  return group
+}
+
+// Styling from the owner's two living-room references (inspiration library, applied 2026-10-03; no false ceiling): warm
+// floor-length curtains gathered either side of the south window on a dark rod, and a floor plant in the south-east corner.
+// Decor only (archvizExclude). The panels hang clear of the south sofa's ends and behind the corner lamp table.
+function southWindowDressing(room, {wallFaceMm = 0} = {}) {
+  const decor = new THREE.Group(); decor.name = 'south window curtains and plant'; decor.userData.archvizExclude = true
+  const win = room.windows.find(w => w.wall === 'south'), sofa = room.southLayout.furniture.southSofa
+  const z = mm(room.lengthMm - wallFaceMm) - .07, top = mm(win.topMm) + .18
+  const fabric = new THREE.MeshStandardMaterial({color: '#9a5a36', roughness: .95}), rod = new THREE.MeshStandardMaterial({color: '#3b2a1e', roughness: .5, metalness: .3})
+  const sofaWest = sofa.centerXmm - sofa.lengthMm / 2, sofaEast = sofa.centerXmm + sofa.lengthMm / 2
+  // Each panel is a row of narrow pleats; it stops short of the sofa end it stands beside.
+  const panel = (x1Mm, x2Mm) => {
+    const pleats = Math.max(3, Math.round((x2Mm - x1Mm) / 55))
+    for (let i = 0; i < pleats; i++) {
+      const w = mm(x2Mm - x1Mm) / pleats
+      const m = new THREE.Mesh(new THREE.BoxGeometry(w * .82, top - .02, i % 2 ? .05 : .03), fabric)
+      m.position.set(mm(x1Mm) + w * (i + .5), (top - .02) / 2 + .02, z - (i % 2 ? .012 : 0)); m.castShadow = true; decor.add(m)
+    }
+  }
+  panel(Math.max(wallFaceMm + 20, win.fromMm - 330), Math.min(sofaWest - 20, win.fromMm + 60))
+  panel(Math.max(sofaEast + 30, win.fromMm + win.widthMm - 60), win.fromMm + win.widthMm + 330)
+  const bar = new THREE.Mesh(new THREE.CylinderGeometry(.012, .012, mm(win.widthMm) + .8, 12), rod)
+  bar.rotation.z = Math.PI / 2; bar.position.set(mm(win.fromMm + win.widthMm / 2), top + .02, z); decor.add(bar)
+  // Floor plant in a woven-look pot, south-east corner beyond the sofa.
+  const px = mm(room.widthMm - wallFaceMm) - .28, pz = mm(room.lengthMm - wallFaceMm) - .3
+  const pot = new THREE.Mesh(new THREE.CylinderGeometry(.15, .12, .32, 20), new THREE.MeshStandardMaterial({color: '#b08a5a', roughness: .9})); pot.position.set(px, .16, pz); pot.castShadow = true; decor.add(pot)
+  const leaf = new THREE.MeshStandardMaterial({color: '#3f7d3a', roughness: .85})
+  for (let i = 0; i < 7; i++) {
+    const blade = new THREE.Mesh(new THREE.SphereGeometry(.09, 12, 8), leaf)
+    const a = i / 7 * Math.PI * 2
+    blade.scale.set(.5, 2.6 + (i % 3) * .5, .5); blade.position.set(px + Math.cos(a) * .1, .55 + (i % 3) * .1, pz + Math.sin(a) * .1); blade.rotation.z = Math.cos(a) * .35; blade.rotation.x = Math.sin(a) * .35
+    blade.castShadow = true; decor.add(blade)
+  }
+  return decor
 }

@@ -1,6 +1,8 @@
 import {assertRoom} from './rooms.mjs';
 import {getMaterial} from './materialCatalog.mjs';
-export const DEFAULT_APPEARANCE=Object.freeze({schemaVersion:1,wood:'teak',plaster:'plaster-ivory',grainScale:1,rooms:Object.freeze({})});
+// The kitchen starts in white oak (owner inspiration 2026-10-03: a light knotty oak finish); other rooms keep teak.
+// A saved appearance in the browser still wins: choose it there under Interior studio > Materials.
+export const DEFAULT_APPEARANCE=Object.freeze({schemaVersion:1,wood:'teak',plaster:'plaster-ivory',grainScale:1,rooms:Object.freeze({kitchen:Object.freeze({wood:'white-oak'})})});
 export function validateAppearance(input){
   if(!input||input.schemaVersion!==1)throw new Error('Unsupported interior appearance schema.');
   getMaterial(input.wood,'wood');getMaterial(input.plaster,'plaster');
