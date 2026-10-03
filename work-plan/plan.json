@@ -331,12 +331,12 @@
       "trade": "electrical",
       "title": "Replace the old Drawing Room switchboard with a modular switch plate",
       "room": "Drawing Room",
-      "detail": "Owner 2026-10-04 (electrician): the existing switchboard on the east side of the TV controls this room's fans and lights and has a power socket. Replace it in the same place with a modular plate: take out the old board, fit a modular metal box of the right size (count the modules: one per light switch, two per fan regulator, two per socket, plus one or two spare), re-terminate the existing wires and check each for damaged insulation and a proper earth. Use step or electronic fan regulators of the same modular range. If the board falls inside the panelled area, set the box forward so the plate sits flush on the panel. The plate itself is fitted after painting. Note: the earlier electrical plan put a new main switchboard on the east wall (point E1); keeping the board where it is avoids rewiring, so E1 is now only needed if the owner wants switches there as well.",
+      "detail": "Owner 2026-10-04 (electrician): the existing switchboard is on the north wall on the east side of the TV, about 10 cm from the wall end, at about the middle height of the TV, and it falls inside the area the panelling will cover. It controls this room's fans and lights and has a power socket. Replace it in the same place with a modular plate: take out the old board, fit a modular metal box of the right size (count the modules: one per light switch, two per fan regulator, two per socket, plus one or two spare), re-terminate the existing wires and check each for damaged insulation and a proper earth. Use step or electronic fan regulators of the same modular range. Set the new box forward by the panel build-up (18 mm panel plus the 20-25 mm batten gap) with a box extension ring, so the plate ends up flush on the panel face. The plate itself is fitted after painting. Decided 2026-10-04: no switchboard on the east wall; this board stays the room's only one, so point E1 of the earlier electrical plan is dropped (the 3D model still shows it until the board is measured).",
       "dependsOn": [
         "electrician-survey"
       ],
       "status": "todo",
-      "needs": "Exact position and size of the existing board; how many fans, lights and sockets it controls; choose the modular range and colour"
+      "needs": "MEASURE: the board's width and height, its distance from the entry door frame, and the height of its centre. CHECK: that the TV does not cover it (a 55-inch TV centred as drawn ends 120 mm from the door frame; a 65-inch ends 10 mm from it). Count the fans, lights and sockets; choose the modular range and colour"
     },
     {
       "id": "elec-floor-box",
@@ -470,7 +470,7 @@
       "trade": "carpentry",
       "title": "Clean panel wall behind the TV that hides the cabinet door",
       "room": "Drawing Room",
-      "detail": "Owner 2026-10-04 (carpenter). Fluted panelling on the north wall from 40 to 2100 mm from the west wall, floor to 1800 high, 18 thick, a groove every 100 mm set out from the hidden door so both door edges fall on a groove; a slim cap with a light strip on top. Fix it on 20-25 mm battens, not straight on the wall: the gap behind is where the electrician runs the TV and console cables, so the wall need not be chased. Cut neat openings for the socket boxes behind the TV and behind the console, and for the switch plate if it falls inside the panelled area, and bring those boxes forward flush with the panel face. Fix a plywood backing piece behind the panel where the TV bracket bolts through into the wall.",
+      "detail": "Owner 2026-10-04 (carpenter). Fluted panelling on the north wall from 40 to 2100 mm from the west wall, floor to 1800 high, 18 thick, a groove every 100 mm set out from the hidden door so both door edges fall on a groove; a slim cap with a light strip on top. Fix it on 20-25 mm battens, not straight on the wall: the gap behind is where the electrician runs the TV and console cables, so the wall need not be chased. SWITCHBOARD: the existing board (east of the TV, mid-TV height) falls inside the panel. Do not flute that part: make the east end of the panelling a plain flat strip, about 250 mm wide and full height, in the same finish, and cut one clean rectangular opening in it for the modular box; the switch plate then sits flat and covers the cut edge. A plate cannot sit flat across grooves. Also cut neat openings for the socket boxes behind the TV and behind the console. Fix a plywood backing piece behind the panel where the TV bracket bolts through into the wall.",
       "dependsOn": [
         "plaster",
         "carp-west-cabinet",
@@ -478,7 +478,7 @@
         "elec-drawing-switchboard"
       ],
       "status": "todo",
-      "needs": "Panel finish and colour; socket and switch positions marked by the electrician first",
+      "needs": "Panel finish and colour; exact switchboard size and position (the electrician fits the box first, then the carpenter cuts to it)",
       "source": "docs/DRAWING_ROOM_TV_WALL.md"
     },
     {
