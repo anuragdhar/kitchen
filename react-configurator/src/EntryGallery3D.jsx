@@ -10,6 +10,7 @@ import {EMPTY_ROOM_SHELLS} from './config/roomShellConfig.js'
 import {wallPiecesAroundStorage} from './domain/wallStorage.mjs'
 import {createEntryArrivalDoor} from './rooms/entry/EntryArrivalDoor.js'
 import {createEntryFoldSeat} from './rooms/entry/EntryFoldSeat.js'
+import {createEntryEastCabinet} from './rooms/entry/EntryEastCabinet.js'
 import shoeRackWoodTexture from '../../Interior/entry-textures/shoe-rack-wood.png'
 import {createDesignerRender} from './render/designerRender.js'
 import {useDesignerRender} from './render/useDesignerRender.js'
@@ -73,6 +74,7 @@ export default function EntryGallery3D(){
     entryPocketEastWallSpans(height).forEach(([segment,bottom,top])=>addSpan(segment,bottom,top))
     model.add(createEntryArrivalDoor(x,z))
     model.add(createEntryFoldSeat(x,z))
+    model.add(createEntryEastCabinet(x,z))
     const outer=ENTRY.outerEntryOpening
     addSpan([outer.wallPlanX,outer.fromPlanY,outer.wallPlanX,outer.toPlanY],outer.heightMm/1000,height)
     const inner=ENTRY.innerOpening

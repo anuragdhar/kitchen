@@ -32,6 +32,7 @@ import {KITCHEN,KITCHEN_REFRIGERATOR,EAST_INIT,WEST_INIT,KITCHEN_AUTOSAVE_KEY,NO
 import {ENTRY,ENTRY_WALL_SEGMENTS,entryPocketEastWallSpans,PLAN_IMAGE} from './config/entryConfig.js'
 import {createEntryArrivalDoor} from './rooms/entry/EntryArrivalDoor.js'
 import {createEntryFoldSeat} from './rooms/entry/EntryFoldSeat.js'
+import {createEntryEastCabinet} from './rooms/entry/EntryEastCabinet.js'
 import WallSelectionPanel from './WallSelectionPanel.jsx'
 import ItemDimensionsPanel from './ItemDimensionsPanel.jsx'
 import {pickItem,selectionOutline} from './render/dimensionPick.js'
@@ -190,6 +191,7 @@ function LiveWholeHome3D({onOpenRoom}){
     for(const [segment,bottom,top] of entryPocketEastWallSpans(HEIGHT)){const mesh=addSpan(segment,bottom,top);if(mesh)mesh.userData={planWall:segment}}
     model.add(createEntryArrivalDoor(X,Z))
     model.add(createEntryFoldSeat(X,Z))
+    model.add(createEntryEastCabinet(X,Z))
     // Entry wall cavity (owner mark 2026-09-30): translucent volumes for the empty 3-ft pocket on the Entry side of the Drawing
     // Room's north wall and for the 9-inch wall between them. Never hit by the measure tool (userData.noMeasure). Sizes come
     // from ENTRY.wallCavity.

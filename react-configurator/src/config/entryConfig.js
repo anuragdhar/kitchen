@@ -38,7 +38,12 @@ export const ENTRY = {
   wallCavity: {planX1: 577, planX2: 680, planY1: 726, planY2: 772, heightMm: 2700, wallPlanY1: 715, wallPlanY2: 726, status: 'owner says empty floor to ceiling; the drawing shows only a closed rectangle',
     partitionPlanX: 650,
     eastOpening: {wallPlanX: 575, fromPlanY: 715, toPlanY: 775, heightMm: 2700},
-    westDoorPlan: {fromPlanX: 653, toPlanX: 684, heightMm: 2100, shelfFromPlanY: 754}},
+    westDoorPlan: {fromPlanX: 653, toPlanX: 684, heightMm: 2100, shelfFromPlanY: 754},
+    // Owner, 2026-10-03 (marked on a Whole home 3D screenshot): a cabinet EXISTS in the east compartment. It fills the
+    // compartment from the open east side back to the partition, floor to ceiling. Only its presence and position are the
+    // owner's; the doors (two leaves on the east face, a loft pair above doorHeightMm), shelves and panel size are assumed.
+    eastCabinet: {planX1: 577, planX2: 648, planY1: 726, planY2: 772, heightMm: 2700, doorHeightMm: 2100, doorCount: 2, panelMm: 18,
+      shelfHeightsMm: [450, 900, 1350, 1800], status: 'owner says it exists; doors, shelves and exact size assumed, not measured'}},
   ownerMark: {planX1: 573, planX2: 643, planY1: 726, planY2: 772},
   source: 'A501 floor plan entry and shoe-area dimensions',
 }

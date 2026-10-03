@@ -93,3 +93,15 @@ Drawing Room page's "North wall view" faces the door.
 Used about twice a year (winter clothes and the like), so the two 300 mm leaves swing INTO the closet (`wallStorage.opens`),
 leaving 725 mm between the door and the 380 mm shelves; `checkWallStorage()` checks that clearance. In Drawing Room layout C
 nothing stands in front of the door (layouts A, B, B2 and B3 still block it, as reported).
+
+## East cabinet exists (owner, 2026-10-03)
+
+The owner marked the east compartment on a Whole home 3D screenshot and said a cabinet exists there. It is now drawn in
+Whole home 3D and the Main entry view (`src/rooms/entry/EntryEastCabinet.js`), from `ENTRY.wallCavity.eastCabinet`:
+plan x 577-648, y 726-772, so about **925 mm** across its face (north-south), **1,363 mm** deep (back to the partition) and
+2,700 mm high, with its doors on the east face toward the Entry gallery. This supersedes "the east cabinet has no doors or
+shelves, so none are drawn" above.
+
+Only the cabinet's presence and position come from the owner. The two door leaves, the loft pair above 2,100 mm, the four
+shelves and the 18 mm panels are assumed; nothing is measured on site. Check: `eastCabinetGeometry()` in
+`src/domain/entryCavity.mjs`, tested in `tests/entry-cavity.test.mjs`. The Blender models and renders were not regenerated.

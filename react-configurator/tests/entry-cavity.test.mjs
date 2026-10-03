@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import {cavityGeometry, usableDepth, recessOptions} from '../src/domain/entryCavity.mjs'
+import {eastCabinetGeometry, cavityGeometry, usableDepth, recessOptions} from '../src/domain/entryCavity.mjs'
 import {ENTRY, ENTRY_WALL_SEGMENTS, entryPocketEastWallSpans} from '../src/config/entryConfig.js'
 import {HOME_ROOM_LAYOUTS} from '../src/config/homeRoomViews.js'
 import {EMPTY_ROOM_SHELLS} from '../src/config/roomShellConfig.js'
@@ -65,4 +65,13 @@ test('a full-height partition splits the pocket into an east and a west cabinet'
   assert.ok(x > c.planX1 + 50 && x < c.planX2, 'the partition is inside the pocket, nearer its west end')
   assert.ok(ENTRY_WALL_SEGMENTS.some(([x1, y1, x2, y2]) => x1 === x && x2 === x && y1 === c.wallPlanY1 && y2 === ENTRY.shaft.planY1))
   assert.ok(Math.abs(geometry.partitionRoomXMm - 736) < 20, `partition ${geometry.partitionRoomXMm} mm from the Drawing Room west wall`)
+})
+
+test('the existing east cabinet fills the east compartment and faces the Entry gallery', () => {
+  const g = eastCabinetGeometry(ENTRY), e = ENTRY.wallCavity.eastCabinet
+  assert.equal(g.inside, true, 'east of the partition and within the pocket')
+  assert.ok(Math.abs(g.faceWidthMm - 925) < 15, `face ${g.faceWidthMm} mm`)
+  assert.ok(Math.abs(g.depthMm - 1363) < 15, `depth ${g.depthMm} mm`)
+  assert.ok(g.leafWidthMm > 300 && g.leafWidthMm < 600, 'a normal door leaf')
+  assert.ok(e.shelfHeightsMm.every(y => y > 0 && y < e.doorHeightMm))
 })

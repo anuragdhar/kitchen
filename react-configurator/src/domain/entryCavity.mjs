@@ -26,6 +26,23 @@ export function cavityGeometry(entry, drawing) {
 }
 
 /**
+ * The existing cabinet in the pocket's east compartment (entry.wallCavity.eastCabinet), in millimetres. Its face is on the
+ * open east side toward the Entry gallery: faceWidthMm runs north-south (plan y), depthMm runs east-west back to the
+ * partition (plan x). `inside` is true when it stays within the compartment (east of the partition, within the pocket).
+ */
+export function eastCabinetGeometry(entry) {
+  const c = entry.wallCavity, e = c.eastCabinet
+  const xmm = entry.planScale.xMetresPerPixel * 1000, zmm = entry.planScale.zMetresPerPixel * 1000
+  return {
+    faceWidthMm: (e.planY2 - e.planY1) * zmm,
+    depthMm: (e.planX2 - e.planX1) * xmm,
+    heightMm: e.heightMm,
+    leafWidthMm: (e.planY2 - e.planY1) * zmm / e.doorCount,
+    inside: e.planX1 >= c.planX1 && e.planX2 < c.partitionPlanX && e.planY1 >= c.planY1 && e.planY2 <= c.planY2 && e.heightMm <= c.heightMm && e.doorHeightMm <= e.heightMm,
+  }
+}
+
+/**
  * How deep a niche may go measured from the Drawing Room face: through the wall into the pocket (keeping a skin on the
  * far side), or, if the wall must stay, only about half of it.
  */
