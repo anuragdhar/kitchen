@@ -198,14 +198,29 @@
       "id": "main-gate",
       "phase": "civil",
       "trade": "fabrication",
-      "title": "Replace the iron main entry gate with a stainless steel one",
+      "title": "Replace the iron main entry door (the first, outer door) with a stainless steel one",
       "room": "Main entry",
-      "detail": "Owner 2026-10-03. Measure the opening, choose grade 304 (or 316 near the coast), design, lock and finish; remove the old gate and fix the new frame.",
+      "detail": "Owner 2026-10-03, confirmed 2026-10-04: the existing first door at the entry is iron; replace it with stainless steel. Measure the opening, choose grade 304 (or 316 near the coast), design, lock and finish; remove the old door and fix the new frame.",
       "dependsOn": [
         "society-permission",
         "site-measure"
       ],
-      "status": "todo"
+      "status": "todo",
+      "needs": "Choose design, lock and finish; get a fabricator quote"
+    },
+    {
+      "id": "shaft-cover",
+      "phase": "civil",
+      "trade": "fabrication",
+      "title": "Replace the plain iron shaft cover at the entry with a better-looking one",
+      "room": "Main entry",
+      "detail": "Owner 2026-10-04: on the right-hand side at the entry a plain iron cover closes the services shaft. Replace it with something more pleasing. It must still open or lift off for access to the shaft, and stay ventilated if the present one is. Options to price: a stainless steel louvred door matching the new entry door; a powder-coated aluminium louvre panel; or a flush panel door finished like the entry joinery. Size not yet measured.",
+      "dependsOn": [
+        "site-measure",
+        "society-permission"
+      ],
+      "status": "todo",
+      "needs": "Choose the type; measure the opening; check with the society, since the shaft is shared"
     },
     {
       "id": "debris",
