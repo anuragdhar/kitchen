@@ -34,11 +34,13 @@ export const AC_OUTDOOR_UNITS = [
     centre: {planX: 248, planY: 717.5, note: 'moved 3 px east and 10 px north of the mark centre so the coil is 100 mm off the kitchen north wall and the casing clears the Bedroom 1 balcony glazing'},
     // Owner, later 2026-10-05: the window AC goes on an iron frame just beside this place (bedroom1.balconyExtension.windowAc,
     // top at 1430), and this unit "can move up": raised from 300 to 1800 so it hangs above the window AC with 370 mm between.
-    longAxis: 'east-west', fanFaces: 'north', mount: 'on a wall bracket outside the kitchen north wall, at its west corner beside the shaft, above the window AC', bottomMm: 1800},
+    longAxis: 'east-west', fanFaces: 'north', mount: 'on a wall bracket outside the kitchen north wall, at its west corner beside the shaft, above the window AC', bottomMm: 1800,
+    planRecommendation: 'NOT needed for Bedroom 1: the window AC serves that room (docs/AC_PLAN.md, b). Do not buy this unit for Bedroom 1. The AC plan uses this same place for the outdoor unit of a Lobby / Dining split AC instead (c)'},
   // The Drawing Room has no AC yet (work-plan task ac-choose: about 1.5 ton). This is the owner's "possible place" for its
   // outdoor unit; the other idea is the bottom of the shoe rack (ENTRY.shoeRack.acBay). Neither is decided.
   {id: 'drawing', serves: 'Drawing Room', tons: 1.5, tonsKnown: false, status: 'proposal',
     mark: {x1: 686, y1: 454, x2: 708, y2: 506},
     centre: {planX: 703.2, planY: 480, note: 'moved 6 px west of the mark centre so the coil is 100 mm off the outer face of the Drawing Room west wall'},
-    longAxis: 'north-south', fanFaces: 'west', mount: 'on a wall bracket outside the Drawing Room west wall, at its south end', bottomMm: 300},
+    longAxis: 'north-south', fanFaces: 'west', mount: 'on a wall bracket outside the Drawing Room west wall, at its south end', bottomMm: 300,
+    planRecommendation: 'KEEP: preferred over the shoe rack bay (docs/AC_PLAN.md, a): about 4.3 m of pipe against about 11 m. Service access needs agreeing with the installer (no window on this wall)'},
 ]
