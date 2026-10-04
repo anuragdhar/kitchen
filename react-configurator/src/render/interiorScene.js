@@ -4,6 +4,12 @@ import {appearanceStore} from '../home/appearanceStore.mjs';
 import {effectiveMaterials} from '../home/appearance.mjs';
 import {getMaterial,mapPath} from '../home/materialCatalog.mjs';
 
+import {paletteStore} from '../home/paletteStore.mjs';
+import {paletteSurfaceSpec} from '../home/paletteAppearance.mjs';
+
+// A chosen whole-home palette decides the tagged wood and plaster of the rooms it maps; the built-in "today" palette
+// decides nothing, so the saved Interior studio > Materials setting applies exactly as before.
+const specFor=(settings,paletteId,room,role)=>paletteSurfaceSpec(paletteId,room,role)??getMaterial(effectiveMaterials(settings,room)[role],role);
 const scenes=new Map();
 const events=new Set();
 export const subscribeScenes=listener=>{events.add(listener);return()=>events.delete(listener);};
@@ -61,10 +67,10 @@ export function registerInteriorScene({id,scene,camera,renderer,metresPerUnit=1,
     return textures.get(material.asset);
   };
   const update=async()=>{
-    const token=++generation,settings=appearanceStore.getSnapshot();record.ready=false;record.errors=[];notify();
+    const token=++generation,settings=appearanceStore.getSnapshot(),paletteId=paletteStore.getSnapshot().palette;record.ready=false;record.errors=[];notify();
     try{
       const needed=new Map();
-      for(const entry of entries){for(const original of entry.list){const effective=effectiveMaterials(settings,original.userData?.interiorRoom||entry.room);const role=original.userData?.interiorRole;if(role){const spec=getMaterial(effective[role],role);if(spec)needed.set(spec.id,spec);}}}
+      for(const entry of entries){for(const original of entry.list){const role=original.userData?.interiorRole;if(role){const spec=specFor(settings,paletteId,original.userData?.interiorRoom||entry.room,role);if(spec)needed.set(spec.id,spec);}}}
       const loaded=new Map(await Promise.all([...needed].map(async([key,value])=>[key,await load(value)])));
       if(!alive||token!==generation)return;
       for(const material of generated)material.dispose();generated.clear();
@@ -72,8 +78,7 @@ export function registerInteriorScene({id,scene,camera,renderer,metresPerUnit=1,
       for(const entry of entries){
         const list=entry.list.map(original=>{
           const role=original.userData?.interiorRole;if(!role)return original;
-          const resolved=effectiveMaterials(settings,original.userData?.interiorRoom||entry.room);
-          const spec=getMaterial(resolved[role],role);if(!spec)return original;
+          const spec=specFor(settings,paletteId,original.userData?.interiorRoom||entry.room,role);if(!spec)return original;
           const key=`${original.uuid}:${spec.id}`;if(materialCache.has(key))return materialCache.get(key);
           const maps=loaded.get(spec.id),material=original.clone();generated.add(material);materialCache.set(key,material);
           const repeat=(role==='wood'?settings.grainScale:1)/spec.sizeMetres;
@@ -101,7 +106,8 @@ export function registerInteriorScene({id,scene,camera,renderer,metresPerUnit=1,
     notify();
   };
   const refresh=()=>{record.whenReady=update();};
-  const unsubscribe=appearanceStore.subscribe(refresh);
+  const unsubscribeAppearance=appearanceStore.subscribe(refresh),unsubscribePalette=paletteStore.subscribe(refresh);
+  const unsubscribe=()=>{unsubscribeAppearance();unsubscribePalette();};
   const lighting=bindInteriorLighting(record,notify);
   record.dispose=()=>{
     lighting.dispose();

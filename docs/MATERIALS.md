@@ -30,6 +30,11 @@ is retained. A changed value from another tab or unreadable stored document bloc
 silent overwrites. This is optimistic conflict detection, not simultaneous-write
 locking. Keep exported project/reference data outside browser storage as well.
 
+A whole-home palette preview (2026-10-05, docs/PALETTE.md) sits on top of this: Interior studio > Materials and the
+Palette page choose a palette, stored separately in home-interior.palette.v1. "Today" is the default and decides nothing,
+so the settings above apply unchanged; any other palette decides the tagged wood (nearest bundled veneer, tinted) and
+wall colour per room until Today is chosen again. The saved appearance value is never rewritten by a palette.
+
 Tests check asset hashes, semantic roles, bounded scale and inheritance, plus the
 actual entry-room WebGL scene: all four species resolve maps, pixel output changes,
 geometry and non-themed materials stay invariant, and navigation cleans up and

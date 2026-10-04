@@ -9,6 +9,7 @@ import EmptyRoomGallery from './EmptyRoomGallery.jsx'
 import EntryGallery3D from './EntryGallery3D.jsx'
 import WholeHome3D from './WholeHome3D.jsx'
 import WorkPlan from './WorkPlan.jsx'
+import PaletteView from './PaletteView.jsx'
 import BlenderHomeView from './BlenderHomeView.jsx'
 import CurrentRoomBlenderView from './home/CurrentRoomBlenderView.jsx'
 import {usesEditableRoomSource} from './render/roomParity.mjs'
@@ -35,6 +36,7 @@ const rooms={
   pooja:{name:'Pooja Ghar',color:'#a16207',shellKey:'lobby',initialView:'pooja',hotspotOnly:true},
   drawing:{name:'Drawing Room',color:'#3f6212',shellKey:'drawing',hotspotOnly:true},
   entry:{name:'Main entry',eyebrow:'Northwest arrival',description:'Follow the seven-foot gallery past the shoe area, through the main door and right into the home.',color:'#9a3412'},
+  palette:{name:'Palette',eyebrow:'One scheme for the whole home',description:'The recommended material and colour palette, two alternatives, where each colour goes and what it would change from today.',color:'#9a5b2b'},
   dxf:{name:'DXF workspace',eyebrow:'Floor-plan tools',description:'View the included architectural DXF, inspect layers, load another file and prepare controlled drawing edits.',color:'#0f766e'},
 }
 
@@ -356,7 +358,8 @@ export default function HomeApp(){
     <InteriorStudio/>
     <HomeHeader section={section} onHome={()=>setSection('home')} onOpen3D={()=>setSection('whole3d')} onOpenPlan={()=>setSection('plan')}/>
     {section==='plan'&&<WorkPlan/>}
-    {section!=='home'&&section!=='dxf'&&section!=='plan'&&<MiniFloorNavigator section={section} onOpen={setSection}/>}
+    {section==='palette'&&<PaletteView/>}
+    {section!=='home'&&section!=='dxf'&&section!=='plan'&&section!=='palette'&&<MiniFloorNavigator section={section} onOpen={setSection}/>}
     {section==='home'&&<WholeHome onOpen={setSection}/>} 
     {section==='kitchen'&&<RoomPresentation key={section} section={section}><KitchenConfigurator/></RoomPresentation>}
     {section==='study'&&<RoomPresentation key={section} section={section}><StudyWorkspace/></RoomPresentation>}
