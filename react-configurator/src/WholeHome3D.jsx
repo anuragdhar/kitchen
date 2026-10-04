@@ -34,6 +34,8 @@ import {ENTRY,ENTRY_WALL_SEGMENTS,entryPocketEastWallSpans,PLAN_IMAGE} from './c
 import {createEntryArrivalDoor} from './rooms/entry/EntryArrivalDoor.js'
 import {createEntryFoldSeat} from './rooms/entry/EntryFoldSeat.js'
 import {createEntryEastCabinet} from './rooms/entry/EntryEastCabinet.js'
+import {createEntryOuterDoor} from './rooms/entry/EntryOuterDoor.js'
+import {createEntryCeilingLights} from './rooms/entry/EntryCeilingLights.js'
 import WallSelectionPanel from './WallSelectionPanel.jsx'
 import ItemDimensionsPanel from './ItemDimensionsPanel.jsx'
 import {pickItem,selectionOutline} from './render/dimensionPick.js'
@@ -193,6 +195,9 @@ function LiveWholeHome3D({onOpenRoom}){
     model.add(createEntryArrivalDoor(X,Z))
     model.add(createEntryFoldSeat(X,Z))
     model.add(createEntryEastCabinet(X,Z))
+    // First (outer) door: ventilated stainless steel (ENTRY.outerDoor); round ceiling lights (config/entryLightingConfig.js).
+    model.add(createEntryOuterDoor(X,Z))
+    model.add(createEntryCeilingLights(X,Z))
     // Entry wall cavity (owner mark 2026-09-30): translucent volumes for the empty 3-ft pocket on the Entry side of the Drawing
     // Room's north wall and for the 9-inch wall between them. Never hit by the measure tool (userData.noMeasure). Sizes come
     // from ENTRY.wallCavity.

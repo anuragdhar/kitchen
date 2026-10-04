@@ -42,10 +42,10 @@ page). Write the answer next to the item or just tell the assistant; the task an
 | C3 | Entry ceiling plank: width, design, colour, edge trim | choose at the shop; long PVC planks, about 250 mm wide | Finalise the entry ceiling |
 | C4 | Entry ceiling: direction of the planks | along the length of the entry | Finalise the entry ceiling |
 | C5 | Entry ceiling: how far it drops below the slab | not proposed yet | Finalise the entry ceiling |
-| C6 | Entry lights: colour and number | neutral white (4000 K), two lights of 6-8 W, one switch at the door | Entry wiring |
+| C6 | Entry lights: colour and number. ROUND panel lights are DECIDED (owner 2026-10-04); the 3D model now draws four: two recessed in the corridor, two surface-mounted in the inner gallery (no spotlight or track light there, see docs/changes/2026-10-04-entry.md) | neutral white (4000 K), 8 W each; corridor pair on one switch at the door, gallery pair on a switch by the Drawing Room door | Entry wiring |
 | C7 | Skirting: replace everywhere, some rooms, or skip; and which type | optional; flush tile skirting if done | Optional skirting |
 | C8 | Shaft cover at the entry: type | stainless steel louvred door, aluminium louvre panel, or flush panel door | Shaft cover |
-| C9 | Stainless steel main door: design, lock, finish | none yet | Stainless steel door |
+| C9 | Stainless steel outer door. DECIDED (owner 2026-10-04): ventilated (grille) and lockable; the wooden door to the Drawing Room stays and no second wooden door is added. Still open: grille pattern, finish, lock, hinge side | as drawn: 12 mm bars at 100 mm with insect mesh, solid kick plate and lock rail, brushed 304, mortise lock with deadbolt and night latch, hinge on the north jamb, opens outward | Stainless steel door |
 | C10 | Floor over the shaft: steel frame with steel plate, or a cast concrete slab | steel frame drawn; concrete slab to be priced as well | Steel floor |
 | C11 | Drawing Room panel wall: finish and colour | mid walnut, fluted, plain strip at the east end for the switchboard | Panel wall |
 | C12 | TV size to plan for: 55 inch only, or keep room for 65 inch | both drawn; affects whether the switchboard is covered | TV wall points |

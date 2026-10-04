@@ -9,7 +9,9 @@ export const ROOM_LIGHTING=Object.freeze(Object.fromEntries(HOME_ROOMS.map(r=>[r
   taskGain:['kitchen','study','balcony'].includes(r.id)?1.3:.65,
   // The Drawing Room draws its own fixtures (track lights, panel cap strip, sofa glow), so the generic strip meshes of this
   // overlay are not drawn there; they floated in mid-air over the west sofa (owner 2026-10-04). The lights themselves stay.
-  ownFixtures:r.id==='drawing',
+  // The Main entry draws its own ROUND panel lights (rooms/entry/EntryCeilingLights.js): the owner wants circular lights
+  // there, and these strips were showing as linear lights (owner 2026-10-04).
+  ownFixtures:r.id==='drawing'||r.id==='entry',
 })])));
 const object=v=>v&&typeof v==='object'&&!Array.isArray(v);
 function layers(value,partial=false){if(!object(value))throw Error('Invalid lighting layers.');const out={};for(const [key,v] of Object.entries(value)){if(!LAYERS.includes(key)||typeof v!=='boolean')throw Error('Unknown layer or non-boolean switch.');out[key]=v;}if(!partial&&LAYERS.some(k=>!(k in out)))throw Error('Missing lighting layer.');return Object.freeze(out);}
