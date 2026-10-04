@@ -196,12 +196,12 @@
       "trade": "general",
       "title": "Drawing Room: finalise layered lighting with track lights (no false ceiling)",
       "room": "Drawing Room",
-      "detail": "Owner 2026-10-04, decided: track lights plus the existing chandelier, no false ceiling, no table lamps and no swing-arm wall lights. The room has TWO ceiling fans (one at each end) and the chandelier midway between them. Drawn in the 3D model (Drawing Room, layout C): 48 V magnetic surface track, white, fixed straight to the slab. Track 1, 2.0 m, parallel to the TV wall and 400 mm in front of it: three 7 W spot heads (about 600 lumens each, 24-36 degree beam, anti-glare) aimed at the fluted panel, none at the screen. Track 2, 2.7 m, along the west wall 600 mm off it, over the sofas: two 15 W diffused linear heads (about 1,400 lumens each) between the two fans, and three 12 W READING heads (about 1,000 lumens each, 36 degree beam) pointing straight down at the seats: the two ends of the west sofa and the west end of the south sofa. Reading is done by turning these up; they are dimmed or off otherwise. Totals: 4.7 m of track, 8 heads, 87 W, about 7,600 lumens, all dimmable. One 48 V 150 W driver, hidden where it can be reached (the cap of the panel wall). IMPORTANT for the dimming to work as intended: Track 2 needs its own dimmer, separate from Track 1, and ideally the reading heads are separately controllable from the diffused heads (smart heads, or a two-circuit track); a plain single-circuit track dims every head on it together. Colour: warm white 3000 K for the spots; the diffused and reading heads may be the tunable 3-in-1 type, neutral white being better for long reading. Mood light: dim the tracks, and use colour-changing (RGB + warm white) LED strip for the strip on top of the TV panel and the glow under the south sofa. Keep downward heads out from under the fan blades. The fan and chandelier positions in the model are assumed.",
+      "detail": "Owner 2026-10-04, decided: track lights plus the existing chandelier, no false ceiling, no table lamps and no swing-arm wall lights. The room has TWO ceiling fans (one at each end) and the chandelier midway between them. Drawn in the 3D model (Drawing Room, layout C): 48 V magnetic surface track, white, fixed straight to the slab. Track 1, 2.0 m, parallel to the TV wall and 400 mm in front of it: three 7 W spot heads (about 600 lumens each, 24-36 degree beam, anti-glare) aimed at the fluted panel, none at the screen. Track 2, 2.7 m, along the west wall 600 mm off it, over the sofas: two 15 W diffused linear heads (about 1,400 lumens each) between the two fans, and three 12 W READING heads (about 1,000 lumens each, 36 degree beam) pointing straight down at the seats: the two ends of the west sofa and the west end of the south sofa. Reading is done by turning Track 2 up; it is dimmed for TV. Totals: 4.7 m of track, 8 heads, 87 W, about 7,600 lumens, all dimmable. CIRCUITS (owner, later 2026-10-04): the heads on a track cannot be dimmed one by one, only the whole track, so ONE TRACK = ONE CIRCUIT, each with its own 48 V driver and its own wall dimmer: Track 1 on a 60 W driver (21 W of heads), Track 2 on a 100 W driver (66 W of heads), both hidden where they can be reached (the cap of the panel wall). Track 2 keeps its reading and diffused heads together on one dimmer: turn the whole track up to read, down for TV; the chandelier carries the general light. The mix of light on a track is fixed by which heads are clipped on. Colour: warm white 3000 K for the spots; the diffused and reading heads may be the tunable 3-in-1 type, neutral white being better for long reading. Mood light: dim the tracks, and use colour-changing (RGB + warm white) LED strip for the strip on top of the TV panel and the glow under the south sofa. Keep downward heads out from under the fan blades. The fan and chandelier positions in the model are assumed.",
       "dependsOn": [
         "finalise-layouts"
       ],
       "status": "todo",
-      "needs": "MEASURE: where the two fans and the chandelier are (distance from the walls) and the fan blade diameter. DECIDE at the shop: how the reading heads are dimmed separately (smart heads or a two-circuit track). Buy track, heads and driver from one maker so they fit each other"
+      "needs": "MEASURE: the fan blade diameter and how far the fans hang (positions are from the phone scan). Buy track, heads and the two drivers from one maker so they fit each other; check the dimmer type matches the driver"
     },
     {
       "phase": "measure",
@@ -209,12 +209,64 @@
       "trade": "general",
       "title": "Lobby / Dining: finalise track lighting (no false ceiling)",
       "room": "Lobby / Dining",
-      "detail": "Owner 2026-10-04: track lights in the Lobby too, for flexibility. Drawn in the 3D model: the same 48 V magnetic surface track as the Drawing Room, white, fixed to the slab, in two runs that hug the walls so the middle of the ceiling stays free. Track 1, 2.6 m, along the south wall about 500 mm off it, east of the toilet door: two 7 W spots on the wall and two 15 W diffused heads for general light. Track 2, 1.5 m, in front of the ironing storage on the east wall: one 7 W spot on the storage doors and one 12 W down spot over the pulled-out ironing board. The linear pendant over the dining table stays. Totals: 4.1 m of track, 6 heads, 63 W, about 5,600 lumens, one 48 V 100 W driver, all dimmable, warm white 3000 K. Use the same maker as the Drawing Room so heads can be swapped between rooms.",
+      "detail": "Owner 2026-10-04: track lights in the Lobby too, for flexibility. Drawn in the 3D model: the same 48 V magnetic surface track as the Drawing Room, white, fixed to the slab, in two runs that hug the walls so the middle of the ceiling stays free. Track 1, 2.6 m, along the south wall about 500 mm off it, east of the toilet door: two 7 W spots on the wall and two 15 W diffused heads for general light. Track 2, 1.5 m, in front of the ironing storage on the east wall: one 7 W spot on the storage doors and one 12 W down spot over the pulled-out ironing board. The linear pendant over the dining table stays. Totals: 4.1 m of track, 6 heads, 63 W, about 5,600 lumens, warm white 3000 K. Each track is its own circuit with its own 48 V 60 W driver and its own wall dimmer (owner 2026-10-04: the heads on a track dim together); the pendant is a third switch. The old strip lights of the earlier design are removed from the model. Use the same maker as the Drawing Room so heads can be swapped between rooms.",
       "dependsOn": [
         "finalise-layouts"
       ],
       "status": "todo",
       "needs": "Is there a ceiling fan in the Lobby, and where? Confirm the two track positions; where the driver hides"
+    },
+    {
+      "phase": "measure",
+      "id": "lighting-plan-bedroom1",
+      "trade": "general",
+      "title": "Bedroom 1: track lighting (no false ceiling)",
+      "room": "Bedroom 1",
+      "detail": "Owner 2026-10-04: the same track lights as the Drawing Room and Lobby. Drawn in the 3D model (config bedroom1LightingConfig.js): two runs of 48 V magnetic surface track on the slab, white, warm white 3000 K, each run its own circuit with its own driver and wall dimmer. Track 1, 2.6 m, 800 mm off the west wall along the wardrobe: three 7 W spots on the wardrobe doors (they light the inside when the doors are open) and two 15 W diffused heads for soft general light; 51 W on a 100 W driver. Track 2, 1.2 m, over the bed 750 mm from the headboard wall: one 12 W reading head straight down over each sleeper's chest (the head is further east, out of the beam) and a 7 W spot washing the headboard wall; 31 W on a 60 W driver. Totals: 3.8 m of track, 8 heads, 82 W, about 7,200 lumens (660 per square metre), all dimmable. The ceiling fan is ASSUMED at the room centre with 1200 mm blades; both tracks keep at least 270 mm from its blades. The generic strip lights of the earlier overlay are removed from the model.",
+      "dependsOn": [
+        "finalise-layouts"
+      ],
+      "status": "todo",
+      "needs": "MEASURE: where the ceiling fan is, its blade size and drop (OPEN_ITEMS C23). Confirm the wardrobe track position (800 off the west wall) and that the bed track may run over the bed"
+    },
+    {
+      "phase": "measure",
+      "id": "lighting-plan-bedroom3",
+      "trade": "general",
+      "title": "Bedroom 3: track lighting (no false ceiling)",
+      "room": "Bedroom 3",
+      "detail": "Owner 2026-10-04. Drawn in the 3D model (config bedroom3LightingConfig.js): two runs of 48 V magnetic surface track on the slab, white, warm white 3000 K, each its own circuit with its own 60 W driver and wall dimmer, both 3.05 m long from 300 mm off the west wall to 150 mm short of the east cabinet bridge (which reaches 2650 mm). Track 1, 650 mm off the north wall: a 15 W diffused head, a 7 W spot on the north-wall art, a 12 W reading head aimed at the north sleeper's chest from the foot side (about 24 degrees of tilt, so the lamp is not over the eyes), and a 12 W down light over the dressing spot in front of the mirror cabinet; 46 W. Track 2, 626 mm off the south wall: two 7 W spots on the wardrobe fronts (the cabinet through the south wall), a 15 W diffused head and the south sleeper's 12 W reading head aimed the same way; 41 W. Totals: 6.1 m of track, 8 heads, 87 W, about 7,600 lumens (515 per square metre). The ceiling fan is ASSUMED at the room centre until the phone-scan point is patched in; the tracks pass the checks with the fan anywhere within 400 mm of the centre. The generic strip lights of the earlier overlay are removed from the model.",
+      "dependsOn": [
+        "finalise-layouts"
+      ],
+      "status": "todo",
+      "needs": "MEASURE: the ceiling fan point from the phone scan (OPEN_ITEMS C24), its blade size and drop. Confirm the aimed reading heads"
+    },
+    {
+      "phase": "measure",
+      "id": "lighting-plan-study",
+      "trade": "general",
+      "title": "Study (Bedroom 2): track lighting (no false ceiling)",
+      "room": "Study",
+      "detail": "Owner 2026-10-04. Drawn in the 3D model (config studyLightingConfig.js) for the kids layout: two runs of 48 V magnetic surface track on the slab, white, warm white 3000 K, each its own circuit with its own driver and wall dimmer. Track 1, 2.6 m, 850 mm off the north wall along the bookshelf: a 7 W spot on each glazed bay and a 15 W diffused head; 36 W on a 60 W driver. Track 2, 2.6 m, 540 mm off the east wall: a 12 W reading head aimed at the child in bed from the foot side (16 degrees of tilt), a 12 W down light on the desk top, and two 15 W diffused heads; 54 W on a 100 W driver. Totals: 5.2 m of track, 8 heads, 90 W, about 8,000 lumens (500 per square metre). The ceiling fan is ASSUMED at the room centre with 1200 mm blades. The balcony office is lit separately. The generic strip lights of the earlier overlay are removed from the model.",
+      "dependsOn": [
+        "finalise-layouts"
+      ],
+      "status": "todo",
+      "needs": "MEASURE: where the ceiling fan is, its blade size and drop (OPEN_ITEMS C25). Settle the kids layout first: the bed/desk track follows the furniture"
+    },
+    {
+      "phase": "measure",
+      "id": "lighting-plan-kitchen",
+      "trade": "general",
+      "title": "Kitchen: ceiling track down the walkway, under-cabinet strips kept",
+      "room": "Kitchen",
+      "detail": "Owner 2026-10-04. Drawn in the 3D model (config kitchenLightingConfig.js): one run of 48 V magnetic surface track on the slab down the middle of the walkway (1187 mm from the west wall, between the top wall cabinets that reach the ceiling), 3.95 m from near the window to near the door, neutral white 4000 K: three 15 W diffused heads for shadow-free light along both counters, a 12 W down light aimed at the front of the hob and one aimed at the sink (both under 30 degrees of tilt, onto the worktop); 69 W on a 100 W driver, its own wall dimmer. The under-cabinet LED strips of the cabinet design stay as a second dimmable circuit: a ceiling light cannot reach the back of a counter under a cabinet that goes to the ceiling. Totals from the track: 5 heads, about 6,200 lumens (560 per square metre). There is no ceiling fan in the kitchen (the exhaust fan is in the window). If the hob or the sink moves, the two down lights move with them.",
+      "dependsOn": [
+        "finalise-layouts"
+      ],
+      "status": "todo",
+      "needs": "Confirm 4000 K for the kitchen (the other rooms are 3000 K) and that there is no ceiling fan (OPEN_ITEMS C26). Where the driver hides (top of the wall cabinets)"
     },
     {
       "id": "shoe-rack-wall",
@@ -471,7 +523,7 @@
       "trade": "electrical",
       "title": "Drawing Room: power feed points for the track lights and wall lights",
       "room": "Drawing Room",
-      "detail": "Electrician. One feed point at the wall end of each track, brought up inside the wall and across the wall-ceiling corner, so no wire shows on the slab; the track itself carries the power along its length. A separate switched and dimmed line for each track back to the switchboard, and for each layer if a two-circuit track is used. Fix the 48 V 150 W driver where it can be reached, for example inside the cap of the panel wall; check the dimmer type matches the driver. Take down the old small wall light in the north-west and the wall reading light, and either reuse their wiring as the track feeds or close the points with blank plates.",
+      "detail": "Electrician. One feed point at the wall end of each track, brought up inside the wall and across the wall-ceiling corner, so no wire shows on the slab; the track itself carries the power along its length. One track = one circuit: a separate dimmed line for each track back to the switchboard (two dimmers), and the chandelier on its own switch. Fix the two 48 V drivers (60 W for Track 1, 100 W for Track 2) where they can be reached, for example inside the cap of the panel wall; check the dimmer type matches the driver. Take down the old small wall light in the north-west and the wall reading light, and either reuse their wiring as the track feeds or close the points with blank plates.",
       "dependsOn": [
         "lighting-plan-drawing",
         "electrician-survey"
@@ -484,9 +536,25 @@
       "trade": "electrical",
       "title": "Lobby / Dining: power feed points for the track lights",
       "room": "Lobby / Dining",
-      "detail": "Electrician. One feed point at the wall end of each of the two tracks, brought up inside the wall, each track on its own dimmed line; the dining pendant on a separate switch. Fix the 48 V 100 W driver where it can be reached.",
+      "detail": "Electrician. One feed point at the wall end of each of the two tracks, brought up inside the wall, each track on its own dimmed line (one track = one circuit, two dimmers); the dining pendant on a separate switch. Fix the two 48 V 60 W drivers where they can be reached.",
       "dependsOn": [
         "lighting-plan-lobby",
+        "electrician-survey"
+      ],
+      "status": "todo"
+    },
+    {
+      "phase": "electrical-rough",
+      "id": "elec-track-feed-rooms",
+      "trade": "electrical",
+      "title": "Bedroom 1, Bedroom 3, Study and Kitchen: power feed points for the track lights",
+      "room": "Whole home",
+      "detail": "Electrician. One feed point at the wall end of each track run, brought up inside the wall and across the wall-ceiling corner; one track = one circuit, so each run gets its own dimmed line back to the switchboard (two dimmers per bedroom and in the Study, one in the Kitchen plus the switch of the under-cabinet strips). Fix each 48 V driver (60 W or 100 W, as sized in the lighting tasks) where it can be reached: above a wardrobe, in a cabinet top, on top of the kitchen wall cabinets. Check the dimmer type matches the driver.",
+      "dependsOn": [
+        "lighting-plan-bedroom1",
+        "lighting-plan-bedroom3",
+        "lighting-plan-study",
+        "lighting-plan-kitchen",
         "electrician-survey"
       ],
       "status": "todo"
@@ -505,7 +573,8 @@
         "debris",
         "ac-piping",
         "elec-track-feed",
-        "elec-track-feed-lobby"
+        "elec-track-feed-lobby",
+        "elec-track-feed-rooms"
       ],
       "status": "todo"
     },
@@ -694,7 +763,8 @@
         "elec-tv-wall",
         "elec-drawing-switchboard",
         "elec-track-feed",
-        "elec-track-feed-lobby"
+        "elec-track-feed-lobby",
+        "elec-track-feed-rooms"
       ],
       "status": "todo",
       "source": "docs/DRAWING_ROOM_ELECTRICAL.md"

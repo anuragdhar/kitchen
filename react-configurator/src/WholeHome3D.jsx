@@ -25,7 +25,9 @@ import {createBedroom3Wardrobe} from './rooms/bedroom3/Bedroom3Wardrobe.js'
 import {createBedroom3WestChest} from './rooms/bedroom3/Bedroom3WestChest.js'
 import {createLobbyEastIroningStorage} from './rooms/lobby/LobbyEastIroningStorage.js'
 import {createRoomAirConditioning} from './rooms/shared/RoomAirConditioning.js'
-import {createRoomTaskLighting} from './rooms/shared/RoomTaskLighting.js'
+import {createRoomTaskLighting,createRoomTrackLighting} from './rooms/shared/RoomTaskLighting.js'
+import {STUDY_LIGHTING} from './config/studyLightingConfig.js'
+import {KITCHEN_LIGHTING} from './config/kitchenLightingConfig.js'
 import {createDrawingRoomLayouts,DRAWING_LAYOUTS} from './rooms/drawing/DrawingRoomLayouts.js'
 import {createStoreStorage} from './rooms/shared/StoreStorage.js'
 import {BALCONY_OFFICE,BALCONY_DESK_HEIGHT_KEY} from './config/balconyOfficeConfig.js'
@@ -387,11 +389,13 @@ function LiveWholeHome3D({onOpenRoom}){
     b3g.add(createBedroom3EntryDoor(bedroom3))
     b3g.add(createBedroom3Wardrobe(bedroom3))
     b3g.add(createBedroom3WestChest(bedroom3))
+    b3g.add(createRoomTaskLighting(bedroom3)) // tracks and the assumed fan (config/bedroom3LightingConfig.js)
 
     const study=STUDY_ROOM,sd=study.dimensions,sb=boundsFor('Study')
     const sg=roomGroup(sb,sd.widthMm,sd.lengthMm)
     sg.add(createStudyTerrace(study))
     sg.add(createStudyFurniture(study).group)
+    sg.add(createRoomTrackLighting(STUDY_LIGHTING,sd)) // tracks and the assumed fan (config/studyLightingConfig.js)
     const sDoor=study.openings.mainDoor,sTerrace=study.openings.terraceDoor,sOffice=study.openings.balconyOffice
     const built=study.cabinetry.southBuiltIn
     roomEdge(sb,sd.widthMm,sd.lengthMm,'south',[
@@ -440,6 +444,7 @@ function LiveWholeHome3D({onOpenRoom}){
     const bedroom=EMPTY_ROOM_SHELLS.bedroom1
     const bg=roomGroup(bbounds,bedroom.widthMm,bedroom.lengthMm)
     bg.add(createRoomAirConditioning(bedroom))
+    bg.add(createRoomTaskLighting(bedroom)) // tracks and the assumed fan (config/bedroom1LightingConfig.js)
     const poojaWardrobe=bedroom.balconyExtension?.poojaWallWardrobe
     if(poojaWardrobe){
       const {widthMm:width,depthMm:depth,heightMm:height,doorCount}=poojaWardrobe
@@ -549,6 +554,7 @@ function LiveWholeHome3D({onOpenRoom}){
     // The south wall and bedroom door are shared with the lobby model above.
 
     const kb=boundsFor('Kitchen'),kg=roomGroup(kb,KITCHEN.width,KITCHEN.length)
+    kg.add(createRoomTrackLighting(KITCHEN_LIGHTING,KITCHEN_LIGHTING.room)) // the ceiling track (config/kitchenLightingConfig.js); this group is in the room frame, so no mirroring here
     const storeStorage=createStoreStorage()
     storeStorage.userData.setCoverOpen(storageCoverOpen)
     storeStorage.position.z=KITCHEN.length/1000

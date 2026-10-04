@@ -10,6 +10,9 @@ import {createRug,createPottedPlant,createWallArt,createFloorLamp} from './rooms
 import {createStudyTerrace} from './rooms/study/StudyTerrace.js'
 import {createDesignerRender} from './render/designerRender.js'
 import {useDesignerRender} from './render/useDesignerRender.js'
+import {createRoomTrackLighting} from './rooms/shared/RoomTaskLighting.js'
+import {STUDY_LIGHTING,STUDY_DIMMER_CIRCUITS} from './config/studyLightingConfig.js'
+import DrawingLightDimmer from './rooms/drawing/DrawingLightDimmer.jsx'
 
 const mm=value=>value/1000
 
@@ -200,6 +203,14 @@ export default function StudyRoom3D(){
     const hemi=new THREE.HemisphereLight('#ffffff','#78838a',1.05);scene.add(hemi)
     const sun=new THREE.DirectionalLight('#fff4dc',1.7);sun.position.set(-2,5,3);sun.castShadow=true;scene.add(sun)
     const fill=new THREE.PointLight('#dbeafe',1.15,9);fill.position.set(W*.55,H*.72,L*.5);scene.add(fill)
+    // Track lights and the (assumed) ceiling fan (config/studyLightingConfig.js); the sliders below the toolbar dim one
+    // circuit (run) at a time. Dark room: only those circuits light the room.
+    const trackLighting=createRoomTrackLighting(STUDY_LIGHTING,STUDY_ROOM.dimensions,{realLights:true});room.add(trackLighting)
+    const setDarkRoom=on=>{
+      hemi.intensity=on?.03:1.05;sun.intensity=on?0:1.7;fill.intensity=on?0:1.15;scene.environmentIntensity=on?.02:1
+      scene.background.set(on?'#0b0d10':'#edf2f6')
+      const overlay=scene.getObjectByName('Home Interior proposed lighting');if(overlay)overlay.visible=!on
+    }
     const setCamera=key=>{
       if(key==='top'){camera.position.set(W/2,7,L/2+.01);controls.target.set(W/2,0,L/2);camera.up.set(0,0,-1)}
       else if(key==='kids'){camera.position.set(W/2+1.35,8.5,L+1.8);controls.target.set(W/2,.25,L/2);camera.up.set(0,1,0)}
@@ -216,7 +227,7 @@ export default function StudyRoom3D(){
     const interiorScene=registerInteriorScene({id:'study',scene,camera,renderer,zones:[{id:'study',min:[0,0,0],max:[W,H,L]}]})
     let raf=0;const render=()=>{controls.update();designerRender.render();raf=requestAnimationFrame(render)};render()
     eastGroup.visible=showEastWall;northGroup.visible=showNorthWall
-    sceneRef.current={setDesigner:on=>designerRender.setEnabled(on),setCamera,setEastVisible:value=>{eastGroup.visible=value},setNorthVisible:value=>{northGroup.visible=value},setKidsPreview:value=>{kidsGroup.visible=value!=='off';nightBeds.visible=value==='night';daySeats.visible=value==='day'},setLabelsVisible:value=>{labels.forEach(({sprite})=>{sprite.visible=value})},setDirectionsVisible:value=>{directionGroup.visible=value}}
+    sceneRef.current={setDesigner:on=>designerRender.setEnabled(on),setCamera,setTrackLight:(circuit,level)=>trackLighting.userData.setTrackLight(circuit,level),setDarkRoom,setEastVisible:value=>{eastGroup.visible=value},setNorthVisible:value=>{northGroup.visible=value},setKidsPreview:value=>{kidsGroup.visible=value!=='off';nightBeds.visible=value==='night';daySeats.visible=value==='day'},setLabelsVisible:value=>{labels.forEach(({sprite})=>{sprite.visible=value})},setDirectionsVisible:value=>{directionGroup.visible=value}}
     return()=>{interiorScene.dispose();cancelAnimationFrame(raf);designerRender.dispose();observer.disconnect();controls.dispose();labels.forEach(({texture})=>texture.dispose());directionTextures.forEach(texture=>texture.dispose());room.traverse(object=>{object.geometry?.dispose?.();if(Array.isArray(object.material))object.material.forEach(m=>m.dispose());else object.material?.dispose?.()});environment.dispose();pmrem.dispose();renderer.dispose();renderer.domElement.remove();sceneRef.current=null}
   },[])
   useEffect(()=>{sceneRef.current?.setCamera(preset)},[preset])
@@ -237,6 +248,7 @@ export default function StudyRoom3D(){
         <button onClick={()=>setShowNorthWall(value=>!value)} style={{padding:'7px 10px',borderRadius:9,border:'1px solid #cbd5e1',background:showNorthWall?'#fff':'#fee2e2',color:'#172033',fontWeight:800,cursor:'pointer'}}>{showNorthWall?'Hide north wall':'Show north wall'}</button>
         <button onClick={()=>setShowLabels(value=>!value)} style={{padding:'7px 10px',borderRadius:9,border:'1px solid #cbd5e1',background:showLabels?'#dbeafe':'#fff',color:'#172033',fontWeight:800,cursor:'pointer'}}>{showLabels?'Hide labels':'Show labels'}</button>
         <button onClick={()=>setShowDirections(value=>!value)} style={{padding:'7px 10px',borderRadius:9,border:'1px solid #cbd5e1',background:showDirections?'#dbeafe':'#fff',color:'#172033',fontWeight:800,cursor:'pointer'}}>{showDirections?'Hide directions':'Show directions'}</button>
+        <DrawingLightDimmer circuits={STUDY_DIMMER_CIRCUITS} onChange={(circuit,level)=>sceneRef.current?.setTrackLight?.(circuit,level)} onDarkRoom={on=>sceneRef.current?.setDarkRoom?.(on)}/>
       </div>
     </div>
     <div style={{position:'relative'}}><div ref={mountRef} style={{height:'clamp(620px,82vh,1100px)',width:'100%'}}/>{showDirections&&<div aria-label="Study compass directions" style={{position:'absolute',right:12,bottom:12,display:'grid',gridTemplateColumns:'repeat(3,28px)',gridTemplateRows:'repeat(3,24px)',placeItems:'center',padding:'7px 9px',borderRadius:10,background:'rgba(255,255,255,.92)',border:'1px solid rgba(23,32,51,.3)',boxShadow:'0 5px 16px rgba(20,15,35,.16)',color:'#172033',fontSize:10,fontWeight:900}}>{['NW','N','NE','W','•','E','SW','S','SE'].map(direction=><span key={direction}>{direction}</span>)}</div>}</div>
