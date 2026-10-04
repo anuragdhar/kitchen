@@ -1,0 +1,2140 @@
+
+> home-interior@1.0.0 check
+> npm test && npm run build
+
+
+> home-interior@1.0.0 test
+> node --test tests/current-layout.test.mjs tests/layout-checks.test.mjs tests/browser-helpers.test.mjs tests/kitchen-validation.test.mjs tests/current-validation.test.mjs tests/kitchen-navigation.test.mjs tests/project-codec.test.mjs tests/project-storage.test.mjs tests/current-project.test.mjs tests/interior-inspiration.test.mjs tests/inspiration-photos.test.mjs tests/interior-materials.test.mjs tests/interior-lighting.test.mjs tests/local-update.test.mjs tests/local-update-plugin.test.mjs tests/blender-room-views.test.mjs tests/archviz.test.mjs tests/parallel-profiles.test.mjs tests/whole-home-render.test.mjs tests/kitchen-export.test.mjs tests/kitchen-bom.test.mjs tests/daylight.test.mjs tests/bedroom1-closed-door.test.mjs tests/bedroom3-east-cabinet.test.mjs tests/inspiration-sync.test.mjs tests/drawing-room-layout.test.mjs tests/room-review.test.mjs tests/entry-cavity.test.mjs tests/wall-storage.test.mjs tests/drawing-room-console.test.mjs tests/drawing-room-south.test.mjs tests/drawing-electrical.test.mjs tests/existing-electrical.test.mjs tests/drawing-lighting.test.mjs tests/lobby-lighting.test.mjs tests/work-plan.test.mjs tests/kitchen-services.test.mjs tests/entry-fittings.test.mjs tests/bedroom1-lighting.test.mjs tests/bedroom3-lighting.test.mjs tests/study-lighting.test.mjs tests/kitchen-lighting.test.mjs tests/balcony-desk.test.mjs tests/window-design.test.mjs ../scripts/windows/launchers.test.mjs
+
+TAP version 13
+# Subtest: start-server.bat is the only root Windows command script
+ok 1 - start-server.bat is the only root Windows command script
+  ---
+  duration_ms: 1.401
+  type: 'test'
+  ...
+# Subtest: the five specialist utilities are preserved outside the root
+ok 2 - the five specialist utilities are preserved outside the root
+  ---
+  duration_ms: 104.1522
+  type: 'test'
+  ...
+# Subtest: the FreeCAD opener calls its relocated generator and returns
+ok 3 - the FreeCAD opener calls its relocated generator and returns
+  ---
+  duration_ms: 0.3827
+  type: 'test'
+  ...
+# Subtest: startup uses the lockfile, loopback and Vite browser opening
+ok 4 - startup uses the lockfile, loopback and Vite browser opening
+  ---
+  duration_ms: 0.3737
+  type: 'test'
+  ...
+# Subtest: launcher documentation uses the single root entry point
+ok 5 - launcher documentation uses the single root entry point
+  ---
+  duration_ms: 35.4095
+  type: 'test'
+  ...
+# Subtest: Windows: fresh checkout installs before starting, from a spaced path
+ok 6 - Windows: fresh checkout installs before starting, from a spaced path
+  ---
+  duration_ms: 318.6496
+  type: 'test'
+  ...
+# Subtest: Windows: existing dependencies are reused
+ok 7 - Windows: existing dependencies are reused
+  ---
+  duration_ms: 80.0339
+  type: 'test'
+  ...
+# Subtest: Windows: failed install stops startup and preserves its exit code
+ok 8 - Windows: failed install stops startup and preserves its exit code
+  ---
+  duration_ms: 71.1168
+  type: 'test'
+  ...
+# Subtest: Windows: failed server preserves its exit code
+ok 9 - Windows: failed server preserves its exit code
+  ---
+  duration_ms: 70.7
+  type: 'test'
+  ...
+# Subtest: Windows: missingPackage fails before npm is invoked
+ok 10 - Windows: missingPackage fails before npm is invoked
+  ---
+  duration_ms: 40.8998
+  type: 'test'
+  ...
+# Subtest: Windows: missingNode fails before npm is invoked
+ok 11 - Windows: missingNode fails before npm is invoked
+  ---
+  duration_ms: 51.8229
+  type: 'test'
+  ...
+# Subtest: Windows: missingNpm fails before npm is invoked
+ok 12 - Windows: missingNpm fails before npm is invoked
+  ---
+  duration_ms: 93.7014
+  type: 'test'
+  ...
+# Subtest: capture validation preserves measured values and source identity
+ok 13 - capture validation preserves measured values and source identity
+  ---
+  duration_ms: 2.1071
+  type: 'test'
+  ...
+# Subtest: refuses wrong units, axes, versions and nonfinite scale
+ok 14 - refuses wrong units, axes, versions and nonfinite scale
+  ---
+  duration_ms: 0.3539
+  type: 'test'
+  ...
+# Subtest: refuses missing, duplicate or corrupt geometry evidence
+ok 15 - refuses missing, duplicate or corrupt geometry evidence
+  ---
+  duration_ms: 0.4703
+  type: 'test'
+  ...
+# Subtest: requires a reconstructable source camera
+ok 16 - requires a reconstructable source camera
+  ---
+  duration_ms: 0.2953
+  type: 'test'
+  ...
+# Subtest: gallery accepts only immutable local PNG paths
+ok 17 - gallery accepts only immutable local PNG paths
+  ---
+  duration_ms: 0.5969
+  type: 'test'
+  ...
+# Subtest: every room has a measured-scene-independent photographic profile
+ok 18 - every room has a measured-scene-independent photographic profile
+  ---
+  duration_ms: 284.9664
+  type: 'test'
+  ...
+# Subtest: affected rooms require their own editable scene identity
+ok 19 - affected rooms require their own editable scene identity
+  ---
+  duration_ms: 0.557
+  type: 'test'
+  ...
+# (node:25228) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///<LOCAL_PATH>/build-checkout/react-configurator/src/config/balconyOfficeConfig.js is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to C:\\Users\\anura\\A501RenderWorker\\build-checkout\\react-configurator\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: owner defaults of 2026-10-04: 1500 mm sit-stand top, one-inch gap, 743 mm fixed south section at the seated preset
+ok 20 - owner defaults of 2026-10-04: 1500 mm sit-stand top, one-inch gap, 743 mm fixed south section at the seated preset
+  ---
+  duration_ms: 1.0398
+  type: 'test'
+  ...
+# Subtest: the layout puts the fixed section in the south corner and the moving top one inch north of it, both an inch off the wall
+ok 21 - the layout puts the fixed section in the south corner and the moving top one inch north of it, both an inch off the wall
+  ---
+  duration_ms: 0.8766
+  type: 'test'
+  ...
+# Subtest: the frame feet sit 105 mm inside each end of the top and their slots stay inside the rear cabinet end panels
+ok 22 - the frame feet sit 105 mm inside each end of the top and their slots stay inside the rear cabinet end panels
+  ---
+  duration_ms: 0.3384
+  type: 'test'
+  ...
+# Subtest: the moving top, its beam and the clamp clear the fixed section, walls and cabinets by an inch over the whole height range
+ok 23 - the moving top, its beam and the clamp clear the fixed section, walls and cabinets by an inch over the whole height range
+  ---
+  duration_ms: 17.4791
+  type: 'test'
+  ...
+# Subtest: the check catches a gap under an inch, a top outside the frame range, a fixed section at the wrong height and a moving top into the wall
+ok 24 - the check catches a gap under an inch, a top outside the frame range, a fixed section at the wrong height and a moving top into the wall
+  ---
+  duration_ms: 96.0561
+  type: 'test'
+  ...
+# Subtest: without a fixed section the moving top runs to the south wall and the laptop goes back on it
+ok 25 - without a fixed section the moving top runs to the south wall and the laptop goes back on it
+  ---
+  duration_ms: 0.5736
+  type: 'test'
+  ...
+# Subtest: box helpers: solid runs around openings, and clearance is the axis gap or negative on overlap
+ok 26 - box helpers: solid runs around openings, and clearance is the axis gap or negative on overlap
+  ---
+  duration_ms: 0.4761
+  type: 'test'
+  ...
+# Subtest: the phone scan of 2026-10-04 is recorded, not applied: room box and envelope unchanged, scanned plates listed
+ok 27 - the phone scan of 2026-10-04 is recorded, not applied: room box and envelope unchanged, scanned plates listed
+  ---
+  duration_ms: 0.1906
+  type: 'test'
+  ...
+# (node:40256) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///<LOCAL_PATH>/build-checkout/react-configurator/src/config/bedroom1ClosedDoor.js is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to C:\\Users\\anura\\A501RenderWorker\\build-checkout\\react-configurator\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: closed door sits on the Lobby/Bedroom 1 wall, in the plan area the owner marked
+ok 28 - closed door sits on the Lobby/Bedroom 1 wall, in the plan area the owner marked
+  ---
+  duration_ms: 0.4971
+  type: 'test'
+  ...
+# Subtest: opening span converts plan px to lobby-local mm and clears every other opening
+ok 29 - opening span converts plan px to lobby-local mm and clears every other opening
+  ---
+  duration_ms: 0.1973
+  type: 'test'
+  ...
+# Subtest: cavity depth is what remains after the sheet, and the cabinet must fit it
+ok 30 - cavity depth is what remains after the sheet, and the cabinet must fit it
+  ---
+  duration_ms: 0.2942
+  type: 'test'
+  ...
+# Subtest: rejects reversed or out-of-room jambs
+ok 31 - rejects reversed or out-of-room jambs
+  ---
+  duration_ms: 0.7181
+  type: 'test'
+  ...
+# (node:39692) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///<LOCAL_PATH>/build-checkout/react-configurator/src/config/bedroom1LightingConfig.js is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to C:\\Users\\anura\\A501RenderWorker\\build-checkout\\react-configurator\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: Bedroom 1: a wardrobe/general track and a bed track, each its own circuit, clear of the assumed ceiling fan
+ok 32 - Bedroom 1: a wardrobe/general track and a bed track, each its own circuit, clear of the assumed ceiling fan
+  ---
+  duration_ms: 2.4507
+  type: 'test'
+  ...
+# Subtest: the fan is assumed at the room centre until measured, and every run keeps well clear of its blades
+ok 33 - the fan is assumed at the room centre until measured, and every run keeps well clear of its blades
+  ---
+  duration_ms: 0.6415
+  type: 'test'
+  ...
+# Subtest: track 1 grazes the wardrobe doors; track 2 puts a reading head over each sleeper, 750 mm from the headboard
+ok 34 - track 1 grazes the wardrobe doors; track 2 puts a reading head over each sleeper, 750 mm from the headboard
+  ---
+  duration_ms: 0.4223
+  type: 'test'
+  ...
+# Subtest: the checks catch a reading head off the bed, a spot aimed across the room and a run through the fan
+ok 35 - the checks catch a reading head off the bed, a spot aimed across the room and a run through the fan
+  ---
+  duration_ms: 0.8221
+  type: 'test'
+  ...
+# (node:30240) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///<LOCAL_PATH>/build-checkout/react-configurator/src/config/roomShellConfig.js is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to C:\\Users\\anura\\A501RenderWorker\\build-checkout\\react-configurator\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: owner east-cabinet layout keeps the bed and openings, removes the west run
+ok 36 - owner east-cabinet layout keeps the bed and openings, removes the west run
+  ---
+  duration_ms: 1.454
+  type: 'test'
+  ...
+# Subtest: AC placeholder fits a distinct open-bottom slatted bay above the bed
+ok 37 - AC placeholder fits a distinct open-bottom slatted bay above the bed
+  ---
+  duration_ms: 0.1065
+  type: 'test'
+  ...
+# Subtest: review plan identifies both east cabinets instead of the west run
+ok 38 - review plan identifies both east cabinets instead of the west run
+  ---
+  duration_ms: 2.5465
+  type: 'test'
+  ...
+# Subtest: west chest stays clear of the bed, entry swing envelope and south storage
+ok 39 - west chest stays clear of the bed, entry swing envelope and south storage
+  ---
+  duration_ms: 0.5232
+  type: 'test'
+  ...
+# (node:5752) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///<LOCAL_PATH>/build-checkout/react-configurator/src/config/bedroom3LightingConfig.js is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to C:\\Users\\anura\\A501RenderWorker\\build-checkout\\react-configurator\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: Bedroom 3: a north and a south track, each its own circuit, clear of the fan and of the east cabinet bridge
+ok 40 - Bedroom 3: a north and a south track, each its own circuit, clear of the fan and of the east cabinet bridge
+  ---
+  duration_ms: 2.0939
+  type: 'test'
+  ...
+# Subtest: the fan point is one field, at the scanned medallion; the checks hold with the fan anywhere within 400 mm of the room centre
+ok 41 - the fan point is one field, at the scanned medallion; the checks hold with the fan anywhere within 400 mm of the room centre
+  ---
+  duration_ms: 2.1031
+  type: 'test'
+  ...
+# Subtest: reading heads are aimed at each sleeper's chest from the foot side with a gentle tilt, plus a dressing down light
+ok 42 - reading heads are aimed at each sleeper's chest from the foot side with a gentle tilt, plus a dressing down light
+  ---
+  duration_ms: 0.2311
+  type: 'test'
+  ...
+# Subtest: the checks catch a run into the bridge, a reading head tilted too far, and an aimed head that misses the bed
+ok 43 - the checks catch a run into the bridge, a reading head tilted too far, and an aimed head that misses the bed
+  ---
+  duration_ms: 0.2877
+  type: 'test'
+  ...
+# (node:23260) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///<LOCAL_PATH>/build-checkout/react-configurator/src/config/homeRoomViews.js is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to C:\\Users\\anura\\A501RenderWorker\\build-checkout\\react-configurator\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: every individual room has a Blender model region and a rendered preview
+ok 44 - every individual room has a Blender model region and a rendered preview
+  ---
+  duration_ms: 1.6806
+  type: 'test'
+  ...
+# Subtest: interactive lighting exports contain embedded atlases with usable UVs and linear range metadata
+ok 45 - interactive lighting exports contain embedded atlases with usable UVs and linear range metadata
+  ---
+  duration_ms: 226.7179
+  type: 'test'
+  ...
+# Subtest: CLI accepts separated and equals arguments
+ok 46 - CLI accepts separated and equals arguments
+  ---
+  duration_ms: 2.916
+  type: 'test'
+  ...
+# Subtest: CLI rejects missing values, unknown flags, and unsupported schemes
+ok 47 - CLI rejects missing values, unknown flags, and unsupported schemes
+  ---
+  duration_ms: 0.5536
+  type: 'test'
+  ...
+# Subtest: help does not require Playwright
+ok 48 - help does not require Playwright
+  ---
+  duration_ms: 0.2807
+  type: 'test'
+  ...
+# Subtest: inspection records unavailable optional APIs explicitly
+ok 49 - inspection records unavailable optional APIs explicitly
+  ---
+  duration_ms: 0.4391
+  type: 'test'
+  ...
+# Subtest: missing required API is an error, not an empty result
+ok 50 - missing required API is an error, not an empty result
+  ---
+  duration_ms: 0.5223
+  type: 'test'
+  ...
+# Subtest: thrown API calls are not swallowed
+ok 51 - thrown API calls are not swallowed
+  ---
+  duration_ms: 0.1566
+  type: 'test'
+  ...
+# Subtest: malformed required returns fail
+ok 52 - malformed required returns fail
+  ---
+  duration_ms: 0.4733
+  type: 'test'
+  ...
+# Subtest: strict mode rejects false and inconsistent validation
+ok 53 - strict mode rejects false and inconsistent validation
+  ---
+  duration_ms: 0.1363
+  type: 'test'
+  ...
+# Subtest: whole-home page is opened before waiting for kitchen API
+ok 54 - whole-home page is opened before waiting for kitchen API
+  ---
+  duration_ms: 0.5383
+  type: 'test'
+  ...
+# Subtest: already mounted kitchen needs no navigation click
+ok 55 - already mounted kitchen needs no navigation click
+  ---
+  duration_ms: 0.4696
+  type: 'test'
+  ...
+# Subtest: missing canvas fails smoke inspection
+ok 56 - missing canvas fails smoke inspection
+  ---
+  duration_ms: 0.2708
+  type: 'test'
+  ...
+# (node:13468) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///<LOCAL_PATH>/build-checkout/react-configurator/src/config/kitchenConfig.js is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to C:\\Users\\anura\\A501RenderWorker\\build-checkout\\react-configurator\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: room, opening and clearance baseline is preserved
+ok 57 - room, opening and clearance baseline is preserved
+  ---
+  duration_ms: 1.1157
+  type: 'test'
+  ...
+# Subtest: active east geometry stays on the cooking/appliance wall
+ok 58 - active east geometry stays on the cooking/appliance wall
+  ---
+  duration_ms: 0.1814
+  type: 'test'
+  ...
+# Subtest: active west geometry stays on the wet wall
+ok 59 - active west geometry stays on the wet wall
+  ---
+  duration_ms: 0.0934
+  type: 'test'
+  ...
+# Subtest: historical placeholders remain hidden, with stable IDs
+ok 60 - historical placeholders remain hidden, with stable IDs
+  ---
+  duration_ms: 0.0891
+  type: 'test'
+  ...
+# Subtest: baseline and airy variants pass the documented basic checks
+ok 61 - baseline and airy variants pass the documented basic checks
+  ---
+  duration_ms: 0.6712
+  type: 'test'
+  ...
+# Subtest: airy option changes only the intended y positions
+ok 62 - airy option changes only the intended y positions
+  ---
+  duration_ms: 0.1487
+  type: 'test'
+  ...
+# Subtest: shaft ends at the north wall and rack follows baseline sink
+ok 63 - shaft ends at the north wall and rack follows baseline sink
+  ---
+  duration_ms: 0.1345
+  type: 'test'
+  ...
+# Subtest: module fill preserves run lengths including fractional fillers
+ok 64 - module fill preserves run lengths including fractional fillers
+  ---
+  duration_ms: 0.9314
+  type: 'test'
+  ...
+# (node:10504) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///<LOCAL_PATH>/build-checkout/react-configurator/src/config/kitchenConfig.js is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to C:\\Users\\anura\\A501RenderWorker\\build-checkout\\react-configurator\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: real baseline configuration has a lossless v1 round trip
+ok 65 - real baseline configuration has a lossless v1 round trip
+  ---
+  duration_ms: 3.3426
+  type: 'test'
+  ...
+# Subtest: real airy configuration has a lossless v1 round trip
+ok 66 - real airy configuration has a lossless v1 round trip
+  ---
+  duration_ms: 1.0132
+  type: 'test'
+  ...
+# Subtest: real custom hob and shelf elevation survive legacy migration without changing configuration
+ok 67 - real custom hob and shelf elevation survive legacy migration without changing configuration
+  ---
+  duration_ms: 0.8714
+  type: 'test'
+  ...
+# Subtest: real model-only format maps shaft dimensions and does not reset the stored hob
+ok 68 - real model-only format maps shaft dimensions and does not reset the stored hob
+  ---
+  duration_ms: 1.6506
+  type: 'test'
+  ...
+# (node:9636) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///<LOCAL_PATH>/build-checkout/react-configurator/src/config/kitchenConfig.js is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to C:\\Users\\anura\\A501RenderWorker\\build-checkout\\react-configurator\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: actual baseline configuration passes with baseline east
+ok 69 - actual baseline configuration passes with baseline east
+  ---
+  duration_ms: 2.0253
+  type: 'test'
+  ...
+# Subtest: actual baseline configuration passes with refined east
+ok 70 - actual baseline configuration passes with refined east
+  ---
+  duration_ms: 0.4092
+  type: 'test'
+  ...
+# Subtest: actual airy configuration passes with baseline east
+ok 71 - actual airy configuration passes with baseline east
+  ---
+  duration_ms: 0.2435
+  type: 'test'
+  ...
+# Subtest: actual airy configuration passes with refined east
+ok 72 - actual airy configuration passes with refined east
+  ---
+  duration_ms: 0.7013
+  type: 'test'
+  ...
+# Subtest: with no offset, sunrise comes from plan east and sunset from plan west
+ok 73 - with no offset, sunrise comes from plan east and sunset from plan west
+  ---
+  duration_ms: 0.691
+  type: 'test'
+  ...
+# Subtest: solar noon is the highest sun and lies toward plan south
+ok 74 - solar noon is the highest sun and lies toward plan south
+  ---
+  duration_ms: 0.1614
+  type: 'test'
+  ...
+# Subtest: direction is always a unit vector and hour is validated
+ok 75 - direction is always a unit vector and hour is validated
+  ---
+  duration_ms: 1.1966
+  type: 'test'
+  ...
+# Subtest: the true-north offset rotates the whole sun path by the same angle
+ok 76 - the true-north offset rotates the whole sun path by the same angle
+  ---
+  duration_ms: 0.2736
+  type: 'test'
+  ...
+# Subtest: presets: night before sunrise and after sunset, golden near horizon, day at noon
+ok 77 - presets: night before sunrise and after sunset, golden near horizon, day at noon
+  ---
+  duration_ms: 0.6521
+  type: 'test'
+  ...
+# (node:40612) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///<LOCAL_PATH>/build-checkout/react-configurator/src/config/drawingElectricalConfig.js is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to C:\\Users\\anura\\A501RenderWorker\\build-checkout\\react-configurator\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: the layout C electrical plan passes: no point in an opening, behind a sofa or behind the AC
+ok 78 - the layout C electrical plan passes: no point in an opening, behind a sofa or behind the AC
+  ---
+  duration_ms: 2.5546
+  type: 'test'
+  ...
+# Subtest: every sofa seat has a charging point within 1.5 m, without counting the optional floor box
+ok 79 - every sofa seat has a charging point within 1.5 m, without counting the optional floor box
+  ---
+  duration_ms: 0.4696
+  type: 'test'
+  ...
+# Subtest: the TV box stays hidden behind both TV sizes and the router point is behind the console router bay
+ok 80 - the TV box stays hidden behind both TV sizes and the router point is behind the console router bay
+  ---
+  duration_ms: 0.6766
+  type: 'test'
+  ...
+# Subtest: the checks catch points in openings, behind furniture or out of reach
+ok 81 - the checks catch points in openings, behind furniture or out of reach
+  ---
+  duration_ms: 1.5245
+  type: 'test'
+  ...
+# Subtest: point positions land on the right wall
+ok 82 - point positions land on the right wall
+  ---
+  duration_ms: 0.2221
+  type: 'test'
+  ...
+# (node:32792) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///<LOCAL_PATH>/build-checkout/react-configurator/src/config/drawingLightingConfig.js is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to C:\\Users\\anura\\A501RenderWorker\\build-checkout\\react-configurator\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: layout C has two tracks with spot and diffused heads, clear of both ceiling fans and the chandelier
+ok 83 - layout C has two tracks with spot and diffused heads, clear of both ceiling fans and the chandelier
+  ---
+  duration_ms: 1.5178
+  type: 'test'
+  ...
+# Subtest: one run = one circuit: each run has its own driver loaded to 80% at most, and one slider per circuit
+ok 84 - one run = one circuit: each run has its own driver loaded to 80% at most, and one slider per circuit
+  ---
+  duration_ms: 0.3878
+  type: 'test'
+  ...
+# Subtest: the chandelier stays; the old north-west wall light is removed in layout C only
+ok 85 - the chandelier stays; the old north-west wall light is removed in layout C only
+  ---
+  duration_ms: 0.2371
+  type: 'test'
+  ...
+# Subtest: track 1 grazes the TV panel wall and track 2 runs along the west wall over the sofa
+ok 86 - track 1 grazes the TV panel wall and track 2 runs along the west wall over the sofa
+  ---
+  duration_ms: 0.121
+  type: 'test'
+  ...
+# Subtest: track 2 is one circuit of mixed reading and diffused heads over the seats, not a swing-arm wall light
+ok 87 - track 2 is one circuit of mixed reading and diffused heads over the seats, not a swing-arm wall light
+  ---
+  duration_ms: 0.3747
+  type: 'test'
+  ...
+# Subtest: the checks catch a track under a fan, a diffused head near the blades, a spot aimed across the room and an overloaded run
+ok 88 - the checks catch a track under a fan, a diffused head near the blades, a spot aimed across the room and an overloaded run
+  ---
+  duration_ms: 0.5251
+  type: 'test'
+  ...
+# (node:26224) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///<LOCAL_PATH>/build-checkout/react-configurator/src/config/roomShellConfig.js is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to C:\\Users\\anura\\A501RenderWorker\\build-checkout\\react-configurator\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: the 18-inch low console fits east of the coffee table with a walkway of at least 800 mm
+ok 89 - the 18-inch low console fits east of the coffee table with a walkway of at least 800 mm
+  ---
+  duration_ms: 7.5217
+  type: 'test'
+  ...
+# Subtest: both the 55-inch now and the 65-inch later fit the same solid stretch of wall
+ok 90 - both the 55-inch now and the 65-inch later fit the same solid stretch of wall
+  ---
+  duration_ms: 3.7475
+  type: 'test'
+  ...
+# Subtest: a floor-to-ceiling 18-inch unit is rejected: no walkway beside the north sofa and no room for a TV bay
+ok 91 - a floor-to-ceiling 18-inch unit is rejected: no walkway beside the north sofa and no room for a TV bay
+  ---
+  duration_ms: 0.3398
+  type: 'test'
+  ...
+# Subtest: the wall arm improves the north-sofa PICTURE angle but barely the head turn, and worsens the west sofa picture
+ok 92 - the wall arm improves the north-sofa PICTURE angle but barely the head turn, and worsens the west sofa picture
+  ---
+  duration_ms: 0.4673
+  type: 'test'
+  ...
+# Subtest: the arm blocks the walkway at full reach, so it must be folded away when walking through
+ok 93 - the arm blocks the walkway at full reach, so it must be folded away when walking through
+  ---
+  duration_ms: 0.2841
+  type: 'test'
+  ...
+# Subtest: arm geometry: turning north brings the SOUTH end of the screen forward
+ok 94 - arm geometry: turning north brings the SOUTH end of the screen forward
+  ---
+  duration_ms: 0.126
+  type: 'test'
+  ...
+# Subtest: the console checker catches a console too close to the sofa, too deep, or with an oversized TV
+ok 95 - the console checker catches a console too close to the sofa, too deep, or with an oversized TV
+  ---
+  duration_ms: 4.2408
+  type: 'test'
+  ...
+# Subtest: the ceiling projector option fits: an 80-inch 16:9 screen, projector over open floor, hung above head height
+ok 96 - the ceiling projector option fits: an 80-inch 16:9 screen, projector over open floor, hung above head height
+  ---
+  duration_ms: 0.9126
+  type: 'test'
+  ...
+# Subtest: console geometry sits on the solid east wall south of the north sofa
+ok 97 - console geometry sits on the solid east wall south of the north sofa
+  ---
+  duration_ms: 0.262
+  type: 'test'
+  ...
+# Subtest: review briefs describe each corner option and state the full-height rejection
+ok 98 - review briefs describe each corner option and state the full-height rejection
+  ---
+  duration_ms: 5.8098
+  type: 'test'
+  ...
+# Subtest: with the door opening inward, a pulled-out arm TV stops the door; a flat one does not
+ok 99 - with the door opening inward, a pulled-out arm TV stops the door; a flat one does not
+  ---
+  duration_ms: 0.6611
+  type: 'test'
+  ...
+# (node:39948) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///<LOCAL_PATH>/build-checkout/react-configurator/src/config/roomShellConfig.js is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to C:\\Users\\anura\\A501RenderWorker\\build-checkout\\react-configurator\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: the Drawing Room TV wall and two-sofa layout fit with no issues
+ok 100 - the Drawing Room TV wall and two-sofa layout fit with no issues
+  ---
+  duration_ms: 4.3668
+  type: 'test'
+  ...
+# Subtest: the brief is encoded: 65-inch TV, one-foot cabinet, two same-size 3-seaters, no window seat
+ok 101 - the brief is encoded: 65-inch TV, one-foot cabinet, two same-size 3-seaters, no window seat
+  ---
+  duration_ms: 0.1962
+  type: 'test'
+  ...
+# Subtest: the entry door has not moved, and it opens INTO the room (owner, 2026-09-30)
+ok 102 - the entry door has not moved, and it opens INTO the room (owner, 2026-09-30)
+  ---
+  duration_ms: 0.1297
+  type: 'test'
+  ...
+# Subtest: every device sits where the brief put it
+ok 103 - every device sits where the brief put it
+  ---
+  duration_ms: 0.0835
+  type: 'test'
+  ...
+# Subtest: the checker catches an oversized TV, a blocked door, a bass module that does not fit or sits in the corner
+ok 104 - the checker catches an oversized TV, a blocked door, a bass module that does not fit or sits in the corner
+  ---
+  duration_ms: 5.0691
+  type: 'test'
+  ...
+# Subtest: layout B as drawn fits with the owner-confirmed door (the north sofa does not touch it)
+ok 105 - layout B as drawn fits with the owner-confirmed door (the north sofa does not touch it)
+  ---
+  duration_ms: 2.003
+  type: 'test'
+  ...
+# Subtest: that only holds for an east hinge and a leaf up to about 855 mm: the sofa is the limit
+ok 106 - that only holds for an east hinge and a leaf up to about 855 mm: the sofa is the limit
+  ---
+  duration_ms: 8.3312
+  type: 'test'
+  ...
+# Subtest: if the real leaf is wider, or the hinge is not settled, the north sofa stops the door
+ok 107 - if the real leaf is wider, or the hinge is not settled, the north sofa stops the door
+  ---
+  duration_ms: 4.2498
+  type: 'test'
+  ...
+# Subtest: shortening both corner sofas to 2100 mm clears the door whatever the leaf or hinge
+ok 108 - shortening both corner sofas to 2100 mm clears the door whatever the leaf or hinge
+  ---
+  duration_ms: 4.2832
+  type: 'test'
+  ...
+# Subtest: layout A is clear of the door swing on either hinge side
+ok 109 - layout A is clear of the door swing on either hinge side
+  ---
+  duration_ms: 3.2001
+  type: 'test'
+  ...
+# Subtest: layout B keeps the two sofas the same size as each other and as layout A
+ok 110 - layout B keeps the two sofas the same size as each other and as layout A
+  ---
+  duration_ms: 0.3078
+  type: 'test'
+  ...
+# Subtest: layout B known trade-offs: west sofa sees the TV well, north sofa sees it side-on, the walkway passes it
+ok 111 - layout B known trade-offs: west sofa sees the TV well, north sofa sees it side-on, the walkway passes it
+  ---
+  duration_ms: 0.3892
+  type: 'test'
+  ...
+# Subtest: layout B checker catches a TV too close to the door, a blocked lane and a low cabinet
+ok 112 - layout B checker catches a TV too close to the door, a blocked lane and a low cabinet
+  ---
+  duration_ms: 4.7357
+  type: 'test'
+  ...
+# (node:41744) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///<LOCAL_PATH>/build-checkout/react-configurator/src/config/entryConfig.js is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to C:\\Users\\anura\\A501RenderWorker\\build-checkout\\react-configurator\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: layout C passes its checks: south sofa against the window wall, west sofa in an L with it, table inside
+ok 113 - layout C passes its checks: south sofa against the window wall, west sofa in an L with it, table inside
+  ---
+  duration_ms: 4.8808
+  type: 'test'
+  ...
+# Subtest: the west sofa moved south and the old north-wall sofa is now on the south wall
+ok 114 - the west sofa moved south and the old north-wall sofa is now on the south wall
+  ---
+  duration_ms: 0.1449
+  type: 'test'
+  ...
+# Subtest: the TV is on the north wall between the west cabinet door and the entry door, in both sizes
+ok 115 - the TV is on the north wall between the west cabinet door and the entry door, in both sizes
+  ---
+  duration_ms: 0.5709
+  type: 'test'
+  ...
+# Subtest: the TV console is one free-standing piece, clear of the west wall, overlapping the hidden door only a little
+ok 116 - the TV console is one free-standing piece, clear of the west wall, overlapping the hidden door only a little
+  ---
+  duration_ms: 4.4804
+  type: 'test'
+  ...
+# Subtest: fluted wall panelling runs from the west wall to the entry door frame, floor to door head, with the door edges on grooves
+ok 117 - fluted wall panelling runs from the west wall to the entry door frame, floor to door head, with the door edges on grooves
+  ---
+  duration_ms: 1.1335
+  type: 'test'
+  ...
+# Subtest: the TV console holds the router, landline and intercom; there is no east-wall cabinet
+ok 118 - the TV console holds the router, landline and intercom; there is no east-wall cabinet
+  ---
+  duration_ms: 0.1786
+  type: 'test'
+  ...
+# Subtest: the south sofa moved east and a small lamp table stands at its west end
+ok 119 - the south sofa moved east and a small lamp table stands at its west end
+  ---
+  duration_ms: 0.7596
+  type: 'test'
+  ...
+# Subtest: the west cabinet leaf opens outward; in layout C only the draggable TV console stands in front of it
+ok 120 - the west cabinet leaf opens outward; in layout C only the draggable TV console stands in front of it
+  ---
+  duration_ms: 0.9411
+  type: 'test'
+  ...
+# Subtest: the review sheet describes layout C and is the default
+ok 121 - the review sheet describes layout C and is the default
+  ---
+  duration_ms: 4.0213
+  type: 'test'
+  ...
+# (node:27672) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///<LOCAL_PATH>/build-checkout/react-configurator/src/config/entryConfig.js is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to C:\\Users\\anura\\A501RenderWorker\\build-checkout\\react-configurator\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: the owner-marked area lies inside the pocket and the pocket is 3 ft deep
+ok 122 - the owner-marked area lies inside the pocket and the pocket is 3 ft deep
+  ---
+  duration_ms: 0.9525
+  type: 'test'
+  ...
+# Subtest: the wall between the pocket and the Drawing Room is about 220 mm, the size of a 9-inch wall, and the pocket runs floor to ceiling
+ok 123 - the wall between the pocket and the Drawing Room is about 220 mm, the size of a 9-inch wall, and the pocket runs floor to ceiling
+  ---
+  duration_ms: 0.1995
+  type: 'test'
+  ...
+# Subtest: the pocket lines up with the free north wall of the Drawing Room, left of the entry door
+ok 124 - the pocket lines up with the free north wall of the Drawing Room, left of the entry door
+  ---
+  duration_ms: 0.826
+  type: 'test'
+  ...
+# Subtest: usable depth: about 1.1 m if the wall may be opened into the pocket, about 110 mm if the wall must stay
+ok 125 - usable depth: about 1.1 m if the wall may be opened into the pocket, about 110 mm if the wall must stay
+  ---
+  duration_ms: 0.1274
+  type: 'test'
+  ...
+# Subtest: recess options: the TV bay and the router cabinet fit the pocket completely, the whole 2100 mm cabinet does not
+ok 126 - recess options: the TV bay and the router cabinet fit the pocket completely, the whole 2100 mm cabinet does not
+  ---
+  duration_ms: 0.1969
+  type: 'test'
+  ...
+# Subtest: the east cabinet is open over its whole east side onto the Entry gallery, as in the Blender model
+ok 127 - the east cabinet is open over its whole east side onto the Entry gallery, as in the Blender model
+  ---
+  duration_ms: 0.6134
+  type: 'test'
+  ...
+# Subtest: a full-height partition splits the pocket into an east and a west cabinet
+ok 128 - a full-height partition splits the pocket into an east and a west cabinet
+  ---
+  duration_ms: 0.2694
+  type: 'test'
+  ...
+# Subtest: the existing east cabinet fills the east compartment and faces the Entry gallery
+ok 129 - the existing east cabinet fills the east compartment and faces the Entry gallery
+  ---
+  duration_ms: 0.1868
+  type: 'test'
+  ...
+# (node:25044) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///<LOCAL_PATH>/build-checkout/react-configurator/src/config/entryConfig.js is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to C:\\Users\\anura\\A501RenderWorker\\build-checkout\\react-configurator\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: the entry has four sections in walking order; the corridor and the inner gallery are the two a person walks through
+ok 130 - the entry has four sections in walking order; the corridor and the inner gallery are the two a person walks through
+  ---
+  duration_ms: 1.4358
+  type: 'test'
+  ...
+# Subtest: the first (outer) door is a ventilated, lockable stainless steel door that fills the opening drawn on the plan
+ok 131 - the first (outer) door is a ventilated, lockable stainless steel door that fills the opening drawn on the plan
+  ---
+  duration_ms: 0.8606
+  type: 'test'
+  ...
+# Subtest: the door checks catch a gap between panels, a lock on the grille, a solid door and an inward swing
+ok 132 - the door checks catch a gap between panels, a lock on the grille, a solid door and an inward swing
+  ---
+  duration_ms: 0.791
+  type: 'test'
+  ...
+# Subtest: the entry lights are round panels: two recessed in the corridor, two surface-mounted in the gallery, nothing linear
+ok 133 - the entry lights are round panels: two recessed in the corridor, two surface-mounted in the gallery, nothing linear
+  ---
+  duration_ms: 0.6376
+  type: 'test'
+  ...
+# Subtest: the light checks catch a strip, a light over the shaft, one against a wall and a dark end of the gallery
+ok 134 - the light checks catch a strip, a light over the shaft, one against a wall and a dark end of the gallery
+  ---
+  duration_ms: 1.1369
+  type: 'test'
+  ...
+# (node:41328) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///<LOCAL_PATH>/build-checkout/react-configurator/src/config/existingElectricalConfig.js is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to C:\\Users\\anura\\A501RenderWorker\\build-checkout\\react-configurator\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: every room with existing points is a real room, every point is well formed and sourced
+ok 135 - every room with existing points is a real room, every point is well formed and sourced
+  ---
+  duration_ms: 1.2078
+  type: 'test'
+  ...
+# Subtest: the lobby x figures are converted from the beam face to the room frame once, z is not touched
+ok 136 - the lobby x figures are converted from the beam face to the room frame once, z is not touched
+  ---
+  duration_ms: 0.1441
+  type: 'test'
+  ...
+# Subtest: plates land on the right wall at the right height, ceiling points on the ceiling
+ok 137 - plates land on the right wall at the right height, ceiling points on the ceiling
+  ---
+  duration_ms: 0.295
+  type: 'test'
+  ...
+# Subtest: the Lobby switchboard is reported inside the planned Bedroom 1 door
+ok 138 - the Lobby switchboard is reported inside the planned Bedroom 1 door
+  ---
+  duration_ms: 0.588
+  type: 'test'
+  ...
+# Subtest: Drawing Room layout C: the switchboard is behind the panelling and the TV, the east boards behind the open door leaf, the south-west sockets behind the west sofa
+ok 139 - Drawing Room layout C: the switchboard is behind the panelling and the TV, the east boards behind the open door leaf, the south-west sockets behind the west sofa
+  ---
+  duration_ms: 0.5936
+  type: 'test'
+  ...
+# Subtest: the Drawing Room conflicts follow the layout
+ok 140 - the Drawing Room conflicts follow the layout
+  ---
+  duration_ms: 0.4207
+  type: 'test'
+  ...
+# Subtest: a synthetic point in a window, in an open side or in the hidden cabinet door is caught; a clear one is not
+ok 141 - a synthetic point in a window, in an open side or in the hidden cabinet door is caught; a clear one is not
+  ---
+  duration_ms: 0.5733
+  type: 'test'
+  ...
+# Subtest: the review brief lists the existing points and the conflicts, and skips rooms without a scan
+ok 142 - the review brief lists the existing points and the conflicts, and skips rooms without a scan
+  ---
+  duration_ms: 8.3082
+  type: 'test'
+  ...
+# Subtest: photo schema remains optional and legacy libraries round-trip unchanged
+ok 143 - photo schema remains optional and legacy libraries round-trip unchanged
+  ---
+  duration_ms: 1.6679
+  type: 'test'
+  ...
+# Subtest: unsafe or remote photo locations and invalid IDs are rejected
+ok 144 - unsafe or remote photo locations and invalid IDs are rejected
+  ---
+  duration_ms: 1.0203
+  type: 'test'
+  ...
+# Subtest: photo limits, duplicate IDs and invalid metadata fail before persistence
+ok 145 - photo limits, duplicate IDs and invalid metadata fail before persistence
+  ---
+  duration_ms: 0.3798
+  type: 'test'
+  ...
+# Subtest: explicit merge enriches matching old references while preserving local captions, order and decisions
+ok 146 - explicit merge enriches matching old references while preserving local captions, order and decisions
+  ---
+  duration_ms: 0.3898
+  type: 'test'
+  ...
+# Subtest: merge deduplicates media paths and never attaches photos from unrelated ID collisions
+ok 147 - merge deduplicates media paths and never attaches photos from unrelated ID collisions
+  ---
+  duration_ms: 0.302
+  type: 'test'
+  ...
+# Subtest: merge respects per-reference cap and does not resurrect removed photos until requested
+ok 148 - merge respects per-reference cap and does not resurrect removed photos until requested
+  ---
+  duration_ms: 0.3219
+  type: 'test'
+  ...
+# Subtest: sniffImage accepts only real JPG, PNG and WebP bytes
+ok 149 - sniffImage accepts only real JPG, PNG and WebP bytes
+  ---
+  duration_ms: 1.3383
+  type: 'test'
+  ...
+# Subtest: photo ids cannot escape the media folder
+ok 150 - photo ids cannot escape the media folder
+  ---
+  duration_ms: 0.5375
+  type: 'test'
+  ...
+# Subtest: upsert replaces by id, appends new references and never removes any
+ok 151 - upsert replaces by id, appends new references and never removes any
+  ---
+  duration_ms: 1.5737
+  type: 'test'
+  ...
+# Subtest: upsert keeps sources as given; the server route and client enforce project-relative paths
+ok 152 - upsert keeps sources as given; the server route and client enforce project-relative paths
+  ---
+  duration_ms: 0.3454
+  type: 'test'
+  ...
+# Subtest: room IDs unique and tour covers entry to balcony
+ok 153 - room IDs unique and tour covers entry to balcony
+  ---
+  duration_ms: 0.649
+  type: 'test'
+  ...
+# Subtest: reference JSON round trip and no mutation
+ok 154 - reference JSON round trip and no mutation
+  ---
+  duration_ms: 0.7506
+  type: 'test'
+  ...
+# Subtest: unsupported schemas, duplicate IDs and unknown rooms rejected
+ok 155 - unsupported schemas, duplicate IDs and unknown rooms rejected
+  ---
+  duration_ms: 0.2204
+  type: 'test'
+  ...
+# Subtest: unsafe reference URLs rejected
+ok 156 - unsafe reference URLs rejected
+  ---
+  duration_ms: 0.1566
+  type: 'test'
+  ...
+# Subtest: repository reference library is valid
+ok 157 - repository reference library is valid
+  ---
+  duration_ms: 13.994
+  type: 'test'
+  ...
+# Subtest: requested Pinterest ideas are assigned to the correct rooms with design notes
+ok 158 - requested Pinterest ideas are assigned to the correct rooms with design notes
+  ---
+  duration_ms: 0.6979
+  type: 'test'
+  ...
+# Subtest: project references can be added to an existing empty browser library
+ok 159 - project references can be added to an existing empty browser library
+  ---
+  duration_ms: 0.6197
+  type: 'test'
+  ...
+# Subtest: merge preserves local edits and decisions, adds missing references and does not mutate
+ok 160 - merge preserves local edits and decisions, adds missing references and does not mutate
+  ---
+  duration_ms: 0.2962
+  type: 'test'
+  ...
+# Subtest: merge deduplicates a Pinterest pin across regional hosts, tracking queries and IDs
+ok 161 - merge deduplicates a Pinterest pin across regional hosts, tracking queries and IDs
+  ---
+  duration_ms: 0.2281
+  type: 'test'
+  ...
+# Subtest: same reference can be used in another room but ID collisions never overwrite local data
+ok 162 - same reference can be used in another room but ID collisions never overwrite local data
+  ---
+  duration_ms: 0.7806
+  type: 'test'
+  ...
+# Subtest: merge deduplicates other HTTPS references without treating lookalike hosts as Pinterest
+ok 163 - merge deduplicates other HTTPS references without treating lookalike hosts as Pinterest
+  ---
+  duration_ms: 0.1701
+  type: 'test'
+  ...
+# Subtest: merge rejects invalid input and combined overflow without changing the browser library
+ok 164 - merge rejects invalid input and combined overflow without changing the browser library
+  ---
+  duration_ms: 3.7985
+  type: 'test'
+  ...
+# Subtest: every named room has a layered lighting proposal
+ok 165 - every named room has a layered lighting proposal
+  ---
+  duration_ms: 1.437
+  type: 'test'
+  ...
+# Subtest: auto schedule handles boundaries and midnight, cooler day warmer night
+ok 166 - auto schedule handles boundaries and midnight, cooler day warmer night
+  ---
+  duration_ms: 0.3745
+  type: 'test'
+  ...
+# Subtest: room overrides and individual layer switches do not leak to other rooms
+ok 167 - room overrides and individual layer switches do not leak to other rooms
+  ---
+  duration_ms: 0.2174
+  type: 'test'
+  ...
+# Subtest: invalid lighting parameters are rejected
+ok 168 - invalid lighting parameters are rejected
+  ---
+  duration_ms: 0.3473
+  type: 'test'
+  ...
+# Subtest: all layers can be independently disabled and master intensity scales them
+ok 169 - all layers can be independently disabled and master intensity scales them
+  ---
+  duration_ms: 0.3345
+  type: 'test'
+  ...
+# Subtest: Kelvin approximation is bounded and night contains less blue
+ok 170 - Kelvin approximation is bounded and night contains less blue
+  ---
+  duration_ms: 0.158
+  type: 'test'
+  ...
+# Subtest: four independently sourced wood species and plaster finishes exist
+ok 171 - four independently sourced wood species and plaster finishes exist
+  ---
+  duration_ms: 2.0819
+  type: 'test'
+  ...
+# Subtest: appearance roundtrip and inheritance preserve distinct room overrides
+ok 172 - appearance roundtrip and inheritance preserve distinct room overrides
+  ---
+  duration_ms: 0.3782
+  type: 'test'
+  ...
+# Subtest: unknown IDs, room and invalid grain scales fail closed
+ok 173 - unknown IDs, room and invalid grain scales fail closed
+  ---
+  duration_ms: 0.3373
+  type: 'test'
+  ...
+# Subtest: surface tags do not alter material properties
+ok 174 - surface tags do not alter material properties
+  ---
+  duration_ms: 0.2198
+  type: 'test'
+  ...
+# Subtest: bundled PBR maps match their documented source checksums
+ok 175 - bundled PBR maps match their documented source checksums
+  ---
+  duration_ms: 114.5993
+  type: 'test'
+  ...
+# Subtest: buildBOM counts modules/drawers and excludes power points from the appliance list
+ok 176 - buildBOM counts modules/drawers and excludes power points from the appliance list
+  ---
+  duration_ms: 1.5813
+  type: 'test'
+  ...
+# Subtest: buildBOM does not mutate its input
+ok 177 - buildBOM does not mutate its input
+  ---
+  duration_ms: 0.5146
+  type: 'test'
+  ...
+# Subtest: buildBOMCsv quotes every field and includes one row per appliance and note
+ok 178 - buildBOMCsv quotes every field and includes one row per appliance and note
+  ---
+  duration_ms: 1.2661
+  type: 'test'
+  ...
+# Subtest: buildBOMMarkdown lists every module row and every appliance
+ok 179 - buildBOMMarkdown lists every module row and every appliance
+  ---
+  duration_ms: 0.5145
+  type: 'test'
+  ...
+# Subtest: svgY converts south-origin Y to SVG top-origin Y
+ok 180 - svgY converts south-origin Y to SVG top-origin Y
+  ---
+  duration_ms: 1.0533
+  type: 'test'
+  ...
+# Subtest: buildPlanSvg renders room, openings, runs and both active items without mutating its input
+ok 181 - buildPlanSvg renders room, openings, runs and both active items without mutating its input
+  ---
+  duration_ms: 3.2122
+  type: 'test'
+  ...
+# Subtest: buildPlanSvg draws grid lines only when grid is 50 or 100
+ok 182 - buildPlanSvg draws grid lines only when grid is 50 or 100
+  ---
+  duration_ms: 0.5543
+  type: 'test'
+  ...
+# Subtest: buildPlanSvg marks a filler module with a dashed outline
+ok 183 - buildPlanSvg marks a filler module with a dashed outline
+  ---
+  duration_ms: 0.1796
+  type: 'test'
+  ...
+# Subtest: buildPlanDxf emits a valid entities section with room, openings and labeled appliances
+ok 184 - buildPlanDxf emits a valid entities section with room, openings and labeled appliances
+  ---
+  duration_ms: 0.445
+  type: 'test'
+  ...
+# Subtest: buildPlanDxf includes GRID-layer lines only when grid is 50 or 100
+ok 185 - buildPlanDxf includes GRID-layer lines only when grid is 50 or 100
+  ---
+  duration_ms: 0.9395
+  type: 'test'
+  ...
+# Subtest: buildPlanSvg and buildPlanDxf agree on which depth each wall uses
+ok 186 - buildPlanSvg and buildPlanDxf agree on which depth each wall uses
+  ---
+  duration_ms: 0.3316
+  type: 'test'
+  ...
+# (node:20780) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///<LOCAL_PATH>/build-checkout/react-configurator/src/config/kitchenLightingConfig.js is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to C:\\Users\\anura\\A501RenderWorker\\build-checkout\\react-configurator\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: Kitchen: one track down the middle of the walkway, clear of the wall cabinets that reach the ceiling and of the shaft
+ok 187 - Kitchen: one track down the middle of the walkway, clear of the wall cabinets that reach the ceiling and of the shaft
+  ---
+  duration_ms: 2.5596
+  type: 'test'
+  ...
+# Subtest: the down lights follow the hob and the sink of the default layout (z measured from the north wall)
+ok 188 - the down lights follow the hob and the sink of the default layout (z measured from the north wall)
+  ---
+  duration_ms: 0.3166
+  type: 'test'
+  ...
+# Subtest: the mirrored config for the planner view flips both axes and swaps aims, and mirrors back to itself
+ok 189 - the mirrored config for the planner view flips both axes and swaps aims, and mirrors back to itself
+  ---
+  duration_ms: 0.6296
+  type: 'test'
+  ...
+# Subtest: the checks catch a run under the east wall cabinets and a down light off the hob
+ok 190 - the checks catch a run under the east wall cabinets and a down light off the hob
+  ---
+  duration_ms: 0.8655
+  type: 'test'
+  ...
+# Subtest: normal and unknown view requests keep the existing 3D default
+ok 191 - normal and unknown view requests keep the existing 3D default
+  ---
+  duration_ms: 0.8181
+  type: 'test'
+  ...
+# Subtest: recognized view preference is explicit and works with other query parameters
+ok 192 - recognized view preference is explicit and works with other query parameters
+  ---
+  duration_ms: 0.3126
+  type: 'test'
+  ...
+# Subtest: derives water, drain, gas and power points that follow appliance centres
+ok 193 - derives water, drain, gas and power points that follow appliance centres
+  ---
+  duration_ms: 0.7996
+  type: 'test'
+  ...
+# Subtest: hidden appliances contribute no points and moving an appliance moves its points
+ok 194 - hidden appliances contribute no points and moving an appliance moves its points
+  ---
+  duration_ms: 0.1983
+  type: 'test'
+  ...
+# Subtest: routes hug the walls: every vertex lies on a wall line
+ok 195 - routes hug the walls: every vertex lies on a wall line
+  ---
+  duration_ms: 0.6815
+  type: 'test'
+  ...
+# Subtest: does not mutate its input
+ok 196 - does not mutate its input
+  ---
+  duration_ms: 0.4506
+  type: 'test'
+  ...
+# Subtest: summary requires every rule, including non-order rules
+ok 197 - summary requires every rule, including non-order rules
+  ---
+  duration_ms: 1.9311
+  type: 'test'
+  ...
+# Subtest: empty, missing, duplicate and unknown-status rows cannot pass
+ok 198 - empty, missing, duplicate and unknown-status rows cannot pass
+  ---
+  duration_ms: 0.4373
+  type: 'test'
+  ...
+# Subtest: nominal plan dimensions use both actual base depths
+ok 199 - nominal plan dimensions use both actual base depths
+  ---
+  duration_ms: 0.1783
+  type: 'test'
+  ...
+# Subtest: all-pair checking finds a non-neighbor overlapping an enclosing interval
+ok 200 - all-pair checking finds a non-neighbor overlapping an enclosing interval
+  ---
+  duration_ms: 0.7087
+  type: 'test'
+  ...
+# Subtest: 3D separation and face contact do not collide; true overlap does
+ok 201 - 3D separation and face contact do not collide; true overlap does
+  ---
+  duration_ms: 0.3165
+  type: 'test'
+  ...
+# Subtest: baseline fixture passes without mutation
+ok 202 - baseline fixture passes without mutation
+  ---
+  duration_ms: 1.1057
+  type: 'test'
+  ...
+# Subtest: both orders pass but misaligned rack makes overall result fail
+ok 203 - both orders pass but misaligned rack makes overall result fail
+  ---
+  duration_ms: 0.3701
+  type: 'test'
+  ...
+# Subtest: nominal aisle below the configured minimum is a real failure
+ok 204 - nominal aisle below the configured minimum is a real failure
+  ---
+  duration_ms: 0.1795
+  type: 'test'
+  ...
+# Subtest: fixed objects are checked for door clearance, bounds and collision
+ok 205 - fixed objects are checked for door clearance, bounds and collision
+  ---
+  duration_ms: 0.3837
+  type: 'test'
+  ...
+# Subtest: collisions are checked across walls, not only within each run
+ok 206 - collisions are checked across walls, not only within each run
+  ---
+  duration_ms: 0.3245
+  type: 'test'
+  ...
+# Subtest: hidden placeholders stay inactive; malformed visibility fails closed
+ok 207 - hidden placeholders stay inactive; malformed visibility fails closed
+  ---
+  duration_ms: 0.1997
+  type: 'test'
+  ...
+# Subtest: invalid coordinates do not produce a successful or partial success
+ok 208 - invalid coordinates do not produce a successful or partial success
+  ---
+  duration_ms: 0.181
+  type: 'test'
+  ...
+# Subtest: materials do not alter the geometry-validation result
+ok 209 - materials do not alter the geometry-validation result
+  ---
+  duration_ms: 1.3138
+  type: 'test'
+  ...
+# Subtest: valid fixture passes without mutation
+ok 210 - valid fixture passes without mutation
+  ---
+  duration_ms: 2.7259
+  type: 'test'
+  ...
+# Subtest: a real reduction in the nominal aisle fails
+ok 211 - a real reduction in the nominal aisle fails
+  ---
+  duration_ms: 0.25
+  type: 'test'
+  ...
+# Subtest: door-zone violation reports its object and overlap
+ok 212 - door-zone violation reports its object and overlap
+  ---
+  duration_ms: 0.2067
+  type: 'test'
+  ...
+# Subtest: full-height clear zone also checks fixed items
+ok 213 - full-height clear zone also checks fixed items
+  ---
+  duration_ms: 0.12
+  type: 'test'
+  ...
+# Subtest: out-of-room x fails
+ok 214 - out-of-room x fails
+  ---
+  duration_ms: 0.0891
+  type: 'test'
+  ...
+# Subtest: out-of-room y fails
+ok 215 - out-of-room y fails
+  ---
+  duration_ms: 0.056
+  type: 'test'
+  ...
+# Subtest: out-of-room z fails
+ok 216 - out-of-room z fails
+  ---
+  duration_ms: 0.1043
+  type: 'test'
+  ...
+# Subtest: out-of-room h fails
+ok 217 - out-of-room h fails
+  ---
+  duration_ms: 0.0529
+  type: 'test'
+  ...
+# Subtest: out-of-room d fails
+ok 218 - out-of-room d fails
+  ---
+  duration_ms: 0.1954
+  type: 'test'
+  ...
+# Subtest: invalid dimension NaN fails
+ok 219 - invalid dimension NaN fails
+  ---
+  duration_ms: 0.2988
+  type: 'test'
+  ...
+# Subtest: invalid dimension Infinity fails
+ok 220 - invalid dimension Infinity fails
+  ---
+  duration_ms: 0.0966
+  type: 'test'
+  ...
+# Subtest: invalid dimension 600 fails
+ok 221 - invalid dimension 600 fails
+  ---
+  duration_ms: 0.0451
+  type: 'test'
+  ...
+# Subtest: invalid dimension null fails
+ok 222 - invalid dimension null fails
+  ---
+  duration_ms: 0.0302
+  type: 'test'
+  ...
+# Subtest: invalid dimension 0 fails
+ok 223 - invalid dimension 0 fails
+  ---
+  duration_ms: 0.0268
+  type: 'test'
+  ...
+# Subtest: invalid dimension -1 fails
+ok 224 - invalid dimension -1 fails
+  ---
+  duration_ms: 0.0254
+  type: 'test'
+  ...
+# Subtest: malformed layout fails rather than reporting an empty success
+ok 225 - malformed layout fails rather than reporting an empty success
+  ---
+  duration_ms: 0.0646
+  type: 'test'
+  ...
+# Subtest: constraints must be explicit, finite and in-room
+ok 226 - constraints must be explicit, finite and in-room
+  ---
+  duration_ms: 0.0672
+  type: 'test'
+  ...
+# Subtest: duplicate IDs across walls fail
+ok 227 - duplicate IDs across walls fail
+  ---
+  duration_ms: 0.1486
+  type: 'test'
+  ...
+# Subtest: hidden zero-sized placeholders are retained but inactive
+ok 228 - hidden zero-sized placeholders are retained but inactive
+  ---
+  duration_ms: 0.0722
+  type: 'test'
+  ...
+# Subtest: a string hidden flag must not hide an invalid item
+ok 229 - a string hidden flag must not hide an invalid item
+  ---
+  duration_ms: 0.0402
+  type: 'test'
+  ...
+# Subtest: material changes do not change basic geometry-check results
+ok 230 - material changes do not change basic geometry-check results
+  ---
+  duration_ms: 0.0714
+  type: 'test'
+  ...
+# Subtest: touching an interval end is allowed; missing z means floor level
+ok 231 - touching an interval end is allowed; missing z means floor level
+  ---
+  duration_ms: 0.0446
+  type: 'test'
+  ...
+# (node:9576) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///<LOCAL_PATH>/build-checkout/react-configurator/src/config/lobbyLightingConfig.js is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to C:\\Users\\anura\\A501RenderWorker\\build-checkout\\react-configurator\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: the Lobby has two wall-hugging tracks with wall spots, diffused heads and a down spot over the ironing board
+ok 232 - the Lobby has two wall-hugging tracks with wall spots, diffused heads and a down spot over the ironing board
+  ---
+  duration_ms: 1.4539
+  type: 'test'
+  ...
+# Subtest: each track is its own circuit with its own driver, and the sliders are pendant, track 1, track 2
+ok 233 - each track is its own circuit with its own driver, and the sliders are pendant, track 1, track 2
+  ---
+  duration_ms: 0.3675
+  type: 'test'
+  ...
+# Subtest: the old strip lights are gone from the Lobby and the Pooja alcove; the pendant and tracks stay
+ok 234 - the old strip lights are gone from the Lobby and the Pooja alcove; the pendant and tracks stay
+  ---
+  duration_ms: 0.0789
+  type: 'test'
+  ...
+# Subtest: both tracks leave the middle of the ceiling free and stay clear of the doors and the dining pendant
+ok 235 - both tracks leave the middle of the ceiling free and stay clear of the doors and the dining pendant
+  ---
+  duration_ms: 0.2726
+  type: 'test'
+  ...
+# Subtest: the checks catch a down spot that misses the ironing board, a spot aimed across the room and an overloaded run
+ok 236 - the checks catch a down spot that misses the ironing board, a spot aimed across the room and an overloaded run
+  ---
+  duration_ms: 0.3611
+  type: 'test'
+  ...
+# Subtest: update requests require local or exact private Codespaces origin
+ok 237 - update requests require local or exact private Codespaces origin
+  ---
+  duration_ms: 1.229
+  type: 'test'
+  ...
+# Subtest: updates a clean checkout by fast forward and preserves local edits
+ok 238 - updates a clean checkout by fast forward and preserves local edits
+  ---
+  duration_ms: 1816.6417
+  type: 'test'
+  ...
+# Subtest: v1 to independently owned v2 round trip preserves every profile setting
+ok 239 - v1 to independently owned v2 round trip preserves every profile setting
+  ---
+  duration_ms: 7.2802
+  type: 'test'
+  ...
+# Subtest: production profiles retain supported rooms and source routing
+ok 240 - production profiles retain supported rooms and source routing
+  ---
+  duration_ms: 4.0768
+  type: 'test'
+  ...
+# Subtest: editing one room never mutates another room or the source documents
+ok 241 - editing one room never mutates another room or the source documents
+  ---
+  duration_ms: 3.902
+  type: 'test'
+  ...
+# Subtest: missing files and path traversal fail instead of using historical defaults
+ok 242 - missing files and path traversal fail instead of using historical defaults
+  ---
+  duration_ms: 2.2547
+  type: 'test'
+  ...
+# Subtest: malformed camera, native source and quality settings are rejected
+ok 243 - malformed camera, native source and quality settings are rejected
+  ---
+  duration_ms: 2.3103
+  type: 'test'
+  ...
+# Subtest: v1 round trip preserves custom positions, elevations, metadata, zeros and modules
+ok 244 - v1 round trip preserves custom positions, elevations, metadata, zeros and modules
+  ---
+  duration_ms: 2.6255
+  type: 'test'
+  ...
+# Subtest: returned states/documents share no mutable references with input/defaults
+ok 245 - returned states/documents share no mutable references with input/defaults
+  ---
+  duration_ms: 1.2039
+  type: 'test'
+  ...
+# Subtest: legacy array shape never resets a non-preset hob or zero-sized placeholders
+ok 246 - legacy array shape never resets a non-preset hob or zero-sized placeholders
+  ---
+  duration_ms: 0.5166
+  type: 'test'
+  ...
+# Subtest: legacy partial settings use defaults not the currently open project
+ok 247 - legacy partial settings use defaults not the currently open project
+  ---
+  duration_ms: 0.3219
+  type: 'test'
+  ...
+# Subtest: legacy layoutModel conversion preserves z, hidden, fixed and shaft axis semantics
+ok 248 - legacy layoutModel conversion preserves z, hidden, fixed and shaft axis semantics
+  ---
+  duration_ms: 0.2437
+  type: 'test'
+  ...
+# Subtest: explicit legacy short aliases take precedence over rich shaft extents
+ok 249 - explicit legacy short aliases take precedence over rich shaft extents
+  ---
+  duration_ms: 0.2584
+  type: 'test'
+  ...
+# Subtest: live arrays are authoritative over obsolete derived layoutModel geometry
+ok 250 - live arrays are authoritative over obsolete derived layoutModel geometry
+  ---
+  duration_ms: 0.3116
+  type: 'test'
+  ...
+# Subtest: draft rule violations remain loadable rather than reset to preset geometry
+ok 251 - draft rule violations remain loadable rather than reset to preset geometry
+  ---
+  duration_ms: 0.2728
+  type: 'test'
+  ...
+# Subtest: unsupported schema 0 rejected
+ok 252 - unsupported schema 0 rejected
+  ---
+  duration_ms: 0.5681
+  type: 'test'
+  ...
+# Subtest: unsupported schema 2 rejected
+ok 253 - unsupported schema 2 rejected
+  ---
+  duration_ms: 0.8837
+  type: 'test'
+  ...
+# Subtest: unsupported schema "1" rejected
+ok 254 - unsupported schema "1" rejected
+  ---
+  duration_ms: 0.2235
+  type: 'test'
+  ...
+# Subtest: unsupported schema null rejected
+ok 255 - unsupported schema null rejected
+  ---
+  duration_ms: 0.136
+  type: 'test'
+  ...
+# Subtest: room width mismatch rejected
+ok 256 - room width mismatch rejected
+  ---
+  duration_ms: 0.2116
+  type: 'test'
+  ...
+# Subtest: room length mismatch rejected
+ok 257 - room length mismatch rejected
+  ---
+  duration_ms: 0.2923
+  type: 'test'
+  ...
+# Subtest: room height mismatch rejected
+ok 258 - room height mismatch rejected
+  ---
+  duration_ms: 0.2014
+  type: 'test'
+  ...
+# Subtest: invalid document d=>{d.format='other-app';} rejected without mutation
+ok 259 - invalid document d=>{d.format='other-app';} rejected without mutation
+  ---
+  duration_ms: 0.4898
+  type: 'test'
+  ...
+# Subtest: invalid document d=>{d.unit='cm';} rejected without mutation
+ok 260 - invalid document d=>{d.unit='cm';} rejected without mutation
+  ---
+  duration_ms: 0.3137
+  type: 'test'
+  ...
+# Subtest: invalid document d=>{d.east='bad';} rejected without mutation
+ok 261 - invalid document d=>{d.east='bad';} rejected without mutation
+  ---
+  duration_ms: 0.2083
+  type: 'test'
+  ...
+# Subtest: invalid document d=>{delete d.west;} rejected without mutation
+ok 262 - invalid document d=>{delete d.west;} rejected without mutation
+  ---
+  duration_ms: 0.3126
+  type: 'test'
+  ...
+# Subtest: invalid document d=>{d.west[1].id=d.east[0].id;} rejected without mutation
+ok 263 - invalid document d=>{d.west[1].id=d.east[0].id;} rejected without mutation
+  ---
+  duration_ms: 0.8799
+  type: 'test'
+  ...
+# Subtest: invalid document d=>{d.east[0].y='2255';} rejected without mutation
+ok 264 - invalid document d=>{d.east[0].y='2255';} rejected without mutation
+  ---
+  duration_ms: 0.6081
+  type: 'test'
+  ...
+# Subtest: invalid document d=>{d.east[0].hidden='false';} rejected without mutation
+ok 265 - invalid document d=>{d.east[0].hidden='false';} rejected without mutation
+  ---
+  duration_ms: 0.5118
+  type: 'test'
+  ...
+# Subtest: invalid document d=>{d.east[0].color='red" onclick="bad';} rejected without mutation
+ok 266 - invalid document d=>{d.east[0].color='red" onclick="bad';} rejected without mutation
+  ---
+  duration_ms: 0.4695
+  type: 'test'
+  ...
+# Subtest: invalid document d=>{d.materials.cabinetBody='url(bad)';} rejected without mutation
+ok 267 - invalid document d=>{d.materials.cabinetBody='url(bad)';} rejected without mutation
+  ---
+  duration_ms: 0.5499
+  type: 'test'
+  ...
+# Subtest: invalid document d=>{d.modules.west=[{id:'bad',width:-1}];} rejected without mutation
+ok 268 - invalid document d=>{d.modules.west=[{id:'bad',width:-1}];} rejected without mutation
+  ---
+  duration_ms: 0.427
+  type: 'test'
+  ...
+# Subtest: invalid document d=>{d.modules='bad';} rejected without mutation
+ok 269 - invalid document d=>{d.modules='bad';} rejected without mutation
+  ---
+  duration_ms: 0.8834
+  type: 'test'
+  ...
+# Subtest: invalid document d=>{d.grid=30;} rejected without mutation
+ok 270 - invalid document d=>{d.grid=30;} rejected without mutation
+  ---
+  duration_ms: 0.3798
+  type: 'test'
+  ...
+# Subtest: invalid document d=>{d.viewOptions.hide3DObstructions='false';} rejected without mutation
+ok 271 - invalid document d=>{d.viewOptions.hide3DObstructions='false';} rejected without mutation
+  ---
+  duration_ms: 0.3373
+  type: 'test'
+  ...
+# Subtest: invalid document d=>{d.eastTopUpperDepth=0;} rejected without mutation
+ok 272 - invalid document d=>{d.eastTopUpperDepth=0;} rejected without mutation
+  ---
+  duration_ms: 0.4103
+  type: 'test'
+  ...
+# Subtest: invalid document d=>{delete d.materials;} rejected without mutation
+ok 273 - invalid document d=>{delete d.materials;} rejected without mutation
+  ---
+  duration_ms: 0.5473
+  type: 'test'
+  ...
+# Subtest: invalid document d=>{d.east[0].d=0;} rejected without mutation
+ok 274 - invalid document d=>{d.east[0].d=0;} rejected without mutation
+  ---
+  duration_ms: 0.3039
+  type: 'test'
+  ...
+# Subtest: nonfinite numbers are rejected before stringify can conceal them
+ok 275 - nonfinite numbers are rejected before stringify can conceal them
+  ---
+  duration_ms: 0.378
+  type: 'test'
+  ...
+# Subtest: invalid JSON, missing arrays and nonsupported payloads are rejected
+ok 276 - invalid JSON, missing arrays and nonsupported payloads are rejected
+  ---
+  duration_ms: 0.3034
+  type: 'test'
+  ...
+# Subtest: byte order mark is accepted
+ok 277 - byte order mark is accepted
+  ---
+  duration_ms: 0.4776
+  type: 'test'
+  ...
+# Subtest: oversized and too deeply nested documents fail predictably
+ok 278 - oversized and too deeply nested documents fail predictably
+  ---
+  duration_ms: 2.5213
+  type: 'test'
+  ...
+# Subtest: prototype-pollution keys and non-JSON values are rejected
+ok 279 - prototype-pollution keys and non-JSON values are rejected
+  ---
+  duration_ms: 0.4847
+  type: 'test'
+  ...
+# Subtest: explicit null fields are invalid, not silently replaced by legacy defaults
+ok 280 - explicit null fields are invalid, not silently replaced by legacy defaults
+  ---
+  duration_ms: 0.8486
+  type: 'test'
+  ...
+# Subtest: known colorless hidden placeholders retain absent color during legacy migration
+ok 281 - known colorless hidden placeholders retain absent color during legacy migration
+  ---
+  duration_ms: 0.4395
+  type: 'test'
+  ...
+# Subtest: legacy autosave migrates to a new key and original bytes are retained
+ok 282 - legacy autosave migrates to a new key and original bytes are retained
+  ---
+  duration_ms: 3.7713
+  type: 'test'
+  ...
+# Subtest: saving before load is rejected
+ok 283 - saving before load is rejected
+  ---
+  duration_ms: 0.4162
+  type: 'test'
+  ...
+# Subtest: new key takes precedence over old legacy state
+ok 284 - new key takes precedence over old legacy state
+  ---
+  duration_ms: 1.0854
+  type: 'test'
+  ...
+# Subtest: corrupt versioned autosave is protected, not replaced by valid legacy or defaults
+ok 285 - corrupt versioned autosave is protected, not replaced by valid legacy or defaults
+  ---
+  duration_ms: 2.0451
+  type: 'test'
+  ...
+# Subtest: corrupt legacy autosave remains untouched
+ok 286 - corrupt legacy autosave remains untouched
+  ---
+  duration_ms: 0.3075
+  type: 'test'
+  ...
+# Subtest: previous valid autosave is recoverable without mutating primary
+ok 287 - previous valid autosave is recoverable without mutating primary
+  ---
+  duration_ms: 0.9982
+  type: 'test'
+  ...
+# Subtest: unchanged saves do not consume backup writes
+ok 288 - unchanged saves do not consume backup writes
+  ---
+  duration_ms: 0.5347
+  type: 'test'
+  ...
+# Subtest: quota failure on backup leaves primary unchanged
+ok 289 - quota failure on backup leaves primary unchanged
+  ---
+  duration_ms: 0.8127
+  type: 'test'
+  ...
+# Subtest: failed primary write preserves both old primary and backup
+ok 290 - failed primary write preserves both old primary and backup
+  ---
+  duration_ms: 1.5703
+  type: 'test'
+  ...
+# Subtest: another tab changing or clearing storage blocks stale autosave
+ok 291 - another tab changing or clearing storage blocks stale autosave
+  ---
+  duration_ms: 1.6872
+  type: 'test'
+  ...
+# Subtest: explicit resume backs up unreadable/conflicting bytes before replacement
+ok 292 - explicit resume backs up unreadable/conflicting bytes before replacement
+  ---
+  duration_ms: 0.6911
+  type: 'test'
+  ...
+# Subtest: failed recovery backup never overwrites the damaged original
+ok 293 - failed recovery backup never overwrites the damaged original
+  ---
+  duration_ms: 0.3654
+  type: 'test'
+  ...
+# Subtest: blocked storage access is reported, not swallowed
+ok 294 - blocked storage access is reported, not swallowed
+  ---
+  duration_ms: 0.1891
+  type: 'test'
+  ...
+# Subtest: malformed state never replaces the last stored project
+ok 295 - malformed state never replaces the last stored project
+  ---
+  duration_ms: 0.5157
+  type: 'test'
+  ...
+# Subtest: named versions share v1 format and retain original legacy slots
+ok 296 - named versions share v1 format and retain original legacy slots
+  ---
+  duration_ms: 0.6306
+  type: 'test'
+  ...
+# Subtest: named-slot backup failure preserves original named project
+ok 297 - named-slot backup failure preserves original named project
+  ---
+  duration_ms: 0.6811
+  type: 'test'
+  ...
+# Subtest: missing slot and missing previous save are explicit errors
+ok 298 - missing slot and missing previous save are explicit errors
+  ---
+  duration_ms: 0.1873
+  type: 'test'
+  ...
+# (node:12576) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///<LOCAL_PATH>/build-checkout/react-configurator/src/config/roomShellConfig.js is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to C:\\Users\\anura\\A501RenderWorker\\build-checkout\\react-configurator\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: drawing room review carries orientation, openings, layout, measurements and tasks
+ok 299 - drawing room review carries orientation, openings, layout, measurements and tasks
+  ---
+  duration_ms: 10.6204
+  type: 'test'
+  ...
+# Subtest: layouts A and B describe different arrangements of the same room
+ok 300 - layouts A and B describe different arrangements of the same room
+  ---
+  duration_ms: 3.3971
+  type: 'test'
+  ...
+# Subtest: other rooms still produce a usable brief from generic config
+ok 301 - other rooms still produce a usable brief from generic config
+  ---
+  duration_ms: 0.851
+  type: 'test'
+  ...
+# Subtest: references are listed as links with tags and notes, and the limits are stated
+ok 302 - references are listed as links with tags and notes, and the limits are stated
+  ---
+  duration_ms: 1.41
+  type: 'test'
+  ...
+# Subtest: the text names the picture it belongs with, so a stale image is easy to spot
+ok 303 - the text names the picture it belongs with, so a stale image is easy to spot
+  ---
+  duration_ms: 0.5732
+  type: 'test'
+  ...
+# Subtest: the lobby and bedrooms get labelled plan boxes and their exact ranges in the text
+ok 304 - the lobby and bedrooms get labelled plan boxes and their exact ranges in the text
+  ---
+  duration_ms: 0.7973
+  type: 'test'
+  ...
+# Subtest: the lobby brief mentions the closed old Bedroom 1 door as plain wall
+ok 305 - the lobby brief mentions the closed old Bedroom 1 door as plain wall
+  ---
+  duration_ms: 0.2419
+  type: 'test'
+  ...
+# (node:13544) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///<LOCAL_PATH>/build-checkout/react-configurator/src/config/studyLightingConfig.js is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to C:\\Users\\anura\\A501RenderWorker\\build-checkout\\react-configurator\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: Study (Bedroom 2): a bookshelf/general track and a bed/desk track, each its own circuit, clear of the assumed fan
+ok 306 - Study (Bedroom 2): a bookshelf/general track and a bed/desk track, each its own circuit, clear of the assumed fan
+  ---
+  duration_ms: 2.403
+  type: 'test'
+  ...
+# Subtest: track 1 puts a spot on each bookshelf bay; track 2 lights the bed from the foot side and the desk from above
+ok 307 - track 1 puts a spot on each bookshelf bay; track 2 lights the bed from the foot side and the desk from above
+  ---
+  duration_ms: 0.3842
+  type: 'test'
+  ...
+# Subtest: the checks catch a desk light that misses the desk and a run too close to the east wall
+ok 308 - the checks catch a desk light that misses the desk and a run too close to the east wall
+  ---
+  duration_ms: 0.9
+  type: 'test'
+  ...
+# (node:14100) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///<LOCAL_PATH>/build-checkout/react-configurator/src/config/entryConfig.js is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to C:\\Users\\anura\\A501RenderWorker\\build-checkout\\react-configurator\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: the west cabinet fits west of the partition, inside the pocket depth, clear of the entry door
+ok 309 - the west cabinet fits west of the partition, inside the pocket depth, clear of the entry door
+  ---
+  duration_ms: 2.0726
+  type: 'test'
+  ...
+# Subtest: the narrow hidden door lies inside the Blender door position (plan x 653-684, 2100 high); the closet is unchanged
+ok 310 - the narrow hidden door lies inside the Blender door position (plan x 653-684, 2100 high); the closet is unchanged
+  ---
+  duration_ms: 0.3175
+  type: 'test'
+  ...
+# Subtest: the router cabinet is wall-hung again, above the north sofa, and clear of the west cabinet door
+ok 311 - the router cabinet is wall-hung again, above the north sofa, and clear of the west cabinet door
+  ---
+  duration_ms: 5.6439
+  type: 'test'
+  ...
+# Subtest: the furniture standing in front of the west cabinet door is reported for every layout
+ok 312 - the furniture standing in front of the west cabinet door is reported for every layout
+  ---
+  duration_ms: 0.3412
+  type: 'test'
+  ...
+# Subtest: the checks catch a door wider than the closet, past the partition, too deep or too tall
+ok 313 - the checks catch a door wider than the closet, past the partition, too deep or too tall
+  ---
+  duration_ms: 0.9465
+  type: 'test'
+  ...
+# Subtest: the shared Drawing Room / Entry wall is cut only across the door, from the floor to the door head
+ok 314 - the shared Drawing Room / Entry wall is cut only across the door, from the floor to the door head
+  ---
+  duration_ms: 0.19
+  type: 'test'
+  ...
+# Subtest: the hidden door is only as wide as the owner (5 ft 7 in, 80 kg) needs to walk through
+ok 315 - the hidden door is only as wide as the owner (5 ft 7 in, 80 kg) needs to walk through
+  ---
+  duration_ms: 0.4495
+  type: 'test'
+  ...
+# Subtest: exports the existing plan directions into Blender metres without mutation
+ok 316 - exports the existing plan directions into Blender metres without mutation
+  ---
+  duration_ms: 1.7887
+  type: 'test'
+  ...
+# Subtest: supports all preset and quality combinations
+ok 317 - supports all preset and quality combinations
+  ---
+  duration_ms: 0.2914
+  type: 'test'
+  ...
+# Subtest: exports a selected artifact and its exact support ID
+ok 318 - exports a selected artifact and its exact support ID
+  ---
+  duration_ms: 0.6009
+  type: 'test'
+  ...
+# Subtest: refuses invalid presets, scales, dimensions and output IDs
+ok 319 - refuses invalid presets, scales, dimensions and output IDs
+  ---
+  duration_ms: 0.3355
+  type: 'test'
+  ...
+# Subtest: refuses floating, unknown and overlapping artifact selections
+ok 320 - refuses floating, unknown and overlapping artifact selections
+  ---
+  duration_ms: 0.1203
+  type: 'test'
+  ...
+# Subtest: accepts only generated same-origin PNG paths
+ok 321 - accepts only generated same-origin PNG paths
+  ---
+  duration_ms: 0.2202
+  type: 'test'
+  ...
+# Subtest: refuses shared support across room boundaries
+ok 322 - refuses shared support across room boundaries
+  ---
+  duration_ms: 0.1464
+  type: 'test'
+  ...
+# (node:4424) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///<LOCAL_PATH>/build-checkout/react-configurator/src/config/roomShellConfig.js is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to C:\\Users\\anura\\A501RenderWorker\\build-checkout\\react-configurator\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: Drawing Room south window: scanned frame, three bays, transom and the decided additions
+ok 323 - Drawing Room south window: scanned frame, three bays, transom and the decided additions
+  ---
+  duration_ms: 1.4217
+  type: 'test'
+  ...
+# Subtest: a window without design fields is a plain frame: no bays design, no leaves, no nets
+ok 324 - a window without design fields is a plain frame: no bays design, no leaves, no nets
+  ---
+  duration_ms: 0.2141
+  type: 'test'
+  ...
+# Subtest: the checker rejects a transom outside the frame, a bay count mismatch and a screen roll that does not park
+ok 325 - the checker rejects a transom outside the frame, a bay count mismatch and a screen roll that does not park
+  ---
+  duration_ms: 0.3842
+  type: 'test'
+  ...
+# Subtest: Bedroom 3 south side as scanned: wardrobe bay, balcony door and window with top lights and a mid rail
+ok 326 - Bedroom 3 south side as scanned: wardrobe bay, balcony door and window with top lights and a mid rail
+  ---
+  duration_ms: 0.2771
+  type: 'test'
+  ...
+# Subtest: Bedroom 3 design check against the scan: toilet door, corner cupboard, AC unit and the east cabinetry
+ok 327 - Bedroom 3 design check against the scan: toilet door, corner cupboard, AC unit and the east cabinetry
+  ---
+  duration_ms: 6.9784
+  type: 'test'
+  ...
+# Subtest: the project work plan is valid and has no ordering warnings
+ok 328 - the project work plan is valid and has no ordering warnings
+  ---
+  duration_ms: 12.6441
+  type: 'test'
+  ...
+# Subtest: tasks come out in phase order with every dependency first
+ok 329 - tasks come out in phase order with every dependency first
+  ---
+  duration_ms: 2.014
+  type: 'test'
+  ...
+# Subtest: the owner's civil items are in the plan and wait for structural approval
+ok 330 - the owner's civil items are in the plan and wait for structural approval
+  ---
+  duration_ms: 1.9006
+  type: 'test'
+  ...
+# Subtest: ready tasks follow status changes; started work with unfinished prerequisites is flagged
+ok 331 - ready tasks follow status changes; started work with unfinished prerequisites is flagged
+  ---
+  duration_ms: 1.2743
+  type: 'test'
+  ...
+# Subtest: validation refuses unknown references, duplicates and loops
+ok 332 - validation refuses unknown references, duplicates and loops
+  ---
+  duration_ms: 1.8644
+  type: 'test'
+  ...
+# Subtest: new task ids are unique and safe
+ok 333 - new task ids are unique and safe
+  ---
+  duration_ms: 0.4369
+  type: 'test'
+  ...
+# Subtest: saving validates first, replaces the file and keeps a backup
+ok 334 - saving validates first, replaces the file and keeps a backup
+  ---
+  duration_ms: 26.6429
+  type: 'test'
+  ...
+1..334
+# tests 334
+# suites 0
+# pass 334
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 2251.3544
+
+> home-interior@1.0.0 build
+> vite build
+
+vite v5.4.21 building for production...
+transforming...
+✓ 910 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                             0.38 kB │ gzip:   0.28 kB
+dist/assets/shoe-rack-wood-DN05ZZCn.png                    34.05 kB
+dist/assets/home a 501 floor - unmodified-ysNysRCF.png    141.67 kB
+dist/assets/arrival-door-wood-8ZZDJ-c-.png                150.43 kB
+dist/assets/floorplan_final-Di7c9Q31.dxf                  355.62 kB
+dist/assets/index-BjKwVxW5.css                              4.84 kB │ gzip:   1.40 kB
+dist/assets/purify.es-BnINGy_Y.js                          28.93 kB │ gzip:  11.14 kB
+dist/assets/index.es-CnPfsaq3.js                          150.85 kB │ gzip:  51.62 kB
+dist/assets/html2canvas.esm-CBrSDip1.js                   201.42 kB │ gzip:  48.03 kB
+dist/assets/jspdf.es.min-BqEc6coX.js                      390.44 kB │ gzip: 128.77 kB
+dist/assets/index-BOFxagn7.js                           3,447.56 kB │ gzip: 985.88 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 11.71s
