@@ -31,6 +31,7 @@ import {KITCHEN_LIGHTING} from './config/kitchenLightingConfig.js'
 import {createDrawingRoomLayouts,DRAWING_LAYOUTS} from './rooms/drawing/DrawingRoomLayouts.js'
 import {createStoreStorage} from './rooms/shared/StoreStorage.js'
 import {BALCONY_OFFICE,BALCONY_DESK_HEIGHT_KEY} from './config/balconyOfficeConfig.js'
+import {balconyDeskLayout} from './domain/balconyDesk.mjs'
 import {KITCHEN,KITCHEN_REFRIGERATOR,EAST_INIT,WEST_INIT,KITCHEN_AUTOSAVE_KEY,NORTH_HOB_OPTION_Y_MM,EAST_TOP_UPPER_DEPTH,WEST_TOP_UPPER_DEPTH,autoFillModules} from './config/kitchenConfig.js'
 import {ENTRY,ENTRY_WALL_SEGMENTS,entryPocketEastWallSpans,PLAN_IMAGE} from './config/entryConfig.js'
 import {createEntryArrivalDoor} from './rooms/entry/EntryArrivalDoor.js'
@@ -421,19 +422,30 @@ function LiveWholeHome3D({onOpenRoom}){
     const og=roomGroup(ob,od.widthMm,od.lengthMm)
     const env=office.envelope,bandBottom=env.lowerBrickParapetMm/1000,bandTop=(env.lowerBrickParapetMm+env.windowBandMm)/1000
     for(const side of env.windowWalls)roomEdge(ob,od.widthMm,od.lengthMm,side,[{start:0,end:side==='south'?od.widthMm:od.lengthMm,bottom:bandBottom,top:bandTop,glass:true}])
-    const desk=office.worktop.westAdjustable,rear=office.worktop.rearCabinet
+    // Desk positions come from the pure balcony layout (src/domain/balconyDesk.mjs): sit-stand top, rear cabinet, fixed
+    // south section with its cabinet, PC, printer and laptop, all in balcony millimetres (x from the west wall, z from the north).
+    const desk=office.worktop.westAdjustable,deskLayout=balconyDeskLayout(office),rear=deskLayout.rear,fixedDesk=deskLayout.fixed
     const savedDeskHeight=Number(localStorage.getItem(BALCONY_DESK_HEIGHT_KEY))
     const deskHeight=Number.isFinite(savedDeskHeight)&&savedDeskHeight>=desk.minHeightMm&&savedDeskHeight<=desk.maxHeightMm?savedDeskHeight:desk.defaultHeightMm
-    localBox(og,desk.depthMm,desk.topThicknessMm,desk.widthMm,desk.depthMm/2,deskHeight,od.lengthMm-desk.widthMm/2,paleWood)
-    localBox(og,rear.depthMm,rear.topHeightMm-rear.toeClearanceMm,rear.widthMm,rear.depthMm/2,(rear.topHeightMm+rear.toeClearanceMm)/2,od.lengthMm-rear.widthMm/2,cabinet)
-    for(let bay=1;bay<rear.bayCount;bay++)localBox(og,18,rear.topHeightMm-rear.toeClearanceMm,rear.depthMm,rear.depthMm/2,(rear.topHeightMm+rear.toeClearanceMm)/2,od.lengthMm-rear.widthMm*bay/rear.bayCount,wood)
+    const mid=(a,b)=>(a+b)/2
+    localBox(og,desk.depthMm,desk.topThicknessMm,deskLayout.moving.lengthMm,mid(deskLayout.moving.x0,deskLayout.moving.x1),deskHeight-desk.topThicknessMm/2,mid(deskLayout.moving.zStart,deskLayout.moving.zEnd),paleWood)
+    localBox(og,rear.depthMm,rear.topMm-rear.toeMm,rear.end-rear.start,rear.depthMm/2,mid(rear.toeMm,rear.topMm),mid(rear.start,rear.end),cabinet)
+    for(const bay of rear.bays.slice(1))localBox(og,rear.depthMm+10,rear.topMm-rear.toeMm,18,rear.depthMm/2,mid(rear.toeMm,rear.topMm),bay.start,wood)
+    if(fixedDesk){
+      localBox(og,fixedDesk.x1-fixedDesk.x0,fixedDesk.thicknessMm,fixedDesk.lengthMm,mid(fixedDesk.x0,fixedDesk.x1),fixedDesk.topHeightMm-fixedDesk.thicknessMm/2,mid(fixedDesk.zStart,fixedDesk.zEnd),paleWood)
+      localBox(og,fixedDesk.cabinet.x1-fixedDesk.cabinet.x0,fixedDesk.cabinet.y1-fixedDesk.cabinet.y0,fixedDesk.lengthMm-4,mid(fixedDesk.cabinet.x0,fixedDesk.cabinet.x1),mid(fixedDesk.cabinet.y0,fixedDesk.cabinet.y1),mid(fixedDesk.zStart,fixedDesk.zEnd),cabinet)
+      const pr=fixedDesk.printer
+      if(pr)localBox(og,pr.x1-pr.x0,pr.y1-pr.y0,pr.zEnd-pr.zStart,mid(pr.x0,pr.x1),mid(pr.y0,pr.y1),pr.centerZ,screen)
+    }
     const north=office.cabinetry.northWall
     localBox(og,od.widthMm,north.upper.heightMm,north.upper.depthMm,od.widthMm/2,od.floorToCeilingMm-north.upper.heightMm/2,north.upper.depthMm/2,cabinet)
     localBox(og,north.lower.widthMm,north.lower.heightMm,north.lower.depthMm,north.lower.widthMm/2,north.lower.heightMm/2,north.lower.depthMm/2,cabinet)
-    office.equipment.monitors.forEach((monitor,index)=>localBox(og,45,monitor.heightWithStandMm*.75,monitor.widthMm,index?470:350,deskHeight+monitor.heightWithStandMm*.48,od.lengthMm-(index?850:1350),screen))
-    localBox(og,215,475,410,155,320,od.lengthMm-rear.widthMm+250,cabinet) // PC in the north desk bay.
-    localBox(og,280,190,440,155,410,od.lengthMm-rear.widthMm/2,screen) // Printer on the centre pull-out shelf.
-    localBox(og,office.equipment.laptop.depthMm,18,office.equipment.laptop.widthMm,560,deskHeight+18,od.lengthMm-500,screen)
+    const mon=deskLayout.monitors
+    for(const [m,spec] of [[mon.right,office.equipment.monitors.find(x=>x.side==='right')],[mon.left,office.equipment.monitors.find(x=>x.side==='left')]])localBox(og,45,m.heightMm,m.widthMm,deskLayout.moving.x0+130,deskHeight+mon.screenBottomMm+m.heightMm/2,m.centerZ,screen)
+    const pc=deskLayout.pcTower
+    localBox(og,pc.x1-pc.x0,pc.y1-pc.y0,pc.zEnd-pc.zStart,mid(pc.x0,pc.x1),mid(pc.y0,pc.y1),pc.centerZ,cabinet)
+    const lap=deskLayout.laptop,lapY=lap.on==='fixed'?lap.topY:deskHeight
+    localBox(og,lap.depthMm,18,lap.widthMm,mid(lap.x0,lap.x1),lapY+9,lap.centerZ,screen)
 
     // Bedroom 1's plan bounds (HOME_ROOM_LAYOUTS) include its east balcony (plan x 273-339). The room frame is the bedroom
     // itself, west wall (plan x 515) to east wall (plan x 339, the balcony's inner edge); the balcony extension continues past
