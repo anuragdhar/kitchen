@@ -3,6 +3,29 @@
 Plain-language note for the owner. Where to look: the **Work plan** button in the app (the budget is at the top of the
 page), `docs/NEXT_STEPS.md` (what to do first) and `docs/WORK_PLAN_BUDGET.md` (every figure and every rate).
 
+## Update, later on 2026-10-05: two finished notes folded in
+
+The figures in sections 1 to 6 below are as first written (97 tasks, Rs 15.2 to 26.3 lakh). After folding in the note on
+tracks and ceiling mouldings and the Bedroom 1 design note, the plan has **101 tasks** and the range is
+**Rs 15,14,500 to Rs 26,58,000** (about Rs 15.1 to 26.6 lakh) for 91 estimated tasks; 10 are still not estimated. The
+generated documents and the Work plan page always show the current figures.
+
+- **Tracks and mouldings.** The tracks in the Drawing Room, Lobby and Bedroom 3 were moved or shortened onto flat ceiling
+  (3.95 / 3.5 / 5.5 m of track; heads and drivers unchanged), so their cost fell slightly. The placeholder became a real
+  task: tape the mouldings (A25) and photograph the Bedroom 1, Study and Kitchen ceilings, which have not been scanned
+  (A26). New task: the electrician sets out every track from the real mouldings before fixing any feed.
+- **Lobby dining pendant.** There is no ceiling point over the table. A decision task (C33) and a task for a new feed,
+  priced from nothing to one light point. Also asked: does the domed ceiling light stay (C34)?
+- **Bedroom 1.** Layout B (bed head on the south wall) is recommended by its design note but NOT chosen: it is a
+  decision task (C35), and what B adds (dressing table, mirror, bedside table) is a separate "only if layout B" task
+  priced from nothing to Rs 27,500. The wardrobes task is now real: the same three wardrobes in both layouts, the
+  balcony one with sliding panels. The medicine cabinet, the closed doorway (acoustic board if B) and the bedroom track
+  plan (track 2 turns if B) each say what the decision changes. New items: A27 (tape or scan Bedroom 1), C36 (which way
+  the doors open), C37 (west wardrobe sliding?), C38 (is the balcony table used?).
+- **What to do first** now starts: C12 TV size, A12 Drawing Room width, A2 and D2 electrician's survey, A25 mouldings,
+  A26 ceiling photographs, B3 society permission, C35 Bedroom 1 layout, A24 Bedroom 1 door wall, A5 the shaft.
+- Still holding a place: the electrical plans, the palette and the AC plan.
+
 ## 1. What changed in the plan
 
 The plan had 61 tasks; it now has 97. Nothing has been marked started or done.
