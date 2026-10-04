@@ -322,3 +322,8 @@ Blender exports and stills were not regenerated for any of this.
   `ENTRY.shoeRack.acBay`, checks in `src/domain/entryFittings.mjs`, a toggle on the Main entry page (off by default; the
   plain rack 865 x 2134 x 381 is unchanged). By typical sizes it fits lengthwise (platform about 900 mm beyond the wall)
   and not across (needs 1200 of width). Details and conditions: `docs/changes/2026-10-05-shoe-rack-ac-bay.md`.
+
+- AC outdoor units at the owner's four plan marks (Bedroom 3 and Bedroom 2 existing; Bedroom 1 and Drawing Room proposals),
+  typical 1.5 ton casings 800 x 550 x 300: `src/config/acOutdoorUnitsConfig.js`, drawn in Whole home 3D and on the Bedroom 3
+  page. The Lobby concept condenser moved about 1 m south on the same strip to clear Bedroom 1's. Kitchen 3D: Dark room now
+  also hides the general preview lighting and the slider levels hold. Details: `docs/changes/2026-10-05-ac-outdoor-units.md`.

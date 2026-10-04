@@ -26,6 +26,7 @@ import {createBedroom3WestChest} from './rooms/bedroom3/Bedroom3WestChest.js'
 import {createWindowDetail} from './rooms/shared/WindowDetail.js'
 import {createLobbyEastIroningStorage} from './rooms/lobby/LobbyEastIroningStorage.js'
 import {createRoomAirConditioning} from './rooms/shared/RoomAirConditioning.js'
+import {createAcOutdoorUnits} from './rooms/shared/AcOutdoorUnit.js'
 import {createRoomTaskLighting,createRoomTrackLighting} from './rooms/shared/RoomTaskLighting.js'
 import {STUDY_LIGHTING} from './config/studyLightingConfig.js'
 import {KITCHEN_LIGHTING} from './config/kitchenLightingConfig.js'
@@ -391,6 +392,8 @@ function LiveWholeHome3D({onOpenRoom}){
     if(b3Balcony.doorTransomMm)b3g.add(createWindowDetail({kind:'glassDoor',from:b3Balcony.doorFromWestMm/1000,to:(b3Balcony.doorFromWestMm+b3Balcony.doorWidthMm)/1000,bottom:0,top:b3Balcony.doorHeightMm/1000,frameStyle:'dark',design:{fromMm:b3Balcony.doorFromWestMm,widthMm:b3Balcony.doorWidthMm,bottomMm:0,topMm:b3Balcony.doorHeightMm,transomMm:b3Balcony.doorTransomMm}},{z:bedroom3.lengthMm/1000,outward:1,materials:{frame:cabinet,darkFrame:aluminium,glass,handle:aluminium}}))
     if(b3Balcony.windowTransomMm)b3g.add(createWindowDetail({kind:'window',from:b3Balcony.windowFromWestMm/1000,to:(b3Balcony.windowFromWestMm+b3Balcony.windowWidthMm)/1000,bottom:b3Balcony.windowSillMm/1000,top:b3Balcony.windowTopMm/1000,frameStyle:'dark',mullionFractions:[],design:{fromMm:b3Balcony.windowFromWestMm,widthMm:b3Balcony.windowWidthMm,bottomMm:b3Balcony.windowSillMm,topMm:b3Balcony.windowTopMm,transomMm:b3Balcony.windowTransomMm,railsMm:b3Balcony.windowRailsMm}},{z:bedroom3.lengthMm/1000,outward:1,materials:{frame:cabinet,darkFrame:aluminium,glass,handle:aluminium}}))
     b3g.add(createBedroom3SouthExtension(bedroom3))
+    // AC outdoor units at the owner's plan marks (config/acOutdoorUnitsConfig.js), in plan coordinates.
+    model.add(createAcOutdoorUnits(X,Z))
     b3g.add(createBedroom3Bed(bedroom3))
     const vanity=createBedroom3DressingTable(bedroom3);b3g.add(vanity);vanity.userData.setMirrorOpen(mirrorOpen)
     b3g.add(createBedroom3EntryDoor(bedroom3))

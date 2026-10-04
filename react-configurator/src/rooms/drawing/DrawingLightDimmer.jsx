@@ -21,6 +21,6 @@ export default function DrawingLightDimmer({onChange,onDarkRoom,circuits:CIRCUIT
     </label>)}
     <button type="button" onClick={()=>CIRCUITS.forEach(([id])=>set(id,0))} style={{padding:'4px 10px',borderRadius:8,border:'1px solid #fdba74',background:'#fff',cursor:'pointer'}}>All off</button>
     <button type="button" onClick={()=>CIRCUITS.forEach(([id])=>set(id,100))} style={{padding:'4px 10px',borderRadius:8,border:'1px solid #fdba74',background:'#fff',cursor:'pointer'}}>Planned level</button>
-    <span style={{color:'#9a3412'}}>A preview of where light falls, not a measured brightness.</span>
+    <span style={{color:'#9a3412'}}>A preview of where light falls, not a measured brightness. With every slider off the room is still lit by daylight and the general preview lighting: tick Dark room to switch those off too.</span>
   </div>
 }

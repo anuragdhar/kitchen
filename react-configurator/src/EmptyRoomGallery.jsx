@@ -18,6 +18,8 @@ import {createBedroom3Wardrobe} from './rooms/bedroom3/Bedroom3Wardrobe.js'
 import {createBedroom3WestChest} from './rooms/bedroom3/Bedroom3WestChest.js'
 import {createLobbyEastIroningStorage} from './rooms/lobby/LobbyEastIroningStorage.js'
 import {createRoomAirConditioning} from './rooms/shared/RoomAirConditioning.js'
+import {createAcOutdoorUnitsForRoom} from './rooms/shared/AcOutdoorUnit.js'
+import {HOME_ROOM_LAYOUTS} from './config/homeRoomViews.js'
 import {createRoomTaskLighting} from './rooms/shared/RoomTaskLighting.js'
 import {createRug,createPottedPlant,createWallArt,createFloorLamp,createCushion,createLaundryHamper} from './rooms/shared/RoomDecor.js'
 import {createDrawingRoomLayouts,DRAWING_LAYOUTS} from './rooms/drawing/DrawingRoomLayouts.js'
@@ -264,6 +266,8 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
     }
     const furniture=new THREE.Group();shell.add(furniture)
     shell.add(createRoomAirConditioning(room))
+    const planBounds=HOME_ROOM_LAYOUTS.find(layout=>layout.key===roomKey)?.bounds
+    if(planBounds)shell.add(createAcOutdoorUnitsForRoom(roomKey,room,planBounds))
     const taskLighting=createRoomTaskLighting(room,{realLights:true});shell.add(taskLighting)
     const drawingLayouts=roomKey==='drawing'?createDrawingRoomLayouts(room,{wallFaceMm:37,initial:drawingLayoutRef.current}):null
     if(drawingLayouts){drawingLayouts.setLabels(tvLabelsRef.current);shell.add(drawingLayouts.built)}

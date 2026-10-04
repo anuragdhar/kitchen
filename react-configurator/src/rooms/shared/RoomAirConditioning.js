@@ -28,8 +28,10 @@ export function createRoomAirConditioning(room){
     box(.22,.28,.90,.14,2.37,2.48,shell)
     box(.015,.025,.78,.26,2.26,2.48,grille)
     const outerX=(room.widthMm+room.balconyExtension.depthMm)/1000
-    // Both condensers sit outside the east glazing, below its one-metre sill.
-    for(const [label,z] of [['Bedroom 1',.46],['Lobby / Dining',1.46]]){
+    // The Lobby condenser sits outside the east glazing, below its one-metre sill (concept position). Bedroom 1's own
+    // outdoor unit is drawn from the owner's plan mark instead (config/acOutdoorUnitsConfig.js, Whole home 3D), a little
+    // further north-east, so the Lobby one moved from z 1.46 to the south slot to stay clear of it (2026-10-05).
+    for(const [label,z] of [['Lobby / Dining',.46]]){
       const unit=new THREE.Group();unit.name=`${label} outdoor AC unit`;group.add(unit)
       const cx=outerX+.20
       const body=new THREE.Mesh(new THREE.BoxGeometry(.36,.52,.70),shell)

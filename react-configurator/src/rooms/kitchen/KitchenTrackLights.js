@@ -26,22 +26,44 @@ export function createKitchenTrackLights({realLights = true} = {}) {
 // `studio` lists the scene's general lights (ambient, sky, key, fill, glows); "dark room" hides them so only the circuits
 // light the kitchen. Hiding (visible=false) rather than dimming leaves the planner's own Daylight toggle free to keep
 // setting their colours and strengths.
+// The "Home Interior proposed lighting" overlay (render/interiorLighting.js) is added to the scene AFTER this and keeps
+// re-applying itself: outside its 'original' mode it sets every scene light it found to zero and lights the room with its
+// own generic area lights. Left alone, that undid the sliders and kept the kitchen bright with everything "off" and Dark
+// room ticked (owner 2026-10-05). So the levels are re-asserted just before every frame (scene.onBeforeRender), and Dark
+// room also hides that overlay, as the other room pages do.
 export function createKitchenRoomLights(scene, {studio = [], ledMaterial = null, realLights = true} = {}) {
   const tracks = createKitchenTrackLights({realLights}); scene.add(tracks)
   const led = []
   scene.traverse(object => { if (object.isPointLight && /led light|task glow/.test(object.name || '')) led.push({light: object, base: object.intensity}) })
   const ledGlow = ledMaterial ? ledMaterial.emissiveIntensity ?? 1 : 1
-  const setLevel = (circuit, level) => {
+  const levels = {led: 1}
+  for (const run of KITCHEN_LIGHTING.tracks.runs) levels[run.id] = 1
+  const apply = (circuit, level) => {
     if (circuit === 'led') {
       for (const {light, base} of led) { light.userData.dimLevel = level; light.intensity = base * level }
       if (ledMaterial && ledMaterial.emissive) ledMaterial.emissiveIntensity = ledGlow * Math.min(level, 1.5)
     } else tracks.userData.setLevel(circuit, level)
   }
-  let background = null
-  const setDarkRoom = on => {
-    for (const light of studio) light.visible = !on
-    if (on) { if (!background && scene.background?.isColor) background = scene.background.clone(); scene.background?.set?.('#0b0d10'); if (scene.fog) scene.fog.color.set('#0b0d10'); scene.environmentIntensity = .02 }
-    else { if (background) { scene.background.copy(background); if (scene.fog) scene.fog.color.copy(background) } scene.environmentIntensity = 1 }
+  const setLevel = (circuit, level) => { if (circuit in levels) { levels[circuit] = level; apply(circuit, level) } }
+  let dark = false, background = null, environment = 1
+  const enforce = () => {
+    for (const circuit in levels) apply(circuit, levels[circuit])
+    if (!dark) return
+    for (const light of studio) light.visible = false
+    const overlay = scene.getObjectByName('Home Interior proposed lighting'); if (overlay) overlay.visible = false
+    scene.background?.set?.('#0b0d10'); if (scene.fog) scene.fog.color.set('#0b0d10'); scene.environmentIntensity = .02
   }
-  return {tracks, setLevel, setDarkRoom}
+  const setDarkRoom = on => {
+    if (on && !dark) { environment = scene.environmentIntensity; if (scene.background?.isColor) background = scene.background.clone() }
+    dark = on
+    if (!on) {
+      for (const light of studio) light.visible = true
+      const overlay = scene.getObjectByName('Home Interior proposed lighting'); if (overlay) overlay.visible = true
+      if (background) { scene.background.copy(background); if (scene.fog) scene.fog.color.copy(background) }
+      scene.environmentIntensity = environment
+    }
+    enforce()
+  }
+  scene.onBeforeRender = enforce
+  return {tracks, setLevel, setDarkRoom, levels}
 }
