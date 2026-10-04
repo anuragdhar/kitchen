@@ -22,6 +22,7 @@ import {createBedroom3SouthExtension} from './rooms/bedroom3/Bedroom3SouthExtens
 import {createBedroom3Bed} from './rooms/bedroom3/Bedroom3Bed.js'
 import {createBedroom3EntryDoor} from './rooms/bedroom3/Bedroom3EntryDoor.js'
 import {createBedroom3Wardrobe} from './rooms/bedroom3/Bedroom3Wardrobe.js'
+import {createBedroom3WestChest} from './rooms/bedroom3/Bedroom3WestChest.js'
 import {createLobbyEastIroningStorage} from './rooms/lobby/LobbyEastIroningStorage.js'
 import {createRoomAirConditioning} from './rooms/shared/RoomAirConditioning.js'
 import {createRoomTaskLighting} from './rooms/shared/RoomTaskLighting.js'
@@ -376,6 +377,7 @@ function LiveWholeHome3D({onOpenRoom}){
     const vanity=createBedroom3DressingTable(bedroom3);b3g.add(vanity);vanity.userData.setMirrorOpen(mirrorOpen)
     b3g.add(createBedroom3EntryDoor(bedroom3))
     b3g.add(createBedroom3Wardrobe(bedroom3))
+    b3g.add(createBedroom3WestChest(bedroom3))
 
     const study=STUDY_ROOM,sd=study.dimensions,sb=boundsFor('Study')
     const sg=roomGroup(sb,sd.widthMm,sd.lengthMm)

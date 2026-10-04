@@ -1,8 +1,10 @@
 import {tagSurfaceMaterial} from '../../render/surfaceRoles.mjs'
 import * as THREE from 'three'
 import {createBedroom3OakMaterial} from './Bedroom3OakMaterial.js'
+import {createBedroom3EastCabinets} from './Bedroom3EastCabinet.js'
 
 export function createBedroom3Wardrobe(room){
+  if(room.furniture?.eastCabinet)return createBedroom3EastCabinets(room)
   const group=new THREE.Group()
   group.name='Bedroom 3 west-wall sliding wardrobe'
   const wardrobe=room.furniture?.westWardrobe

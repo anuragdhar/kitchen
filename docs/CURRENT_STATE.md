@@ -192,6 +192,91 @@ is a baked snapshot of an earlier design; its Drawing Room TV meshes are moved o
 (`ArchivedBlenderHomeView.jsx`), but its sofas, kitchen and everything else stay as baked until the whole home is re-baked in
 Blender. The slot between the Pooja Ghar and Bedroom 1 (plan x 317-339) is filled as masonry, an assumption from the drawing.
 
+## Bedroom 3 east bedside cabinets (2026-10-03)
+
+Owner request: move the west-wall cabinetry to both sides of the east-wall bed,
+using the supplied mirror/overhead-cabinet and slatted-AC references, the existing
+honey-oak shade, and an overall depth of 18 inches (457.2 mm).
+
+- Removed the west run: 2676 mm along the wall x 580 deep x 2500 high, starting
+  1050 mm from north, including its 600 mm dressing bay. The former preview is now
+  replaced by the current furniture, visible in Bedroom 3 and Whole home Editable 3D.
+- Northeast mirror dressing cabinet: 750 wide along the wall x 457.2 deep x 2200
+  high, starting 150 mm from north. Southeast low cabinet: 750 x 457.2 x 600,
+  starting 2826 mm from north. The low cabinet is the working interpretation of
+  the owner's small southeast cabinet. Both have 48.5 mm separation from the bed.
+- Overhead run: 3426 wide x 457.2 deep x 450 high, from 2200 to 2650 above floor.
+  Central 1200 mm slatted AC bay, open underneath, with a 1000 x 280 x 230 mm
+  placeholder unit. AC selection, airflow, removable-panel hardware, service
+  access and installation clearances require equipment-specific review.
+- The bed remains 1829 x 1829, head east, centre 1863 from north; room, doors,
+  south projecting cabinet and balcony retain their configured dimensions.
+  The 457.2 mm depth reaches x 3505.8, 44.2 mm into the toilet opening's x range,
+  but starts 150 mm south of its wall plane. It does not occupy the opening;
+  the approach and open mirror leaf still need on-site review.
+- Configuration: roomShellConfig.js; shared geometry: Bedroom3EastCabinet.js.
+  Coordinates are millimetres, x east from west wall / z south from north wall /
+  y up; builders divide by 1000 for Three.js metres. Depth includes closed fronts.
+  The existing mirror control opens the new dressing cabinet.
+- Added an East cabinetry view. Previous Blender stills remain available under
+  Show previous renders, labelled as the earlier layout; they were not regenerated.
+  Layout and review-plan fixtures: bedroom3-east-cabinet.test.mjs.
+
+Verification completed 2026-10-04 (Node 22.23.3):
+- `npm.cmd run check`: 274/281 tests passed; seven unchanged Windows launcher
+  tests failed with ENOENT for temporary caller-cwd.log. Its build stage did not run.
+- `node --test tests/bedroom3-east-cabinet.test.mjs tests/room-review.test.mjs`:
+  10/10 passed. `npm.cmd run build`: passed, with the existing large-chunk warning.
+- Chrome/Playwright against the existing loopback server: reviewed east elevation,
+  open mirror, top plan, mobile east elevation and Whole home Editable 3D; no page
+  errors. Generated Three.js bounds confirm both closed cabinet assemblies have
+  457.2 mm depth. Local evidence is under react-configurator/test-results/bedroom3-*.
+- `git diff --check`: passed. Blender/CAD regeneration, physical installation,
+  AC performance and site measurements were not verified.
+
+Changed source files for this request: src/config/roomShellConfig.js,
+src/rooms/bedroom3/Bedroom3EastCabinet.js, Bedroom3DressingTable.js and
+Bedroom3Wardrobe.js in that same directory, src/EmptyRoomGallery.jsx,
+src/domain/roomReview.mjs, tests/bedroom3-east-cabinet.test.mjs, package.json,
+and this document. Existing changes in .claude/settings.json and
+inspiration/library.json were left as found.
+
+## Bedroom 3 west chest and artwork (2026-10-04)
+
+Owner accepted the low-chest proposal to balance the east cabinetry and add drawer
+storage while keeping the west wall light. Previously this wall was empty after
+the east-cabinet change. Added a honey-oak chest, 1400 mm along the wall x 450 deep
+x 800 high, with six drawers and a clear top. It occupies x 0-450, z 1163-2563,
+centred opposite the existing bed. Closed chest-to-bed-foot clearance changes from
+2134 mm (empty wall) to 1684 mm. Its north end is 1163 mm off the north wall,
+beyond the 900 mm entry-leaf envelope; its south end is 1163 mm from the south
+storage wall. Existing bed, east cabinetry, room and openings are unchanged.
+
+A 1100 x 700 x 30 mm framed geometric artwork is centred above it, bottom 1050 mm
+above floor (250 mm over the chest). Shared builder Bedroom3WestChest.js serves
+Bedroom 3 and Whole home Editable 3D. Config is in roomShellConfig.js, in mm with
+x east / z south / y up; the builder converts to metres. Width here runs along z.
+The room has a West chest view button; review sheets include the chest footprint
+and clearance. Layout fixtures are in bedroom3-east-cabinet.test.mjs.
+
+Changed files: src/config/roomShellConfig.js, src/rooms/bedroom3/Bedroom3WestChest.js,
+src/EmptyRoomGallery.jsx, src/WholeHome3D.jsx, src/domain/roomReview.mjs,
+tests/bedroom3-east-cabinet.test.mjs, and this document. Earlier working changes
+were retained. Blender snapshots and CAD exports were not regenerated.
+
+Verification (Node 22.23.3): `npm.cmd run check` returned 275/282 passing, with
+the same seven documented Windows launcher ENOENT failures; its build stage was
+not reached. Separate `npm.cmd run build` passed (existing large-chunk warning).
+`node --test tests/bedroom3-east-cabinet.test.mjs tests/room-review.test.mjs` passed
+11/11. `node test-results/bedroom3-west-check.cjs` passed with Chrome: rendered
+chest bounds 450 x 800 x 1400 mm in x/y/z, artwork 30 x 700 x 1100 mm, no page
+errors. Reviewed west desktop/mobile, top, east, and Whole home Editable 3D
+screenshots in test-results/bedroom3-*.png. The first SwiftShader run crashed
+during the mobile screenshot; the completed run used Chrome's default renderer.
+The artwork mounts 50 mm from x=0 to clear the room shell's inside face.
+`git diff --check` passed. Physical fit, installation, drawer mechanisms and
+Blender/CAD output were not verified; browser evidence is visual smoke QA.
+
 ## Phone scan of the Drawing Room and Lobby (2026-10-04)
 
 The owner's Scaniverse scan was measured and partly applied; the full table, method and accuracy are in

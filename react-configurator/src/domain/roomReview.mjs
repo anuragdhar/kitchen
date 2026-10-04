@@ -222,6 +222,13 @@ function genericPlanItems(roomKey, room) {
     const b = f.bed, w = f.westWardrobe
     if (b) add(`Bed ${b.lengthMm}x${b.widthMm}`, W - b.lengthMm, b.centerFromNorthMm - b.widthMm / 2, W, b.centerFromNorthMm + b.widthMm / 2, 'seat')
     if (w) add(`Wardrobe run ${w.lengthMm}x${w.depthMm}`, 0, w.fromNorthMm, w.depthMm, w.fromNorthMm + w.lengthMm, 'fixed')
+    const chest = f.westChest
+    if (chest) add(`West chest ${chest.widthMm}x${chest.depthMm}`, 0, chest.fromNorthMm, chest.depthMm, chest.fromNorthMm+chest.widthMm, 'fixed')
+    const c = f.eastCabinet
+    if (c) for (const [key, label] of [['north', 'NE dressing cabinet'], ['south', 'SE bedside cabinet']]) {
+      const unit = c[key]
+      add(`${label} ${unit.widthMm}x${c.depthMm}`, W-c.depthMm, unit.fromNorthMm, W, unit.fromNorthMm+unit.widthMm, 'fixed')
+    }
   }
   return items
 }
@@ -232,6 +239,11 @@ function describeExtras(room) {
   if (room.poojaAlcove) { const a = room.poojaAlcove; lines.push(`Pooja alcove on the ${a.wall} wall: ${mm(a.widthMm)} wide starting ${mm(a.fromMm)} from the west end, ${mm(a.depthMm)} deep beyond the wall (outside this room's outline), ${a.templeDepthMm ? `temple ${mm(a.templeDepthMm)} deep, ` : ''}seated-person platform ${mm(a.platformHeightMm)} high.`) }
   if (room.balconyExtension) { const b = room.balconyExtension; lines.push(`Enclosed balcony on the ${b.wall} side: ${mm(b.depthMm)} deep, ${mm(b.lengthMm)} long, railing ${mm(b.railingHeightMm)} (outside the main outline in the top plan).`) }
   if (room.southExtension) lines.push('The south side has a projecting cabinet and balcony (see the furniture list).')
+  if (room.furniture?.westChest) {
+    const c=room.furniture.westChest,a=c.artwork,b=room.furniture.bed
+    lines.push(`West honey-oak chest: ${c.widthMm} mm along the wall x ${c.depthMm} mm deep x ${c.heightMm} mm high, ${c.drawerRows*c.drawerColumns} drawers. Framed artwork ${a.widthMm} x ${a.heightMm} mm, bottom ${a.bottomMm} mm above floor. Closed chest to bed foot: ${room.widthMm-b.lengthMm-c.depthMm} mm.`)
+  }
+  if (room.furniture?.eastCabinet) lines.push('East bedside cabinetry: 18 inches (457.2 mm) overall depth, honey oak. Northeast mirror dressing cabinet, southeast low cabinet, overhead cupboards and a slatted AC cover with an open underside. AC dimensions are a concept placeholder; equipment, airflow and service access are not verified. The north cabinet starts 150 mm off the toilet wall; doorway approach and mirror-door use need site review.')
   if (room.name === 'Lobby / Dining') {
     const bounds = HOME_ROOM_LAYOUTS.find(r => r.name === room.name).bounds
     const span = closedDoorSpanMm(BEDROOM1_CLOSED_DOOR, bounds, room.widthMm)

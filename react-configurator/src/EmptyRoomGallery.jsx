@@ -15,6 +15,7 @@ import {createBedroom3SouthExtension} from './rooms/bedroom3/Bedroom3SouthExtens
 import {createBedroom3Bed} from './rooms/bedroom3/Bedroom3Bed.js'
 import {createBedroom3EntryDoor} from './rooms/bedroom3/Bedroom3EntryDoor.js'
 import {createBedroom3Wardrobe} from './rooms/bedroom3/Bedroom3Wardrobe.js'
+import {createBedroom3WestChest} from './rooms/bedroom3/Bedroom3WestChest.js'
 import {createLobbyEastIroningStorage} from './rooms/lobby/LobbyEastIroningStorage.js'
 import {createRoomAirConditioning} from './rooms/shared/RoomAirConditioning.js'
 import {createRoomTaskLighting} from './rooms/shared/RoomTaskLighting.js'
@@ -55,8 +56,7 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
   const [poojaDoorsOpen,setPoojaDoorsOpen]=useState(true)
   const [partitionOpen,setPartitionOpen]=useState(false)
   const [mirrorOpen,setMirrorOpen]=useState(false)
-  const [showBedroom3Renders,setShowBedroom3Renders]=useState(initialRoomKey==='bedroom3')
-  const [showBedsideIdea,setShowBedsideIdea]=useState(false),bedsideIdeaRef=useRef(false)
+  const [showBedroom3Renders,setShowBedroom3Renders]=useState(false)
   const [showDrawingRender,setShowDrawingRender]=useState(initialRoomKey==='drawing')
   const [wallSelection,setWallSelection]=useState(null)
   const [pickedItem,setPickedItem]=useState(null)
@@ -267,36 +267,19 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
     const partition=createDrawingLobbyPartition(room,roomKey);shell.add(partition)
     partition.userData.setOpen?.(partitionOpen)
     if(roomKey==='lobby')wallParent('south').add(createLobbyConcealedDoor(room))
-    let ironingStorage=null,bedsideIdea=null
+    let ironingStorage=null
     if(roomKey==='bedroom3'){
       furniture.add(createBedroom3Bed(room))
       furniture.add(vanity)
       furniture.add(createBedroom3Wardrobe(room))
+      furniture.add(createBedroom3WestChest(room))
       // Light decor pass, matching Lobby/Bedroom1/Study (owner request
       // 2026-09-28). Placed in the open floor near the north entry door,
-      // clear of the bed (headed east), the west wardrobe run and the
+      // clear of the bed (headed east) and the
       // south balcony/cabinet extension.
       const b3Plant=createPottedPlant(1.05);b3Plant.position.set(0.5,0,0.55);furniture.add(b3Plant)
       const b3Art=createWallArt(.85,.6,'#7a6a55');b3Art.position.set(2.3,1.5,0.05);furniture.add(b3Art)
-      // Bedside cabinet idea (room.furniture.bedsideCabinetIdea): preview only, toggled from the toolbar.
-      const idea=room.furniture.bedsideCabinetIdea,bed=room.furniture.bed
-      if(idea){
-        bedsideIdea=new THREE.Group();bedsideIdea.name='Bedside cabinet idea (preview)';bedsideIdea.visible=bedsideIdeaRef.current;furniture.add(bedsideIdea)
-        const body=new THREE.MeshStandardMaterial({color:'#5a4636',roughness:.7}),mirror=new THREE.MeshStandardMaterial({color:'#c9d6da',metalness:.9,roughness:.08}),pull=new THREE.MeshStandardMaterial({color:'#2b2622',roughness:.5})
-        const d=mm(idea.depthMm),w=mm(idea.widthMm),h=mm(idea.heightMm),bedN=mm(bed.centerFromNorthMm-bed.widthMm/2),bedS=mm(bed.centerFromNorthMm+bed.widthMm/2)
-        // Tall cabinet against the east wall, between the north wall and the bed; its door faces west into the room.
-        const tall=new THREE.Group();tall.name='Tall bedside cabinet (idea)';bedsideIdea.add(tall)
-        const z0=bedN-.03-w
-        addBox(d,h,w,W-.04-d/2,h/2,z0+w/2,body,tall)
-        addBox(.012,h-.16,w-.08,W-.04-d-.006,h/2,z0+w/2,idea.mirrorDoor?mirror:body,tall)
-        addBox(.02,.3,.02,W-.04-d-.02,1.1,z0+w-.07,pull,tall)
-        // Bridge of overhead cabinets across the headboard, and an open shelf under it.
-        const bridge=new THREE.Group();bridge.name='Overhead bridge cabinets (idea)';bedsideIdea.add(bridge)
-        const bd=mm(idea.bridge.depthMm),bh=mm(idea.bridge.heightMm),by=mm(idea.bridge.bottomMm)+bh/2,span=bedS-bedN+.03
-        addBox(bd,bh,span,W-.04-bd/2,by,bedN-.03+span/2,body,bridge)
-        for(let i=1;i<idea.bridge.doorCount;i++)addBox(.004,bh-.03,.004,W-.04-bd-.002,by,bedN-.03+span*i/idea.bridge.doorCount,pull,bridge)
-        addBox(mm(idea.shelf.depthMm),.03,span,W-.04-mm(idea.shelf.depthMm)/2,mm(idea.shelf.heightMm),bedN-.03+span/2,body,bridge)
-      }
+
     }
     if(roomKey==='drawing'){
       furniture.add(drawingLayouts.furniture)
@@ -454,7 +437,9 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
     }
     setDaylight(daylightRef.current)
     controls.target.set(W/2,H*.38,L/2)
+    let activeCameraKey=initialView
     const setCamera=key=>{
+      activeCameraKey=key
       camera.fov=key==='poojaDoor'?54:46;camera.updateProjectionMatrix()
       if(key==='top'){camera.position.set((W+extensionDepth)/2,span*1.22,(L+southDepth)/2-.01);camera.up.set(0,0,1);controls.target.set((W+extensionDepth)/2,0,(L+southDepth)/2)}
       else if(key==='poojaDoor'&&room.poojaAlcove){const center=mm(room.poojaAlcove.fromMm+room.poojaAlcove.widthMm/2);camera.position.set(center,1.42,3.10);camera.up.set(0,1,0);controls.target.set(center,1.20,0)}
@@ -465,13 +450,24 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
       else if(roomKey==='drawing'&&key==='tvWall'){camera.position.set(1.75,1.5,L-.3);camera.up.set(0,1,0);controls.target.set(1.05,1.15,.3)}
       else if(roomKey==='lobby'){camera.position.set(W+span*.36,H*2.5,L+span*.42);camera.up.set(0,1,0);controls.target.set(W/2,H*.30,L/2)}
       else if(roomKey==='bedroom1'){camera.position.set(W+extensionDepth+span*.42,H*2.25,-span*.45);camera.up.set(0,1,0);controls.target.set((W+extensionDepth)/2,H*.40,L/2)}
+      else if(roomKey==='bedroom3'&&key==='westWall'){
+        const distance=W-.35
+        camera.fov=Math.max(46,THREE.MathUtils.radToDeg(2*Math.atan((L/2+.1)/(distance*camera.aspect))))
+        camera.updateProjectionMatrix();camera.position.set(W-.35,1.5,L/2);camera.up.set(0,1,0);controls.target.set(0,1.25,L/2)
+      }
+      else if(roomKey==='bedroom3'&&key==='eastWall'){
+        // Keep both bedside units in frame on narrow screens without moving through the west wall.
+        const distance=W-mm(room.furniture.eastCabinet.depthMm)-.25
+        camera.fov=Math.max(46,THREE.MathUtils.radToDeg(2*Math.atan((L/2+.1)/(distance*camera.aspect))))
+        camera.updateProjectionMatrix();camera.position.set(.25,1.5,L/2);camera.up.set(0,1,0);controls.target.set(W,1.4,L/2)
+      }
       else if(roomKey==='bedroom3'&&key==='southOpenings'){camera.position.set(W*.45,H*.76,L*.2);camera.up.set(0,1,0);controls.target.set(W*.72,H*.48,L)}
       else if(roomKey==='bedroom3'){camera.position.set(W*.62,H*2.2,L+southDepth+span*.42);camera.up.set(0,1,0);controls.target.set(W*.65,H*.4,(L+southDepth)/2)}
       else{camera.position.set(openWest?-span*.46:W+span*.46,H*2.05,-span*.42);camera.up.set(0,1,0);controls.target.set(W/2,H*.42,L/2)}
       camera.lookAt(controls.target);controls.update()
     }
     setCamera(initialView)
-    const resize=()=>{const width=mount.clientWidth,height=mount.clientHeight;renderer.setSize(width,height,false);designerRender.setSize(width,height);camera.aspect=width/height;camera.updateProjectionMatrix()}
+    const resize=()=>{const width=mount.clientWidth,height=mount.clientHeight;renderer.setSize(width,height,false);designerRender.setSize(width,height);camera.aspect=width/height;camera.updateProjectionMatrix();if(roomKey==='bedroom3'&&['eastWall','westWall'].includes(activeCameraKey))setCamera(activeCameraKey)}
     const observer=new ResizeObserver(resize);observer.observe(mount);resize()
     const raycaster=new THREE.Raycaster(),pointer=new THREE.Vector2()
     let pressedAt=null,markedMesh=null,markedMaterial=null
@@ -540,7 +536,7 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
       }
       return {views,project}
     }
-    sceneRef.current={setBedsideIdea:visible=>{if(bedsideIdea)bedsideIdea.visible=visible},clearItem,setDesigner:on=>designerRender.setEnabled(on),captureReview,setTrackLight:(kind,level)=>{drawingLayouts?.setTrackLight(kind,level);taskLighting.userData.setTrackLight?.(kind,level);setDaylight(daylightRef.current)},setDarkRoom:on=>{darkRoom=on;setDaylight(daylightRef.current)},setTvLabels:visible=>drawingLayouts?.setLabels(visible),setDrawingLayout:key=>drawingLayouts?.setLayout(key),setDrawingArm:pulled=>drawingLayouts?.setArm(pulled),setElectrical:visible=>drawingLayouts?.setElectrical(visible),setDoorSwing:visible=>drawingLayouts?.setDoorSwing(visible),setStorageOpen:open=>drawingLayouts?.setStorageOpen(open),setDrawingTv:key=>drawingLayouts?.setTvSize(key),setMirrorOpen:value=>vanity.userData.setMirrorOpen?.(value),setPartitionOpen:value=>partition.userData.setOpen?.(value),setCamera,setSouthVisible:value=>{southWall.visible=value},setFurnitureVisible:value=>{furniture.visible=value},setBoardOpen:value=>{ironingStorage?.userData.setBoardOpen(value)},setPoojaDoorsOpen:value=>{poojaDoors?.userData.setDoorsOpen(value)},clearMark,setDaylight}
+    sceneRef.current={clearItem,setDesigner:on=>designerRender.setEnabled(on),captureReview,setTrackLight:(kind,level)=>{drawingLayouts?.setTrackLight(kind,level);taskLighting.userData.setTrackLight?.(kind,level);setDaylight(daylightRef.current)},setDarkRoom:on=>{darkRoom=on;setDaylight(daylightRef.current)},setTvLabels:visible=>drawingLayouts?.setLabels(visible),setDrawingLayout:key=>drawingLayouts?.setLayout(key),setDrawingArm:pulled=>drawingLayouts?.setArm(pulled),setElectrical:visible=>drawingLayouts?.setElectrical(visible),setDoorSwing:visible=>drawingLayouts?.setDoorSwing(visible),setStorageOpen:open=>drawingLayouts?.setStorageOpen(open),setDrawingTv:key=>drawingLayouts?.setTvSize(key),setMirrorOpen:value=>vanity.userData.setMirrorOpen?.(value),setPartitionOpen:value=>partition.userData.setOpen?.(value),setCamera,setSouthVisible:value=>{southWall.visible=value},setFurnitureVisible:value=>{furniture.visible=value},setBoardOpen:value=>{ironingStorage?.userData.setBoardOpen(value)},setPoojaDoorsOpen:value=>{poojaDoors?.userData.setDoorsOpen(value)},clearMark,setDaylight}
     return()=>{interiorScene.dispose();cancelAnimationFrame(raf);designerRender.dispose();observer.disconnect();renderer.domElement.removeEventListener('pointerdown',onPointerDown);renderer.domElement.removeEventListener('pointerup',onPointerUp);controls.dispose();labelTextures.forEach(texture=>texture.dispose());shell.traverse(object=>{object.geometry?.dispose?.();if(Array.isArray(object.material))object.material.forEach(material=>material.dispose());else object.material?.dispose?.()});markedWallMaterial.dispose();environment.dispose();pmrem.dispose();renderer.dispose();renderer.domElement.remove();sceneRef.current=null}
   },[roomKey,initialView])
 
@@ -553,7 +549,6 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
   useEffect(()=>{sceneRef.current?.setDoorSwing(doorSwing)},[doorSwing,roomKey])
   // A picked item's outline would be stale once the room, layout or visibility changes.
   useEffect(()=>{sceneRef.current?.clearItem?.();setPickedItem(null)},[roomKey,drawingLayout,showFurniture])
-  useEffect(()=>{bedsideIdeaRef.current=showBedsideIdea;sceneRef.current?.setBedsideIdea(showBedsideIdea)},[showBedsideIdea,roomKey])
   useEffect(()=>{sceneRef.current?.setElectrical(showElectrical)},[showElectrical,roomKey])
   useEffect(()=>{sceneRef.current?.setStorageOpen(storageOpen)},[storageOpen,roomKey])
   useEffect(()=>{sceneRef.current?.setDrawingTv(tvSize)},[tvSize,roomKey])
@@ -590,7 +585,7 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
 
   return <>
     {showSelector&&<div style={{display:'flex',gap:8,flexWrap:'wrap',marginBottom:14}}>
-      {Object.entries(EMPTY_ROOM_SHELLS).map(([key,item])=><button key={key} onClick={()=>{setRoomKey(key);setView('overview');setShowSouthWall(key==='lobby'||key==='drawing'||key==='bedroom1');setShowFurniture(key==='bedroom1'||key==='bedroom3'||key==='drawing'||key==='lobby');setShowBedroom3Renders(key==='bedroom3');setShowDrawingRender(key==='drawing');setWallSelection(null);setWallNote('')}} style={{...buttonStyle(roomKey===key),padding:'9px 13px'}}>{item.name}</button>)}
+      {Object.entries(EMPTY_ROOM_SHELLS).map(([key,item])=><button key={key} onClick={()=>{setRoomKey(key);setView('overview');setShowSouthWall(key==='lobby'||key==='drawing'||key==='bedroom1');setShowFurniture(key==='bedroom1'||key==='bedroom3'||key==='drawing'||key==='lobby');setShowBedroom3Renders(false);setShowDrawingRender(key==='drawing');setWallSelection(null);setWallNote('')}} style={{...buttonStyle(roomKey===key),padding:'9px 13px'}}>{item.name}</button>)}
     </div>}
     <section style={{background:'#fff',border:'1px solid #dbe3e9',borderRadius:22,overflow:'hidden',boxShadow:'0 16px 42px rgba(23,32,51,.1)'}}>
     <div style={{padding:'14px 16px',display:'flex',gap:10,alignItems:'center',justifyContent:'space-between',flexWrap:'wrap',borderBottom:'1px solid #e2e8f0'}}>
@@ -607,9 +602,10 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
         {roomKey==='bedroom3'&&<button onClick={()=>{setShowSouthWall(true);setView('southOpenings')}} aria-pressed={view==='southOpenings'} style={buttonStyle(view==='southOpenings')}>Balcony door + window</button>}
         {room.poojaAlcove&&<button onClick={()=>{setView('pooja');setPoojaDoorsOpen(true)}} aria-pressed={view==='pooja'} style={buttonStyle(view==='pooja')}>Pooja view</button>}
         {room.poojaAlcove&&<button onClick={()=>{setView('poojaDoor');setPoojaDoorsOpen(false)}} aria-pressed={view==='poojaDoor'} style={buttonStyle(view==='poojaDoor')}>Door front</button>}
-        {roomKey==='bedroom3'&&<button onClick={()=>setShowBedsideIdea(value=>!value)} aria-pressed={showBedsideIdea} style={buttonStyle(showBedsideIdea)} title="Idea from the inspiration library, not part of the layout: a tall mirror cabinet beside the bed and overhead cabinets across the headboard">{showBedsideIdea?'Hide bedside cabinet idea':'Show bedside cabinet idea'}</button>}
+        {roomKey==='bedroom3'&&<button onClick={()=>setView('eastWall')} aria-pressed={view==='eastWall'} style={buttonStyle(view==='eastWall')}>East cabinetry view</button>}
+        {roomKey==='bedroom3'&&<button onClick={()=>setView('westWall')} aria-pressed={view==='westWall'} style={buttonStyle(view==='westWall')}>West chest view</button>}
         {roomKey==='bedroom3'&&<button onClick={()=>setMirrorOpen(value=>!value)} style={buttonStyle(mirrorOpen)}>{mirrorOpen?'Close vanity mirror':'Open vanity mirror'}</button>}
-        {roomKey==='bedroom3'&&<button onClick={()=>setShowBedroom3Renders(value=>!value)} aria-pressed={showBedroom3Renders} style={buttonStyle(showBedroom3Renders)}>{showBedroom3Renders?'Hide renders':'Show renders'}</button>}
+        {roomKey==='bedroom3'&&<button onClick={()=>setShowBedroom3Renders(value=>!value)} aria-pressed={showBedroom3Renders} style={buttonStyle(showBedroom3Renders)}>{showBedroom3Renders?'Hide previous renders':'Show previous renders'}</button>}
         {roomKey==='drawing'&&<label style={{display:'flex',alignItems:'center',gap:6,fontWeight:800,fontSize:13}}>Layout
           <select value={drawingLayout} onChange={event=>setDrawingLayout(event.target.value)} style={{padding:'7px 8px',borderRadius:9,border:'1px solid #cbd5e1',maxWidth:360}}>{DRAWING_LAYOUTS.map(layout=><option key={layout.key} value={layout.key}>{layout.label}</option>)}</select>
         </label>}

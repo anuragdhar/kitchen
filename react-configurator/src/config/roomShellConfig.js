@@ -33,14 +33,21 @@ export const EMPTY_ROOM_SHELLS={
     },
     furniture:{
       bed:{lengthMm:1829,widthMm:1829,headWall:'east',centerFromNorthMm:1863},
-      // IDEA ONLY (owner inspiration "Cabinet beside the bed", 2026-10-03: "explore before changing the layout"). Shown by a
-      // toggle, off by default; nothing else moves. A tall mirror-door cabinet on the east wall north of the bed, and a bridge of
-      // overhead cabinets across the headboard. depthMm 380 keeps it 33 mm clear of the toilet door frame (north wall, to x 3550).
-      bedsideCabinetIdea:{status:'idea',side:'north',depthMm:380,widthMm:880,heightMm:2400,mirrorDoor:true,
-        bridge:{depthMm:350,bottomMm:1900,heightMm:500,doorCount:4},shelf:{depthMm:250,heightMm:1500}},
-      dressingTable:{wall:'west',integratedWithWardrobe:true,fromNorthMm:1050,widthMm:600,depthMm:580,heightMm:2500,doorBottomMm:500,doorTopMm:2350,doorConstruction:'lightweight framed',mirrorWidthMm:420,mirrorHeightMm:1550,mirrorBottomMm:600},
-      // Continue the west run to the projecting south cabinet to form an L.
-      westWardrobe:{fromNorthMm:1050,lengthMm:2676,depthMm:580,heightMm:2500,doorType:'sliding',doorCount:3,vanityBayWidthMm:600},
+      // Owner 2026-10-04: low honey-oak chest opposite the bed; width runs along z.
+      westChest:{wall:'west',fromNorthMm:1163,widthMm:1400,depthMm:450,heightMm:800,panelMm:18,plinthMm:80,drawerRows:3,drawerColumns:2,
+        // The room shell straddles x=0 by 50 mm; mount the frame on its inner face.
+        artwork:{widthMm:1100,heightMm:700,depthMm:30,bottomMm:1050,frameMm:20,wallOffsetMm:50}},
+      // Owner 2026-10-03: replace west run with east bedside cabinetry, existing honey oak.
+      // All mm; x east from west wall, z south from north wall, y up. Depth includes fronts.
+      // 18 inches = 457.2 mm. North/south setbacks keep cabinetry off the opening wall planes.
+      eastCabinet:{wall:'east',depthMm:457.2,panelMm:18,
+        north:{fromNorthMm:150,widthMm:750,heightMm:2200,mirrorBottomMm:580,mirrorTopMm:2130},
+        south:{fromNorthMm:2826,widthMm:750,heightMm:600,drawerCount:2},
+        bridge:{fromNorthMm:150,widthMm:3426,bottomMm:2200,heightMm:450,doorCount:4},
+        ac:{centerFromNorthMm:1863,bayWidthMm:1200,slatHeightMm:18,slatGapMm:18,
+          unitWidthMm:1000,unitHeightMm:280,unitDepthMm:230,bottomMm:2280,wallGapMm:25},
+        shelf:{fromNorthMm:900,widthMm:1926,depthMm:250,heightMm:1650},
+      },
     },
     doors:[
       {wall:'north',fromMm:0,widthMm:900,heightMm:2100,leadsTo:'Bedroom 3'},
