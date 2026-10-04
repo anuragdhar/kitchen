@@ -137,7 +137,7 @@
       "trade": "general",
       "title": "Finalise the entry ceiling: long PVC ceiling planks",
       "room": "Main entry",
-      "detail": "Owner 2026-10-04: the entry ceiling will be PVC. Square 24 x 24 inch tiles were considered and dropped the same day: the entry is only about 1.0 m wide, so a 610 mm tile fits barely one and a half times across. Instead use LONG PVC ceiling planks (the interlocking strip type, commonly about 250 mm wide and sold in 3 m lengths), finalised after visiting some shops. Proposed: run them along the length of the entry (about 2.1 m), so each plank is one piece with no end joints and about four planks cover the width. Lights: recessed round LED panel lights, the type already used in the home (Orient Electric 12 W recessed panel, 1,200 lumens), but single-colour, not the 3-in-1 colour-changing version. Proposed, not yet agreed by the owner: neutral white (4000 K), two lights of 6-8 W each along the length, on one switch at the door. Still to decide: the plank width, design and colour, the edge trim, the height the ceiling drops to, and whether anything above must stay reachable. Nothing is drawn in the 3D model yet.",
+      "detail": "Owner 2026-10-04: the entry ceiling will be PVC. Square 24 x 24 inch tiles were considered and dropped the same day: the entry is only about 1.0 m wide, so a 610 mm tile fits barely one and a half times across. Instead use LONG PVC ceiling planks (the interlocking strip type, commonly about 250 mm wide and sold in 3 m lengths), finalised after visiting some shops. Proposed: run them along the length of the entry (about 2.1 m), so each plank is one piece with no end joints and about four planks cover the width. Lights: ROUND recessed LED panel lights, the type already used in the home (Orient Electric 12 W recessed panel, 1,200 lumens), but single-colour, not the 3-in-1 colour-changing version; the owner confirmed again on 2026-10-04 that the entry gets a circular light, not linear ones. Proposed, not yet agreed by the owner: neutral white (4000 K), two lights of 6-8 W each along the length, on one switch at the door. Now drawn in the 3D model (Main entry and Whole home 3D, src/config/entryLightingConfig.js): two 8 W round panels (120 mm, 105 mm cut-out) on the centre line of the corridor, about 540 mm in from each end wall and 1.1 m apart; plus two surface-mounted round panels of the same family in the inner gallery (see the gallery note in task elec-entry-ceiling). The lights are drawn at the slab because the ceiling drop is not decided. Still to decide: the plank width, design and colour, the edge trim, the height the ceiling drops to, and whether anything above must stay reachable.",
       "dependsOn": [
         "site-measure"
       ],
@@ -294,13 +294,13 @@
       "trade": "fabrication",
       "title": "Replace the iron main entry door (the first, outer door) with a stainless steel one",
       "room": "Main entry",
-      "detail": "Owner 2026-10-03, confirmed 2026-10-04: the existing first door at the entry is iron; replace it with stainless steel. Measure the opening, choose grade 304 (or 316 near the coast), design, lock and finish; remove the old door and fix the new frame.",
+      "detail": "Owner 2026-10-03, confirmed 2026-10-04: the existing first door at the entry is iron; replace it with stainless steel. Owner 2026-10-04 (later): it must be VENTILATED, with a grille, louvre or perforated area so air passes through it, and lockable. Decided: the wooden door between the entry and the Drawing Room stays (it keeps the air-conditioned area small) and no second wooden door is added at the entry. Drawn in the 3D model (Main entry and Whole home 3D) from the plan opening, about 905 wide x 2,200 high, not measured: a 45 mm box-section frame; one leaf 815 x 2,145 in 40 mm box section, hung on the north jamb and opening OUT onto the landing; from the bottom: a solid 300 mm kick plate, a grille of 12 mm square bars at 100 mm with a fine stainless insect mesh behind it, a solid lock rail 925-1,075 with a mortise lock, lever handles, deadbolt and night latch at 1,000, grille again to 2,000, and a solid top rail. About 0.67 square metres of free air, 38% of the leaf. Choose grade 304 (316 near the coast), brushed finish. Measure the opening, confirm the hinge side with the fabricator, remove the old door and fix the new frame.",
       "dependsOn": [
         "society-permission",
         "site-measure"
       ],
       "status": "todo",
-      "needs": "Choose design, lock and finish; get a fabricator quote"
+      "needs": "Measure the opening (OPEN_ITEMS A7). Choose the grille pattern (bars, louvres or perforated sheet), the finish, the lock and the hinge side; get a fabricator quote. Confirm with the society if the outer look matters"
     },
     {
       "id": "shaft-cover",
@@ -431,12 +431,12 @@
       "trade": "electrical",
       "title": "Entry ceiling: run the wiring for the lights and their switch",
       "room": "Main entry",
-      "detail": "Owner 2026-10-04 (electrician). Before the PVC ceiling goes up: chase a conduit from a switch box beside the main door up the wall, and run it on the slab above the ceiling line to each light position, leaving about 300 mm of spare wire at each point. Two light points are proposed, on one switch. Take the supply from the nearest lighting circuit. Mark the light positions on the slab from the plank layout so they land where the cut-outs will be.",
+      "detail": "Owner 2026-10-04 (electrician). Before the PVC ceiling goes up: chase a conduit from a switch box beside the main door up the wall, and run it on the slab above the ceiling line to each light position, leaving about 300 mm of spare wire at each point. Two light points are proposed in the corridor, on one switch. Take the supply from the nearest lighting circuit. Mark the light positions on the slab from the plank layout so they land where the cut-outs will be. Inner gallery (the part after the wooden main door, past the shoe rack to the Drawing Room door, which has no light today and keeps its plaster ceiling): two more points for surface-mounted round panels of the same type, one about 780 mm in front of the shoe rack's mirror doors (over the fold-down seat and the key tray) and one about 660 mm from the Drawing Room wall in front of the open east cabinet, on their own switch beside the Drawing Room door (a two-way switch at the main door is an option). Answer to the owner's question of 2026-10-04 whether this 4th section needs a spotlight or a track light: no; the round panels do the job, see docs/changes/2026-10-04-entry.md.",
       "dependsOn": [
         "entry-ceiling-plan"
       ],
       "status": "todo",
-      "needs": "Light count and positions, and the switch position, from the entry ceiling plan"
+      "needs": "Light count and positions, and the switch position, from the entry ceiling plan; owner to agree the two gallery lights and their switch"
     },
     {
       "phase": "electrical-rough",
