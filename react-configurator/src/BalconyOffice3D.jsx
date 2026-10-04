@@ -6,6 +6,7 @@ import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js'
 import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader.js'
 import {RoomEnvironment} from 'three/examples/jsm/environments/RoomEnvironment.js'
 import {BALCONY_OFFICE,BALCONY_DESK_HEIGHT_KEY} from './config/balconyOfficeConfig.js'
+import {balconyDeskLayout,FRAME_BEAM_WIDTH_MM,CLAMP_FROM_WEST_EDGE_MM} from './domain/balconyDesk.mjs'
 import {createDesignerRender} from './render/designerRender.js'
 
 const mm=value=>value/1000
@@ -383,13 +384,18 @@ export default function BalconyOffice3D(){
     room.add(routerGroup)
     itemObjects.router=routerGroup
 
-    // West sit-stand workstation running continuously to the south wall.
+    // West workstation: a fixed section in the south corner and a shorter sit-stand top north of it, one inch apart.
+    // Every position below comes from the pure layout (src/domain/balconyDesk.mjs, millimetres) so this drawing, the
+    // whole-home view and the clearance check agree. mm() converts to scene metres.
     const adjustable=office.worktop.westAdjustable
+    const layout=balconyDeskLayout(office)
     const deskDepth=mm(adjustable.depthMm)
-    const deskLength=mm(adjustable.widthMm)
+    const deskLength=mm(layout.moving.lengthMm)
     const worktopT=mm(adjustable.topThicknessMm)
-    const deskStartZ=L-deskLength
-    const deskCenterZ=deskStartZ+deskLength/2
+    const deskX0=mm(layout.moving.x0)
+    const deskStartZ=mm(layout.moving.zStart)
+    const deskEndZ=mm(layout.moving.zEnd)
+    const deskCenterZ=(deskStartZ+deskEndZ)/2
     const movingDesk=new THREE.Group()
     movingDesk.position.y=mm(adjustable.defaultHeightMm)
     room.add(movingDesk)
@@ -401,108 +407,69 @@ export default function BalconyOffice3D(){
       movingDesk.add(mesh)
       return mesh
     }
-    const desktopMesh=addMovingBox({w:deskDepth,h:worktopT,d:deskLength,x:deskDepth/2,y:-worktopT/2,z:deskCenterZ,color:'#ffffff',map:woodTexture,roughness:.42})
+    const desktopMesh=addMovingBox({w:deskDepth,h:worktopT,d:deskLength,x:deskX0+deskDepth/2,y:-worktopT/2,z:deskCenterZ,color:'#ffffff',map:woodTexture,roughness:.42})
     itemObjects.desktop=desktopMesh
-    tagCarpentry(desktopMesh,{name:'Adjustable west tabletop',widthMm:adjustable.widthMm,heightMm:adjustable.topThicknessMm,depthMm:adjustable.depthMm,note:'Custom top anchored at the south wall, clear of the shallower north cabinet'})
+    tagCarpentry(desktopMesh,{name:'Sit-stand top',widthMm:layout.moving.lengthMm,heightMm:adjustable.topThicknessMm,depthMm:adjustable.depthMm,note:`Electric sit-stand top on the FLEXISPOT frame; ${layout.gapMm} mm clear of the fixed south section and of the west wall`})
+    // A box in absolute room millimetres (layout part) becomes a mesh.
+    const addPartBox=(group,part,material)=>{
+      const mesh=new THREE.Mesh(new THREE.BoxGeometry(mm(part.x1-part.x0),mm(part.y1-part.y0),mm(part.z1-part.z0)),material)
+      mesh.position.set(mm((part.x0+part.x1)/2),mm((part.y0+part.y1)/2),mm((part.z0+part.z1)/2))
+      mesh.castShadow=true;mesh.receiveShadow=true;group.add(mesh);return mesh
+    }
 
-    // Resolve the monitor position before building the cabinet so its clamp can have a true open shaft.
-    const monitorShift=mm(office.equipment.monitorStand.shiftLeftMm)
-    const northStart=deskStartZ-.015+monitorShift
     const rightMonitor=office.equipment.monitors.find(monitor=>monitor.side==='right')
     const leftMonitor=office.equipment.monitors.find(monitor=>monitor.side==='left')
-    const rightDiag=rightMonitor.diagonalInches*.0254
-    const rightW=rightDiag*(16/Math.sqrt(337))
-    const rightH=rightDiag*(9/Math.sqrt(337))
-    const rightCenterZ=northStart+rightW/2
-    const leftDiag=leftMonitor.diagonalInches*.0254
-    const leftW=leftDiag*(16/Math.sqrt(337))
-    const leftH=leftDiag*(9/Math.sqrt(337))
-    const leftCenterZ=northStart+rightW+.045+leftW/2
-    const standZ=(rightCenterZ+leftCenterZ)/2
+    const rightW=mm(layout.monitors.right.widthMm),rightH=mm(layout.monitors.right.heightMm)
+    const leftW=mm(layout.monitors.left.widthMm),leftH=mm(layout.monitors.left.heightMm)
+    const rightCenterZ=mm(layout.monitors.right.centerZ)
+    const leftCenterZ=mm(layout.monitors.left.centerZ)
+    const standZ=mm(layout.monitors.standZ)
 
-    // FLEXISPOT-style electric frame: fixed feet with telescoping columns and a moving crossbar.
+    // FLEXISPOT-style electric frame: fixed feet with telescoping columns and a beam under the top between them.
     const frameMaterial=makeMaterial('#252b31',.38)
-    const frameHalfSpan=mm(adjustable.frameSpanMm)/2
-    const frameCenterZ=deskCenterZ+mm(adjustable.frameOffsetSouthMm)
-    const frameLegZ=[frameCenterZ-frameHalfSpan,frameCenterZ+frameHalfSpan]
-    const frameLegX=mm(office.worktop.rearCabinet.depthMm)*.62
+    const frameLegZ=layout.frame.legZ.map(mm)
+    const frameLegX=mm(layout.frame.legX)
     const frameColumns=[]
     const frameGroup=new THREE.Group()
     room.add(frameGroup)
     itemObjects['desk-frame']=frameGroup
     for(const z of frameLegZ){
-      const foot=new THREE.Mesh(new THREE.BoxGeometry(mm(adjustable.footDepthMm),.045,.075),frameMaterial)
+      const foot=new THREE.Mesh(new THREE.BoxGeometry(mm(layout.frame.footDepthMm),.045,mm(layout.frame.columnMm)),frameMaterial)
       foot.position.set(frameLegX,.0225,z)
       foot.castShadow=true
       frameGroup.add(foot)
-      const column=new THREE.Mesh(new THREE.BoxGeometry(.075,1,.075),frameMaterial)
+      const column=new THREE.Mesh(new THREE.BoxGeometry(mm(layout.frame.columnMm),1,mm(layout.frame.columnMm)),frameMaterial)
       column.castShadow=true
       frameGroup.add(column)
       frameColumns.push({mesh:column,z})
     }
-    addMovingBox({w:.085,h:.075,d:mm(adjustable.frameSpanMm),x:frameLegX,y:-.105,z:frameCenterZ,color:'#252b31',roughness:.38})
+    const beamDepth=mm(layout.frame.beam.depthMm)
+    addMovingBox({w:mm(FRAME_BEAM_WIDTH_MM),h:beamDepth,d:mm(layout.frame.spanMm),x:frameLegX,y:-worktopT-beamDepth/2,z:(frameLegZ[0]+frameLegZ[1])/2,color:'#252b31',roughness:.38})
 
-    // A low fixed rear cabinet preserves storage without occupying the moving desk structure.
+    // A low fixed rear cabinet under the sit-stand top preserves storage without occupying the moving desk structure.
+    // Its carcass parts (ends, bottom with the two desk-foot slots, the open top rail, the clamp chase) come from the layout.
     const rear=office.worktop.rearCabinet
     const rearD=mm(rear.depthMm)
-    const rearLength=mm(rear.widthMm)
     const rearTop=mm(rear.topHeightMm)
     const toe=mm(rear.toeClearanceMm)
     const rearBodyH=rearTop-toe
-    const rearModules=3
-    const moduleD=rearLength/rearModules
-    const centerBayCenterZ=deskStartZ+moduleD*1.5
     const rearCabinetGroup=new THREE.Group()
-    rearCabinetGroup.position.set(0,toe,deskStartZ)
     const rearCarcassMaterial=makeMaterial('#ffffff',.56,woodTexture)
-    const addRearPart=(w,h,d,x,y,z)=>{
-      const mesh=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),rearCarcassMaterial)
-      mesh.position.set(x,y,z);mesh.castShadow=true;mesh.receiveShadow=true;rearCabinetGroup.add(mesh);return mesh
+    const chaseLipMaterial=makeMaterial('#31363c',.4,null,.2)
+    for(const part of layout.rear.parts){
+      const mesh=addPartBox(rearCabinetGroup,part,part.decorative?chaseLipMaterial:rearCarcassMaterial)
+      if(part.decorative) tagCarpentry(mesh,{name:'Monitor-clamp travel channel',widthMm:rear.centerClampChaseWidthMm,heightMm:rear.centerClampChaseDropMm,depthMm:rear.centerClampChaseDepthMm,note:'Continuous upper rear clearance in the south bay lets the monitor stand move south through the full sit-stand range'})
     }
-    const clampSlotD=mm(office.equipment.monitorStand.clampClearanceDepthMm)
-    const clampSlotStart=moduleD+.02
-    const clampSlotEnd=moduleD*2-.02
-    const legPocketW=mm(rear.northLegPocketWidthMm)
-    const legPocketCenter=frameLegZ[0]-deskStartZ
-    const legPocketStart=legPocketCenter-legPocketW/2
-    const legPocketEnd=legPocketCenter+legPocketW/2
-    const southLegSlotW=mm(rear.legRemovalSlotWidthMm)
-    const southLegSlotCenter=frameLegZ[1]-deskStartZ
-    const southLegSlotStart=southLegSlotCenter-southLegSlotW/2
-    const southLegSlotEnd=southLegSlotCenter+southLegSlotW/2
-    const serviceOpeningStart=Math.min(clampSlotStart,legPocketStart)
-    const serviceOpeningEnd=Math.max(clampSlotEnd,legPocketEnd)
-    // The centre bay has a continuous upper rear chase, allowing the monitor clamp to move south.
-    const clampBackLowerH=Math.max(.1,rearBodyH-mm(office.equipment.monitorStand.clampDropMm))
-    addRearPart(.02,rearBodyH,clampSlotStart,.01,rearBodyH/2,clampSlotStart/2)
-    addRearPart(.02,rearBodyH,rearLength-clampSlotEnd,.01,rearBodyH/2,clampSlotEnd+(rearLength-clampSlotEnd)/2)
-    addRearPart(.02,clampBackLowerH,clampSlotEnd-clampSlotStart,.01,clampBackLowerH/2,(clampSlotStart+clampSlotEnd)/2)
-    addRearPart(rearD,.025,legPocketStart,rearD/2,.0125,legPocketStart/2)
-    addRearPart(rearD,.025,southLegSlotStart-legPocketEnd,rearD/2,.0125,legPocketEnd+(southLegSlotStart-legPocketEnd)/2)
-    addRearPart(rearD,.025,rearLength-southLegSlotEnd,rearD/2,.0125,southLegSlotEnd+(rearLength-southLegSlotEnd)/2)
-    addRearPart(rearD,.025,serviceOpeningStart,rearD/2,rearBodyH-.0125,serviceOpeningStart/2)
-    addRearPart(rearD,.025,southLegSlotStart-serviceOpeningEnd,rearD/2,rearBodyH-.0125,serviceOpeningEnd+(southLegSlotStart-serviceOpeningEnd)/2)
-    addRearPart(rearD,.025,rearLength-southLegSlotEnd,rearD/2,rearBodyH-.0125,southLegSlotEnd+(rearLength-southLegSlotEnd)/2)
-    // Keep the monitor-clamp chase tied at the front, but leave both desk-leg
-    // slots open for their full depth so the assembled frame can slide out.
-    addRearPart(.04,.025,clampSlotEnd-clampSlotStart,rearD-.02,rearBodyH-.0125,(clampSlotStart+clampSlotEnd)/2)
-    const clampChaseEdge=new THREE.Mesh(new THREE.BoxGeometry(.012,mm(office.equipment.monitorStand.clampDropMm),clampSlotEnd-clampSlotStart),makeMaterial('#31363c',.4,null,.2))
-    clampChaseEdge.position.set(clampSlotD,rearBodyH-mm(office.equipment.monitorStand.clampDropMm)/2,(clampSlotStart+clampSlotEnd)/2)
-    rearCabinetGroup.add(clampChaseEdge)
-    tagCarpentry(clampChaseEdge,{name:'Centre monitor-clamp travel channel',widthMm:rear.centerClampChaseWidthMm,heightMm:rear.centerClampChaseDropMm,depthMm:rear.centerClampChaseDepthMm,note:'Continuous upper rear clearance lets the monitor stand move south while the printer remains below'})
-    addRearPart(rearD,rearBodyH,.025,rearD/2,rearBodyH/2,.0125)
-    addRearPart(rearD,rearBodyH,.025,rearD/2,rearBodyH/2,rearLength-.0125)
-    for(const dividerZ of [moduleD,moduleD*2]) addRearPart(rearD,rearBodyH-.05,.018,rearD/2,rearBodyH/2,dividerZ)
-    addRearPart(rearD-.035,.022,moduleD-.05,rearD/2,rearBodyH*.5,moduleD*1.5)
     room.add(rearCabinetGroup)
-    tagCarpentry(rearCabinetGroup,{name:'West lower cabinet run',widthMm:rear.widthMm,heightMm:rear.topHeightMm,depthMm:rear.depthMm,note:'Three bays with two full-depth desk-foot installation slots and a centre monitor-clamp channel'})
+    tagCarpentry(rearCabinetGroup,{name:'West lower cabinet run',widthMm:rear.widthMm,heightMm:rear.topHeightMm,depthMm:rear.depthMm,note:`${layout.rear.bays.length} bays with two full-depth desk-foot slots; the top rail is open between the slots so the frame beam can drop into it`})
     const westDoorGroups=[]
-    const bayNames=['north','centre','south']
-    for(let i=0;i<rearModules;i++){
-      const frontDepth=moduleD-.018
+    const bayNames=['north','south','third','fourth']
+    layout.rear.bays.forEach((bay,i)=>{
+      const bayD=mm(bay.lengthMm)
+      const frontDepth=bayD-.018
       const hingeAtSouth=i%2===0
       const westDoorGroup=new THREE.Group()
-      westDoorGroup.position.set(rearD+.012,toe+rearBodyH/2,deskStartZ+i*moduleD+(hingeAtSouth?.009:moduleD-.009))
+      westDoorGroup.position.set(rearD+.012,toe+rearBodyH/2,mm(bay.start)+(hingeAtSouth?.009:bayD-.009))
       const westFront=new THREE.Mesh(new THREE.BoxGeometry(.018,rearBodyH-.035,frontDepth),doorMaterial)
       westFront.position.z=hingeAtSouth?frontDepth/2:-frontDepth/2;westFront.castShadow=true;westDoorGroup.add(westFront)
       const westHandle=new THREE.Mesh(new THREE.BoxGeometry(.032,.16,.018),makeMaterial('#20262c',.34,null,.25))
@@ -510,42 +477,83 @@ export default function BalconyOffice3D(){
       room.add(westDoorGroup)
       tagCarpentry(westDoorGroup,{name:`West cabinet ${bayNames[i]} door`,widthMm:Math.round(frontDepth*1000),heightMm:Math.round((rearBodyH-.035)*1000),depthMm:18,note:'East-facing hinged cabinet front'})
       westDoorGroups.push({group:westDoorGroup,angle:THREE.MathUtils.degToRad(hingeAtSouth?62:-62)})
-    }
-    // Proposed equipment bays: tower at the north end, printer on a pull-out shelf at the south end.
+    })
+    // PC tower in the north bay, south of the foot pocket.
+    const pcSpec=layout.pcTower
     const towerGroup=new THREE.Group()
-    const towerBody=new THREE.Mesh(new THREE.BoxGeometry(.216,.489,.410),new THREE.MeshStandardMaterial({color:'#171b20',roughness:.42,metalness:.18}))
-    const northStorageCenterZ=deskStartZ+Math.max(.22,(legPocketStart-.025)/2)
-    towerBody.position.set(rearD/2,toe+.489/2,northStorageCenterZ)
+    const towerBody=new THREE.Mesh(new THREE.BoxGeometry(mm(pcSpec.x1-pcSpec.x0),mm(pcSpec.y1-pcSpec.y0),mm(pcSpec.zEnd-pcSpec.zStart)),new THREE.MeshStandardMaterial({color:'#171b20',roughness:.42,metalness:.18}))
+    towerBody.position.set(mm((pcSpec.x0+pcSpec.x1)/2),mm((pcSpec.y0+pcSpec.y1)/2),mm(pcSpec.centerZ))
     towerBody.castShadow=true
     towerGroup.add(towerBody)
     const towerMesh=new THREE.Mesh(new THREE.BoxGeometry(.19,.43,.008),new THREE.MeshStandardMaterial({color:'#263744',emissive:'#14202a',emissiveIntensity:.35,roughness:.55}))
-    towerMesh.position.set(rearD/2,toe+.489/2,northStorageCenterZ-.209)
+    towerMesh.position.set(mm((pcSpec.x0+pcSpec.x1)/2),mm((pcSpec.y0+pcSpec.y1)/2),mm(pcSpec.zStart)+.001)
     towerGroup.add(towerMesh)
     room.add(towerGroup)
     itemObjects['pc-tower']=towerGroup
 
+    // Fixed south section: top at the seated preset on a full-depth cabinet, printer on a pull-out shelf inside.
+    const fixedSection=layout.fixed
+    const fixedSliders=[]
+    const fixedGroup=new THREE.Group()
+    const fixedCarcassMaterial=makeMaterial('#ffffff',.56,woodTexture)
     const printerGroup=new THREE.Group()
-    const printerShelf=new THREE.Mesh(new THREE.BoxGeometry(rearD-.025,.025,moduleD-.06),new THREE.MeshStandardMaterial({color:'#75563d',roughness:.5}))
-    tagSurfaceMaterial(printerShelf.material,'wood','balcony')
-    printerShelf.position.set(rearD/2,toe+.035,centerBayCenterZ)
-    printerShelf.castShadow=true
-    printerGroup.add(printerShelf)
-    const printerBody=new THREE.Mesh(new THREE.BoxGeometry(.332,.189,.446),new THREE.MeshStandardMaterial({color:'#e9edf0',roughness:.55}))
-    printerBody.position.set(rearD/2,toe+.142,centerBayCenterZ)
-    printerBody.castShadow=true
-    printerGroup.add(printerBody)
+    if(fixedSection){
+      for(const part of fixedSection.parts){
+        if(part.name==='printer pull-out shelf') continue
+        const mesh=addPartBox(fixedGroup,part,part.name==='fixed section top'?makeMaterial('#ffffff',.42,woodTexture):fixedCarcassMaterial)
+        if(part.name==='fixed section top'){
+          itemObjects['fixed-top']=mesh
+          tagCarpentry(mesh,{name:'Fixed south section top',widthMm:fixedSection.lengthMm,heightMm:fixedSection.thicknessMm,depthMm:fixedSection.x1-fixedSection.x0,note:`Fixed at ${fixedSection.topHeightMm} mm, level with the seated preset; ${layout.gapMm} mm north gap to the moving top. Cut to the taped room length on site`})
+        }
+      }
+      room.add(fixedGroup)
+      tagCarpentry(fixedGroup,{name:'Fixed south cabinet',widthMm:fixedSection.lengthMm,heightMm:fixedSection.cabinet.y1-fixedSection.cabinet.y0,depthMm:fixedSection.x1-fixedSection.x0,note:'Full-depth cabinet under the fixed section: printer shelf below, shelf above, two bypass sliding fronts (no swing: the scan leaves about 270 mm of floor in front)'})
+      // Two-panel bypass sliders on the east face; the north panel slides south over the other when the cabinets are "open".
+      const door=fixedSection.door
+      const panelD=mm(door.zEnd-door.zStart)/2-.008
+      const panelH=mm(door.y1-door.y0)-.035
+      const panelY=mm((door.y0+door.y1)/2)
+      const southPanelZ=mm(door.zEnd)-.009-panelD/2
+      const northPanelClosedZ=mm(door.zStart)+.009+panelD/2
+      for(const [z,x,name] of [[southPanelZ,mm(door.x),'south'],[northPanelClosedZ,mm(door.x)+.022,'north']]){
+        const panel=new THREE.Mesh(new THREE.BoxGeometry(.018,panelH,panelD),doorMaterial)
+        panel.position.set(x,panelY,z);panel.castShadow=true;room.add(panel)
+        tagCarpentry(panel,{name:`Fixed south cabinet ${name} sliding panel`,widthMm:Math.round(panelD*1000),heightMm:Math.round(panelH*1000),depthMm:18,note:name==='north'?'Bypass sliding front, shown shifted south':'Bypass sliding front'})
+        if(name==='north'){
+          const handle=new THREE.Mesh(new THREE.BoxGeometry(.032,.16,.018),makeMaterial('#20262c',.34,null,.25))
+          handle.position.set(.018,0,-panelD/2+.055);panel.add(handle)
+          fixedSliders.push({mesh:panel,closedZ:northPanelClosedZ,openZ:southPanelZ})
+        }
+      }
+      for(const y of [mm(door.y0)+.026,mm(door.y1)-.012]) addBox({w:.035,h:.014,d:mm(door.zEnd-door.zStart)-.025,x:mm(door.x)+.011,y,z:mm((door.zStart+door.zEnd)/2),color:'#20262c',roughness:.34,metalness:.25})
+      if(fixedSection.printerShelf){
+        const shelfMesh=addPartBox(printerGroup,fixedSection.printerShelf,new THREE.MeshStandardMaterial({color:'#75563d',roughness:.5}))
+        tagSurfaceMaterial(shelfMesh.material,'wood','balcony')
+        const pr=fixedSection.printer
+        const printerBody=new THREE.Mesh(new THREE.BoxGeometry(mm(pr.x1-pr.x0),mm(pr.y1-pr.y0),mm(pr.zEnd-pr.zStart)),new THREE.MeshStandardMaterial({color:'#e9edf0',roughness:.55}))
+        printerBody.position.set(mm((pr.x0+pr.x1)/2),mm((pr.y0+pr.y1)/2),mm(pr.centerZ))
+        printerBody.castShadow=true
+        printerGroup.add(printerBody)
+      }
+    }
     room.add(printerGroup)
     itemObjects.printer=printerGroup
     // Toggleable 3D electrical overlay. Markers sit just in front of the
     // cabinet faces so outlet locations remain legible from every preset.
+    const chaseStartZ=mm(layout.rear.chase.start)
+    const northBayStartZ=mm(layout.rear.bays[0].start)
     addElectricalMarker(room,'E1 · HEATER',heaterX,H-.62,upperD+.055,'#ea580c')
     addElectricalMarker(room,'E2 · ROUTER',routerX,routerShelfY+.13,upperD+.055,'#ea580c')
-    addElectricalMarker(room,'N1 · DESK FEED',rearD+.045,rearTop-.07,centerBayCenterZ+.20,'#2563eb')
-    addElectricalMarker(room,'N2 · PC / UPS',rearD+.045,toe+.29,deskStartZ+.20,'#2563eb')
-    addElectricalMarker(room,'N3 · PC SPARE',rearD+.045,toe+.29,deskStartZ+.42,'#2563eb')
-    addElectricalMarker(room,'N4 · PRINTER',rearD+.045,toe+.23,centerBayCenterZ,'#2563eb')
-    addElectricalMarker(room,'D1 · 2× CAT6',rearD+.045,rearTop-.18,centerBayCenterZ+.35,'#0f766e')
-    addElectricalMarker(movingDesk,'P1 · 8-WAY RAIL',deskDepth*.62,-.11,deskCenterZ+.22,'#16a34a')
+    for(const point of office.electrical.scannedWallPoints??[]){
+      if(point.wall!=='north') continue
+      addElectricalMarker(room,`${point.id} · EXISTING (SCAN)`,mm((point.fromWestMm[0]+point.fromWestMm[1])/2),mm((point.heightMm[0]+point.heightMm[1])/2),.03,'#6b7280')
+    }
+    addElectricalMarker(room,'N1 · DESK FEED',rearD+.045,rearTop-.07,chaseStartZ+.25,'#2563eb')
+    addElectricalMarker(room,'N2 · PC / UPS',rearD+.045,toe+.29,northBayStartZ+.22,'#2563eb')
+    addElectricalMarker(room,'N3 · PC SPARE',rearD+.045,toe+.29,northBayStartZ+.44,'#2563eb')
+    if(fixedSection) addElectricalMarker(room,'N4 · PRINTER',mm(fixedSection.x1)+.045,toe+.23,mm(fixedSection.printer?.centerZ??(fixedSection.zStart+fixedSection.zEnd)/2),'#2563eb')
+    addElectricalMarker(room,'D1 · 2× CAT6',rearD+.045,rearTop-.18,chaseStartZ+.45,'#0f766e')
+    addElectricalMarker(movingDesk,'P1 · 8-WAY RAIL',deskX0+deskDepth*.62,-.11,deskCenterZ+.22,'#16a34a')
     // West-facing dual-monitor workstation, packed toward the north end.
     const standMaterial=makeMaterial('#242a31',.35)
     const screenMaterial=new THREE.MeshStandardMaterial({color:'#163b56',emissive:'#0d2638',emissiveIntensity:.45,roughness:.18,metalness:.08})
@@ -554,7 +562,7 @@ export default function BalconyOffice3D(){
       const monitorW=diagonal*(16/Math.sqrt(16*16+9*9))
       const monitorH=diagonal*(9/Math.sqrt(16*16+9*9))
       const monitorGroup=new THREE.Group()
-      monitorGroup.position.set(0,centerY,centerZ)
+      monitorGroup.position.set(deskX0,centerY,centerZ)
       if(monitor.shape==='curved'){
         const radius=1.15
         const arc=monitorW/radius
@@ -578,51 +586,55 @@ export default function BalconyOffice3D(){
       itemObjects[id]=monitorGroup
       return {monitorW,monitorH,group:monitorGroup}
     }
-    // Shift the complete dual-monitor assembly 6 inches south/left from its earlier position.
-    const screenBottom=.17
+    // The dual-monitor assembly sits toward the north end of the moving top (layout.monitors: 6 inches south of its edge).
+    const screenBottom=mm(layout.monitors.screenBottomMm)
     addMonitor({monitor:rightMonitor,centerZ:rightCenterZ,centerY:screenBottom+rightH/2,id:'monitor-lenovo'})
     addMonitor({monitor:leftMonitor,centerZ:leftCenterZ,centerY:screenBottom+leftH/2,id:'monitor-benq'})
     const armGroup=new THREE.Group()
     movingDesk.add(armGroup)
     itemObjects['monitor-arm']=armGroup
+    const armX=deskX0+mm(CLAMP_FROM_WEST_EDGE_MM)
     const post=new THREE.Mesh(new THREE.CylinderGeometry(.022,.028,.48,18),standMaterial)
-    post.position.set(.07,.24,standZ)
+    post.position.set(armX,.24,standZ)
     post.castShadow=true
     armGroup.add(post)
     const crossbar=new THREE.Mesh(new THREE.BoxGeometry(.04,.035,leftCenterZ-rightCenterZ+.18),standMaterial)
-    crossbar.position.set(.10,.38,standZ)
+    crossbar.position.set(armX+.03,.38,standZ)
     crossbar.castShadow=true
     armGroup.add(crossbar)
     const clampDrop=mm(office.equipment.monitorStand.clampDropMm)
     const clampStem=new THREE.Mesh(new THREE.CylinderGeometry(.011,.011,clampDrop,14),standMaterial)
-    clampStem.position.set(.07,-worktopT-clampDrop/2,standZ)
+    clampStem.position.set(armX,-worktopT-clampDrop/2,standZ)
     clampStem.castShadow=true
     armGroup.add(clampStem)
     const clampPad=new THREE.Mesh(new THREE.CylinderGeometry(.033,.033,.012,18),standMaterial)
     clampPad.rotation.z=Math.PI/2
-    clampPad.position.set(.07,-worktopT-clampDrop,standZ)
+    clampPad.position.set(armX,-worktopT-clampDrop,standZ)
     armGroup.add(clampPad)
 
-    const laptopSpec=office.equipment.laptop
+    // Laptop: on the fixed south section when there is one (seated height), else on the moving top (layout.laptop).
+    const laptopSpec=layout.laptop
     const laptopW=mm(laptopSpec.widthMm)
     const laptopD=mm(laptopSpec.depthMm)
-    const laptopZ=Math.min(deskStartZ+deskLength-laptopW/2-.035,leftCenterZ+leftW/2+laptopW/2+.03)
+    const laptopZ=mm(laptopSpec.centerZ)
+    const laptopX1=mm(laptopSpec.x1)
     const laptopGroup=new THREE.Group()
     const laptopMaterial=makeMaterial('#353b43',.36)
     const laptopBase=new THREE.Mesh(new THREE.BoxGeometry(laptopD,.014,laptopW),laptopMaterial)
-    laptopBase.position.set(deskDepth-laptopD/2-.055,.012,laptopZ)
+    laptopBase.position.set(laptopX1-laptopD/2,.012,laptopZ)
     laptopBase.castShadow=true
     laptopGroup.add(laptopBase)
     const laptopScreen=new THREE.Mesh(new THREE.BoxGeometry(.014,.215,laptopW),laptopMaterial)
-    laptopScreen.position.set(deskDepth-laptopD+.005,.122,laptopZ)
+    laptopScreen.position.set(laptopX1-laptopD+.005,.122,laptopZ)
     laptopScreen.rotation.z=THREE.MathUtils.degToRad(-8)
     laptopScreen.castShadow=true
     laptopGroup.add(laptopScreen)
     const laptopDisplay=new THREE.Mesh(new THREE.BoxGeometry(.008,.195,laptopW-.018),screenMaterial)
-    laptopDisplay.position.set(deskDepth-laptopD+.014,.122,laptopZ)
+    laptopDisplay.position.set(laptopX1-laptopD+.014,.122,laptopZ)
     laptopDisplay.rotation.z=THREE.MathUtils.degToRad(-8)
     laptopGroup.add(laptopDisplay)
-    movingDesk.add(laptopGroup)
+    if(laptopSpec.on==='fixed'){laptopGroup.position.y=mm(laptopSpec.topY);room.add(laptopGroup)}
+    else movingDesk.add(laptopGroup)
     itemObjects.laptop=laptopGroup
 
     // Licensed human reference model, normalized to exactly 5 ft 7 in / 1702 mm tall.
@@ -784,6 +796,7 @@ export default function BalconyOffice3D(){
       lowerLeftSlider.position.x=THREE.MathUtils.lerp(lowerLeftSlider.position.x,THREE.MathUtils.lerp(lowerLeftSliderClosedX,lowerRightSliderX,cabinetOpenTarget),.12)
       liftGroup.rotation.x=THREE.MathUtils.lerp(liftGroup.rotation.x,THREE.MathUtils.degToRad(-58)*cabinetOpenTarget,.12)
       for(const {group,angle} of westDoorGroups)group.rotation.y=THREE.MathUtils.lerp(group.rotation.y,angle*cabinetOpenTarget,.12)
+      for(const {mesh,closedZ,openZ} of fixedSliders)mesh.position.z=THREE.MathUtils.lerp(mesh.position.z,THREE.MathUtils.lerp(closedZ,openZ,cabinetOpenTarget),.12)
       controls.update();designerRender.render()
     }
     animate()
@@ -873,18 +886,23 @@ export default function BalconyOffice3D(){
     pdf.setFillColor(205,174,135);pdf.rect(ox+roomW-northW,oy,northW,north.upper.depthMm*planScale,'FD')
     pdf.setFillColor(154,116,76);pdf.rect(ox+roomW-northW,oy,northW,north.lower.depthMm*planScale,'FD')
     const desk=office.worktop.westAdjustable
-    const deskStart=office.dimensions.lengthMm-desk.widthMm
+    const deskLayout=balconyDeskLayout(office)
+    const moving=deskLayout.moving,fixedSec=deskLayout.fixed,gapMm=deskLayout.gapMm
+    const deskStart=moving.zStart
     const northCabinetToDeskGap=deskStart-north.lower.depthMm
-    pdf.setFillColor(112,78,54);pdf.rect(ox,oy+deskStart*planScale,desk.depthMm*planScale,desk.widthMm*planScale,'FD')
     const rear=office.worktop.rearCabinet
-    pdf.setFillColor(220,198,165);pdf.rect(ox,oy+deskStart*planScale,rear.depthMm*planScale,rear.widthMm*planScale,'FD')
+    const fixedCfg=office.worktop.southFixed
+    pdf.setFillColor(112,78,54);pdf.rect(ox+moving.x0*planScale,oy+deskStart*planScale,desk.depthMm*planScale,moving.lengthMm*planScale,'FD')
+    if(fixedSec){pdf.setFillColor(140,98,66);pdf.rect(ox+fixedSec.x0*planScale,oy+fixedSec.zStart*planScale,(fixedSec.x1-fixedSec.x0)*planScale,fixedSec.lengthMm*planScale,'FD')}
+    pdf.setFillColor(220,198,165);pdf.rect(ox,oy+deskLayout.rear.start*planScale,rear.depthMm*planScale,rear.widthMm*planScale,'FD')
     dim(ox,oy-7,ox+roomW,oy-7,formatDim(office.dimensions.widthMm),4)
     dim(ox-8,oy,ox-8,oy+roomL,formatDim(office.dimensions.lengthMm),4)
-    dim(ox,oy+deskStart*planScale-4,ox+desk.depthMm*planScale,oy+deskStart*planScale-4,`Desk depth ${formatDim(desk.depthMm)}`,2)
-    dim(ox+desk.depthMm*planScale+5,oy+deskStart*planScale,ox+desk.depthMm*planScale+5,oy+(deskStart+desk.widthMm)*planScale,`Desk width ${formatDim(desk.widthMm)}`,3)
-    note('Plan legend',125,34);note(`Brown: adjustable west desktop\nTan: fixed west-side cabinet\nNorth cabinet: ${formatDim(north.lower.widthMm)} wide; lower ${formatDim(north.lower.depthMm)} deep\nGap from lower cabinet to desk: ${formatDim(northCabinetToDeskGap)}\nDesktop continues to south wall\nSouth wall: no counter or cabinet\nWest cabinet: ${formatDim(rear.depthMm)} deep x ${formatDim(rear.widthMm)} long\nEast-facing access\nOpen floor depth: ${formatDim(desk.depthMm-rear.depthMm)}`,125,40,70)
-    note(`Important: the ${formatDim(desk.widthMm)} custom desktop exceeds the FLEXISPOT stated ${formatDim(desk.supportedTopWidthMm[1])} supported-top limit. Confirm stiffness, fixing pattern, load distribution and warranty with the frame supplier before fabrication.`,125,78,120)
-    note('Site verification: carpenter must verify room, wall squareness, window/parapet, power points and all clearances before cutting.',125,101,120)
+    dim(ox+moving.x0*planScale,oy+deskStart*planScale-4,ox+moving.x1*planScale,oy+deskStart*planScale-4,`Desk depth ${formatDim(desk.depthMm)}`,2)
+    dim(ox+moving.x1*planScale+5,oy+deskStart*planScale,ox+moving.x1*planScale+5,oy+moving.zEnd*planScale,`Sit-stand top ${formatDim(moving.lengthMm)}`,3)
+    if(fixedSec) dim(ox+moving.x1*planScale+5,oy+fixedSec.zStart*planScale,ox+moving.x1*planScale+5,oy+fixedSec.zEnd*planScale,`Fixed ${formatDim(fixedSec.lengthMm)}`,3)
+    note('Plan legend',125,34);note(`Brown: sit-stand top, ${formatDim(moving.x0)} off the west wall\nDark brown: fixed south section, ${formatDim(gapMm)} gap to the moving top\nTan: low cabinet under the sit-stand top\nNorth cabinet: ${formatDim(north.lower.widthMm)} wide; lower ${formatDim(north.lower.depthMm)} deep\nGap from lower cabinet to desk: ${formatDim(northCabinetToDeskGap)}\nWest cabinet: ${formatDim(rear.depthMm)} deep x ${formatDim(rear.widthMm)} long, ${rear.bayCount} bays\n${fixedSec?`Fixed section cabinet: full ${formatDim(fixedSec.x1-fixedSec.x0)} depth, floor to ${formatDim(fixedSec.cabinet.y1)}`:'No fixed section'}\nEast-facing access\nOpen floor depth beside the cabinet: ${formatDim(moving.x1-rear.depthMm)}`,125,40,70)
+    note(`Owner 2026-10-04: the single ${formatDim(2268)} top was too long. The south corner is now fixed and the ${formatDim(desk.widthMm)} sit-stand top is inside the FLEXISPOT stated ${formatDim(desk.supportedTopWidthMm[0])}-${formatDim(desk.supportedTopWidthMm[1])} top range. Keep ${formatDim(gapMm)} between the moving top and everything it passes. The fixed section is cut to the taped room length on site (phone scan 2026-10-04: room about ${formatDim(office.survey.lengthMm)} long, not ${formatDim(office.dimensions.lengthMm)}).`,125,82,120)
+    note('Site verification: carpenter must verify room, wall squareness, window/parapet, power points and all clearances before cutting.',125,105,120)
 
     pdf.addPage('a4','landscape')
     title('North Wall Elevation and Cabinet Schedule')
@@ -908,7 +926,7 @@ export default function BalconyOffice3D(){
     note('All cabinet dimensions are nominal carcass dimensions. The five-inch lower cabinet needs wall anchoring; verify actual book depth. Allow for shutters, tracks, edge bands, scribes, wall irregularity and installation tolerances.',125,82,145)
 
     pdf.addPage('a4','landscape')
-    title('West Elevation - Adjustable Desk and Window')
+    title('West Elevation - Sit-stand Desk, Fixed Section and Window')
     const wx=18,wBase=188
     const westScale=.062
     const westL=office.dimensions.lengthMm*westScale
@@ -921,12 +939,17 @@ export default function BalconyOffice3D(){
     pdf.setFillColor(184,120,90);pdf.rect(wx,wBase-westH,westL,office.envelope.upperBrickBandMm*westScale,'F')
     const deskX=wx+deskStart*westScale
     const deskY=wBase-deskHeightIn*25.4*westScale
-    pdf.setFillColor(112,78,54);pdf.rect(deskX,deskY,desk.widthMm*westScale,Math.max(1.5,desk.topThicknessMm*westScale),'F')
+    pdf.setFillColor(112,78,54);pdf.rect(deskX,deskY,moving.lengthMm*westScale,Math.max(1.5,desk.topThicknessMm*westScale),'F')
     const rearTop=wBase-rear.topHeightMm*westScale
     pdf.setFillColor(220,198,165);pdf.rect(deskX,rearTop,rear.widthMm*westScale,rear.topHeightMm*westScale,'F')
+    if(fixedSec){
+      pdf.setFillColor(140,98,66);pdf.rect(wx+fixedSec.zStart*westScale,wBase-fixedSec.topHeightMm*westScale,fixedSec.lengthMm*westScale,Math.max(1.5,fixedSec.thicknessMm*westScale),'F')
+      pdf.setFillColor(220,198,165);pdf.rect(wx+fixedSec.zStart*westScale,wBase-fixedSec.cabinet.y1*westScale,fixedSec.lengthMm*westScale,(fixedSec.cabinet.y1-fixedSec.cabinet.y0)*westScale,'F')
+      dim(wx+moving.zEnd*westScale,deskY-6,wx+fixedSec.zStart*westScale,deskY-6,formatDim(gapMm),2)
+    }
     dim(wx,wBase+7,wx+westL,wBase+7,formatDim(office.dimensions.lengthMm),4)
     dim(wx-7,wBase-westH,wx-7,wBase,formatDim(office.dimensions.floorToCeilingMm),4)
-    note(`WEST WORKSTATION\nDesktop: ${formatDim(desk.widthMm)} W x ${formatDim(desk.depthMm)} D x ${formatDim(desk.topThicknessMm)} T.\nCurrent exported height: ${formatDim(deskHeightIn*25.4)}.\nAdjustment range: ${formatDim(desk.minHeightMm)} to ${formatDim(desk.maxHeightMm)}.\nFrame span: ${formatDim(desk.frameSpanMm)}; shifted ${formatDim(desk.frameOffsetSouthMm)} south.\nNorth/south end overhangs: ${formatDim(desk.northEndOverhangMm)} / ${formatDim(desk.southEndOverhangMm)}.\nDesk-foot through-slots: north ${formatDim(rear.northLegPocketWidthMm)} W; south ${formatDim(rear.legRemovalSlotWidthMm)} W; full ${formatDim(rear.depthMm)} depth.\nDesktop remains at the south wall, leaving ${formatDim(northCabinetToDeskGap)} from the five-inch north lower cabinet.\nCentre clamp channel: ${formatDim(rear.centerClampChaseWidthMm)} W x ${formatDim(rear.centerClampChaseDepthMm)} D; ${formatDim(rear.centerClampChaseDropMm)} drop.\nWest cabinet: ${formatDim(rear.widthMm)} L x ${formatDim(rear.depthMm)} D x ${formatDim(rear.topHeightMm)} H; east-facing access.\nClear floor depth: ${formatDim(desk.depthMm-rear.depthMm)}.\nNo south-wall counter or cabinet.`,205,36,78)
+    note(`WEST WORKSTATION\nSit-stand top: ${formatDim(moving.lengthMm)} W x ${formatDim(desk.depthMm)} D x ${formatDim(desk.topThicknessMm)} T, ${formatDim(moving.x0)} off the wall.\nCurrent exported height: ${formatDim(deskHeightIn*25.4)}.\nAdjustment range: ${formatDim(desk.minHeightMm)} to ${formatDim(desk.maxHeightMm)}.\nFrame span: ${formatDim(desk.frameSpanMm)}; feet ${formatDim(deskLayout.frame.northOverhangMm)} / ${formatDim(deskLayout.frame.southOverhangMm)} inside the ends.\nDesk-foot through-slots: north ${formatDim(rear.northLegPocketWidthMm)} W; south ${formatDim(rear.legRemovalSlotWidthMm)} W; full ${formatDim(rear.depthMm)} depth; top rail open between them.\n${formatDim(northCabinetToDeskGap)} from the five-inch north lower cabinet.\nClamp channel (south bay): ${formatDim(rear.centerClampChaseWidthMm)} W x ${formatDim(rear.centerClampChaseDepthMm)} D; ${formatDim(rear.centerClampChaseDropMm)} drop.\nWest cabinet: ${formatDim(rear.widthMm)} L x ${formatDim(rear.depthMm)} D x ${formatDim(rear.topHeightMm)} H; east-facing access.\n${fixedSec?`FIXED SOUTH SECTION: ${formatDim(fixedSec.lengthMm)} W x ${formatDim(fixedSec.x1-fixedSec.x0)} D top at ${formatDim(fixedSec.topHeightMm)} (seated preset), ${formatDim(gapMm)} gap to the moving top; cabinet below from ${formatDim(fixedSec.cabinet.y0)} to ${formatDim(fixedSec.cabinet.y1)} with a printer pull-out and one door.`:'No fixed section.'}`,205,36,78)
     note(`ENVELOPE\nBrick parapet: ${formatDim(office.envelope.lowerBrickParapetMm)}\nWindow band: ${formatDim(office.envelope.windowBandMm)}\nTop brick band: ${formatDim(office.envelope.upperBrickBandMm)}\nTotal: ${formatDim(office.dimensions.floorToCeilingMm)}`,205,99,78)
     note('Provide flexible cable loops and confirm that no fixed cabinet, cable or shutter enters the desk lifting path.',205,137,78)
 
@@ -937,10 +960,14 @@ export default function BalconyOffice3D(){
       ['Water-heater bay','1',north.upper.heaterBayWidthMm,north.upper.heightMm,north.upper.depthMm,'Existing heater; drip tray; verify manufacturer clearance, plumbing and service access'],
       ['Router shelf','1',north.upper.routerBayWidthMm-50,22,north.upper.depthMm-55,'Raised shelf; internal socket; ventilated; solid divider; three straight antenna pass-throughs'],
       ['North lower cabinet','1',north.lower.widthMm,north.lower.heightMm,north.lower.depthMm,`Full-width bypass sliders above and below ${formatDim(north.doors.lower.splitHeightMm)} split; no filler`],
-      ['West adjustable tabletop','1',desk.widthMm,desk.topThicknessMm,desk.depthMm,`Custom top; current height ${formatDim(desk.currentHeightMm)}; FLEXISPOT frame span ${formatDim(desk.frameSpanMm)}`],
-      ['West lower cabinet run','1',rear.widthMm,rear.topHeightMm,rear.depthMm,`Uniform one-foot depth to south end; east-facing access; toe clearance ${formatDim(rear.toeClearanceMm)}`],
-      ['PC tower bay','1',rear.nominalBayWidthMm,rear.topHeightMm-rear.toeClearanceMm,rear.depthMm,'North bay; open/perforated front and rear; cable cut-out required'],
-      ['Printer pull-out shelf','1',rear.printerShelf.widthMm,rear.printerShelf.thicknessMm,rear.printerShelf.depthMm,'South bay of the one-foot-deep run; runners extend east toward seated user'],
+      ['West sit-stand top','1',moving.lengthMm,desk.topThicknessMm,desk.depthMm,`Custom top; current height ${formatDim(desk.currentHeightMm)}; FLEXISPOT frame span ${formatDim(desk.frameSpanMm)}; ${formatDim(gapMm)} clear of the fixed section and the west wall`],
+      ...(fixedSec?[
+        ['Fixed south section top','1',fixedSec.lengthMm,fixedSec.thicknessMm,fixedSec.x1-fixedSec.x0,`Fixed at ${formatDim(fixedSec.topHeightMm)}; cut to the taped room length on site; ${formatDim(gapMm)} gap to the moving top`],
+        ['Fixed south cabinet','1',fixedSec.lengthMm,fixedSec.cabinet.y1-fixedSec.cabinet.y0,fixedSec.x1-fixedSec.x0,`Under the fixed section; toe ${formatDim(fixedSec.cabinet.y0)}; two-panel bypass sliding fronts (no swing: about 270 mm of floor in front by the scan); shelf at ${(fixedCfg.under?.shelfHeightsMm??[]).map(formatDim).join(', ')||'none'}`],
+        ['Printer shelf','1',fixedCfg.under.printerShelf.widthMm,fixedCfg.under.printerShelf.thicknessMm,fixedCfg.under.printerShelf.depthMm,`Low in the fixed south cabinet; ${fixedCfg.under.printerShelf.runners}`],
+      ]:[]),
+      ['West lower cabinet run','1',rear.widthMm,rear.topHeightMm,rear.depthMm,`Uniform one-foot depth under the sit-stand top; ${rear.bayCount} bays of ${(rear.bayLengthsMm??[]).map(formatDim).join(' / ')}; east-facing access; toe clearance ${formatDim(rear.toeClearanceMm)}; top rail open between the foot slots, divider stopped at ${formatDim(deskLayout.rear.dividerTopMm)}`],
+      ['PC tower bay','1',deskLayout.rear.bays[0].lengthMm,rear.topHeightMm-rear.toeClearanceMm,rear.depthMm,'North bay; open/perforated front and rear; cable cut-out required'],
     ]
     const colX=[14,69,82,112,142,172]
     const colW=[52,10,27,27,27,108]
@@ -962,7 +989,7 @@ export default function BalconyOffice3D(){
     title('Preliminary Electrical and Data Plan')
     const electrical=office.electrical
     note(`OUTLET COUNT\nExisting fixed outlets retained: ${electrical.totals.existingFixedOutlets} (water heater and router).\nNew fixed outlets: ${electrical.totals.newFixedOutlets}.\nMoving under-desk power rail: ${electrical.totals.movingDeskOutlets} outlets.\nDesigned connected equipment plugs: ${electrical.totals.simultaneousEquipmentPlugs}; spare equipment outlets: ${electrical.totals.spareEquipmentOutlets}.`,14,31,82)
-    note(`NEW FIXED POINTS\n1. Centre high service zone: 1 x 6/16 A earthed point feeding the moving desk rail.\n2. North PC/UPS bay: 2 x 6 A earthed points.\n3. Centre printer bay: 1 x 6 A earthed point.\n\nDESK RAIL LOADS\nTwo monitors, laptop charger, dock, combined phone/watch charger and sit-stand motor; two spare outlets.`,104,31,90)
+    note(`NEW FIXED POINTS\n1. South-bay high service zone: 1 x 6/16 A earthed point feeding the moving desk rail.\n2. North PC/UPS bay: 2 x 6 A earthed points.\n3. Fixed south cabinet, printer: 1 x 6 A earthed point.\n\nDESK RAIL LOADS\nTwo monitors, laptop charger, dock, combined phone/watch charger and sit-stand motor; two spare outlets.\n\nSEEN ON THE NORTH WALL (phone scan 2026-10-04, +/- 20 mm, from the west wall / above floor)\n${(electrical.scannedWallPoints??[]).map(p=>`${p.id}: ${formatDim(p.fromWestMm[0])}-${formatDim(p.fromWestMm[1])}, ${formatDim(p.heightMm[0])}-${formatDim(p.heightMm[1])} high; ${p.kind}`).join('\n')}`,104,31,90)
     note(`DATA AND ROUTING\n2 x Cat6 from router rear chase to desk dock: one active, one spare.\nKeep data separated from mains and cross only at right angles.\nUse a flexible service loop sized for the full desk travel and quick-disconnect plugs so the desk can slide out.`,205,31,78)
     note(`SAFETY BASIS\nRetain the water heater on a dedicated circuit and verify its existing point and accessible double-pole isolation.\nAll socket outlets: three-pin, permanently earthed, BIS-certified to IS 1293:2019.\nDomestic installation: residual-current protection not exceeding ${electrical.protection.domesticRcdMaxMa} mA.\nLicensed electrician to verify actual load, circuit segregation, breaker and conductor sizing, polarity, insulation resistance, earthing and earth-fault loop impedance before energising. Keep outlets accessible and clear of heater plumbing and possible leaks.`,14,112,pageW-28)
 
@@ -989,11 +1016,11 @@ export default function BalconyOffice3D(){
   const formatCarpentryDimension=value=>dimensionUnit==='ft-in'?feetInches(value):`${Math.round(value)} mm`
   const aiRenderPrompt=`Create a photorealistic interior architectural 3D render of a narrow enclosed balcony home office in an Indian apartment. Room size: ${BALCONY_OFFICE.dimensions.widthMm} mm wide × ${BALCONY_OFFICE.dimensions.lengthMm} mm long × ${BALCONY_OFFICE.dimensions.floorToCeilingMm} mm high. Camera: eye-level wide-angle view from the study entrance, showing the full west workstation and north cabinet without fisheye distortion.
 
-West wall: a continuous ${BALCONY_OFFICE.worktop.westAdjustable.widthMm} × ${BALCONY_OFFICE.worktop.westAdjustable.depthMm} mm light-oak adjustable desktop, currently ${Math.round(deskHeightIn*25.4)} mm high, running to the south wall. Black dual-motor sit-stand frame, two monitors on one clamp-mounted arm, open laptop, clean keyboard and mouse, concealed eight-outlet power rail and organized cable spine. Below it is a ${BALCONY_OFFICE.worktop.rearCabinet.depthMm} mm deep light-oak cabinet run with three east-facing doors, a ventilated PC bay, centre printer pull-out and clear desk-leg installation slots.
+West wall: a ${BALCONY_OFFICE.worktop.westAdjustable.widthMm} × ${BALCONY_OFFICE.worktop.westAdjustable.depthMm} mm light-oak sit-stand desktop, currently ${Math.round(deskHeightIn*25.4)} mm high, on a black dual-motor frame, with two monitors on one clamp-mounted arm, clean keyboard and mouse, concealed eight-outlet power rail and organized cable spine. Below it is a ${BALCONY_OFFICE.worktop.rearCabinet.depthMm} mm deep light-oak cabinet run with two east-facing doors, a ventilated PC bay and clear desk-leg installation slots. In the south corner, separated from the moving top by a ${BALCONY_OFFICE.worktop.movingGapMm} mm gap, a fixed ${BALCONY_OFFICE.worktop.southFixed.lengthMm} × ${BALCONY_OFFICE.worktop.southFixed.depthMm} mm section of the same oak top at ${BALCONY_OFFICE.worktop.southFixed.topHeightMm} mm with an open laptop on it and a full-height cabinet below holding the printer on a pull-out shelf.
 
 North wall: full-height cabinetry. Lower cabinet is ${BALCONY_OFFICE.cabinetry.northWall.lower.widthMm} mm wide × ${BALCONY_OFFICE.cabinetry.northWall.lower.depthMm} mm deep with organized book shelves and sliding fronts. Upper cabinet is ${BALCONY_OFFICE.cabinetry.northWall.upper.depthMm} mm deep: concealed water-heater service bay on the northwest, router shelf on the northeast with three straight antennas passing through the side, and two horizontal book shelves below the router. Use removable ventilated access panels.
 
-Architecture and finish: warm pale oak mica cabinetry with subtle grain, matte off-white walls, black metal frame and hardware, soft neutral floor, window bands along the south and west walls, natural daylight balanced with warm recessed ceiling lights. Keep the south wall free of cabinets. The result should look buildable, uncluttered and accurately scaled, with realistic joinery, shadows and reflections. No people, compass labels, measurement tags, UI elements, text, logos, floating furniture or extra cabinets.`
+Architecture and finish: warm pale oak mica cabinetry with subtle grain, matte off-white walls, black metal frame and hardware, soft neutral floor, window bands along the south and west walls, natural daylight balanced with warm recessed ceiling lights. The result should look buildable, uncluttered and accurately scaled, with realistic joinery, shadows and reflections. No people, compass labels, measurement tags, UI elements, text, logos, floating furniture or extra cabinets.`
   const copyAiPrompt=async()=>{
     try{await navigator.clipboard.writeText(aiRenderPrompt);setPromptCopyStatus('copied');setTimeout(()=>setPromptCopyStatus('idle'),1800)}
     catch{setPromptCopyStatus('error')}
@@ -1019,7 +1046,7 @@ Architecture and finish: warm pale oak mica cabinetry with subtle grain, matte o
       </div>
     </div>
     <div style={{padding:'10px 16px',display:'flex',alignItems:'center',gap:10,flexWrap:'wrap',borderBottom:'1px solid #e8e3ef',background:'#faf8fc'}}>
-      <b style={{fontSize:13,color:'#231942'}}>West desk: {dimensionUnit==='ft-in'?feetInches(deskHeightIn*25.4):`${Math.round(deskHeightIn*25.4)} mm`}</b>
+      <b style={{fontSize:13,color:'#231942'}}>Sit-stand top: {dimensionUnit==='ft-in'?feetInches(deskHeightIn*25.4):`${Math.round(deskHeightIn*25.4)} mm`}</b>
       <input aria-label="Adjust west desk height" type="range" min="29" max="47.6" step="0.5" value={deskHeightIn} onChange={event=>setDeskHeightIn(Number(event.target.value))} style={{flex:'1 1 180px',accentColor:'#6d28d9'}}/>
       {[29,33,39,41].map(height=><button key={height} onClick={()=>setDeskHeightIn(height)} style={{padding:'6px 9px',borderRadius:8,border:'1px solid #cfc6dc',background:deskHeightIn===height?'#6d28d9':'#fff',color:deskHeightIn===height?'#fff':'#231942',fontWeight:800,cursor:'pointer'}}>{height}&quot;</button>)}
       <label style={{display:'flex',alignItems:'center',gap:6,fontSize:12,fontWeight:800,color:'#231942'}}>Units
@@ -1042,7 +1069,7 @@ Architecture and finish: warm pale oak mica cabinetry with subtle grain, matte o
       </aside>}
       {showElectrical&&<aside aria-label="Electrical points legend" style={{position:'absolute',zIndex:7,right:12,top:12,width:'min(310px,calc(100% - 24px))',background:'rgba(255,255,255,.96)',border:'2px solid #2563eb',borderRadius:14,padding:12,boxShadow:'0 12px 30px rgba(20,15,35,.22)',color:'#231942',fontSize:11,lineHeight:1.45}}>
         <div style={{display:'flex',justifyContent:'space-between',gap:8}}><b style={{fontSize:14}}>3D electrical points</b><button onClick={()=>setShowElectrical(false)} aria-label="Hide electrical points" style={{border:0,background:'transparent',fontSize:18,cursor:'pointer'}}>×</button></div>
-        <div style={{marginTop:7}}><b style={{color:'#ea580c'}}>E1–E2</b> existing heater and router · <b style={{color:'#2563eb'}}>N1–N4</b> new fixed power · <b style={{color:'#16a34a'}}>P1</b> moving desk rail · <b style={{color:'#0f766e'}}>D1</b> two Cat6 runs</div>
+        <div style={{marginTop:7}}><b style={{color:'#ea580c'}}>E1–E2</b> existing heater and router points (assumed) · <b style={{color:'#6b7280'}}>X1–X3</b> plates seen on the north wall in the phone scan of 2026-10-04 · <b style={{color:'#2563eb'}}>N1–N4</b> new fixed power · <b style={{color:'#16a34a'}}>P1</b> moving desk rail · <b style={{color:'#0f766e'}}>D1</b> two Cat6 runs</div>
       </aside>}
       {showAiPrompt&&<div role="presentation" onClick={()=>setShowAiPrompt(false)} style={{position:'fixed',zIndex:10000,inset:0,display:'grid',placeItems:'center',padding:20,background:'rgba(23,15,42,.72)',backdropFilter:'blur(4px)'}}>
         <aside role="dialog" aria-modal="true" aria-label="AI render prompt" onClick={event=>event.stopPropagation()} style={{width:'min(820px,calc(100vw - 32px))',maxHeight:'calc(100vh - 40px)',display:'flex',flexDirection:'column',background:'#fff',border:'3px solid #7c3aed',borderRadius:18,padding:'18px 20px',boxShadow:'0 28px 80px rgba(0,0,0,.42)',color:'#231942'}}>
@@ -1054,7 +1081,7 @@ Architecture and finish: warm pale oak mica cabinetry with subtle grain, matte o
       {showDirections&&<div aria-label="Compass directions" style={{position:'absolute',zIndex:4,right:12,bottom:12,display:'grid',gridTemplateColumns:'repeat(3,28px)',gridTemplateRows:'repeat(3,24px)',placeItems:'center',padding:'7px 9px',borderRadius:10,background:'rgba(255,255,255,.9)',border:'1px solid rgba(35,25,66,.3)',boxShadow:'0 5px 16px rgba(20,15,35,.16)',color:'#231942',fontSize:10,fontWeight:900}}>
         {['NW','N','NE','W','•','E','SW','S','SE'].map(direction=><span key={direction}>{direction}</span>)}
       </div>}
-      <div style={{position:'absolute',left:12,bottom:12,background:'rgba(17,24,39,.82)',color:'#fff',padding:'8px 10px',borderRadius:10,fontSize:11,lineHeight:1.45}}>West: 30 in sit–stand desk to south wall<br/>South wall: no counter or cabinet<br/>Reference person: 5 ft 7 in, facing monitors</div>
+      <div style={{position:'absolute',left:12,bottom:12,background:'rgba(17,24,39,.82)',color:'#fff',padding:'8px 10px',borderRadius:10,fontSize:11,lineHeight:1.45}}>West: {formatCarpentryDimension(BALCONY_OFFICE.worktop.westAdjustable.widthMm)} sit–stand top, {formatCarpentryDimension(BALCONY_OFFICE.worktop.movingGapMm)} gap, {formatCarpentryDimension(BALCONY_OFFICE.worktop.southFixed.lengthMm)} fixed south section<br/>Fixed section top: {formatCarpentryDimension(BALCONY_OFFICE.worktop.southFixed.topHeightMm)} (seated preset)<br/>Reference person: 5 ft 7 in, facing monitors</div>
     </div>
   </section>
 }
