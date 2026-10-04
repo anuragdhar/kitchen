@@ -18,7 +18,10 @@ test('the chandelier stays; the old north-west wall light is removed in layout C
   assert.equal(config.wallUplight, null)
   assert.ok(DRAWING_LIGHTING.northTv.wallUplight && DRAWING_LIGHTING.cornerSofas.wallUplight)
   assert.equal(config.ceilingFans.fans.length, 2)
-  assert.match(config.ceilingFans.status, /assumed/)
+  // Positions come from the phone scan of 2026-10-04 (docs/SITE_SCAN_2026-10-04.md); blade size and drop are still assumed.
+  assert.match(config.ceilingFans.status, /phone scan of 2026-10-04.*blade size and drop assumed/)
+  assert.deepEqual(config.ceilingFans.fans.map(f => [f.xMm, f.zMm]), [[1650, 1290], [1580, 4075]])
+  assert.deepEqual([config.ambient[0].xMm, config.ambient[0].zMm], [1600, 2705])
 })
 
 test('track 1 grazes the TV panel wall and track 2 runs along the west wall over the sofa', () => {

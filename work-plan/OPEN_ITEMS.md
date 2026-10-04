@@ -7,7 +7,7 @@ page). Write the answer next to the item or just tell the assistant; the task an
 
 | # | What to measure | Waiting task |
 | --- | --- | --- |
-| A1 | Drawing Room switchboard: width, height, distance from its nearest edge to the entry door frame, height of its centre from the floor | Replace the old switchboard; panel wall |
+| A1 | Drawing Room switchboard: width, height, distance from its nearest edge to the entry door frame, height of its centre from the floor. PHONE SCAN 2026-10-04 (approximate, tape before ordering): 195 wide x 260 high, 230 from the door jamb, centre 1365 from the floor | Replace the old switchboard; panel wall |
 | A2 | The same switchboard: how many fans, lights and sockets it controls | Replace the old switchboard |
 | A3 | Shoe rack opening: width of the window, height of the window, thickness of that wall | Remove the window and wall; support frame |
 | A4 | Longest shoe in the house (to check the 15 inch depth) | Shoe rack |
@@ -16,8 +16,11 @@ page). Write the answer next to the item or just tell the assistant; the task an
 | A7 | Entry: size of the main door opening, and size of the iron shaft cover on the right | Stainless steel door; shaft cover |
 | A8 | Existing cabinet in the east part of the entry pocket: real width, depth, height, doors and shelves | 3D model only (drawn from the plan) |
 | A9 | Skirting: running length, only if the skirting is being replaced | Optional skirting |
-| A10 | Drawing Room south window: width of each of the three sections, and the shutter height | Centre window shutters |
-| A11 | Opening between the Drawing Room and the Lobby: width, and height under the beam | Lobby shutter |
+| A10 | Drawing Room south window: width of each of the three sections, and the shutter height. PHONE SCAN 2026-10-04 (approximate): frame 2700 wide, sections about 935 / 900 / 865, sill 935, top lights from about 2040, head 2430 | Centre window shutters |
+| A11 | Opening between the Drawing Room and the Lobby: width, and height under the beam. PHONE SCAN 2026-10-04 (approximate): starts 2055 from the north wall, about 3100 wide (south end hidden by a curtain), 2445 under the beam | Lobby shutter |
+| A12 | Drawing Room width, west wall to east wall, by tape at floor level: the phone scan says 3150, the plan and the app say 3353. Also the length (scan 5276, app 5335) | 3D model only: room size, window and furniture positions |
+| A13 | Ceiling height by tape in the Drawing Room and the Lobby: the scan says 2775 and 2760, the app uses 2700 everywhere | 3D model only: ceiling height and beam |
+| A14 | Lobby switchboard on the north wall (415-615 from the west end, 1215-1495 high by the scan): it stands where the moved Bedroom 1 door is planned. What it controls, and where it can go | none yet (moving the Bedroom 1 door is not in the work plan) |
 
 ## B. Things to look at or find out
 
@@ -51,11 +54,11 @@ page). Write the answer next to the item or just tell the assistant; the task an
 | C15 | Drawing Room AC: model, indoor wall, outdoor unit position | about 1.5 ton now that the Lobby opening gets glass doors; indoor unit on the west wall | Choose the AC |
 | C16 | Sliding doors to the Lobby (aluminium, fluted glass, nothing on the floor: DECIDED): which side the panels park on, and the frame colour | park in front of the solid wall north of the opening, so the whole opening is clear | Lobby sliding doors |
 | C17 | Track lights (DECIDED: two white magnetic tracks plus the chandelier; 3 wall spots of 7 W, 2 diffused heads of 15 W, 3 reading heads of 12 W; 150 W driver). Still open: which maker, and tunable or fixed warm white for the diffused and reading heads | fixed 3000 K wall spots, tunable diffused and reading heads | Layered lighting |
-| C18 | ANSWERED 2026-10-04: two ceiling fans (south end and north end) and a chandelier in the centre. Still to measure: each fan's and the chandelier's distance from the walls, and the fan blade diameter | tracks placed clear of the blades | Layered lighting |
+| C18 | ANSWERED 2026-10-04: two ceiling fans (south end and north end) and a chandelier in the centre. PHONE SCAN 2026-10-04: north fan 1650 from the west wall and 1290 from the north wall, chandelier 1600 and 2705, south fan 1580 and 4075 (centres of the ceiling rosettes). Still to measure: the fan blade diameter and how far the fans hang down. Also to decide: the ceiling has a plaster moulding 330-400 mm in from the walls, where Track 1 and Track 2 would be fixed | tracks placed clear of the blades | Layered lighting |
 | C19 | South window: which wood shade; glass type for the new shutters; roller net cassette at the top or the side (roller net per section is DECIDED) | match the TV panel wall; 5 mm clear glass | Window wooden shade; mosquito net; centre shutters |
 | C20 | Outside sun screen on the south window: plain bamboo or an outdoor PVC/HDPE screen | outdoor screen lasts longer; bamboo looks warmer. Hung close to the wall, cord brought inside | Outside sun screen |
 | C21 | Reading heads on Track 2 (DECIDED 2026-10-04: stronger dimmable heads over the seats, no swing-arm lights). Still open: how they are dimmed separately from the diffused heads | smart heads, or a two-circuit track | Layered lighting |
-| C22 | Lobby / Dining: is there a ceiling fan, and where? Confirm the two track positions (south wall; in front of the ironing storage) | tracks hug the walls so the centre stays free | Lobby track lighting |
+| C22 | Lobby / Dining: is there a ceiling fan, and where? PHONE SCAN 2026-10-04: a ceiling medallion in the middle of the room (2645 from the west, 1600 from the north) that looks like a fan point, and a small domed light at 3810, 1615; confirm which is the fan. Confirm the two track positions (south wall; in front of the ironing storage) | tracks hug the walls so the centre stays free | Lobby track lighting |
 
 ## D. People to arrange
 

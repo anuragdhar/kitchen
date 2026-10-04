@@ -30,7 +30,7 @@ Positions are measured inside the room: **x** from the west wall, **z** from the
 | S1 | Sofa glow driver | south wall, x 1605, 300 high | 1 x 6 A switched socket (switched at E1) | LED driver for the low glow strip under the south sofa |
 | S2 | Lamp + charging, south sofa east end | south wall, x 2850, 300 high | 1 x 6 A socket + 1 USB-A + USB-C + 2-way chandelier switch | side-table lamp and phones at the open end of the south sofa |
 | S3 | Spare / heater socket | south wall, x 3200, 300 high | 1 x 6/16 A combined socket | room heater, air purifier or decorative lights by the window |
-| C1 | Chandelier | ceiling, x 1676, z 2850 | ceiling light point with a hook rated for the fitting | existing chandelier, midway between the two ceiling fans (owner 2026-10-04); position assumed until measured |
+| C1 | Chandelier | ceiling, x 1600, z 2705 | ceiling light point with a hook rated for the fitting | existing chandelier on the centre ceiling medallion, between the two ceiling fans (owner 2026-10-04); position from the phone scan of 2026-10-04 |
 | F1 | Floor box at the coffee table (optional) | floor, x 1230, z 3425 | flush floor box: 1 x 6 A + USB-A/C, lid closes over plugs | charging at the table and the west sofa; must be chased into the floor before tiling, under the rug |
 
 Totals: 17 points: 5 socket points, 5 charging points (1 optional), 5 lighting and switch points, 1 data point and 1 dedicated AC point.
@@ -71,3 +71,6 @@ TV, and that the router point is behind the TV console's router bay.
 Not checked or not known: the existing points and wiring in the room, where the building's intercom, broadband and DTH cables
 enter, the AC's actual rating, and whether the floor can be chased for F1. Decide F1 before any flooring work. If the
 layout changes, the plan has to be redone: the points follow the furniture.
+
+Existing points found by the phone scan of 2026-10-04 (switchboard, distribution board, sockets, wall light) are listed in
+`docs/SITE_SCAN_2026-10-04.md`. The south window sill is 935 mm (was taken as 550), so the south-wall points at 300 mm stay well below it.

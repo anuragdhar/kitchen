@@ -46,7 +46,7 @@ export const DRAWING_ELECTRICAL = {
       outlets: '1 x 6 A socket + 1 USB-A + USB-C', use: 'just above the corner lamp table (550 high), for its lamp and phones at the west end of the south sofa'},
     {id: 'W5', name: 'Reading light', kind: 'lighting', wall: 'west', alongMm: 4645, heightMm: 1550,
       outlets: 'light point with a local switch (2-way with E1)', use: 'reading light over the corner lamp table and the west end of the south sofa'},
-    // ---- South wall: below the window sill (550 mm) along the window ----
+    // ---- South wall: below the window sill (935 mm, phone scan 2026-10-04) along the window ----
     {id: 'S1', name: 'Sofa glow driver', kind: 'power', wall: 'south', alongMm: 1605, heightMm: 300, hidden: true,
       outlets: '1 x 6 A switched socket (switched at E1)', use: 'LED driver for the low glow strip under the south sofa'},
     {id: 'S2', name: 'Lamp + charging, south sofa east end', kind: 'charging', wall: 'south', alongMm: 2850, heightMm: 300,
@@ -54,8 +54,8 @@ export const DRAWING_ELECTRICAL = {
     {id: 'S3', name: 'Spare / heater socket', kind: 'power', wall: 'south', alongMm: 3200, heightMm: 300,
       outlets: '1 x 6/16 A combined socket', use: 'room heater, air purifier or decorative lights by the window'},
     // ---- Ceiling and floor ----
-    {id: 'C1', name: 'Chandelier', kind: 'lighting', wall: 'ceiling', xMm: 1676, zMm: 2850,
-      outlets: 'ceiling light point with a hook rated for the fitting', use: 'existing chandelier, midway between the two ceiling fans (owner 2026-10-04); position assumed until measured'},
+    {id: 'C1', name: 'Chandelier', kind: 'lighting', wall: 'ceiling', xMm: 1600, zMm: 2705,
+      outlets: 'ceiling light point with a hook rated for the fitting', use: 'existing chandelier on the centre ceiling medallion, between the two ceiling fans (owner 2026-10-04); position from the phone scan of 2026-10-04'},
     {id: 'F1', name: 'Floor box at the coffee table', kind: 'charging', wall: 'floor', xMm: 1230, zMm: 3425, optional: true,
       outlets: 'flush floor box: 1 x 6 A + USB-A/C, lid closes over plugs',
       use: 'charging at the table and the west sofa; must be chased into the floor before tiling, under the rug'},

@@ -58,7 +58,10 @@ export const EMPTY_ROOM_SHELLS={
       eastIroningStorage:{fromNorthMm:650,lengthMm:1450,depthMm:400,heightMm:1000,doorCount:3,centerBayWidthMm:600,boardLengthMm:950,boardWidthMm:300},
     },
     doors:[
-      {wall:'south',fromMm:1000,widthMm:900,heightMm:2100,leadsTo:'Toilet'},
+      // Phone scan 2026-10-04: the toilet door is 605 mm clear between its jambs, 1060-1665 from the west (was 1000 + 900).
+      {wall:'south',fromMm:1060,widthMm:605,heightMm:2100,leadsTo:'Toilet',source:'phone scan 2026-10-04'},
+      // PLANNED position (owner 2026-10-04): civil work moves this door here. Today's door is about 2580-3530 from the west
+      // (phone scan), and the lobby switchboard (415-615 from the west, 1215-1495 high) is on this stretch and has to move.
       {wall:'north',fromMm:100,widthMm:900,heightMm:2100,leadsTo:'Bedroom 1'},
     ],
   },
@@ -204,7 +207,11 @@ export const EMPTY_ROOM_SHELLS={
       access:{personHeightMm:1702,personKg:80,shoulderMm:470,bodyDepthMm:300,headroomMm:50},
       cabinet:{fromWestMm:40,widthMm:650},depthMm:1105,panelMm:18,
       shelves:{depthMm:380,heightsMm:[120,550,1000,1450,1900,2350]}},
-    windows:[{wall:'south',fromMm:471,widthMm:2298,bottomMm:550,topMm:2100,frameStyle:'dark',mullionFractions:[.62],source:'clipboard screenshot'}],
+    // Phone scan 2026-10-04 (docs/SITE_SCAN_2026-10-04.md): the frame runs 233-2933 from the west wall, sill 935, head 2430,
+    // in three bays (mullions at 1167 and 2067) with a row of top lights above about 2040. Was 471 + 2298, sill 550, head 2100,
+    // from a screenshot. The scanned room is 3150 wide, not 3353 (widthMm is NOT changed until taped), so in this model the
+    // window stands 420 mm off the east wall where the real one stands 217 mm off it.
+    windows:[{wall:'south',fromMm:233,widthMm:2700,bottomMm:935,topMm:2430,frameStyle:'dark',mullionFractions:[.346,.679],source:'phone scan 2026-10-04'}],
   },
   kitchenShell:{name:'Kitchen shell',widthMm:2324,lengthMm:3070,heightMm:2700,color:'#b45309',source:'A501 floor plan'},
 }

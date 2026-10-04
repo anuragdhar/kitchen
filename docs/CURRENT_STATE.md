@@ -191,3 +191,13 @@ Whole home 3D sync (2026-10-03): the page now opens on Editable 3D, which is alw
 is a baked snapshot of an earlier design; its Drawing Room TV meshes are moved onto the north wall at load time
 (`ArchivedBlenderHomeView.jsx`), but its sofas, kitchen and everything else stay as baked until the whole home is re-baked in
 Blender. The slot between the Pooja Ghar and Bedroom 1 (plan x 317-339) is filled as masonry, an assumption from the drawing.
+
+## Phone scan of the Drawing Room and Lobby (2026-10-04)
+
+The owner's Scaniverse scan was measured and partly applied; the full table, method and accuracy are in
+`docs/SITE_SCAN_2026-10-04.md`. Applied: Drawing Room south window 471 + 2298, sill 550, head 2100 -> 233 + 2700, sill 935,
+head 2430, three bays; layout C chandelier (1676, 2850) -> (1600, 2705) and ceiling fans (1676, 1150), (1676, 4550) ->
+(1650, 1290), (1580, 4075); Lobby toilet door 1000 + 900 -> 1060 + 605. Not applied: the scanned room box (Drawing Room
+3150 x 5276 x 2775, Lobby ceiling 2760, beam 260 wide with its underside at 2445) because the whole-home model uses the
+A501 outline and one 2700 ceiling; the Lobby north door, which the app shows at its planned position after civil work
+(today it is at about 2580-3530). Fan blade size and drop are still assumed. Blender exports and stills were not regenerated.

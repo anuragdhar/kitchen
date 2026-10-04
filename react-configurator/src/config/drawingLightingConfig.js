@@ -9,18 +9,21 @@ export const DRAWING_LIGHTING = {
     sofaGlow: {xMm: 1140, lengthMm: 2250, fromNorthMm: 4810, heightMm: 120, label: 'South sofa low glow'},
   },
   // Layout C: reading light over the corner lamp table, low glow under the south sofa. Owner 2026-10-04: the chandelier hangs
-  // midway between the two ceiling fans (it was drawn over the coffee table at 1745, 3425).
+  // between the two ceiling fans (it was drawn over the coffee table at 1745, 3425).
+  // Phone scan 2026-10-04 (docs/SITE_SCAN_2026-10-04.md): the three ceiling points are the centres of the plaster rosettes,
+  // measured from the west and north walls: the 830 mm centre medallion at (1600, 2705) and a small rosette at each end.
+  // Was assumed at x 1676 with the chandelier at z 2850 and the fans at z 1150 and 4550.
   southSofas: {
-    ambient: [{xMm: 1676, zMm: 2850, label: 'Existing chandelier, midway between the two fans'}],
+    ambient: [{xMm: 1600, zMm: 2705, label: 'Existing chandelier, on the centre ceiling medallion'}],
     // Owner 2026-10-04: the old small wall light in the north-west comes off; the track lights replace it.
     wallUplight: null,
     // Owner 2026-10-04: no swing-arm wall reading light; brighter dimmable track heads over the seats do that job instead.
     reading: null,
     sofaGlow: {xMm: 1605, lengthMm: 2250, fromNorthMm: 4835, heightMm: 120, label: 'South sofa low glow'},
     // Owner, 2026-10-04: the room has two ceiling fans, one at each end, and the chandelier between them; there is no false
-    // ceiling. Fan positions, blade size and drop are ASSUMED until measured (work-plan/OPEN_ITEMS.md, C18).
-    ceilingFans: {status: 'positions and blade size assumed, not measured', bladeDiameterMm: 1200, dropMm: 300, chandelierRadiusMm: 330,
-      fans: [{xMm: 1676, zMm: 1150, label: 'North ceiling fan'}, {xMm: 1676, zMm: 4550, label: 'South ceiling fan'}]},
+    // ceiling. The scan flattened the fans into the ceiling, so blade size and drop are still ASSUMED (work-plan/OPEN_ITEMS.md, C18).
+    ceilingFans: {status: 'positions from the phone scan of 2026-10-04; blade size and drop assumed, not measured', bladeDiameterMm: 1200, dropMm: 300, chandelierRadiusMm: 330,
+      fans: [{xMm: 1650, zMm: 1290, label: 'North ceiling fan'}, {xMm: 1580, zMm: 4075, label: 'South ceiling fan'}]},
     // Layered lighting without a false ceiling (owner 2026-10-04): surface magnetic track fixed to the slab, with spot heads
     // on the walls and diffused heads for soft general light, placed clear of both fans. `axis` is the direction the run
     // goes: 'x' runs east-west at z = atMm, 'z' runs north-south at x = atMm. A head's atMm is its place along the run;

@@ -158,10 +158,13 @@ function southWindowDressing(room, {wallFaceMm = 0} = {}) {
       m.position.set(mm(x1Mm) + w * (i + .5), (top - .02) / 2 + .02, z - (i % 2 ? .012 : 0)); m.castShadow = true; decor.add(m)
     }
   }
-  panel(Math.max(wallFaceMm + 20, win.fromMm - 330), Math.min(sofaWest - 20, win.fromMm + 60))
-  panel(Math.max(sofaEast + 30, win.fromMm + win.widthMm - 60), win.fromMm + win.widthMm + 330)
-  const bar = new THREE.Mesh(new THREE.CylinderGeometry(.012, .012, mm(win.widthMm) + .8, 12), rod)
-  bar.rotation.z = Math.PI / 2; bar.position.set(mm(win.fromMm + win.widthMm / 2), top + .02, z); decor.add(bar)
+  // The rod and the panels overhang the window by up to 400 and 330 mm, but stop at the side walls.
+  const westLimit = wallFaceMm + 20, eastLimit = room.widthMm - wallFaceMm - 20
+  panel(Math.max(westLimit, win.fromMm - 330), Math.min(sofaWest - 20, win.fromMm + 60))
+  panel(Math.max(sofaEast + 30, win.fromMm + win.widthMm - 60), Math.min(eastLimit, win.fromMm + win.widthMm + 330))
+  const rodWest = Math.max(westLimit, win.fromMm - 400), rodEast = Math.min(eastLimit, win.fromMm + win.widthMm + 400)
+  const bar = new THREE.Mesh(new THREE.CylinderGeometry(.012, .012, mm(rodEast - rodWest), 12), rod)
+  bar.rotation.z = Math.PI / 2; bar.position.set(mm((rodWest + rodEast) / 2), top + .02, z); decor.add(bar)
   // Floor plant in a woven-look pot, south-east corner beyond the sofa.
   const px = mm(room.widthMm - wallFaceMm) - .28, pz = mm(room.lengthMm - wallFaceMm) - .3
   const pot = new THREE.Mesh(new THREE.CylinderGeometry(.15, .12, .32, 20), new THREE.MeshStandardMaterial({color: '#b08a5a', roughness: .9})); pot.position.set(px, .16, pz); pot.castShadow = true; decor.add(pot)

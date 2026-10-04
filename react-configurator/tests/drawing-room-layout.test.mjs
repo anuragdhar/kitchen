@@ -26,6 +26,10 @@ test('the entry door has not moved, and it opens INTO the room (owner, 2026-09-3
   const [door] = room.doors
   assert.equal(room.doors.length, 1)
   assert.deepEqual([door.wall, door.fromMm, door.widthMm, door.heightMm, door.leadsTo], ['north', 2150, 1000, 2100, 'Main entry'])
+  // South window as scanned on 2026-10-04 (docs/SITE_SCAN_2026-10-04.md); the room box itself is not changed by the scan.
+  const win = room.windows[0]
+  assert.deepEqual([win.wall, win.fromMm, win.widthMm, win.bottomMm, win.topMm], ['south', 233, 2700, 935, 2430])
+  assert.deepEqual([room.widthMm, room.lengthMm, room.heightMm], [3353, 5335, 2700])
   assert.equal(door.opensInto, 'Drawing Room')
   assert.ok(door.leafMm > 0 && door.leafMm < door.widthMm)
 })

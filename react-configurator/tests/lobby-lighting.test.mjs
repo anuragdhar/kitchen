@@ -23,6 +23,11 @@ test('both tracks leave the middle of the ceiling free and stay clear of the doo
   for (const run of [l1, l2]) assert.ok(Math.abs((run.axis === 'x' ? centre.z : centre.x) - run.atMm) >= 1000, `${run.id} is at least 1 m from the room centre`)
   assert.deepEqual(headPosition(l2, l2.heads[1]), {x: 4050, z: 1375})
   assert.deepEqual(LOBBY_DIMMER_KINDS.map(([kind]) => kind), ['chandelier', 'spot', 'diffuse', 'reading'])
+  // Phone scan 2026-10-04: the toilet door as it stands, the Bedroom 1 door where the civil work will put it.
+  assert.deepEqual([toilet.fromMm, toilet.widthMm], [1060, 605])
+  const bedroom = room.doors.find(d => d.wall === 'north')
+  assert.deepEqual([bedroom.fromMm, bedroom.widthMm], [100, 900])
+  assert.deepEqual(LOBBY_LIGHTING.existingCeilingPoints.map(p => [p.xMm, p.zMm]), [[2645, 1600], [3810, 1615]])
 })
 
 test('the checks catch a down spot that misses the ironing board and a spot aimed across the room', () => {

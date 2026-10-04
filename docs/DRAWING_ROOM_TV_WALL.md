@@ -229,7 +229,7 @@ outward. `maxLeafThatClears` in `drawingRoomLayout.mjs` computes the limit for a
 ## Things to confirm before building
 
 - **Wall depth:** the cabinet is 305 deep by request. That is a cabinet, not a recess; it is not cut into the wall.
-- **Window:** the south sofa's back (about 850 high) is in front of the lower part of the window (sill 550).
+- **Window:** the south sofa's back (about 850 high) is below the window sill (935, phone scan 2026-10-04; this line assumed 550 before).
 - **Power and data (suggestion, needs an electrician):** two mains sockets and an HDMI/ARC lead in the TV bay,
   one socket each for the soundbar, the Bass Module compartment and the router bay, a data cable from router bay to TV bay,
   phone and intercom cable ends in the east niche. Keep mains and low-voltage runs apart. Not modelled.
@@ -264,7 +264,7 @@ Measured: south sofa seats are 4.7-4.8 m from the TV and 3-12 degrees off-axis; 
 as in any L. Limits stated plainly:
 - At 4.7 m a 55-inch screen is small (common guides put that distance at 75 inches or more); the 65-inch is the largest the
   wall takes, and only with about 10 mm to the door openings (it stands 90 mm off the wall, in front of the architraves).
-- The south sofa's back (about 925 mm) covers the lower part of the window above its 550 mm sill.
+- The south sofa's back (about 925 mm) ends just under the window sill, 935 mm by the phone scan of 2026-10-04 (it was taken as 550, with the sofa covering the lower part of the window).
 - The west cabinet door now has nothing in front of it; its two leaves open inward into the closet.
 
 ## Hidden closet door in fluted wall panelling, one-piece console (owner, later 2026-10-03)

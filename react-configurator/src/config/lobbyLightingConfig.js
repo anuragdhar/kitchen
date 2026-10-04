@@ -2,9 +2,17 @@
 // Millimetres in the room frame: x from the west wall, z from the north wall. Same track vocabulary as the Drawing Room
 // (drawingLightingConfig.js): `axis` 'x' runs east-west at z = atMm, 'z' runs north-south at x = atMm; a 'spot' points at
 // the wall named in `aim`, a 'diffuse' head gives soft general light, a 'reading' head is a stronger spot pointing straight
-// down at a work spot. Both runs hug a wall, so the middle of the ceiling stays free for a ceiling fan: whether the lobby
-// has one, and where, is NOT known (work-plan/OPEN_ITEMS.md). Watts and lumens are typical catalogue figures.
+// down at a work spot. Both runs hug a wall, so the middle of the ceiling stays free for a ceiling fan.
+// Watts and lumens are typical catalogue figures.
 export const LOBBY_LIGHTING = {
+  // Phone scan 2026-10-04 (docs/SITE_SCAN_2026-10-04.md): what is on the ceiling today, at the centres of the plaster
+  // rosettes. x here is from the Drawing Room face of the dividing beam, which is about 40 mm west of this room's x = 0.
+  // The scan flattened whatever hangs there, so 'probably a fan' is read from the photo texture, not confirmed
+  // (work-plan/OPEN_ITEMS.md, C22). Recorded only: nothing is drawn from these and the track checks do not use them.
+  existingCeilingPoints: [
+    {xMm: 2645, zMm: 1600, label: 'Centre medallion, about 810 across, dark hub and rod: probably a ceiling fan'},
+    {xMm: 3810, zMm: 1615, label: 'Small rosette with a domed ceiling light'},
+  ],
   // The linear pendant over the dining table stays (RoomTaskLighting.js draws it at the table centre).
   pendant: {label: 'Dining pendant', lengthMm: 900, bottomMm: 1657},
   tracks: {type: '48 V magnetic surface track', colour: 'white', kelvin: 3000, driverWatts: 100, sectionMm: 22, runs: [
