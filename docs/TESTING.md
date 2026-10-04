@@ -148,3 +148,15 @@ KITCHEN_APP_URL) and exercises actual JSON upload/download, named versions, relo
 legacy migration, stale file reads, corrupt autosaves, and injected quota failures.
 Browser contexts are isolated from user data; all runs use kitchenView=top and do
 not establish 3D performance. Artifacts go to test-results/persistence/.
+
+## Quick room screenshots and scan measuring (2026-10-04)
+
+`node scripts/room-shots.cjs --room "Drawing Room" --views "Overview,Top" --out test-results/shots` (from
+`react-configurator/`, against a running dev server; `--whole` for Whole home 3D, `--url` for another port) saves the 3D
+canvas for each named view button and reports page errors. It asks Chrome for the GPU, which takes about 30-40 s per room
+here; software WebGL took 5-10 minutes and sometimes hung (`--software` keeps that path). The output is smoke evidence
+to look at, not an approved baseline.
+
+`python scripts/scan_measure.py` (repo root; numpy and Pillow) measures a room from a phone scan: wall-aligned plans,
+flat-surface positions, textured wall elevations and ceiling plans. Usage is in the file; a worked example and the
+accuracy limits are in `docs/SITE_SCAN_2026-10-04.md`.
