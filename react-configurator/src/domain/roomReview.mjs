@@ -5,6 +5,8 @@ import {HOME_ROOM_LAYOUTS} from '../config/homeRoomViews.js'
 import {checkDrawingRoomLayout, checkCornerLayout, checkCornerConsole, checkCornerProjector, checkSouthLayout, consoleGeometry, projectorPlacement, tvWallGeometry, cornerTvFrontX, WALL_FACE_MM} from './drawingRoomLayout.mjs'
 import {windowGeometry} from './windowDesign.mjs'
 import {describeExistingElectrical} from './existingElectrical.mjs'
+import {bedroom1Review} from './bedroom1Layout.mjs'
+import {BEDROOM1_DESIGN} from '../config/bedroom1LayoutConfig.js'
 
 const mm = v => `${Math.round(v)} mm`
 const size = (a, b) => `${Math.round(a)} x ${Math.round(b)}`
@@ -219,11 +221,6 @@ function genericPlanItems(roomKey, room) {
     if (t) add(`Table ${t.lengthMm}x${t.widthMm}`, t.centerXmm - t.widthMm / 2, t.centerZmm - t.lengthMm / 2, t.centerXmm + t.widthMm / 2, t.centerZmm + t.lengthMm / 2, 'table')
     if (s) add(`Ironing unit ${s.lengthMm}x${s.depthMm}`, W - s.depthMm, s.fromNorthMm, W, s.fromNorthMm + s.lengthMm, 'fixed')
   }
-  if (roomKey === 'bedroom1') {
-    const b = f.bed, w = f.wardrobe
-    if (b) add(`Bed ${b.lengthMm}x${b.widthMm}`, b.fromWestMm, L - b.fromSouthMm - b.widthMm, b.fromWestMm + b.lengthMm, L - b.fromSouthMm, 'seat')
-    if (w) add(`Wardrobe ${w.lengthMm}x${w.depthMm}`, 0, w.fromNorthMm, w.depthMm, w.fromNorthMm + w.lengthMm, 'fixed')
-  }
   if (roomKey === 'bedroom3') {
     const b = f.bed, w = f.westWardrobe
     if (b) add(`Bed ${b.lengthMm}x${b.widthMm}`, W - b.lengthMm, b.centerFromNorthMm - b.widthMm / 2, W, b.centerFromNorthMm + b.widthMm / 2, 'seat')
@@ -279,19 +276,23 @@ export const REVIEW_TASKS = [
 ]
 
 export function buildRoomReview({roomKey, room, layoutKey = null, references = [], date = new Date()}) {
-  const layoutLabel = roomKey === 'drawing' && layoutKey ? `Layout ${DRAWING_LAYOUT_LABELS[layoutKey]}` : null
-  let layout = null
+  // Bedroom 1 (config/bedroom1LayoutConfig.js): the default layout keeps the generic furniture list and gains the plan boxes,
+  // measurements and known problems of its layout check; the alternative is described in full and named in the title.
+  const bedroom1 = roomKey === 'bedroom1' ? bedroom1Review(room, layoutKey ?? BEDROOM1_DESIGN.defaultLayout) : null
+  const bedroom1Alternative = bedroom1 && layoutKey && layoutKey !== BEDROOM1_DESIGN.defaultLayout
+  const layoutLabel = roomKey === 'drawing' && layoutKey ? `Layout ${DRAWING_LAYOUT_LABELS[layoutKey]}` : bedroom1Alternative ? bedroom1.label : null
+  let layout = bedroom1Alternative ? bedroom1 : null
   if (roomKey === 'drawing') layout = {southSofas: drawingLayoutC, northTv: drawingLayoutA, cornerSofas: drawingLayoutB, cornerConsole: drawingCornerConsole, cornerProjector: drawingCornerProjector}[layoutKey ?? 'southSofas'](room)
   const dims = `${room.widthMm} x ${room.lengthMm} x ${room.heightMm} mm (width x length x ceiling)`
-  const planItems = layout?.items ?? genericPlanItems(roomKey, room)
+  const planItems = layout?.items ?? bedroom1?.items ?? genericPlanItems(roomKey, room)
   const sections = [
     {heading: 'Room', lines: [`${room.name}, interior ${dims}. Source: ${room.source ?? 'app config'}.`, FRAME_NOTE, FURNITURE_AXES]},
     {heading: 'Openings and structure', lines: [...describeOpenings(room), ...describeExtras(room)]},
-    {heading: layout ? 'This layout' : 'Furniture and fixtures', lines: layout ? layout.lines : describeGeneric(room)},
+    {heading: layout ? 'This layout' : 'Furniture and fixtures', lines: layout ? layout.lines : bedroom1 ? [...describeGeneric(room), ...bedroom1.lines] : describeGeneric(room)},
   ]
   if (planItems.length) sections.push({heading: 'Plan boxes (x range, z range in mm)', lines: planItems.map(i => `${i.label}: x ${Math.round(i.x1)}-${Math.round(i.x2)}, z ${Math.round(i.z1)}-${Math.round(i.z2)}`)})
-  if (layout) sections.push({heading: 'Measured from the model', lines: layout.measured})
-  if (layout?.issues.length) sections.push({heading: 'Known problems', lines: layout.issues})
+  if (layout ?? bedroom1) sections.push({heading: 'Measured from the model', lines: (layout ?? bedroom1).measured})
+  if ((layout ?? bedroom1)?.issues.length) sections.push({heading: 'Known problems', lines: (layout ?? bedroom1).issues})
   const existing = describeExistingElectrical(roomKey, room, {layoutKey: roomKey === 'drawing' ? (layoutKey ?? 'southSofas') : null})
   if (existing.length) sections.push({heading: 'Existing electrical points (site scan)', lines: existing})
   if (references.length) sections.push({heading: 'Style references (links)', lines: references.map(r => `${r.title}${r.tags?.length ? ` [${r.tags.join(', ')}]` : ''}: ${r.url}${r.notes ? ` - ${r.notes}` : ''}`)})

@@ -4,7 +4,10 @@ export const EMPTY_ROOM_SHELLS={
     wallOpenings:{east:{fromMm:0,toMm:2200}},
     balconyExtension:{
       wall:'east',depthMm:1200,lengthMm:2200,railingHeightMm:1000,frameStyle:'aluminium',
-      poojaWallWardrobe:{widthMm:1200,depthMm:508,heightMm:2700,northShiftMm:300,doorCount:2,opensTo:'Bedroom 1 balcony'},
+      // doors:'sliding' (2026-10-05, src/domain/bedroom1Layout.mjs): hinged 600 mm leaves were assumed until the window AC below
+      // was placed 217 mm in front of the east half; the east leaf then opened only 41 degrees. Two sliding panels need no swing.
+      // The body is drawn 208 mm deeper than the balcony (into the Pooja wall): not verified on site.
+      poojaWallWardrobe:{widthMm:1200,depthMm:508,heightMm:2700,northShiftMm:300,doorCount:2,doors:'sliding',opensTo:'Bedroom 1 balcony'},
       furniture:{
         table:{centerFromBedroomWallMm:1000,centerFromNorthMm:500,widthMm:700,depthMm:350,heightMm:740},
         chair:{centerFromBedroomWallMm:540,centerFromNorthMm:500,widthMm:440,depthMm:400,seatHeightMm:450,backHeightMm:860,facing:'east'},
