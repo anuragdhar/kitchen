@@ -43,7 +43,7 @@ export default function ArchvizPanel(){
       </select></label>
     </div>
     {room&&<p>{profiles.rooms[room].note||'Retain the authored furnishings and finishes; use a room-specific camera and lighting pass.'}</p>}
-    {room==='bedroom3'&&<p><strong>Bedroom 3:</strong> choose <strong>Balcony door + window</strong> in the workspace before exporting to include the south wall openings. The overview cutaway hides that wall group. The south cabinet and balcony must not be clipped to the internal room rectangle.</p>}
+    {room==='bedroom3'&&<p><strong>Bedroom 3:</strong> choose <strong>Balcony opening + window</strong> in the workspace before exporting to include the south wall openings. The overview cutaway hides that wall group. The south cabinet and balcony must not be clipped to the internal room rectangle.</p>}
     {usesEditableRoomSource(room)&&!sceneId&&<p role="status">The {room} editable scene is not open. A whole-home scene or another room cannot substitute for it.</p>}
     <div className="interior-row" style={{marginTop:12,flexWrap:'wrap'}}>
       <button disabled={busy||!ready||!room} onClick={download}>{busy?'Working…':'Export current design for Blender'}</button>

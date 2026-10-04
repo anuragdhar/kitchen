@@ -3,6 +3,7 @@
 import {BEDROOM1_CLOSED_DOOR, closedDoorSpanMm} from '../config/bedroom1ClosedDoor.js'
 import {HOME_ROOM_LAYOUTS} from '../config/homeRoomViews.js'
 import {checkDrawingRoomLayout, checkCornerLayout, checkCornerConsole, checkCornerProjector, checkSouthLayout, consoleGeometry, projectorPlacement, tvWallGeometry, cornerTvFrontX, WALL_FACE_MM} from './drawingRoomLayout.mjs'
+import {windowGeometry} from './windowDesign.mjs'
 
 const mm = v => `${Math.round(v)} mm`
 const size = (a, b) => `${Math.round(a)} x ${Math.round(b)}`
@@ -24,7 +25,11 @@ for (const d of room.doors ?? []) {
     const swing = d.opensInto ? ` It opens INTO ${d.opensInto === room.name ? 'this room' : d.opensInto} (leaf ${mm(d.leafMm)}); the swing sweeps a quarter circle of that radius from the ${d.hinge ?? 'unknown'} jamb${d.hingeKnown ? ' (the hinge side and a leaf of about this width are inferred from the owner confirming that the north-wall sofa does not touch the door; the real leaf width has not been measured)' : ' (hinge side not confirmed, both sides were checked)'}, so nothing may stand in it.` : ''
     lines.push(`Door on the ${d.wall} wall: ${mm(d.widthMm)} wide x ${mm(d.heightMm)} high, starting ${mm(d.fromMm)} from the ${d.wall === 'north' || d.wall === 'south' ? 'west' : 'north'} end, leads to ${d.leadsTo}.${swing}`)
   }
-  for (const w of room.windows ?? []) lines.push(`Window on the ${w.wall} wall: ${mm(w.widthMm)} wide, sill ${mm(w.bottomMm)}, head ${mm(w.topMm)}, starting ${mm(w.fromMm)} from the west end.`)
+  for (const w of room.windows ?? []) {
+    const g = windowGeometry(w)
+    const design = g.designed ? ` ${g.bays.length} bays of ${g.bays.map(b => b.widthMm).join(' / ')} mm${g.transomMm ? `, fixed top lights above a transom at ${mm(g.transomMm)}` : ''}${g.leaves.length ? `, ${g.leaves.length} ${w.shutters?.opens || ''} shutters below it` : ''}${g.rollerNets.length ? `, roller mosquito net per section (cassette ${g.rollerNets[0].cassette})` : ''}${g.outsideScreen ? `, outside roll-up screen ${mm(g.outsideScreen.widthMm)} wide parked ${mm(g.outsideScreen.offsetMm)} off the wall` : ''}.` : ''
+    lines.push(`Window on the ${w.wall} wall: ${mm(w.widthMm)} wide, sill ${mm(w.bottomMm)}, head ${mm(w.topMm)}, starting ${mm(w.fromMm)} from the west end.${design}`)
+  }
   for (const [wall, o] of Object.entries(room.wallOpenings ?? {})) lines.push(`Open (no wall) on the ${wall} side from ${mm(o.fromMm)} to ${mm(o.toMm)}.`)
   const ws = room.wallStorage
   if (ws) lines.push(`Cabinet door on the north wall: ${mm(ws.widthMm)} wide (${ws.doorCount} leaves) x ${mm(ws.heightMm)} high, starting ${mm(ws.fromWestMm)} from the west end, into a closet ${mm(ws.depthMm)} deep behind the wall (the west half of the pocket on the Main Entry side; its east half is a separate cabinet that opens onto the Entry, not into this room). Shelves ${mm(ws.shelves.depthMm)} deep at the back. Not confirmed on site.`)
@@ -238,7 +243,11 @@ function describeExtras(room) {
   if (room.openSide) lines.push(`This room is drawn open on its ${room.openSide} side.`)
   if (room.poojaAlcove) { const a = room.poojaAlcove; lines.push(`Pooja alcove on the ${a.wall} wall: ${mm(a.widthMm)} wide starting ${mm(a.fromMm)} from the west end, ${mm(a.depthMm)} deep beyond the wall (outside this room's outline), ${a.templeDepthMm ? `temple ${mm(a.templeDepthMm)} deep, ` : ''}seated-person platform ${mm(a.platformHeightMm)} high.`) }
   if (room.balconyExtension) { const b = room.balconyExtension; lines.push(`Enclosed balcony on the ${b.wall} side: ${mm(b.depthMm)} deep, ${mm(b.lengthMm)} long, railing ${mm(b.railingHeightMm)} (outside the main outline in the top plan).`) }
-  if (room.southExtension) lines.push('The south side has a projecting cabinet and balcony (see the furniture list).')
+  if (room.southExtension) {
+    const b = room.southExtension.balcony
+    if (b?.enclosed) lines.push(`The south side has a projecting cabinet bay (x 0-${room.southExtension.cabinet.widthMm}) and an ENCLOSED balcony merged with the room (phone scan 2026-10-04): x ${b.fromWestMm}-${b.fromWestMm + b.widthMm}, ${mm(b.depthMm)} deep beyond the wall line, soffit ${mm(b.ceilingMm)}; the room opens into it ${mm(b.opening.toMm - b.opening.fromWestMm)} wide (x ${b.opening.fromWestMm}-${b.opening.toMm}) under a beam ${mm(b.opening.headMm)} high; window on its outer wall x ${b.outerWindow.fromWestMm}-${b.outerWindow.fromWestMm + b.outerWindow.widthMm}, sill ${mm(b.outerWindow.sillMm)}, head ${mm(b.outerWindow.topMm)}.`)
+    else lines.push('The south side has a projecting cabinet and balcony (see the furniture list).')
+  }
   if (room.furniture?.westChest) {
     const c=room.furniture.westChest,a=c.artwork,b=room.furniture.bed
     lines.push(`West honey-oak chest: ${c.widthMm} mm along the wall x ${c.depthMm} mm deep x ${c.heightMm} mm high, ${c.drawerRows*c.drawerColumns} drawers. Framed artwork ${a.widthMm} x ${a.heightMm} mm, bottom ${a.bottomMm} mm above floor. Closed chest to bed foot: ${room.widthMm-b.lengthMm-c.depthMm} mm.`)

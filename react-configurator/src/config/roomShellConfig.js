@@ -25,11 +25,29 @@ export const EMPTY_ROOM_SHELLS={
   },
   bedroom3:{
     name:'Bedroom 3',widthMm:3963,lengthMm:3726,heightMm:2700,color:'#db8b47',source:'A501 floor plan',
-    // The plan labels the two adjacent south projections as 1925 and 2383 mm;
-    // scale their drawn proportions to the 3963 mm room width until surveyed.
+    // The plan labels the two adjacent south projections as 1925 and 2383 mm. Phone scan 2026-10-04
+    // (docs/SITE_SCAN_2026-10-04_BEDROOM3.md): the balcony is 2425 wide between its end walls, so the cabinet bay is
+    // 0-1538 (was 1771, scaled from the plan); the bay itself was not scanned, so its 610 depth and 2400 height stay.
     southExtension:{
-      cabinet:{fromWestMm:0,widthMm:1771,depthMm:610,heightMm:2400,floorClearanceMm:100},
-      balcony:{fromWestMm:1771,widthMm:2192,depthMm:1200,railingHeightMm:1050,doorFromWestMm:1771,doorWidthMm:1000,doorHeightMm:2200,windowFromWestMm:2771,windowWidthMm:1192,windowSillMm:900,windowTopMm:2200},
+      cabinet:{fromWestMm:0,widthMm:1538,depthMm:610,heightMm:2400,floorClearanceMm:100},
+      // The balcony is ENCLOSED and merged with the room (phone scan 2026-10-04): the old door and window on the room line
+      // are gone; the room opens into it under a beam. Millimetres, x east from the west wall, z south from the north wall.
+      //  depthMm      room wall line (z 3726) to the inner face of the outer wall
+      //  ceilingMm    balcony soffit above the floor (the room's own ceiling scanned at about 2800; heightMm stays 2700)
+      //  opening      clear width from the room into the balcony and the beam underside over it
+      //  beam         width into the room from the wall line (its north face is at lengthMm - widthMm)
+      //  westJamb     the opening's west jamb runs this far into the room, flush with the beam face (a column, width assumed)
+      //  eastColumn   a column at the east end projecting into the balcony; the 340 mm of wall between opening.toMm and the
+      //               east wall is the stub left on the room line
+      //  outerWindow  on the outer wall; the frame reaches the east wall; frameStyle 'light' = the scanned cream frame
+      // railingHeightMm is kept for the open-balcony drawing path, which is not used while enclosed is true.
+      balcony:{fromWestMm:1538,widthMm:2425,depthMm:1065,ceilingMm:2690,enclosed:true,railingHeightMm:1050,source:'phone scan 2026-10-04',
+        opening:{fromWestMm:1538,toMm:3385,headMm:2440},
+        beam:{widthMm:250,undersideMm:2440},
+        westJamb:{intoRoomMm:250,widthMm:230,widthAssumed:true},
+        eastColumn:{fromWestMm:3725,depthMm:415},
+        outerWindow:{fromWestMm:2725,widthMm:1238,sillMm:1060,topMm:2060,frameStyle:'light',mullionFractions:[.5],sliding:true,source:'phone scan 2026-10-04'},
+      },
     },
     furniture:{
       bed:{lengthMm:1829,widthMm:1829,headWall:'east',centerFromNorthMm:1863},
@@ -218,7 +236,17 @@ export const EMPTY_ROOM_SHELLS={
     // in three bays (mullions at 1167 and 2067) with a row of top lights above about 2040. Was 471 + 2298, sill 550, head 2100,
     // from a screenshot. The scanned room is 3150 wide, not 3353 (widthMm is NOT changed until taped), so in this model the
     // window stands 420 mm off the east wall where the real one stands 217 mm off it.
-    windows:[{wall:'south',fromMm:233,widthMm:2700,bottomMm:935,topMm:2430,frameStyle:'dark',mullionFractions:[.346,.679],source:'phone scan 2026-10-04'}],
+    // Design (work-plan tasks carp-window-centre, window-wood-finish, window-mosquito-net, window-outside-chick; open items
+    // A10, B6, C19, C20; docs/changes/2026-10-04-bedroom3-windows.md). Read by src/domain/windowDesign.mjs:
+    //  transomMm      the fixed top band starts here (scan: about 2040; the owner says the band is about 1 ft = 305 high)
+    //  bays           west to east; the centre bay was fixed and gets two outward shutters like the side bays (B5)
+    //  rollerNet      roller mosquito net per section on the room side, cassette under the transom (decided; C19 proposal: top)
+    //  outsideScreen  roll-up bamboo chick 85 mm off the wall, the roll parked in front of the top band (docs/drawings/south-window-chick-cord.png)
+    //  frameStyle     'wood' with frameColor = the TV panel wall colour (C19 proposal; the shade is not decided)
+    windows:[{wall:'south',fromMm:233,widthMm:2700,bottomMm:935,topMm:2430,frameStyle:'wood',frameColor:'#a47a52',mullionFractions:[.346,.679],source:'phone scan 2026-10-04',
+      transomMm:2040,bays:[{shutters:2},{shutters:2,wasFixed:true},{shutters:2}],shutters:{opens:'outward'},
+      rollerNet:{perBay:true,cassette:'top',cassetteMm:45,side:'room'},
+      outsideScreen:{kind:'bamboo chick',rollDiameterMm:100,offsetMm:85,widthMm:2500,dropMm:1700}}],
   },
   kitchenShell:{name:'Kitchen shell',widthMm:2324,lengthMm:3070,heightMm:2700,color:'#b45309',source:'A501 floor plan'},
 }

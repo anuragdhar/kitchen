@@ -23,6 +23,7 @@ import {createBedroom3Bed} from './rooms/bedroom3/Bedroom3Bed.js'
 import {createBedroom3EntryDoor} from './rooms/bedroom3/Bedroom3EntryDoor.js'
 import {createBedroom3Wardrobe} from './rooms/bedroom3/Bedroom3Wardrobe.js'
 import {createBedroom3WestChest} from './rooms/bedroom3/Bedroom3WestChest.js'
+import {createWindowDetail} from './rooms/shared/WindowDetail.js'
 import {createLobbyEastIroningStorage} from './rooms/lobby/LobbyEastIroningStorage.js'
 import {createRoomAirConditioning} from './rooms/shared/RoomAirConditioning.js'
 import {createRoomTaskLighting} from './rooms/shared/RoomTaskLighting.js'
@@ -312,6 +313,8 @@ function LiveWholeHome3D({onOpenRoom}){
     partition.userData.setOpen(partitionOpen)
     const dw=drawing.windows[0],dd=drawing.doors[0],open=drawing.wallOpenings.east
     roomEdge(db,drawing.widthMm,drawing.lengthMm,'south',[{start:dw.fromMm,end:dw.fromMm+dw.widthMm,bottom:dw.bottomMm/1000,top:dw.topMm/1000,glass:true}])
+    // Window design (bays, transom, shutters, nets, outside screen) from the same shared builder as the room page, in room metres.
+    dg.add(createWindowDetail({kind:'window',from:dw.fromMm/1000,to:(dw.fromMm+dw.widthMm)/1000,bottom:dw.bottomMm/1000,top:dw.topMm/1000,frameStyle:dw.frameStyle,mullionFractions:dw.mullionFractions,design:dw},{z:drawing.lengthMm/1000,outward:1,materials:{frame:cabinet,darkFrame:aluminium,glass,handle:aluminium}}))
     roomEdge(db,drawing.widthMm,drawing.lengthMm,'north',[{start:drawing.wallStorage.fromWestMm,end:drawing.wallStorage.fromWestMm+drawing.wallStorage.widthMm,bottom:drawing.wallStorage.bottomMm/1000,top:(drawing.wallStorage.bottomMm+drawing.wallStorage.heightMm)/1000},...drawing.doors.filter(door=>door.wall==='north').map(door=>({start:door.fromMm,end:door.fromMm+door.widthMm,top:door.heightMm/1000}))])
     roomEdge(db,drawing.widthMm,drawing.lengthMm,'east',[{start:open.fromMm,end:open.toMm,top:HEIGHT}])
     roomEdge(db,drawing.widthMm,drawing.lengthMm,'west')
@@ -369,8 +372,10 @@ function LiveWholeHome3D({onOpenRoom}){
     const {cabinet:b3Cabinet,balcony:b3Balcony}=bedroom3.southExtension
     roomEdge(b3b,bedroom3.widthMm,bedroom3.lengthMm,'south',[
       {start:b3Cabinet.fromWestMm,end:b3Cabinet.fromWestMm+b3Cabinet.widthMm,bottom:b3Cabinet.floorClearanceMm/1000,top:(b3Cabinet.floorClearanceMm+b3Cabinet.heightMm)/1000},
-      {start:b3Balcony.doorFromWestMm,end:b3Balcony.doorFromWestMm+b3Balcony.doorWidthMm,bottom:0,top:b3Balcony.doorHeightMm/1000,glass:true},
-      {start:b3Balcony.windowFromWestMm,end:b3Balcony.windowFromWestMm+b3Balcony.windowWidthMm,bottom:b3Balcony.windowSillMm/1000,top:b3Balcony.windowTopMm/1000,glass:true},
+      // Enclosed balcony (phone scan 2026-10-04): open to the room under the beam; its outer window is drawn by createBedroom3SouthExtension.
+      ...(b3Balcony.enclosed?[{start:b3Balcony.opening.fromWestMm,end:b3Balcony.opening.toMm,bottom:0,top:b3Balcony.opening.headMm/1000}]:[
+        {start:b3Balcony.doorFromWestMm,end:b3Balcony.doorFromWestMm+b3Balcony.doorWidthMm,bottom:0,top:b3Balcony.doorHeightMm/1000,glass:true},
+        {start:b3Balcony.windowFromWestMm,end:b3Balcony.windowFromWestMm+b3Balcony.windowWidthMm,bottom:b3Balcony.windowSillMm/1000,top:b3Balcony.windowTopMm/1000,glass:true}]),
     ])
     b3g.add(createBedroom3SouthExtension(bedroom3))
     b3g.add(createBedroom3Bed(bedroom3))

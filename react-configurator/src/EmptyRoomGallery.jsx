@@ -29,6 +29,7 @@ import {parseInspiration,validateInspiration} from './home/inspiration.mjs'
 import inspirationSeed from '../../inspiration/library.json'
 import {createLobbyConcealedDoor} from './rooms/lobby/LobbyConcealedDoor.js'
 import {createBedroom3DressingTable} from './rooms/bedroom3/Bedroom3DressingTable.js'
+import {createWindowDetail} from './rooms/shared/WindowDetail.js'
 import WallSelectionPanel from './WallSelectionPanel.jsx'
 import ItemDimensionsPanel from './ItemDimensionsPanel.jsx'
 import {pickItem,selectionOutline} from './render/dimensionPick.js'
@@ -128,11 +129,16 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
       if(side==='south'&&room.southExtension){
         const {cabinet,balcony}=room.southExtension
         result.push({kind:'passage',from:mm(cabinet.fromWestMm),to:mm(cabinet.fromWestMm+cabinet.widthMm),bottom:mm(cabinet.floorClearanceMm),top:mm(cabinet.floorClearanceMm+cabinet.heightMm)})
-        result.push({kind:'glassDoor',from:mm(balcony.doorFromWestMm),to:mm(balcony.doorFromWestMm+balcony.doorWidthMm),bottom:0,top:mm(balcony.doorHeightMm),frameStyle:'dark'})
-        result.push({kind:'window',from:mm(balcony.windowFromWestMm),to:mm(balcony.windowFromWestMm+balcony.windowWidthMm),bottom:mm(balcony.windowSillMm),top:mm(balcony.windowTopMm),frameStyle:'dark',mullionFractions:[]})
+        // Enclosed balcony (phone scan 2026-10-04): the room line is open under the beam; the window is on the outer wall (Bedroom3SouthExtension.js).
+        if(balcony.enclosed) result.push({kind:'passage',from:mm(balcony.opening.fromWestMm),to:mm(balcony.opening.toMm),bottom:0,top:mm(balcony.opening.headMm)})
+        else{
+          result.push({kind:'glassDoor',from:mm(balcony.doorFromWestMm),to:mm(balcony.doorFromWestMm+balcony.doorWidthMm),bottom:0,top:mm(balcony.doorHeightMm),frameStyle:'dark'})
+          result.push({kind:'window',from:mm(balcony.windowFromWestMm),to:mm(balcony.windowFromWestMm+balcony.windowWidthMm),bottom:mm(balcony.windowSillMm),top:mm(balcony.windowTopMm),frameStyle:'dark',mullionFractions:[]})
+        }
       }
       for(const door of room.doors||[]) if(door.wall===side) result.push({kind:'door',from:mm(door.fromMm),to:mm(door.fromMm+door.widthMm),bottom:0,top:mm(door.heightMm)})
-      for(const window of room.windows||[]) if(window.wall===side) result.push({kind:'window',from:mm(window.fromMm),to:mm(window.fromMm+window.widthMm),bottom:mm(window.bottomMm),top:mm(window.topMm),frameStyle:window.frameStyle,mullionFractions:window.mullionFractions})
+      // `design` carries the millimetre entry so the shared builder can draw bays, transom, shutters, nets and the outside screen.
+      for(const window of room.windows||[]) if(window.wall===side) result.push({kind:'window',from:mm(window.fromMm),to:mm(window.fromMm+window.widthMm),bottom:mm(window.bottomMm),top:mm(window.topMm),frameStyle:window.frameStyle,mullionFractions:window.mullionFractions,design:window.transomMm||window.bays||window.rollerNet||window.outsideScreen||window.frameColor?window:undefined})
       return result.sort((a,b)=>a.from-b.from)
     }
     const addOpeningDetail=(side,opening)=>{
@@ -148,14 +154,9 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
         addBox(width-.1,h-.08,.035,center,(h-.08)/2,z,doorMaterial,parent)
         addBox(.07,.025,.06,opening.to-.17,1.02,z+(side==='north'?.04:-.04),handleMaterial,parent)
       }
-      if(opening.kind==='window'||opening.kind==='glassDoor'){
-        const h=opening.top-opening.bottom,midY=(opening.top+opening.bottom)/2
-        const windowFrame=opening.frameStyle==='dark'?darkFrameMaterial:frameMaterial
-        addBox(width-.06,h-.06,.025,center,midY,z,glassMaterial,parent)
-        for(const x of [opening.from+.025,...(opening.mullionFractions||[.5]).map(fraction=>opening.from+width*fraction),opening.to-.025]) addBox(.05,h,.065,x,midY,z,windowFrame,parent)
-        for(const y of [opening.bottom+.025,opening.top-.025]) addBox(width,.05,.065,center,y,z,windowFrame,parent)
-        if(opening.kind==='glassDoor')addBox(.025,.18,.05,opening.from+width*.8,1.05,z-.055,handleMaterial,parent)
-      }
+      // Windows and glass doors: the shared builder (rooms/shared/WindowDetail.js) draws the plain frame as before and, when
+      // the config entry carries design fields, the transom, shutters, roller nets and outside screen as well.
+      if(opening.kind==='window'||opening.kind==='glassDoor') parent.add(createWindowDetail(opening,{z,outward:side==='south'?1:-1,materials:{frame:frameMaterial,darkFrame:darkFrameMaterial,glass:glassMaterial,handle:handleMaterial}}))
     }
     for(const side of ['north','south','west','east']){
       if(room.openSide===side) continue
@@ -599,7 +600,7 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
         {roomKey==='drawing'&&<button onClick={()=>setView('tvWall')} aria-pressed={view==='tvWall'} style={buttonStyle(view==='tvWall')}>TV wall view</button>}
         <button {...designer.button(buttonStyle(designer.on))}/>
         {roomKey==='drawing'&&<button onClick={()=>setView('northWall')} aria-pressed={view==='northWall'} style={buttonStyle(view==='northWall')}>North wall view</button>}
-        {roomKey==='bedroom3'&&<button onClick={()=>{setShowSouthWall(true);setView('southOpenings')}} aria-pressed={view==='southOpenings'} style={buttonStyle(view==='southOpenings')}>Balcony door + window</button>}
+        {roomKey==='bedroom3'&&<button onClick={()=>{setShowSouthWall(true);setView('southOpenings')}} aria-pressed={view==='southOpenings'} style={buttonStyle(view==='southOpenings')}>{room.southExtension?.balcony?.enclosed?'Balcony opening + window':'Balcony door + window'}</button>}
         {room.poojaAlcove&&<button onClick={()=>{setView('pooja');setPoojaDoorsOpen(true)}} aria-pressed={view==='pooja'} style={buttonStyle(view==='pooja')}>Pooja view</button>}
         {room.poojaAlcove&&<button onClick={()=>{setView('poojaDoor');setPoojaDoorsOpen(false)}} aria-pressed={view==='poojaDoor'} style={buttonStyle(view==='poojaDoor')}>Door front</button>}
         {roomKey==='bedroom3'&&<button onClick={()=>setView('eastWall')} aria-pressed={view==='eastWall'} style={buttonStyle(view==='eastWall')}>East cabinetry view</button>}

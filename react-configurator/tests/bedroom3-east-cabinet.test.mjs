@@ -8,7 +8,8 @@ test('owner east-cabinet layout keeps the bed and openings, removes the west run
   assert.deepEqual([r.widthMm,r.lengthMm,r.heightMm],[3963,3726,2700])
   assert.deepEqual(b,{lengthMm:1829,widthMm:1829,headWall:'east',centerFromNorthMm:1863})
   assert.deepEqual(r.doors.map(d=>[d.wall,d.fromMm,d.widthMm,d.heightMm]),[['north',0,900,2100],['north',2850,700,2100]])
-  assert.deepEqual(r.southExtension.cabinet,{fromWestMm:0,widthMm:1771,depthMm:610,heightMm:2400,floorClearanceMm:100})
+  // Phone scan 2026-10-04: the balcony's west end wall is 1538 from the west wall (was 1771, scaled from the plan).
+  assert.deepEqual(r.southExtension.cabinet,{fromWestMm:0,widthMm:1538,depthMm:610,heightMm:2400,floorClearanceMm:100})
   assert.equal(r.furniture.westWardrobe,undefined)
   assert.equal(r.furniture.bedsideCabinetIdea,undefined)
   assert.equal(c.depthMm,18*25.4)

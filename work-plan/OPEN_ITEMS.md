@@ -21,6 +21,9 @@ page). Write the answer next to the item or just tell the assistant; the task an
 | A12 | Drawing Room width, west wall to east wall, by tape at floor level: the phone scan says 3150, the plan and the app say 3353. Also the length (scan 5276, app 5335) | 3D model only: room size, window and furniture positions |
 | A13 | Ceiling height by tape in the Drawing Room and the Lobby: the scan says 2775 and 2760, the app uses 2700 everywhere | 3D model only: ceiling height and beam |
 | A14 | Lobby switchboard on the north wall (415-615 from the west end, 1215-1495 high by the scan): it stands where the moved Bedroom 1 door is planned. What it controls, and where it can go | none yet (moving the Bedroom 1 door is not in the work plan) |
+| A15 | Bedroom 3 by tape: ceiling height (the phone scan of 2026-10-04 says about 2800 in the room and 2690 under the balcony soffit; the app uses 2700), the room length north-south, and the south-west bay (the app draws it 1538 wide x 610 deep x 2400 high; only its 1538 width comes from the scan) | 3D model only: room size, bay and ceiling |
+| A16 | Bedroom 3 ceiling fan: distance of its centre from the west wall and from the north wall, and how far it hangs down. The phone scan did not catch it (the ceiling was seen only from the balcony). Also the entry door and the toilet door (position along the north wall, clear width, head height): not in the scan | Bedroom 3 lighting and the existing-electrical layer |
+| A17 | Bedroom 3 balcony: what is behind the curtain on the outer wall west of the window (x 1538-2725, above about 1000): plain wall, a second window, or a door; and the small wooden panel with a handle on the balcony's east end wall (about 550 x 700, 300-1000 high): a cabinet, and how deep | 3D model only: balcony |
 
 ## B. Things to look at or find out
 
