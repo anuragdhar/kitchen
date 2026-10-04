@@ -1,7 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import {checkTrackLighting, readingTarget, readingTiltDeg, READING_TILT_MAX_DEG} from '../src/domain/drawingLighting.mjs'
-import {BEDROOM3_LIGHTING, BEDROOM3_CEILING_FAN, BEDROOM3_DIMMER_CIRCUITS, bedroom3DownTargets, bedroom3Obstacles} from '../src/config/bedroom3LightingConfig.js'
+import {checkTrackLighting, readingTarget, readingTiltDeg, READING_TILT_MAX_DEG, TRACK_TO_MOULDING_MM} from '../src/domain/drawingLighting.mjs'
+import {BEDROOM3_LIGHTING, BEDROOM3_CEILING_FAN, BEDROOM3_CEILING_MOULDINGS, BEDROOM3_DIMMER_CIRCUITS, bedroom3DownTargets, bedroom3Obstacles} from '../src/config/bedroom3LightingConfig.js'
 import {EMPTY_ROOM_SHELLS} from '../src/config/roomShellConfig.js'
 import {ROOM_LIGHTING} from '../src/home/lighting.mjs'
 
@@ -11,29 +11,54 @@ const check = c => checkTrackLighting(room, c, {downTargets: bedroom3DownTargets
 test('Bedroom 3: a north and a south track, each its own circuit, clear of the fan and of the east cabinet bridge', () => {
   const result = check(config)
   assert.deepEqual(result.issues, [])
-  assert.deepEqual(result.totals, {watts: 87, lumens: 7600, spots: 3, diffused: 2, reading: 3, heads: 8, lumensPerM2: 515, trackMetres: 6.1})
+  assert.deepEqual(result.totals, {watts: 87, lumens: 7600, spots: 3, diffused: 2, reading: 3, heads: 8, lumensPerM2: 515, trackMetres: 5.5})
   assert.deepEqual(result.runs, {
-    B1: {watts: 46, lumens: 4000, heads: 4, driverWatts: 60, driverLoad: 77, metres: 3.05},
-    B2: {watts: 41, lumens: 3600, heads: 4, driverWatts: 60, driverLoad: 68, metres: 3.05},
+    B1: {watts: 46, lumens: 4000, heads: 4, driverWatts: 60, driverLoad: 77, metres: 2.75},
+    B2: {watts: 41, lumens: 3600, heads: 4, driverWatts: 60, driverLoad: 68, metres: 2.75},
   })
   assert.ok(result.clearances['B1 to east cabinet bridge'] >= 100 && result.clearances['B2 to east cabinet bridge'] >= 100, JSON.stringify(result.clearances))
   assert.deepEqual(BEDROOM3_DIMMER_CIRCUITS.map(([id]) => id), config.tracks.runs.map(run => run.id))
   assert.equal(ROOM_LIGHTING.bedroom3.ownFixtures, true, 'the generic overlay strips are not drawn any more')
 })
 
-test('the fan point is one field, at the scanned medallion; the checks hold with the fan anywhere within 400 mm of the room centre', () => {
+test('the fan point is one field, at the scanned medallion; the checks hold with the fan anywhere within 150 mm of it', () => {
   assert.equal(config.ceilingFans.fans[0], BEDROOM3_CEILING_FAN)
   assert.deepEqual([BEDROOM3_CEILING_FAN.xMm, BEDROOM3_CEILING_FAN.zMm], [2030, 1820], 'phone scan 2026-10-04')
   assert.match(BEDROOM3_CEILING_FAN.status, /phone scan of 2026-10-04; blade size and drop still assumed/)
   const centre = {xMm: Math.round(room.widthMm / 2), zMm: Math.round(room.lengthMm / 2)}
   assert.ok(Math.hypot(BEDROOM3_CEILING_FAN.xMm - centre.xMm, BEDROOM3_CEILING_FAN.zMm - centre.zMm) < 100, 'the scanned point is within 100 mm of the room centre')
   assert.deepEqual(check(config).issues, [], 'no issues with the fan at the scanned point')
-  assert.equal(config.ceilingFans.toleranceMm, 400)
-  for (let i = 0; i < 16; i++) for (const r of [200, 400]) {
+  // Was 400 mm about the room centre while the fan was only assumed; the scan fixed the point (+/- 50) and the corner
+  // rings of the ceiling moulding moved both runs inboard (2026-10-05), so the margin is now 150 mm about the scanned point.
+  assert.equal(config.ceilingFans.toleranceMm, 150)
+  for (let i = 0; i < 16; i++) for (const r of [75, config.ceilingFans.toleranceMm]) {
     const a = i * Math.PI / 8, c = structuredClone(config)
-    c.ceilingFans.fans[0].xMm = centre.xMm + Math.round(r * Math.cos(a)); c.ceilingFans.fans[0].zMm = centre.zMm + Math.round(r * Math.sin(a))
+    c.ceilingFans.fans[0].xMm = BEDROOM3_CEILING_FAN.xMm + Math.round(r * Math.cos(a)); c.ceilingFans.fans[0].zMm = BEDROOM3_CEILING_FAN.zMm + Math.round(r * Math.sin(a))
     assert.deepEqual(check(c).issues, [], `fan moved ${r} mm at ${Math.round(a * 180 / Math.PI)} degrees`)
   }
+})
+
+test('the Bedroom 3 mouldings are recorded and both tracks sit on flat slab inboard of the corner rings, with nothing crossing', () => {
+  const m = BEDROOM3_CEILING_MOULDINGS, result = check(config), [b1, b2] = config.tracks.runs
+  assert.equal(config.ceilingMouldings, m)
+  assert.match(m.source, /phone scan 2026-10-04/); assert.match(m.accuracy, /projection not measurable/)
+  assert.deepEqual(m.border, {north: {fromMm: 360, toMm: 430}, east: {fromMm: 380, toMm: 450}, south: {fromMm: 380, toMm: 450}, west: {fromMm: 440, toMm: 520}})
+  assert.deepEqual(m.cornerRings, {fromMm: 330, reachMm: {north: 740, east: 780, south: 750, west: 800}})
+  assert.deepEqual(m.medallions.map(p => [p.xMm, p.zMm, p.diameterMm]), [[BEDROOM3_CEILING_FAN.xMm, BEDROOM3_CEILING_FAN.zMm, 760]])
+  assert.deepEqual(result.crossings, [])
+  assert.ok(Object.values(result.mouldingClearances).every(mm => mm >= TRACK_TO_MOULDING_MM), JSON.stringify(result.mouldingClearances))
+  assert.equal(result.mouldingClearances['B1 to north-west corner ring'], 80)
+  assert.equal(result.mouldingClearances['B1 to west border moulding'], 80)
+  assert.equal(result.mouldingClearances['B2 to south-east corner ring'], 70)
+  assert.deepEqual([result.clearances['B1 to Ceiling fan'], result.clearances['B2 to Ceiling fan']], [400, 486])
+  // Before and after (2026-10-05): B1 was 650 off the north wall and B2 626 off the south wall, both from x 300.
+  assert.deepEqual([b1.atMm, b1.fromMm, b1.toMm, b1.heads.map(h => h.atMm)], [820, 600, 3350, [1300, 2300, 2950, 3300]])
+  assert.deepEqual([room.lengthMm - b2.atMm, b2.fromMm, b2.toMm, b2.heads.map(h => h.atMm)], [820, 600, 3350, [650, 1135, 1620, 2950]])
+  const bad = patch => { const c = structuredClone(config); patch(c); return check(c).issues.join(' | ') }
+  const old = bad(c => { c.tracks.runs[0].atMm = 650; c.tracks.runs[0].fromMm = 300 })
+  assert.match(old, /B1 lies across the west border moulding/); assert.match(old, /B1 lies across the north-west corner ring/)
+  assert.match(old, /B1 lies across the north-east corner ring/); assert.match(old, /B1: the base of the reading head at 3300 is 0 mm from the north-east corner ring/)
+  assert.match(bad(c => { c.tracks.runs[1].atMm = 3100 }), /B2 lies across the south-west corner ring/)
 })
 
 test('reading heads are aimed at each sleeper\'s chest from the foot side with a gentle tilt, plus a dressing down light', () => {

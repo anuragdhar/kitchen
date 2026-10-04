@@ -1,7 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import {checkTrackLighting, headPosition} from '../src/domain/drawingLighting.mjs'
-import {LOBBY_LIGHTING, LOBBY_DIMMER_CIRCUITS} from '../src/config/lobbyLightingConfig.js'
+import {checkTrackLighting, headPosition, pendantCeilingReport, TRACK_TO_MOULDING_MM} from '../src/domain/drawingLighting.mjs'
+import {LOBBY_LIGHTING, LOBBY_DIMMER_CIRCUITS, LOBBY_CEILING_MOULDINGS} from '../src/config/lobbyLightingConfig.js'
 import {EMPTY_ROOM_SHELLS} from '../src/config/roomShellConfig.js'
 import {ROOM_LIGHTING} from '../src/home/lighting.mjs'
 
@@ -12,14 +12,14 @@ const board = {x1: room.widthMm - s.depthMm - s.boardLengthMm, x2: room.widthMm 
 test('the Lobby has two wall-hugging tracks with wall spots, diffused heads and a down spot over the ironing board', () => {
   const result = checkTrackLighting(room, LOBBY_LIGHTING, {downTargets: [board]})
   assert.deepEqual(result.issues, [])
-  assert.deepEqual(result.totals, {watts: 63, lumens: 5600, spots: 3, diffused: 2, reading: 1, heads: 6, lumensPerM2: 342, trackMetres: 4.1})
+  assert.deepEqual(result.totals, {watts: 63, lumens: 5600, spots: 3, diffused: 2, reading: 1, heads: 6, lumensPerM2: 342, trackMetres: 3.5})
 })
 
 test('each track is its own circuit with its own driver, and the sliders are pendant, track 1, track 2', () => {
   const result = checkTrackLighting(room, LOBBY_LIGHTING, {downTargets: [board]})
   assert.equal(LOBBY_LIGHTING.tracks.driverWatts, undefined, 'the shared 100 W driver is gone')
   assert.deepEqual(result.runs, {
-    L1: {watts: 44, lumens: 4000, heads: 4, driverWatts: 60, driverLoad: 73, metres: 2.6},
+    L1: {watts: 44, lumens: 4000, heads: 4, driverWatts: 60, driverLoad: 73, metres: 2},
     L2: {watts: 19, lumens: 1600, heads: 2, driverWatts: 60, driverLoad: 32, metres: 1.5},
   })
   assert.deepEqual(LOBBY_DIMMER_CIRCUITS.map(([id]) => id), ['chandelier', 'L1', 'L2'])
@@ -42,7 +42,7 @@ test('both tracks leave the middle of the ceiling free and stay clear of the doo
   assert.ok(l2.atMm - (table.centerXmm + table.widthMm / 2) > 1000, 'well clear of the dining table and its pendant')
   const centre = {x: room.widthMm / 2, z: room.lengthMm / 2}
   for (const run of [l1, l2]) assert.ok(Math.abs((run.axis === 'x' ? centre.z : centre.x) - run.atMm) >= 1000, `${run.id} is at least 1 m from the room centre`)
-  assert.deepEqual(headPosition(l2, l2.heads[1]), {x: 4050, z: 1375})
+  assert.deepEqual(headPosition(l2, l2.heads[1]), {x: 4100, z: 1375})
   // Phone scan 2026-10-04: the toilet door as it stands, the Bedroom 1 door where the civil work will put it.
   assert.deepEqual([toilet.fromMm, toilet.widthMm], [1060, 605])
   const bedroom = room.doors.find(d => d.wall === 'north')
@@ -55,4 +55,57 @@ test('the checks catch a down spot that misses the ironing board, a spot aimed a
   assert.match(bad(c => { c.tracks.runs[1].heads[1].atMm = 600 }), /not over a sofa, bed or work spot/)
   assert.match(bad(c => { c.tracks.runs[0].heads[0].aim = 'north' }), /across the room/)
   assert.match(bad(c => { c.tracks.runs[0].driverWatts = 50 }), /L1: the heads draw 44 W, over 80% of its 50 W driver/)
+})
+
+test('the centre medallion is modelled as a probable fan, and both tracks are clear of its blades', () => {
+  const fans = LOBBY_LIGHTING.ceilingFans, result = checkTrackLighting(room, LOBBY_LIGHTING, {downTargets: [board]})
+  assert.equal(fans.status, 'probable, from the scan')
+  assert.equal(fans.fans.length, 1); assert.equal(fans.fans[0].status, 'probable, from the scan')
+  // The scan's x is from the Drawing Room face of the beam, 40 mm west of this room's x = 0.
+  assert.deepEqual([fans.fans[0].xMm, fans.fans[0].zMm], [LOBBY_LIGHTING.existingCeilingPoints[0].xMm - 40, LOBBY_LIGHTING.existingCeilingPoints[0].zMm])
+  assert.deepEqual([fans.bladeDiameterMm, fans.dropMm], [1200, 300], 'assumed, as in the other rooms')
+  assert.deepEqual(result.clearances, {'L1 to Ceiling fan': 540, 'L2 to Ceiling fan': 895})
+  const bad = patch => { const c = structuredClone(LOBBY_LIGHTING); patch(c); return checkTrackLighting(room, c, {downTargets: [board]}).issues.join(' | ') }
+  assert.match(bad(c => { c.tracks.runs[0].atMm = 2100 }), /L1 passes -100 mm from the blades of the Ceiling fan/)
+})
+
+test('the Lobby mouldings are recorded and both tracks sit on flat slab, with nothing crossing', () => {
+  const m = LOBBY_CEILING_MOULDINGS, result = checkTrackLighting(room, LOBBY_LIGHTING, {downTargets: [board]}), [l1, l2] = LOBBY_LIGHTING.tracks.runs
+  assert.equal(LOBBY_LIGHTING.ceilingMouldings, m)
+  assert.match(m.source, /phone scan 2026-10-04/); assert.match(m.accuracy, /projection assumed/)
+  assert.deepEqual(m.border, {north: {fromMm: 390, toMm: 450}, east: {fromMm: 450, toMm: 520}, south: {fromMm: 370, toMm: 440}, west: {fromMm: 580, toMm: 640}})
+  assert.deepEqual(m.cornerRings, {fromMm: 300, reachMm: {north: 770, east: 820, south: 790, west: 960}})
+  assert.deepEqual(m.medallions.map(p => [p.xMm, p.zMm, p.diameterMm]), [[2605, 1600, 810], [3770, 1615, 440]])
+  assert.deepEqual(result.crossings, [])
+  assert.ok(Object.values(result.mouldingClearances).every(mm => mm >= TRACK_TO_MOULDING_MM), JSON.stringify(result.mouldingClearances))
+  assert.equal(result.mouldingClearances['L1 to south border moulding'], 97)
+  assert.equal(result.mouldingClearances['L1 to south-east corner ring'], 73)
+  assert.equal(result.mouldingClearances['L2 to north-east corner ring'], 73)
+  assert.equal(result.mouldingClearances['L2 to rosette of the domed ceiling light'], 110)
+  // Before and after (2026-10-05): L1 ran to x 4700 with diffused heads at 3700 / 4300; L2 was at x 4050.
+  assert.deepEqual([l1.atMm, l1.fromMm, l1.toMm, l1.heads.map(h => h.atMm)], [2740, 2100, 4100, [2500, 3100, 3550, 3930]])
+  assert.deepEqual([l2.atMm, l2.fromMm, l2.toMm, l2.heads.map(h => h.atMm)], [4100, 500, 2000, [800, 1375]])
+  const bad = patch => { const c = structuredClone(LOBBY_LIGHTING); patch(c); return checkTrackLighting(room, c, {downTargets: [board]}).issues.join(' | ') }
+  const old = bad(c => { c.tracks.runs[0].toMm = 4700; c.tracks.runs[0].heads[3].atMm = 4300 })
+  assert.match(old, /L1 lies across the south-east corner ring/); assert.match(old, /L1 lies across the east border moulding/)
+  assert.match(old, /L1: the base of the diffuse head at 4300 is 0 mm from the south-east corner ring/)
+  // L2 stays clear of the rosette and of the corner ring even if the scan's west-based positions are 130 mm out (FRAME NOTE).
+  assert.match(bad(c => { c.tracks.runs[1].atMm = 4010 }), /L2 is 20 mm from the rosette of the domed ceiling light/)
+  assert.match(bad(c => { c.tracks.runs[1].atMm = 4150 }), /L2 is 23 mm from the north-east corner ring/)
+})
+
+test('the dining pendant has no ceiling point above it, its bar canopy straddles the north moulding, and it is beside the fan', () => {
+  const table = room.furniture.diningTable, points = LOBBY_LIGHTING.existingCeilingPoints.map(p => ({...p, xMm: p.xMm - 40}))
+  const report = pendantCeilingReport(room, LOBBY_LIGHTING, {x: table.centerXmm, z: table.centerZmm}, points)
+  assert.deepEqual([table.centerXmm, table.centerZmm], [2200, 620], 'the dining table is not moved')
+  // The real points are on the room's centre line (z about 1600); the nearest is the fan's own medallion.
+  assert.deepEqual(report.existingPoints.map(p => p.distanceMm), [1060, 1859])
+  assert.match(LOBBY_LIGHTING.pendant.ceilingPoint.status, /none exists over the table; a new point or a swag is needed/)
+  assert.deepEqual(report.canopyOnMouldings, ['north border moulding'])
+  // In plan the canopy is 101 mm and the body 22 mm outside the assumed 1200 mm blade circle; the body hangs 670 mm below the blades.
+  assert.deepEqual(report.fans, [{label: 'Ceiling fan', canopyToBladesMm: 101, bodyToBladesMm: 22}])
+  const fans = LOBBY_LIGHTING.ceilingFans
+  assert.ok(room.heightMm - fans.dropMm - (LOBBY_LIGHTING.pendant.bottomMm + 75) >= 650)
+  const bigger = structuredClone(LOBBY_LIGHTING); bigger.ceilingFans.bladeDiameterMm = 1400
+  assert.equal(pendantCeilingReport(room, bigger, {x: table.centerXmm, z: table.centerZmm}).fans[0].canopyToBladesMm, 1, 'a 1400 mm fan would reach the canopy')
 })

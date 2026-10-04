@@ -69,21 +69,65 @@ Configs (millimetres, x from the west wall, z from the north wall): `src/config/
 `kitchenLightingConfig.js`. Pure checks: `src/domain/drawingLighting.mjs` `checkTrackLighting` (runs inside the room,
 300 mm off the walls, 100 mm from furniture or cabinets that reach the ceiling, 50 mm from fan blades and 300 mm for
 down-pointing heads, spots aimed at their own wall, reading heads onto a seat/bed/work spot with at most 35 degrees of
-tilt, each run's driver load). 3D: `src/rooms/drawing/DrawingRoomLighting.js` `createTrackLights` (dims by run id),
+tilt, wall spots at most 1000 mm from their wall, each run's driver load, and the ceiling mouldings below). 3D: `src/rooms/drawing/DrawingRoomLighting.js` `createTrackLights` (dims by run id),
 `src/rooms/shared/RoomTaskLighting.js`, `src/rooms/kitchen/KitchenTrackLights.js` (converts the room frame to the
 kitchen planner's centimetre, west/north-positive scene). Tests: `tests/*-lighting.test.mjs`.
 
 | Room (area) | Runs | Heads | Watts (drivers) | Lumens | lm/m2 | Fan |
 | --- | --- | --- | --- | --- | --- | --- |
-| Drawing Room, layout C (17.9 m2) | T1 TV wall 2.0 m; T2 west wall 2.7 m | 3 spot, 2 diffuse, 3 reading | 87 (60 + 100) | 7,600 | 425 | two, from the phone scan |
-| Lobby / Dining (16.4 m2) | L1 south wall 2.6 m; L2 ironing storage 1.5 m | 3 spot, 2 diffuse, 1 reading | 63 (60 + 60) | 5,600 | 342 | not confirmed (C22) |
+| Drawing Room, layout C (17.9 m2) | T1 TV wall 1.5 m; T2 west wall 2.45 m | 3 spot, 2 diffuse, 3 reading (1 aimed) | 87 (60 + 100) | 7,600 | 425 | two, from the phone scan |
+| Lobby / Dining (16.4 m2) | L1 south wall 2.0 m; L2 ironing storage 1.5 m | 3 spot, 2 diffuse, 1 reading | 63 (60 + 60) | 5,600 | 342 | probable, at the scanned centre medallion (C22) |
 | Bedroom 1 (10.9 m2) | B1 wardrobe 2.6 m; B2 over the bed 1.2 m | 4 spot, 2 diffuse, 2 reading | 82 (100 + 60) | 7,200 | 663 | assumed at centre (C23) |
-| Bedroom 3 (14.8 m2) | B1 north side 3.05 m; B2 south side 3.05 m | 3 spot, 2 diffuse, 3 reading (2 aimed) | 87 (60 + 60) | 7,600 | 515 | assumed at centre, scan pending (C24) |
+| Bedroom 3 (14.8 m2) | B1 north side 2.75 m; B2 south side 2.75 m | 3 spot, 2 diffuse, 3 reading (2 aimed) | 87 (60 + 60) | 7,600 | 515 | from the phone scan (2030, 1820); blades assumed (C24) |
 | Study / Bedroom 2 (15.9 m2) | S1 bookshelf 2.6 m; S2 bed and desk 2.6 m | 3 spot, 3 diffuse, 2 reading (aimed) | 90 (60 + 100) | 8,000 | 503 | assumed at centre (C25) |
 | Kitchen (11.0 m2) | K1 walkway centre 3.95 m (4000 K) | 3 diffuse, 2 reading (aimed at hob and sink) | 69 (100) | 6,200 | 562 | none |
 
 Bedrooms: the general layer and the wardrobe spots are on one run (the evening circuit); reading heads are on the other,
 placed so the lamp is not over the pillows (straight down 750 mm from the headboard in Bedroom 1; aimed from the foot
-side at about 24 degrees in Bedroom 3 and 16 degrees in the Study, because the fan sits over the bed there). Kitchen:
+side at about 19 degrees in Bedroom 3 and 16 degrees in the Study, because the fan sits over the bed there). Kitchen:
 only the walkway between the top wall cabinets is free ceiling, so one run goes down its middle; the existing
 under-cabinet LED strips stay for the backs of the counters. The assumed fans are drawn so the assumption is visible.
+
+## Tracks and the plaster ceiling mouldings (2026-10-05)
+
+The phone scans show the same plaster work on the Drawing Room, Lobby and Bedroom 3 ceilings: a flat painted border along
+each wall, then a raised moulding line 60-80 mm wide about 350-450 mm in from the wall, a ring with a leaf in each corner
+reaching 740-960 mm from the walls, and round medallions at the ceiling points. A track cannot be screwed flat across
+any of these. Owner's note with the measurements, the before/after of every run and what is not verified:
+`docs/changes/2026-10-05-tracks-and-mouldings.md`.
+
+- **Config**: `ceilingMouldings` in the room's lighting config (`DRAWING_CEILING_MOULDINGS`, `LOBBY_CEILING_MOULDINGS`,
+  `BEDROOM3_CEILING_MOULDINGS`): `border[wall] = {fromMm, toMm}` measured from that wall, `cornerRings = {fromMm, reachMm:
+  {north, east, south, west}}` (the square each corner's ring and leaf fill, from its two walls), `medallions = [{xMm, zMm,
+  diameterMm, label}]` from the west and north walls, plus `source`, `accuracy` and `projectionMm` (15, assumed: phone
+  LiDAR smooths small relief). Band distances are kept from each wall because the app's rooms are a little larger than
+  the scans.
+- **Check** (`checkTrackLighting`, pure): `mouldingShapes(room, mouldings)` turns the record into rectangles and circles
+  in the room frame. The centre line of every run, and of every head's base, must be `TRACK_TO_MOULDING_MM` (40: half the
+  22 mm section, a clip lug, scan accuracy) clear of each shape, or the run must declare
+  `crossings: [{moulding: '<shape label>', method: '<stand-off spacers bridging it, or the moulding cut and made good>'}]`.
+  A crossing without a method, or of a moulding the run does not reach, is an issue. The flat painted border outboard of
+  the moulding is allowed. The result lists `mouldingClearances` and `crossings`.
+- **Result**: all six runs were moved to flat slab; **no run crosses a moulding**, so no crossing is declared.
+
+| Run | Before | After | Nearest moulding now |
+| --- | --- | --- | --- |
+| Drawing T1 | z 440, x 300-2300, spots 700 / 1300 / 1900 | z 540, x 820-2320, spots 920 / 1420 / 1920 | north-west ring 50, north border 110 |
+| Drawing T2 | x 640, z 2000-4700, last reading head 4600 | x 640, z 2000-4450, last reading head 4410 aimed at (640, 4700) | south-west ring 85, west border 200 |
+| Lobby L1 | z 2740, x 2100-4700, diffused 3700 / 4300 | z 2740, x 2100-4100, diffused 3550 / 3930 | south-east ring 73, south border 97 |
+| Lobby L2 | x 4050, z 500-2000 | x 4100, z 500-2000 | north border 50, north-east ring 73, dome-light rosette 110 |
+| Bedroom 3 B1 | z 650 (650 off the north wall), x 300-3350 | z 820, x 600-3350 | west border 80, corner rings 80 |
+| Bedroom 3 B2 | z 3100 (626 off the south wall), x 300-3350 | z 2906 (820 off the south wall), x 600-3350 | corner rings 70, west border 80 |
+
+- **Lobby fan**: the centre medallion is modelled as a fan with `status: 'probable, from the scan'` at (2605, 1600) in
+  the room frame, 1200 mm blades assumed. L1 is 540 mm and L2 895 mm outside the blade circle.
+- **Dining pendant** (`pendantCeilingReport`): there is no ceiling point over the table at (2200, 620); the real points are
+  on the centre line at z about 1600, the nearest (the fan's medallion) 1060 mm away. The 750 mm bar canopy as drawn lies
+  across the north moulding, and is only 101 mm outside the assumed blade circle in plan (the body 22 mm, 670 mm below
+  the blades). It needs a new point with a compact canopy inboard of the moulding, or a different fitting; not decided,
+  nothing moved.
+- **Bedroom 3 fan tolerance**: 400 mm about the room centre became 150 mm about the scanned point.
+- **3D**: `createCeilingMouldings` (`DrawingRoomLighting.js`) draws the same shapes the check uses on the Drawing Room,
+  Lobby and Bedroom 3 ceilings, on the room pages and in Whole home 3D. The painted border colour is not drawn.
+- **Bedroom 1 and the Study** ceilings are not scanned. Their tracks (540-850 mm off the walls, some starting 300 mm from a
+  wall) would meet the same border and corner rings if those rooms have them; nothing was changed there.
