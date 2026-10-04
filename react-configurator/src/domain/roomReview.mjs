@@ -4,6 +4,7 @@ import {BEDROOM1_CLOSED_DOOR, closedDoorSpanMm} from '../config/bedroom1ClosedDo
 import {HOME_ROOM_LAYOUTS} from '../config/homeRoomViews.js'
 import {checkDrawingRoomLayout, checkCornerLayout, checkCornerConsole, checkCornerProjector, checkSouthLayout, consoleGeometry, projectorPlacement, tvWallGeometry, cornerTvFrontX, WALL_FACE_MM} from './drawingRoomLayout.mjs'
 import {windowGeometry} from './windowDesign.mjs'
+import {describeExistingElectrical} from './existingElectrical.mjs'
 
 const mm = v => `${Math.round(v)} mm`
 const size = (a, b) => `${Math.round(a)} x ${Math.round(b)}`
@@ -291,6 +292,8 @@ export function buildRoomReview({roomKey, room, layoutKey = null, references = [
   if (planItems.length) sections.push({heading: 'Plan boxes (x range, z range in mm)', lines: planItems.map(i => `${i.label}: x ${Math.round(i.x1)}-${Math.round(i.x2)}, z ${Math.round(i.z1)}-${Math.round(i.z2)}`)})
   if (layout) sections.push({heading: 'Measured from the model', lines: layout.measured})
   if (layout?.issues.length) sections.push({heading: 'Known problems', lines: layout.issues})
+  const existing = describeExistingElectrical(roomKey, room, {layoutKey: roomKey === 'drawing' ? (layoutKey ?? 'southSofas') : null})
+  if (existing.length) sections.push({heading: 'Existing electrical points (site scan)', lines: existing})
   if (references.length) sections.push({heading: 'Style references (links)', lines: references.map(r => `${r.title}${r.tags?.length ? ` [${r.tags.join(', ')}]` : ''}: ${r.url}${r.notes ? ` - ${r.notes}` : ''}`)})
   sections.push({heading: 'Honest limits', lines: [
     'This is a simplified concept model, not a survey: sizes come from the floor plan and manufacturer specs, walls are drawn 85 mm thick, and textures/colours are placeholders.',

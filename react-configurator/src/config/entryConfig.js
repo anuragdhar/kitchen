@@ -21,6 +21,29 @@ export const ENTRY = {
   shaft: {planX1: 575, planY1: 775, planX2: 688, planY2: 810},
   arrivalDoor: {wallPlanX:575,fromPlanY:810,toPlanY:874,heightMm:2200,openAngleDegrees:80,hinge:'north',opens:'west-outside'},
   outerEntryOpening: {wallPlanX: 688, fromPlanY: 822, toPlanY: 867, heightMm: 2200},
+  // The FIRST (outer) door of the home, in outerEntryOpening: the door from the landing into the 7 ft entry corridor. Owner
+  // 2026-10-03/04: it is iron today and becomes stainless steel; owner 2026-10-04 (later): VENTILATED (a grille, so air passes)
+  // and lockable. Decided and not to be changed: the wooden doors behind it stay (arrivalDoor at the end of the corridor and
+  // the Drawing Room door at innerOpening, which keeps the air-conditioned area small), and no second wooden door is added at
+  // this opening. Until now the model drew only the opening, no leaf. Sizes are millimetres; the leaf fills the opening drawn
+  // on the plan (about 905 x 2200), nothing is measured on site (work-plan/OPEN_ITEMS.md A7). Panels are listed from the
+  // bottom of the leaf upward and must meet each other exactly: `sheet` is solid 1.2 mm plate, `grille` is vertical square bars
+  // at `pitchMm` with a fine insect mesh behind them (`meshOpenFraction` of the mesh is open). The hinge side is a working
+  // choice, the same hand as the arrival door; `hingeKnown` is false until the fabricator and the owner settle it.
+  outerDoor: {
+    material: 'stainless steel, grade 304 (316 if the site is near the coast)', finish: 'brushed (hairline)',
+    frameMm: 45, leafThicknessMm: 40, floorGapMm: 10, sheetMm: 1.2,
+    hinge: 'north', opens: 'west-outside', hingeKnown: false, openAngleDegrees: 0,
+    panels: [
+      {kind: 'sheet', fromMm: 0, toMm: 300, note: 'kick plate'},
+      {kind: 'grille', fromMm: 300, toMm: 925, barMm: 12, pitchMm: 100, meshOpenFraction: 0.6},
+      {kind: 'sheet', fromMm: 925, toMm: 1075, note: 'lock rail'},
+      {kind: 'grille', fromMm: 1075, toMm: 2000, barMm: 12, pitchMm: 100, meshOpenFraction: 0.6},
+      {kind: 'sheet', fromMm: 2000, toMm: 2145, note: 'top rail'},
+    ],
+    lock: {type: 'mortise lock with a lever handle, a deadbolt and a night latch, keyed from both sides', heightMm: 1000},
+    status: 'ventilated stainless steel door decided by the owner 2026-10-04; bar pattern, finish, lock and hinge side are proposals; opening not measured',
+  },
   innerOpening: {wallPlanY: 715, fromPlanX: 515, toPlanX: 570, heightMm: 2100},
   // Owner mark 2026-09-30 (plan x 573-643, y 726-772), confirmed by the owner's screenshot of the dark pocket in the 3D
   // model: on the A501 plan there is a closed rectangle (plan x 577-680, y 726-772, about 925 mm = 3 ft deep and 2 m wide)

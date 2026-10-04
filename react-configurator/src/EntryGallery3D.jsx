@@ -11,6 +11,8 @@ import {wallPiecesAroundStorage} from './domain/wallStorage.mjs'
 import {createEntryArrivalDoor} from './rooms/entry/EntryArrivalDoor.js'
 import {createEntryFoldSeat} from './rooms/entry/EntryFoldSeat.js'
 import {createEntryEastCabinet} from './rooms/entry/EntryEastCabinet.js'
+import {createEntryOuterDoor} from './rooms/entry/EntryOuterDoor.js'
+import {createEntryCeilingLights} from './rooms/entry/EntryCeilingLights.js'
 import shoeRackWoodTexture from '../../Interior/entry-textures/shoe-rack-wood.png'
 import {createDesignerRender} from './render/designerRender.js'
 import {useDesignerRender} from './render/useDesignerRender.js'
@@ -75,6 +77,9 @@ export default function EntryGallery3D(){
     model.add(createEntryArrivalDoor(x,z))
     model.add(createEntryFoldSeat(x,z))
     model.add(createEntryEastCabinet(x,z))
+    // First (outer) door: ventilated stainless steel (ENTRY.outerDoor); round ceiling lights (config/entryLightingConfig.js).
+    model.add(createEntryOuterDoor(x,z))
+    model.add(createEntryCeilingLights(x,z,{realLights:true}))
     const outer=ENTRY.outerEntryOpening
     addSpan([outer.wallPlanX,outer.fromPlanY,outer.wallPlanX,outer.toPlanY],outer.heightMm/1000,height)
     const inner=ENTRY.innerOpening
@@ -105,7 +110,7 @@ export default function EntryGallery3D(){
     }
     addLabel('TO DRAWING ROOM',x((inner.fromPlanX+inner.toPlanX)/2),2.42,.22,1.12)
     addLabel('ENTRY SHAFT',x((ENTRY.shaft.planX1+ENTRY.shaft.planX2)/2),2.44,z((ENTRY.shaft.planY1+ENTRY.shaft.planY2)/2),.95)
-    addLabel('OUTER ENTRY',width-.2,2.48,z((outer.fromPlanY+outer.toPlanY)/2),.92)
+    addLabel('STEEL OUTER DOOR',width-.2,2.48,z((outer.fromPlanY+outer.toPlanY)/2),1.0)
     addLabel('SHOE RACK',rackX,rackHeight+.18,rackFront+.08,.9)
 
     // Key station (owner request 2026-09-28: "where to store the keys"):
@@ -144,7 +149,7 @@ export default function EntryGallery3D(){
 
   return <section style={{background:'#fff',border:'1px solid #dbe3e9',borderRadius:22,overflow:'hidden',boxShadow:'0 16px 42px rgba(23,32,51,.1)'}}>
     <div style={{padding:'14px 16px',display:'flex',gap:12,alignItems:'center',justifyContent:'space-between',flexWrap:'wrap',borderBottom:'1px solid #e2e8f0'}}>
-      <div><b style={{fontSize:18,color:'#172033'}}>Northwest entry gallery</b><div style={{fontSize:12,color:'#64748b',marginTop:3}}>Outward-opening arrival door · shaft · shoe rack · door to Drawing Room</div></div>
+      <div><b style={{fontSize:18,color:'#172033'}}>Northwest entry gallery</b><div style={{fontSize:12,color:'#64748b',marginTop:3}}>Ventilated stainless outer door · corridor with round lights · shaft · arrival door · shoe rack · door to Drawing Room</div></div>
       <div style={{display:'flex',gap:7}}><button {...designer.button(buttonStyle(designer.on))}/><button onClick={()=>setView('overview')} style={buttonStyle(view==='overview')}>Overview</button><button onClick={()=>setView('top')} style={buttonStyle(view==='top')}>Top</button></div>
     </div>
     <div ref={mountRef} style={{height:'clamp(620px,82vh,1100px)',width:'100%'}}/>

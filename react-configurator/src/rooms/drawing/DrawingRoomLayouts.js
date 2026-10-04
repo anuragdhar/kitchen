@@ -66,8 +66,9 @@ export function createDrawingRoomLayouts(room, {wallFaceMm = 0, initial = 'south
     built, furniture, setLayout, setLabels, layout: () => current,
     setDoorSwing: visible => { doorSwing.visible = visible },
     setElectrical: visible => { electricalPoints.visible = visible },
-    // Dims one kind of track head in layout C ('spot' or 'diffuse'); level 0 = off, 1 = planned brightness.
-    setTrackLight: (kind, level) => southLights.userData.setTrackLight(kind, level),
+    // Dims one circuit in layout C: 'chandelier', or a track run id ('T1', 'T2'; every head on a run dims together);
+    // level 0 = off, 1 = planned brightness.
+    setTrackLight: (circuit, level) => southLights.userData.setTrackLight(circuit, level),
     // Opening the hidden west cabinet door also drags the TV console (layout C) out of its way.
     setStorageOpen: open => { wallStorage.storage.userData.setOpen(open); south.userData.setAccess(open) },
     setArm: pulled => corner.cornerConsole.userData.setArm(pulled),

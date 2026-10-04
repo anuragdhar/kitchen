@@ -19,7 +19,7 @@ was re-measured from `Scaniverse 2026-10-04 201236.glb` in a folder of its own.
 | Balcony door | x 1,771-2,771, 2,200 high, plain glass | x 2,005-2,705 (700), 2,360 high with a top light above a transom at 2,040 |
 | Balcony window | x 2,771-3,963, sill 900, head 2,200 | x 2,785-3,705 (920), sill 920, mid rail 1,350, transom 1,910, head 2,360; solid wall 3,705-3,963 |
 | Balcony floor | from 1,771 | from 1,905 (the end of the wardrobe bay); depth 1,200 still assumed |
-| Room box 3,963 x 3,726 x 2,700 | | unchanged on purpose (whole-home model); A15 asks for a tape |
+| Room box 3,963 x 3,726 x 2,700 | | unchanged on purpose (whole-home model); A18 asks for a tape |
 
 Decisions taken without asking: the entry door stays 900 because a door covered with clothes cannot be read closer
 than that; the wardrobe's depth and the balcony's depth stay as they were (not visible); the existing corner cupboard
@@ -38,13 +38,23 @@ Nothing in the design clashes with the window, the door or the wardrobe. No furn
 ### Fan
 
 The ceiling medallion and the fan's hub are at 2,030 from the west wall and 1,820 from the north wall (the room's
-centre is 1,981 / 1,863 in the app). The blades are not in the scan. Not written to any lighting file.
+centre is 1,981 / 1,863 in the app). The blades are not in the scan. After the merge with main this point is set in
+`bedroom3LightingConfig.js` (`BEDROOM3_CEILING_FAN`: 1,981 / 1,863 assumed -> 2,030 / 1,820 scanned); the two tracks
+still pass their clearance checks with it there. Blade diameter (1,200) and drop (300) are still assumed.
 
 ### Existing electrical points
 
 Switchboard on the north wall at 1,385-1,550 from the west, 1,235-1,365 high (485 east of the entry door jamb); AC unit
 on the east wall at 1,348-2,278 from the north, 2,280-2,600 high; a wall light on the west wall at 1,740-2,020 from the
-north, 2,110-2,350 high; the fan point above. No sockets could be seen behind the furniture.
+north, 2,110-2,350 high; the fan point above. No sockets could be seen behind the furniture. The switchboard and the
+wall light are in `existingElectricalConfig.js` (key `bedroom3`, X-B1 and X-B2) and show with the room page's
+"Show existing electrical points" button; the planned chest, artwork and east cabinetry are checked against them and
+nothing lands on either (no conflict).
+
+Notes for the lighting plan (not changed here): Track 2's first wardrobe spot is at x 450, and the wardrobe now starts
+at x 365, so that spot is at the wardrobe's west edge rather than a quarter of the way along it; the comment block in
+`bedroom3LightingConfig.js` still describes the wardrobe as x 0-1,771 and the toilet door as 2,850-3,550 (a line was
+added there pointing at the scanned values).
 
 ## 2. Window design: Drawing Room south window and Bedroom 3 window
 
@@ -71,15 +81,15 @@ entry (`doorTransomMm`, `windowTransomMm`, `windowRailsMm` are the ones used now
 
 ## 3. Checks run
 
-- `npm test`: see the commit message / lead report for the exact count; the only failures are the seven known
-  "Windows: ..." launcher tests.
+- `npm test` at the merged head: 334 tests, 327 pass; the only failures are the seven known "Windows: ..." launcher tests.
 - `npm run build`: passed (existing large-chunk warning).
-- Screenshots (`scripts/room-shots.cjs` on port 5182): Bedroom 3 Overview, Top, Balcony door + window; Drawing Room
+- Screenshots (`scripts/room-shots.cjs` on port 5182): Bedroom 3 Overview, Top, Balcony door + window, West chest view,
+  and Overview with the existing electrical points shown; Drawing Room
   Overview, Top; Whole home 3D. Reviewed by eye; they are smoke evidence, not approved baselines.
 
 ## 4. Not verified
 
 - Bedroom 3: the wardrobe bay's depth, the balcony beyond the glass, the entry door's head, the fan's blades and drop,
-  and the switchboard's exact size (tape items A15-A17).
+  and the switchboard's exact size (tape items A18-A20).
 - The real wood shade, the exact top-band height, the net cassette position, and the window frame construction.
 - Blender exports, the archviz pipeline and the Bedroom 3 stills were not regenerated.

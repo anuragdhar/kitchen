@@ -26,15 +26,20 @@ import {createBedroom3WestChest} from './rooms/bedroom3/Bedroom3WestChest.js'
 import {createWindowDetail} from './rooms/shared/WindowDetail.js'
 import {createLobbyEastIroningStorage} from './rooms/lobby/LobbyEastIroningStorage.js'
 import {createRoomAirConditioning} from './rooms/shared/RoomAirConditioning.js'
-import {createRoomTaskLighting} from './rooms/shared/RoomTaskLighting.js'
+import {createRoomTaskLighting,createRoomTrackLighting} from './rooms/shared/RoomTaskLighting.js'
+import {STUDY_LIGHTING} from './config/studyLightingConfig.js'
+import {KITCHEN_LIGHTING} from './config/kitchenLightingConfig.js'
 import {createDrawingRoomLayouts,DRAWING_LAYOUTS} from './rooms/drawing/DrawingRoomLayouts.js'
 import {createStoreStorage} from './rooms/shared/StoreStorage.js'
 import {BALCONY_OFFICE,BALCONY_DESK_HEIGHT_KEY} from './config/balconyOfficeConfig.js'
+import {balconyDeskLayout} from './domain/balconyDesk.mjs'
 import {KITCHEN,KITCHEN_REFRIGERATOR,EAST_INIT,WEST_INIT,KITCHEN_AUTOSAVE_KEY,NORTH_HOB_OPTION_Y_MM,EAST_TOP_UPPER_DEPTH,WEST_TOP_UPPER_DEPTH,autoFillModules} from './config/kitchenConfig.js'
 import {ENTRY,ENTRY_WALL_SEGMENTS,entryPocketEastWallSpans,PLAN_IMAGE} from './config/entryConfig.js'
 import {createEntryArrivalDoor} from './rooms/entry/EntryArrivalDoor.js'
 import {createEntryFoldSeat} from './rooms/entry/EntryFoldSeat.js'
 import {createEntryEastCabinet} from './rooms/entry/EntryEastCabinet.js'
+import {createEntryOuterDoor} from './rooms/entry/EntryOuterDoor.js'
+import {createEntryCeilingLights} from './rooms/entry/EntryCeilingLights.js'
 import WallSelectionPanel from './WallSelectionPanel.jsx'
 import ItemDimensionsPanel from './ItemDimensionsPanel.jsx'
 import {pickItem,selectionOutline} from './render/dimensionPick.js'
@@ -47,6 +52,7 @@ import {TRUE_NORTH_OFFSET_DEG,SITE_LATITUDE_DEG} from './config/orientationConfi
 import {wallPiecesAroundStorage} from './domain/wallStorage.mjs'
 import {createDesignerRender} from './render/designerRender.js'
 import {useDesignerRender} from './render/useDesignerRender.js'
+import {createExistingElectricalPoints} from './rooms/shared/ExistingElectricalPoints.js'
 
 // The A501 plan is south-up: image right is west and image down is north.
 const PLAN_WIDTH=PLAN_IMAGE.widthPx,PLAN_HEIGHT=PLAN_IMAGE.heightPx
@@ -97,6 +103,7 @@ function LiveWholeHome3D({onOpenRoom}){
   // Drawing Room seating layout (DRAWING_LAYOUTS); 'southSofas' (C, owner 2026-10-03) is the default.
   const [drawingLayout,setDrawingLayout]=useState('southSofas'),drawingLayoutRef=useRef('southSofas')
   const [armOut,setArmOut]=useState(false),[tvSize,setTvSize]=useState('55'),[doorSwing,setDoorSwing]=useState(true),[storageOpen,setStorageOpen]=useState(false),[showElectrical,setShowElectrical]=useState(false)
+  const [showExisting,setShowExisting]=useState(false) // existing switchboards and sockets from the phone scan (existingElectricalConfig.js)
   const [storageCoverOpen,setStorageCoverOpen]=useState(false)
   const [wallSelection,setWallSelection]=useState(null)
   const [pickedItem,setPickedItem]=useState(null)
@@ -194,6 +201,9 @@ function LiveWholeHome3D({onOpenRoom}){
     model.add(createEntryArrivalDoor(X,Z))
     model.add(createEntryFoldSeat(X,Z))
     model.add(createEntryEastCabinet(X,Z))
+    // First (outer) door: ventilated stainless steel (ENTRY.outerDoor); round ceiling lights (config/entryLightingConfig.js).
+    model.add(createEntryOuterDoor(X,Z))
+    model.add(createEntryCeilingLights(X,Z))
     // Entry wall cavity (owner mark 2026-09-30): translucent volumes for the empty 3-ft pocket on the Entry side of the Drawing
     // Room's north wall and for the 9-inch wall between them. Never hit by the measure tool (userData.noMeasure). Sizes come
     // from ENTRY.wallCavity.
@@ -311,6 +321,7 @@ function LiveWholeHome3D({onOpenRoom}){
     drawingLayouts.setLabels(tvLabelsRef.current)
     const partition=createDrawingLobbyPartition(drawing,'drawing');dg.add(partition)
     partition.userData.setOpen(partitionOpen)
+    const existingDrawing=createExistingElectricalPoints('drawing',drawing,{wallFaceMm:WALL_THICKNESS_M*500});if(existingDrawing){existingDrawing.visible=false;dg.add(existingDrawing)}
     const dw=drawing.windows[0],dd=drawing.doors[0],open=drawing.wallOpenings.east
     roomEdge(db,drawing.widthMm,drawing.lengthMm,'south',[{start:dw.fromMm,end:dw.fromMm+dw.widthMm,bottom:dw.bottomMm/1000,top:dw.topMm/1000,glass:true}])
     // Window design (bays, transom, shutters, nets, outside screen) from the same shared builder as the room page, in room metres.
@@ -328,6 +339,7 @@ function LiveWholeHome3D({onOpenRoom}){
     lg.add(createRoomAirConditioning(lobby))
     lg.add(createRoomTaskLighting(lobby))
     lg.add(createLobbyConcealedDoor(lobby))
+    const existingLobby=createExistingElectricalPoints('lobby',lobby,{wallFaceMm:WALL_THICKNESS_M*500});if(existingLobby){existingLobby.visible=false;lg.add(existingLobby)}
     const toilet=lobby.doors.find(door=>door.wall==='south'),bedDoor=lobby.doors.find(door=>door.wall==='north')
     roomEdge(lb,lobby.widthMm,lobby.lengthMm,'south',[{start:toilet.fromMm,end:toilet.fromMm+toilet.widthMm,top:toilet.heightMm/1000}])
     // The old plan door on this wall is closed (owner, 2026-09-29): sheet on the lobby face, medicine cabinet behind it.
@@ -384,11 +396,13 @@ function LiveWholeHome3D({onOpenRoom}){
     b3g.add(createBedroom3EntryDoor(bedroom3))
     b3g.add(createBedroom3Wardrobe(bedroom3))
     b3g.add(createBedroom3WestChest(bedroom3))
+    b3g.add(createRoomTaskLighting(bedroom3)) // tracks and the assumed fan (config/bedroom3LightingConfig.js)
 
     const study=STUDY_ROOM,sd=study.dimensions,sb=boundsFor('Study')
     const sg=roomGroup(sb,sd.widthMm,sd.lengthMm)
     sg.add(createStudyTerrace(study))
     sg.add(createStudyFurniture(study).group)
+    sg.add(createRoomTrackLighting(STUDY_LIGHTING,sd)) // tracks and the assumed fan (config/studyLightingConfig.js)
     const sDoor=study.openings.mainDoor,sTerrace=study.openings.terraceDoor,sOffice=study.openings.balconyOffice
     const built=study.cabinetry.southBuiltIn
     roomEdge(sb,sd.widthMm,sd.lengthMm,'south',[
@@ -414,19 +428,30 @@ function LiveWholeHome3D({onOpenRoom}){
     const og=roomGroup(ob,od.widthMm,od.lengthMm)
     const env=office.envelope,bandBottom=env.lowerBrickParapetMm/1000,bandTop=(env.lowerBrickParapetMm+env.windowBandMm)/1000
     for(const side of env.windowWalls)roomEdge(ob,od.widthMm,od.lengthMm,side,[{start:0,end:side==='south'?od.widthMm:od.lengthMm,bottom:bandBottom,top:bandTop,glass:true}])
-    const desk=office.worktop.westAdjustable,rear=office.worktop.rearCabinet
+    // Desk positions come from the pure balcony layout (src/domain/balconyDesk.mjs): sit-stand top, rear cabinet, fixed
+    // south section with its cabinet, PC, printer and laptop, all in balcony millimetres (x from the west wall, z from the north).
+    const desk=office.worktop.westAdjustable,deskLayout=balconyDeskLayout(office),rear=deskLayout.rear,fixedDesk=deskLayout.fixed
     const savedDeskHeight=Number(localStorage.getItem(BALCONY_DESK_HEIGHT_KEY))
     const deskHeight=Number.isFinite(savedDeskHeight)&&savedDeskHeight>=desk.minHeightMm&&savedDeskHeight<=desk.maxHeightMm?savedDeskHeight:desk.defaultHeightMm
-    localBox(og,desk.depthMm,desk.topThicknessMm,desk.widthMm,desk.depthMm/2,deskHeight,od.lengthMm-desk.widthMm/2,paleWood)
-    localBox(og,rear.depthMm,rear.topHeightMm-rear.toeClearanceMm,rear.widthMm,rear.depthMm/2,(rear.topHeightMm+rear.toeClearanceMm)/2,od.lengthMm-rear.widthMm/2,cabinet)
-    for(let bay=1;bay<rear.bayCount;bay++)localBox(og,18,rear.topHeightMm-rear.toeClearanceMm,rear.depthMm,rear.depthMm/2,(rear.topHeightMm+rear.toeClearanceMm)/2,od.lengthMm-rear.widthMm*bay/rear.bayCount,wood)
+    const mid=(a,b)=>(a+b)/2
+    localBox(og,desk.depthMm,desk.topThicknessMm,deskLayout.moving.lengthMm,mid(deskLayout.moving.x0,deskLayout.moving.x1),deskHeight-desk.topThicknessMm/2,mid(deskLayout.moving.zStart,deskLayout.moving.zEnd),paleWood)
+    localBox(og,rear.depthMm,rear.topMm-rear.toeMm,rear.end-rear.start,rear.depthMm/2,mid(rear.toeMm,rear.topMm),mid(rear.start,rear.end),cabinet)
+    for(const bay of rear.bays.slice(1))localBox(og,rear.depthMm+10,rear.topMm-rear.toeMm,18,rear.depthMm/2,mid(rear.toeMm,rear.topMm),bay.start,wood)
+    if(fixedDesk){
+      localBox(og,fixedDesk.x1-fixedDesk.x0,fixedDesk.thicknessMm,fixedDesk.lengthMm,mid(fixedDesk.x0,fixedDesk.x1),fixedDesk.topHeightMm-fixedDesk.thicknessMm/2,mid(fixedDesk.zStart,fixedDesk.zEnd),paleWood)
+      localBox(og,fixedDesk.cabinet.x1-fixedDesk.cabinet.x0,fixedDesk.cabinet.y1-fixedDesk.cabinet.y0,fixedDesk.lengthMm-4,mid(fixedDesk.cabinet.x0,fixedDesk.cabinet.x1),mid(fixedDesk.cabinet.y0,fixedDesk.cabinet.y1),mid(fixedDesk.zStart,fixedDesk.zEnd),cabinet)
+      const pr=fixedDesk.printer
+      if(pr)localBox(og,pr.x1-pr.x0,pr.y1-pr.y0,pr.zEnd-pr.zStart,mid(pr.x0,pr.x1),mid(pr.y0,pr.y1),pr.centerZ,screen)
+    }
     const north=office.cabinetry.northWall
     localBox(og,od.widthMm,north.upper.heightMm,north.upper.depthMm,od.widthMm/2,od.floorToCeilingMm-north.upper.heightMm/2,north.upper.depthMm/2,cabinet)
     localBox(og,north.lower.widthMm,north.lower.heightMm,north.lower.depthMm,north.lower.widthMm/2,north.lower.heightMm/2,north.lower.depthMm/2,cabinet)
-    office.equipment.monitors.forEach((monitor,index)=>localBox(og,45,monitor.heightWithStandMm*.75,monitor.widthMm,index?470:350,deskHeight+monitor.heightWithStandMm*.48,od.lengthMm-(index?850:1350),screen))
-    localBox(og,215,475,410,155,320,od.lengthMm-rear.widthMm+250,cabinet) // PC in the north desk bay.
-    localBox(og,280,190,440,155,410,od.lengthMm-rear.widthMm/2,screen) // Printer on the centre pull-out shelf.
-    localBox(og,office.equipment.laptop.depthMm,18,office.equipment.laptop.widthMm,560,deskHeight+18,od.lengthMm-500,screen)
+    const mon=deskLayout.monitors
+    for(const [m,spec] of [[mon.right,office.equipment.monitors.find(x=>x.side==='right')],[mon.left,office.equipment.monitors.find(x=>x.side==='left')]])localBox(og,45,m.heightMm,m.widthMm,deskLayout.moving.x0+130,deskHeight+mon.screenBottomMm+m.heightMm/2,m.centerZ,screen)
+    const pc=deskLayout.pcTower
+    localBox(og,pc.x1-pc.x0,pc.y1-pc.y0,pc.zEnd-pc.zStart,mid(pc.x0,pc.x1),mid(pc.y0,pc.y1),pc.centerZ,cabinet)
+    const lap=deskLayout.laptop,lapY=lap.on==='fixed'?lap.topY:deskHeight
+    localBox(og,lap.depthMm,18,lap.widthMm,mid(lap.x0,lap.x1),lapY+9,lap.centerZ,screen)
 
     // Bedroom 1's plan bounds (HOME_ROOM_LAYOUTS) include its east balcony (plan x 273-339). The room frame is the bedroom
     // itself, west wall (plan x 515) to east wall (plan x 339, the balcony's inner edge); the balcony extension continues past
@@ -437,6 +462,7 @@ function LiveWholeHome3D({onOpenRoom}){
     const bedroom=EMPTY_ROOM_SHELLS.bedroom1
     const bg=roomGroup(bbounds,bedroom.widthMm,bedroom.lengthMm)
     bg.add(createRoomAirConditioning(bedroom))
+    bg.add(createRoomTaskLighting(bedroom)) // tracks and the assumed fan (config/bedroom1LightingConfig.js)
     const poojaWardrobe=bedroom.balconyExtension?.poojaWallWardrobe
     if(poojaWardrobe){
       const {widthMm:width,depthMm:depth,heightMm:height,doorCount}=poojaWardrobe
@@ -546,6 +572,7 @@ function LiveWholeHome3D({onOpenRoom}){
     // The south wall and bedroom door are shared with the lobby model above.
 
     const kb=boundsFor('Kitchen'),kg=roomGroup(kb,KITCHEN.width,KITCHEN.length)
+    kg.add(createRoomTrackLighting(KITCHEN_LIGHTING,KITCHEN_LIGHTING.room)) // the ceiling track (config/kitchenLightingConfig.js); this group is in the room frame, so no mirroring here
     const storeStorage=createStoreStorage()
     storeStorage.userData.setCoverOpen(storageCoverOpen)
     storeStorage.position.z=KITCHEN.length/1000
@@ -839,10 +866,10 @@ function LiveWholeHome3D({onOpenRoom}){
     const interiorRoomIds=['bedroom3','study','balcony','terrace','kitchen','lobby','drawing','bedroom1','bedroom1-balcony','entry']
     const interiorScene=registerInteriorScene({id:'whole-home',scene,camera,renderer,zones:ROOMS.map((r,index)=>({id:interiorRoomIds[index],min:[X(r.bounds[0]),0,Z(r.bounds[1])],max:[X(r.bounds[2]),HEIGHT,Z(r.bounds[3])]}))})
     let raf=0;const render=()=>{controls.update();designerRender.render();raf=requestAnimationFrame(render)};render()
-    sceneRef.current={clearItem,setDesigner:on=>designerRender.setEnabled(on),setCavity:visible=>{cavityGroup.visible=visible},setRoomLight,setTvLabels:visible=>drawingLayouts.setLabels(visible),setDrawingLayout:key=>drawingLayouts.setLayout(key),setDrawingArm:pulled=>drawingLayouts.setArm(pulled),setElectrical:visible=>drawingLayouts?.setElectrical(visible),setDoorSwing:visible=>drawingLayouts.setDoorSwing(visible),setStorageOpen:open=>drawingLayouts.setStorageOpen(open),setDrawingTv:key=>drawingLayouts.setTvSize(key),setMedicineCabinetOpen:value=>doorInfill.userData.setOpen(value),setStorageCoverOpen:value=>storeStorage.userData.setCoverOpen(value),setMirrorOpen:value=>vanity.userData.setMirrorOpen?.(value),setPartitionOpen:value=>partition.userData.setOpen?.(value),setCamera,setWallsVisible:visible=>{walls.visible=visible},setBoardOpen:value=>{ironingStorage.userData.setBoardOpen(value)},setPoojaPersonVisible:visible=>{seatedPerson.visible=visible},setPoojaDoorsOpen:value=>{poojaDoors.userData.setDoorsOpen(value)},clearMark,setDaylight,setMeasure,clearMeasure}
+    sceneRef.current={clearItem,setDesigner:on=>designerRender.setEnabled(on),setCavity:visible=>{cavityGroup.visible=visible},setRoomLight,setTvLabels:visible=>drawingLayouts.setLabels(visible),setDrawingLayout:key=>drawingLayouts.setLayout(key),setDrawingArm:pulled=>drawingLayouts.setArm(pulled),setElectrical:visible=>drawingLayouts?.setElectrical(visible),setExistingElectrical:visible=>{for(const g of [existingDrawing,existingLobby])if(g)g.visible=visible},setDoorSwing:visible=>drawingLayouts.setDoorSwing(visible),setStorageOpen:open=>drawingLayouts.setStorageOpen(open),setDrawingTv:key=>drawingLayouts.setTvSize(key),setMedicineCabinetOpen:value=>doorInfill.userData.setOpen(value),setStorageCoverOpen:value=>storeStorage.userData.setCoverOpen(value),setMirrorOpen:value=>vanity.userData.setMirrorOpen?.(value),setPartitionOpen:value=>partition.userData.setOpen?.(value),setCamera,setWallsVisible:visible=>{walls.visible=visible},setBoardOpen:value=>{ironingStorage.userData.setBoardOpen(value)},setPoojaPersonVisible:visible=>{seatedPerson.visible=visible},setPoojaDoorsOpen:value=>{poojaDoors.userData.setDoorsOpen(value)},clearMark,setDaylight,setMeasure,clearMeasure}
     setRoomLight(roomLightRef.current/100)
     setDaylight(sunHourRef.current)
-    return()=>{interiorScene.dispose();cancelAnimationFrame(raf);designerRender.dispose();observer.disconnect();renderer.domElement.removeEventListener('pointerdown',onPointerDown);renderer.domElement.removeEventListener('pointerup',onPointerUp);renderer.domElement.removeEventListener('pointermove',onPointerMove);window.removeEventListener('keydown',onMeasureKey);cancelAnimationFrame(moveFrame);tip.remove();controls.dispose();model.traverse(object=>{object.geometry?.dispose?.();object.material?.dispose?.()});markedWallMaterial.dispose();texture.dispose();environment.dispose();pmrem.dispose();renderer.dispose();renderer.domElement.remove();sceneRef.current=null}
+    return()=>{interiorScene.dispose();cancelAnimationFrame(raf);existingDrawing?.userData.dispose();existingLobby?.userData.dispose();designerRender.dispose();observer.disconnect();renderer.domElement.removeEventListener('pointerdown',onPointerDown);renderer.domElement.removeEventListener('pointerup',onPointerUp);renderer.domElement.removeEventListener('pointermove',onPointerMove);window.removeEventListener('keydown',onMeasureKey);cancelAnimationFrame(moveFrame);tip.remove();controls.dispose();model.traverse(object=>{object.geometry?.dispose?.();object.material?.dispose?.()});markedWallMaterial.dispose();texture.dispose();environment.dispose();pmrem.dispose();renderer.dispose();renderer.domElement.remove();sceneRef.current=null}
   },[])
 
   useEffect(()=>{sceneRef.current?.setCamera(view)},[view])
@@ -859,6 +886,7 @@ function LiveWholeHome3D({onOpenRoom}){
   // A picked item's outline would be stale once the room, layout or visibility changes.
   useEffect(()=>{sceneRef.current?.clearItem?.();setPickedItem(null)},[drawingLayout,showWalls])
   useEffect(()=>{sceneRef.current?.setElectrical(showElectrical)},[showElectrical])
+  useEffect(()=>{sceneRef.current?.setExistingElectrical?.(showExisting)},[showExisting])
   useEffect(()=>{sceneRef.current?.setStorageOpen(storageOpen)},[storageOpen])
   useEffect(()=>{sceneRef.current?.setDrawingTv(tvSize)},[tvSize])
   useEffect(()=>{sceneRef.current?.setPartitionOpen(partitionOpen)},[partitionOpen])
@@ -887,6 +915,7 @@ function LiveWholeHome3D({onOpenRoom}){
         <button onClick={()=>setDoorSwing(value=>!value)} aria-pressed={doorSwing} style={buttonStyle(doorSwing)} title="The Drawing Room entry door opens into the room: red is the area its leaf sweeps">{doorSwing?'Hide entry door swing':'Show entry door swing'}</button>
         <button onClick={()=>setStorageOpen(value=>!value)} aria-pressed={storageOpen} style={buttonStyle(storageOpen)} title="The west cabinet of the entry pocket, entered through a narrow hidden door at the west end of the Drawing Room's north wall: the TV console is dragged out and the door, hidden in the wall panelling, swings outward to show the shelves">{storageOpen?'Close hidden west cabinet':'Open hidden west cabinet'}</button>
         {drawingLayout==='southSofas'&&<button onClick={()=>setShowElectrical(value=>!value)} aria-pressed={showElectrical} style={buttonStyle(showElectrical)} title="Proposed sockets, charging, switch, light and data points for layout C (docs/DRAWING_ROOM_ELECTRICAL.md)">{showElectrical?'Hide electrical points':'Show electrical points'}</button>}
+        <button onClick={()=>setShowExisting(value=>!value)} aria-pressed={showExisting} style={buttonStyle(showExisting)} title="The switchboards, distribution board, sockets and lights that are on the Drawing Room and Lobby walls TODAY (phone scan 2026-10-04): grey plates with a blue outline, at true size. The conflict list is on each room's own page">{showExisting?'Hide existing electrical points':'Show existing electrical points'}</button>
         {(drawingLayout==='cornerConsole'||drawingLayout==='southSofas')&&<>
           {drawingLayout==='cornerConsole'&&<button onClick={()=>setArmOut(value=>!value)} aria-pressed={armOut} style={buttonStyle(armOut)}>{armOut?'Park TV flat on the wall':'Pull TV out and turn it toward the north sofa'}</button>}
           <button onClick={()=>setTvSize(value=>value==='55'?'65':'55')} style={buttonStyle(tvSize==='65')}>TV size: {tvSize} inch (click for {tvSize==='55'?'65':'55'})</button>

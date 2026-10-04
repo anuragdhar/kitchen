@@ -27,15 +27,18 @@ export const DRAWING_LIGHTING = {
     // Layered lighting without a false ceiling (owner 2026-10-04): surface magnetic track fixed to the slab, with spot heads
     // on the walls and diffused heads for soft general light, placed clear of both fans. `axis` is the direction the run
     // goes: 'x' runs east-west at z = atMm, 'z' runs north-south at x = atMm. A head's atMm is its place along the run;
-    // `aim` is the wall a spot points at. A 'reading' head is a stronger spot pointing straight down at a sofa seat: turned
-    // up for reading, dimmed otherwise (owner 2026-10-04, instead of swing-arm wall lights). Watts and lumens are typical
-    // catalogue figures for such heads.
-    tracks: {type: '48 V magnetic surface track', colour: 'white', kelvin: 3000, driverWatts: 150, sectionMm: 22, runs: [
-      {id: 'T1', label: 'Track 1: grazes the TV panel wall', axis: 'x', atMm: 440, fromMm: 300, toMm: 2300, heads: [
+    // `aim` is the wall a spot points at. A 'reading' head is a stronger spot pointing straight down at a sofa seat
+    // (owner 2026-10-04, instead of swing-arm wall lights). Watts and lumens are typical catalogue figures for such heads.
+    // CIRCUITS (owner, later 2026-10-04): the heads on a run cannot be dimmed one by one, only the whole run. So each run is
+    // ONE circuit with its own 48 V driver (driverWatts, loaded to 80% at most) and its own wall dimmer, and the mix of light
+    // on a run is fixed by which heads are clipped on. Track 2 keeps its reading and diffused heads together: turn the whole
+    // track up to read, down for TV; the chandelier carries the general light. The former single 150 W driver becomes two.
+    tracks: {type: '48 V magnetic surface track', colour: 'white', kelvin: 3000, sectionMm: 22, circuit: 'one run = one circuit: its own driver and wall dimmer', runs: [
+      {id: 'T1', label: 'Track 1: grazes the TV panel wall', axis: 'x', atMm: 440, fromMm: 300, toMm: 2300, driverWatts: 60, heads: [
         {kind: 'spot', atMm: 700, watts: 7, lumens: 600, aim: 'north'},
         {kind: 'spot', atMm: 1300, watts: 7, lumens: 600, aim: 'north'},
         {kind: 'spot', atMm: 1900, watts: 7, lumens: 600, aim: 'north'}]},
-      {id: 'T2', label: 'Track 2: west wall, over the west sofa', axis: 'z', atMm: 640, fromMm: 2000, toMm: 4700, heads: [
+      {id: 'T2', label: 'Track 2: west wall, over the west sofa', axis: 'z', atMm: 640, fromMm: 2000, toMm: 4700, driverWatts: 100, heads: [
         {kind: 'reading', atMm: 2470, watts: 12, lumens: 1000},
         {kind: 'diffuse', atMm: 2950, watts: 15, lumens: 1400, lengthMm: 300},
         {kind: 'diffuse', atMm: 3500, watts: 15, lumens: 1400, lengthMm: 300},
@@ -50,3 +53,9 @@ export const DRAWING_LIGHTING = {
     sofaGlow: {xMm: 1155, lengthMm: 2250, fromNorthMm: 930, heightMm: 120, label: 'North sofa low glow'},
   },
 }
+
+// Sliders on the Drawing Room page (layout C), one per circuit: [circuit id, label]. 'chandelier' is the existing chandelier;
+// the others are the run ids above (DrawingLightDimmer.jsx).
+export const DRAWING_DIMMER_CIRCUITS = [
+  ['chandelier', 'Chandelier'], ['T1', 'Track 1 (TV wall spots)'], ['T2', 'Track 2 (west wall: general and reading)'],
+]
