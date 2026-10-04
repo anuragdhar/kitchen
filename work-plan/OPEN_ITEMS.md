@@ -29,6 +29,7 @@ page). Write the answer next to the item or just tell the assistant; the task an
 | A20 | Bedroom 3 south bay: depth of the existing olive wardrobe (its doors are flush with the wall line; the app assumes 610) and the balcony beyond the glass (not scanned). Whether the existing AC (930 wide, 2280-2600 high, 200 deep, 1350-2280 from the north) stays: the slatted bay leaves it about 30 mm of headroom | East cabinetry AC bay; 3D model |
 | A21 | Outside the shoe rack wall (north end of the entry gallery): what is there, open sky or a shaft, corridor or lobby; how much free air straight ahead and to each side (east and west) of where the rack projects; anything below it | AC outdoor unit under the shoe rack (proposal) |
 | A22 | AC outdoor units: the tonnage and casing size of the Bedroom 1 and Bedroom 2 units (drawn as 1.5 ton, 800 x 550 x 300), the real position and height of the Bedroom 3 and Bedroom 2 units, and for the two proposed places (outside the kitchen north wall for Bedroom 1; outside the Drawing Room west wall) what is around them outside and how a technician reaches them | 3D model; Choose the AC |
+| A23 | Window AC (1.5 ton, already owned) for the Bedroom 1 balcony: its real width, height, depth and weight; the height and material of the balcony parapet at the marked place; which glazing panel is there; where its power socket can go | Window AC iron frame (not in the work plan yet) |
 
 ## B. Things to look at or find out
 

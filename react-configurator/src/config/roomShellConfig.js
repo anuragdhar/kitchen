@@ -9,6 +9,14 @@ export const EMPTY_ROOM_SHELLS={
         table:{centerFromBedroomWallMm:1000,centerFromNorthMm:500,widthMm:700,depthMm:350,heightMm:740},
         chair:{centerFromBedroomWallMm:540,centerFromNorthMm:500,widthMm:440,depthMm:400,seatHeightMm:450,backHeightMm:860,facing:'east'},
       },
+      // Owner 2026-10-05: the 1.5 ton WINDOW AC the owner already has goes in the balcony's east side, on an iron frame fixed
+      // to the wall, at the owner's plan mark (plan x 261-282, y 703-733). Millimetres; the balcony frame is the room's: z from
+      // the north wall, heights above the floor. It sits on top of the 1 m parapet, in the glazing, its front `insideMm` into
+      // the balcony and the rest outside, where its side louvres must be. centerFromNorthMm comes from the mark (y 718 of
+      // 612-794 over the 3240 mm room length). The casing size is TYPICAL for a 1.5 ton window AC: measure the real one.
+      windowAc:{status:'unit owned by the owner; position proposed 2026-10-05, not measured',tons:1.5,
+        widthMm:660,heightMm:430,depthMm:700,insideMm:250,centerFromNorthMm:1353,bottomMm:1000,weightKg:50,
+        mark:{x1:261,y1:703,x2:282,y2:733},support:'welded iron angle frame fixed to the wall, sloping slightly outward so water drains out'},
     },
     // The south door shares its opening with the lobby's north door (leadsTo 'Bedroom 1').
     // Both sit 100 mm off the common west wall (south-west corner) - keep the two fromMm values in sync.

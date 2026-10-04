@@ -1,7 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import {AC_OUTDOOR_UNITS, AC_OUTDOOR_UNIT_SIZES, AC_OUTDOOR_CLEARANCE} from '../src/config/acOutdoorUnitsConfig.js'
-import {checkOutdoorUnits, outdoorUnitPlacement, planToRoomMm, compassVector} from '../src/domain/acOutdoorUnits.mjs'
+import {checkOutdoorUnits, outdoorUnitPlacement, planToRoomMm, compassVector, checkWindowAc} from '../src/domain/acOutdoorUnits.mjs'
 import {ENTRY} from '../src/config/entryConfig.js'
 import {EMPTY_ROOM_SHELLS} from '../src/config/roomShellConfig.js'
 import {HOME_ROOM_LAYOUTS} from '../src/config/homeRoomViews.js'
@@ -51,4 +51,25 @@ test('the Home Office and kitchen-wall units hang outside their walls with air b
   assert.ok(along.z > 4200 && along.z < 5200 && along.x < 0, `centre ${Math.round(along.x)}, ${Math.round(along.z)} in the Drawing Room frame`)
   assert.match(checkOutdoorUnits([{...unit('bedroom1'), fanFaces: 'east'}], AC_OUTDOOR_UNIT_SIZES, scale).issues.join(' '), /cannot blow east/)
   assert.match(checkOutdoorUnits([unit('bedroom3'), {...unit('study'), centre: unit('bedroom3').centre}], AC_OUTDOOR_UNIT_SIZES, scale).issues.join(' '), /overlap/)
+})
+
+test('Bedroom 3 unit is on the wall about 6 ft up; the owner\'s window AC sits in the Bedroom 1 balcony side with the outdoor unit moved up above it', () => {
+  // Owner 2026-10-05: "fixed on the wall, around 6 feet high".
+  assert.equal(unit('bedroom3').bottomMm, 1830)
+  // Owner 2026-10-05: the Bedroom 2 unit is "at 5 feet high, at the same place".
+  assert.equal(unit('study').bottomMm, 1524)
+  assert.match(unit('bedroom3').mount, /wall bracket.*6 ft/)
+  const room = EMPTY_ROOM_SHELLS.bedroom1, ac = room.balconyExtension.windowAc
+  assert.deepEqual([ac.tons, ac.widthMm, ac.heightMm, ac.depthMm, ac.insideMm, ac.centerFromNorthMm, ac.bottomMm], [1.5, 660, 430, 700, 250, 1353, 1000])
+  assert.deepEqual(ac.mark, {x1: 261, y1: 703, x2: 282, y2: 733})
+  const result = checkWindowAc(room, {above: unit('bedroom1'), aboveSize: AC_OUTDOOR_UNIT_SIZES[1.5]})
+  assert.deepEqual(result.issues, [])
+  assert.deepEqual([result.topMm, result.outsideMm, result.gapToUnitAboveMm, unit('bedroom1').bottomMm], [1430, 450, 370, 1800])
+  // The mark's middle (plan y 718 between the room's 612 and 794) gives the position along the balcony.
+  assert.equal(Math.round((794 - 718) / (794 - 612) * room.lengthMm), ac.centerFromNorthMm)
+  const bad = patch => { const r = structuredClone(room); patch(r.balconyExtension.windowAc); return checkWindowAc(r, {above: unit('bedroom1'), aboveSize: AC_OUTDOOR_UNIT_SIZES[1.5]}).issues.join(' | ') }
+  assert.match(bad(a => { a.centerFromNorthMm = 2100 }), /does not fit/)
+  assert.match(bad(a => { a.bottomMm = 700 }), /below the top of the 1000 mm parapet/)
+  assert.match(bad(a => { a.insideMm = 500 }), /side louvres would be blocked/)
+  assert.match(bad(a => { a.heightMm = 600 }), /starts only 200 mm over the window AC/)
 })

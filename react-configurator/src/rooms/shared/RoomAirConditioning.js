@@ -31,6 +31,21 @@ export function createRoomAirConditioning(room){
     // The Lobby condenser sits outside the east glazing, below its one-metre sill (concept position). Bedroom 1's own
     // outdoor unit is drawn from the owner's plan mark instead (config/acOutdoorUnitsConfig.js, Whole home 3D), a little
     // further north-east, so the Lobby one moved from z 1.46 to the south slot to stay clear of it (2026-10-05).
+    const ac=room.balconyExtension.windowAc
+    if(ac){
+      // The owner's 1.5 ton window AC in the balcony's east side, on an iron frame (roomShellConfig.js, 2026-10-05).
+      const unit=new THREE.Group();unit.name='Bedroom 1 window AC (owner, proposed position)';group.add(unit)
+      const w=ac.widthMm/1000,h=ac.heightMm/1000,d=ac.depthMm/1000,inside=ac.insideMm/1000,z=ac.centerFromNorthMm/1000,y=ac.bottomMm/1000
+      const part=(bw,bh,bd,x,py,pz,material)=>{const mesh=new THREE.Mesh(new THREE.BoxGeometry(bw,bh,bd),material);mesh.position.set(x,py,pz);mesh.castShadow=true;unit.add(mesh);return mesh}
+      part(d,h,w,outerX-inside+d/2,y+h/2,z,shell)
+      part(.012,h*.62,w*.62,outerX-inside-.006,y+h*.6,z-w*.12,grille)
+      part(.012,h*.2,w*.9,outerX-inside-.006,y+h*.14,z,trim)
+      part(.012,h*.8,w*.8,outerX-inside+d+.006,y+h/2,z,grille)
+      // Iron angle frame: a shelf under the outside part and two struts back to the parapet.
+      const out=d-inside
+      part(out+.04,.03,w+.06,outerX+out/2,y-.015,z,grille)
+      for(const side of [-1,1]){const strut=part(Math.hypot(out,.45),.03,.03,outerX+out/2,y-.24,z+side*(w/2+.015),grille);strut.rotation.z=Math.atan2(.45,out)}
+    }
     for(const [label,z] of [['Lobby / Dining',.46]]){
       const unit=new THREE.Group();unit.name=`${label} outdoor AC unit`;group.add(unit)
       const cx=outerX+.20

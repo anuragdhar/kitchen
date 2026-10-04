@@ -327,3 +327,6 @@ Blender exports and stills were not regenerated for any of this.
   typical 1.5 ton casings 800 x 550 x 300: `src/config/acOutdoorUnitsConfig.js`, drawn in Whole home 3D and on the Bedroom 3
   page. The Lobby concept condenser moved about 1 m south on the same strip to clear Bedroom 1's. Kitchen 3D: Dark room now
   also hides the general preview lighting and the slider levels hold. Details: `docs/changes/2026-10-05-ac-outdoor-units.md`.
+- Later 2026-10-05: Bedroom 3 outdoor unit on the wall at 1830 (6 ft), Bedroom 2's at 1524 (5 ft); the owner's 1.5 ton window
+  AC in the east side of the Bedroom 1 balcony on an iron frame (`bedroom1.balconyExtension.windowAc`, typical casing
+  660 x 430 x 700, on the 1 m parapet, centred 1353 from the north end); Bedroom 1's split outdoor unit raised to 1800 above it.

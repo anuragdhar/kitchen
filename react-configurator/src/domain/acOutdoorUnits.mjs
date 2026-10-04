@@ -49,3 +49,28 @@ export function checkOutdoorUnits(units, sizes, scale) {
   }
   return {ok: issues.length === 0, issues, notes, placed}
 }
+
+export const WINDOW_AC_OUTSIDE_FRACTION_MIN = 0.5 // at least half of a window AC's depth must be outside, or its side louvres are blocked
+export const STACK_GAP_MIN_MM = 300                // free height between a window AC and an outdoor unit hung above it
+
+/**
+ * The window AC in a balcony side (room.balconyExtension.windowAc): it sits on the parapet inside the glazed length, clear
+ * of the balcony furniture, with enough of its depth outside; `above` is an outdoor unit hung over it, with its size.
+ */
+export function checkWindowAc(room, {above = null, aboveSize = null} = {}) {
+  const b = room.balconyExtension, ac = b.windowAc, issues = [], need = (ok, message) => { if (!ok) issues.push(message) }
+  const z1 = ac.centerFromNorthMm - ac.widthMm / 2, z2 = ac.centerFromNorthMm + ac.widthMm / 2, topMm = ac.bottomMm + ac.heightMm
+  const outsideMm = ac.depthMm - ac.insideMm
+  need(z1 >= 100 && z2 <= b.lengthMm - 100, `the window AC (${Math.round(z1)}-${Math.round(z2)} from the north wall) does not fit the ${b.lengthMm} mm balcony side`)
+  need(ac.bottomMm >= b.railingHeightMm, `the window AC starts at ${ac.bottomMm} mm, below the top of the ${b.railingHeightMm} mm parapet`)
+  need(topMm <= room.heightMm - 300, `the window AC reaches ${topMm} mm; too close to the ceiling`)
+  need(outsideMm / ac.depthMm >= WINDOW_AC_OUTSIDE_FRACTION_MIN, `only ${outsideMm} of ${ac.depthMm} mm is outside; the side louvres would be blocked`)
+  for (const [name, item] of Object.entries(b.furniture ?? {})) {
+    const half = (item.widthMm ?? 0) / 2, a1 = item.centerFromNorthMm - half, a2 = item.centerFromNorthMm + half
+    const reaches = b.depthMm - item.centerFromBedroomWallMm - (item.depthMm ?? 0) / 2 < ac.insideMm, tall = (item.backHeightMm ?? item.heightMm ?? 0) > ac.bottomMm
+    need(!(a1 < z2 && a2 > z1 && reaches && tall), `the window AC's front would hit the balcony ${name}`)
+  }
+  let gapToUnitAboveMm = null
+  if (above && aboveSize) { gapToUnitAboveMm = above.bottomMm - topMm; need(gapToUnitAboveMm >= STACK_GAP_MIN_MM, `the outdoor unit above starts only ${gapToUnitAboveMm} mm over the window AC (needs ${STACK_GAP_MIN_MM})`); need(above.bottomMm + aboveSize.heightMm <= room.heightMm, 'the outdoor unit above would reach past the ceiling line') }
+  return {ok: issues.length === 0, issues, z1, z2, topMm, outsideMm, gapToUnitAboveMm}
+}

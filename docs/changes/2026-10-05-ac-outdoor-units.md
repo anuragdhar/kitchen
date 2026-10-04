@@ -60,3 +60,32 @@ hides the overlay. Measured on the 3D picture (mean brightness, 0-255): all off 
 on, as in every room); all off with Dark room 10; planned level with Dark room 24 (only the track and the under-cabinet
 LED strips); planned level without Dark room 213. The dimmer bar in every room now says that Dark room is what switches
 off daylight and the preview lighting.
+
+## Later the same day: heights, and the window AC in the Bedroom 1 balcony
+
+- **Bedroom 3 outdoor unit:** fixed on the wall about 6 ft up (owner). Underside 100 (floor stand) -> 1830 mm.
+- **Bedroom 2 outdoor unit:** at the same place, 5 ft up (owner). Underside 300 (assumed) -> 1524 mm.
+- **Window AC, 1.5 ton, already owned:** placed at the owner's mark (plan x 261-282, y 703-733) in the east side of the
+  Bedroom 1 balcony, on a welded iron frame fixed to the wall. Config: `bedroom1.balconyExtension.windowAc` in
+  `roomShellConfig.js`; drawn on the Bedroom 1 page and in Whole home 3D. Drawn at a typical casing, 660 wide x 430 high x
+  700 deep (measure the real one), sitting on top of the 1 m parapet in the glazing, centred 1353 mm from the balcony's
+  north end, 250 mm of it inside and 450 mm outside. It is clear of the balcony table and chair.
+- **Bedroom 1 split outdoor unit "moved up":** it stays at its plan position beside the shaft but hangs higher, underside
+  300 -> 1800 mm, so it is above the window AC (top 1430) with 370 mm between them; its top is at 2350.
+
+### Can the window AC go there? Yes, with these conditions
+
+- **It cools the balcony first.** Cold air reaches the bedroom through the 2.2 m opening between them, so that opening
+  must stay open and clear. Bedroom 1 plus the balcony is about 13.5 square metres, well within 1.5 ton.
+- **The iron frame** carries about 50 kg with vibration: welded angle, anchored into masonry (not into the aluminium
+  glazing frame), sloping slightly outward so condensate and rain drain out. One glazing panel is cut to the casing size
+  and the gap around the casing is sealed.
+- **At least half the casing outside:** a window AC breathes through louvres on its sides, which must be outside the wall.
+- **Water:** it drips condensate from the back. Fit a drain tray and pipe so it does not fall on the floors below.
+- **Power:** its own 16/20 A socket on a separate circuit within cable reach, like the split units.
+- **Noise:** a window AC has its compressor in the same casing, so it is louder in the room than a split unit.
+- **The split unit above it** will draw in some of the window AC's warm exhaust when both run; expect a small loss on the
+  split unit. If the window AC replaces the Bedroom 1 split AC altogether, that outdoor unit is not needed there at all.
+
+To confirm on site: the real casing size of the window AC, the parapet height and what it is made of, and which glazing
+panel is at that position.
