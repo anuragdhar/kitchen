@@ -32,6 +32,9 @@ import {createBedroom3DressingTable} from './rooms/bedroom3/Bedroom3DressingTabl
 import WallSelectionPanel from './WallSelectionPanel.jsx'
 import ItemDimensionsPanel from './ItemDimensionsPanel.jsx'
 import {pickItem,selectionOutline} from './render/dimensionPick.js'
+import {createExistingElectricalPoints} from './rooms/shared/ExistingElectricalPoints.js'
+import {hasExistingElectrical} from './domain/existingElectrical.mjs'
+import ExistingElectricalPanel from './home/ExistingElectricalPanel.jsx'
 
 const mm=value=>value/1000
 
@@ -50,6 +53,7 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
   const [tvLabels,setTvLabels]=useState(initialRoomKey==='drawing'),tvLabelsRef=useRef(initialRoomKey==='drawing')
   const [drawingLayout,setDrawingLayout]=useState('southSofas'),drawingLayoutRef=useRef('southSofas')
   const [armOut,setArmOut]=useState(false),[tvSize,setTvSize]=useState('55'),[doorSwing,setDoorSwing]=useState(true),[storageOpen,setStorageOpen]=useState(false),[showElectrical,setShowElectrical]=useState(false)
+  const [showExisting,setShowExisting]=useState(false) // existing switchboards and sockets from the phone scan (existingElectricalConfig.js)
   const [review,setReview]=useState(null),[reviewBusy,setReviewBusy]=useState(false),[reviewNote,setReviewNote]=useState('')
   const [showFurniture,setShowFurniture]=useState(initialView!=='pooja'&&(initialRoomKey==='bedroom1'||initialRoomKey==='bedroom3'||initialRoomKey==='drawing'||initialRoomKey==='lobby'))
   const [showIroningBoard,setShowIroningBoard]=useState(false)
@@ -263,6 +267,7 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
     const taskLighting=createRoomTaskLighting(room,{realLights:true});shell.add(taskLighting)
     const drawingLayouts=roomKey==='drawing'?createDrawingRoomLayouts(room,{wallFaceMm:37,initial:drawingLayoutRef.current}):null
     if(drawingLayouts){drawingLayouts.setLabels(tvLabelsRef.current);shell.add(drawingLayouts.built)}
+    const existingPoints=createExistingElectricalPoints(roomKey,room,{wallFaceMm:37});if(existingPoints){existingPoints.visible=false;shell.add(existingPoints)}
     const vanity=createBedroom3DressingTable(room);vanity.userData.setMirrorOpen?.(mirrorOpen)
     const partition=createDrawingLobbyPartition(room,roomKey);shell.add(partition)
     partition.userData.setOpen?.(partitionOpen)
@@ -536,8 +541,8 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
       }
       return {views,project}
     }
-    sceneRef.current={clearItem,setDesigner:on=>designerRender.setEnabled(on),captureReview,setTrackLight:(kind,level)=>{drawingLayouts?.setTrackLight(kind,level);taskLighting.userData.setTrackLight?.(kind,level);setDaylight(daylightRef.current)},setDarkRoom:on=>{darkRoom=on;setDaylight(daylightRef.current)},setTvLabels:visible=>drawingLayouts?.setLabels(visible),setDrawingLayout:key=>drawingLayouts?.setLayout(key),setDrawingArm:pulled=>drawingLayouts?.setArm(pulled),setElectrical:visible=>drawingLayouts?.setElectrical(visible),setDoorSwing:visible=>drawingLayouts?.setDoorSwing(visible),setStorageOpen:open=>drawingLayouts?.setStorageOpen(open),setDrawingTv:key=>drawingLayouts?.setTvSize(key),setMirrorOpen:value=>vanity.userData.setMirrorOpen?.(value),setPartitionOpen:value=>partition.userData.setOpen?.(value),setCamera,setSouthVisible:value=>{southWall.visible=value},setFurnitureVisible:value=>{furniture.visible=value},setBoardOpen:value=>{ironingStorage?.userData.setBoardOpen(value)},setPoojaDoorsOpen:value=>{poojaDoors?.userData.setDoorsOpen(value)},clearMark,setDaylight}
-    return()=>{interiorScene.dispose();cancelAnimationFrame(raf);designerRender.dispose();observer.disconnect();renderer.domElement.removeEventListener('pointerdown',onPointerDown);renderer.domElement.removeEventListener('pointerup',onPointerUp);controls.dispose();labelTextures.forEach(texture=>texture.dispose());shell.traverse(object=>{object.geometry?.dispose?.();if(Array.isArray(object.material))object.material.forEach(material=>material.dispose());else object.material?.dispose?.()});markedWallMaterial.dispose();environment.dispose();pmrem.dispose();renderer.dispose();renderer.domElement.remove();sceneRef.current=null}
+    sceneRef.current={clearItem,setDesigner:on=>designerRender.setEnabled(on),captureReview,setTrackLight:(kind,level)=>{drawingLayouts?.setTrackLight(kind,level);taskLighting.userData.setTrackLight?.(kind,level);setDaylight(daylightRef.current)},setDarkRoom:on=>{darkRoom=on;setDaylight(daylightRef.current)},setTvLabels:visible=>drawingLayouts?.setLabels(visible),setDrawingLayout:key=>drawingLayouts?.setLayout(key),setDrawingArm:pulled=>drawingLayouts?.setArm(pulled),setElectrical:visible=>drawingLayouts?.setElectrical(visible),setExistingElectrical:visible=>{if(existingPoints)existingPoints.visible=visible},setDoorSwing:visible=>drawingLayouts?.setDoorSwing(visible),setStorageOpen:open=>drawingLayouts?.setStorageOpen(open),setDrawingTv:key=>drawingLayouts?.setTvSize(key),setMirrorOpen:value=>vanity.userData.setMirrorOpen?.(value),setPartitionOpen:value=>partition.userData.setOpen?.(value),setCamera,setSouthVisible:value=>{southWall.visible=value},setFurnitureVisible:value=>{furniture.visible=value},setBoardOpen:value=>{ironingStorage?.userData.setBoardOpen(value)},setPoojaDoorsOpen:value=>{poojaDoors?.userData.setDoorsOpen(value)},clearMark,setDaylight}
+    return()=>{interiorScene.dispose();cancelAnimationFrame(raf);existingPoints?.userData.dispose();designerRender.dispose();observer.disconnect();renderer.domElement.removeEventListener('pointerdown',onPointerDown);renderer.domElement.removeEventListener('pointerup',onPointerUp);controls.dispose();labelTextures.forEach(texture=>texture.dispose());shell.traverse(object=>{object.geometry?.dispose?.();if(Array.isArray(object.material))object.material.forEach(material=>material.dispose());else object.material?.dispose?.()});markedWallMaterial.dispose();environment.dispose();pmrem.dispose();renderer.dispose();renderer.domElement.remove();sceneRef.current=null}
   },[roomKey,initialView])
 
   useEffect(()=>{sceneRef.current?.setCamera(view)},[view,roomKey])
@@ -550,6 +555,7 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
   // A picked item's outline would be stale once the room, layout or visibility changes.
   useEffect(()=>{sceneRef.current?.clearItem?.();setPickedItem(null)},[roomKey,drawingLayout,showFurniture])
   useEffect(()=>{sceneRef.current?.setElectrical(showElectrical)},[showElectrical,roomKey])
+  useEffect(()=>{sceneRef.current?.setExistingElectrical?.(showExisting)},[showExisting,roomKey])
   useEffect(()=>{sceneRef.current?.setStorageOpen(storageOpen)},[storageOpen,roomKey])
   useEffect(()=>{sceneRef.current?.setDrawingTv(tvSize)},[tvSize,roomKey])
   useEffect(()=>{sceneRef.current?.setBoardOpen(showIroningBoard)},[showIroningBoard,roomKey])
@@ -625,9 +631,11 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
         {roomKey==='lobby'&&<button onClick={()=>setShowIroningBoard(value=>!value)} style={buttonStyle(showIroningBoard)}>{showIroningBoard?'Stow ironing board':'Pull out ironing board'}</button>}
         <button onClick={()=>setShowSouthWall(value=>!value)} style={buttonStyle(showSouthWall)}>{showSouthWall?'Hide south wall':'Show south wall'}</button>
         {(roomKey==='bedroom1'||roomKey==='bedroom3'||roomKey==='drawing'||roomKey==='lobby')&&<button onClick={()=>setShowFurniture(value=>!value)} style={buttonStyle(showFurniture)}>{showFurniture?'Hide furniture':'Show furniture'}</button>}
+        {hasExistingElectrical(roomKey)&&<button onClick={()=>setShowExisting(value=>!value)} aria-pressed={showExisting} style={buttonStyle(showExisting)} title="The switchboards, distribution board, sockets and lights that are on the walls TODAY (phone scan 2026-10-04): grey plates with a blue outline, at true size, plus a list of where the planned design lands on one of them">{showExisting?'Hide existing electrical points':'Show existing electrical points'}</button>}
       </div>
     </div>
     <div ref={mountRef} style={{height:'clamp(620px,82vh,1100px)',width:'100%'}}/>
+    {showExisting&&hasExistingElectrical(roomKey)&&<ExistingElectricalPanel roomKey={roomKey} room={room} layoutKey={roomKey==='drawing'?drawingLayout:null}/>}
     {(review||reviewNote)&&<div style={{padding:16,borderTop:'1px solid #e2e8f0',background:'#f8fafc'}}>
       <div style={{display:'flex',gap:8,flexWrap:'wrap',alignItems:'center',marginBottom:10}}>
         <b>{review?'Review sheet: '+review.title:'Review sheet'}</b>

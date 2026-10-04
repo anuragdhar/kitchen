@@ -73,4 +73,56 @@ enter, the AC's actual rating, and whether the floor can be chased for F1. Decid
 layout changes, the plan has to be redone: the points follow the furniture.
 
 Existing points found by the phone scan of 2026-10-04 (switchboard, distribution board, sockets, wall light) are listed in
-`docs/SITE_SCAN_2026-10-04.md`. The south window sill is 935 mm (was taken as 550), so the south-wall points at 300 mm stay well below it.
+`docs/SITE_SCAN_2026-10-04.md` and, since 2026-10-04, in the app (next section). The south window sill is 935 mm (was taken
+as 550), so the south-wall points at 300 mm stay well below it.
+
+## Existing points: where the switchboards and sockets are today
+
+Owner question, 2026-10-04: "Will the location of switchboards be visible in the map?" Yes. On the **Drawing Room** page and
+the **Lobby / Dining** page, click **Show existing electrical points** (right end of the toolbar). Grey plates with a blue
+outline appear on the walls at the true size and height of each plate, each with a square white tag ("Existing: Switchboard
+195x260"); ceiling points are blue rings the size of the rosette. They show in the 3D view, the Top view and the wall views
+(it is one scene), and in **Whole home 3D** behind a button of the same name. Under the toolbar a list repeats every point and,
+in red, every place where the planned design lands on one. The "Review sheet for AI" text brief carries the same list
+("Existing electrical points (site scan)"). The proposed points (coloured pins, "Show electrical points") can be shown at
+the same time; the two styles do not look alike.
+
+Source: `react-configurator/src/config/existingElectricalConfig.js` (one key per room; add a key to extend it to another
+room). Checks and positions: `src/domain/existingElectrical.mjs`; tests: `tests/existing-electrical.test.mjs`. Positions
+are from the scan, about +/- 20 mm; the widths of the two wall lights and the height of the Lobby tube light were not readable
+and are marked `assumed` in the config and in the list.
+
+Drawing Room, as measured (x from the west wall, z from the north wall, heights to the plate edges):
+
+| ID | Point | Where |
+| --- | --- | --- |
+| X-D1 | Switchboard, 195 x 260 | north wall, x 1710-1905, 1235-1495 high (east edge 230 mm from the door jamb) |
+| X-D2 | Distribution board (MCBs), 350 x 185 | east wall, z 555-905, 1500-1685 high |
+| X-D3 | Door chime | east wall, z 270-535, 1520-1670 high |
+| X-D4 | Socket plate | west wall, z 970-1165, 255-370 high |
+| X-D5 | Three socket plates | west wall, z 4050-4500, 260-375 high |
+| X-D6 | Wall light | west wall, about z 1150, 2130-2350 high (width assumed 150) |
+
+Lobby / Dining: switchboard on the north wall at x 375-575 (measured 415-615 from the Drawing Room face of the dividing beam,
+which is 40 mm west of the Lobby's x = 0; the config stores the measured figure and subtracts the 40 mm in one place),
+1215-1495 high; wall light on the north wall at about x 1560, 2100-2400; tube light on the south wall at x 2160-3310, about
+2260 high; ceiling medallion (probably a fan) at (2605, 1600), about 810 across; small ceiling light rosette at (3770, 1615).
+
+Conflicts with the planned design, as the app reports them (layout C):
+
+- The Drawing Room switchboard X-D1 would be covered by the fluted wall panelling (x 40-2100, up to 1825) and by the TV
+  (55-inch x 800-2030, 795-1505; 65-inch x 690-2140, 735-1565). Move it (the proposed plan puts the main switchboard E1 on
+  the east wall), or cut the panelling and the TV bracket around it and keep it reachable.
+- The distribution board X-D2 is partly, and the door chime X-D3 fully, behind the entry door leaf when the door stands open
+  (the leaf covers the first 850 mm of the east wall). Acceptable for MCBs that are rarely touched and harmless for a chime;
+  keep a clear way to the board.
+- The three socket plates X-D5 are partly behind the west sofa (z 2095-4345): plugs there cannot be reached without moving
+  the sofa. Move the point, or accept it for a lamp or a permanently plugged device.
+- The Lobby switchboard is inside the planned Bedroom 1 door opening (x 100-1000): it has to be moved before the door is cut
+  (already noted in the scan record and in `roomShellConfig.js`).
+
+The checks cover: a point inside a planned door, window, open side or the hidden cabinet door; a point behind planned
+panelling, a TV, a cabinet or console, a sofa standing against that wall, or the open entry door leaf. They do not check
+wiring routes, whether a point can be moved, or anything the scan did not capture (what is behind curtains or furniture).
+The Drawing Room's three ceiling points are not repeated here: they are already the fan and chandelier positions in
+`drawingLightingConfig.js` and C1 above.

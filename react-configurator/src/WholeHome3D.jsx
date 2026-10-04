@@ -46,6 +46,7 @@ import {TRUE_NORTH_OFFSET_DEG,SITE_LATITUDE_DEG} from './config/orientationConfi
 import {wallPiecesAroundStorage} from './domain/wallStorage.mjs'
 import {createDesignerRender} from './render/designerRender.js'
 import {useDesignerRender} from './render/useDesignerRender.js'
+import {createExistingElectricalPoints} from './rooms/shared/ExistingElectricalPoints.js'
 
 // The A501 plan is south-up: image right is west and image down is north.
 const PLAN_WIDTH=PLAN_IMAGE.widthPx,PLAN_HEIGHT=PLAN_IMAGE.heightPx
@@ -96,6 +97,7 @@ function LiveWholeHome3D({onOpenRoom}){
   // Drawing Room seating layout (DRAWING_LAYOUTS); 'southSofas' (C, owner 2026-10-03) is the default.
   const [drawingLayout,setDrawingLayout]=useState('southSofas'),drawingLayoutRef=useRef('southSofas')
   const [armOut,setArmOut]=useState(false),[tvSize,setTvSize]=useState('55'),[doorSwing,setDoorSwing]=useState(true),[storageOpen,setStorageOpen]=useState(false),[showElectrical,setShowElectrical]=useState(false)
+  const [showExisting,setShowExisting]=useState(false) // existing switchboards and sockets from the phone scan (existingElectricalConfig.js)
   const [storageCoverOpen,setStorageCoverOpen]=useState(false)
   const [wallSelection,setWallSelection]=useState(null)
   const [pickedItem,setPickedItem]=useState(null)
@@ -310,6 +312,7 @@ function LiveWholeHome3D({onOpenRoom}){
     drawingLayouts.setLabels(tvLabelsRef.current)
     const partition=createDrawingLobbyPartition(drawing,'drawing');dg.add(partition)
     partition.userData.setOpen(partitionOpen)
+    const existingDrawing=createExistingElectricalPoints('drawing',drawing,{wallFaceMm:WALL_THICKNESS_M*500});if(existingDrawing){existingDrawing.visible=false;dg.add(existingDrawing)}
     const dw=drawing.windows[0],dd=drawing.doors[0],open=drawing.wallOpenings.east
     roomEdge(db,drawing.widthMm,drawing.lengthMm,'south',[{start:dw.fromMm,end:dw.fromMm+dw.widthMm,bottom:dw.bottomMm/1000,top:dw.topMm/1000,glass:true}])
     roomEdge(db,drawing.widthMm,drawing.lengthMm,'north',[{start:drawing.wallStorage.fromWestMm,end:drawing.wallStorage.fromWestMm+drawing.wallStorage.widthMm,bottom:drawing.wallStorage.bottomMm/1000,top:(drawing.wallStorage.bottomMm+drawing.wallStorage.heightMm)/1000},...drawing.doors.filter(door=>door.wall==='north').map(door=>({start:door.fromMm,end:door.fromMm+door.widthMm,top:door.heightMm/1000}))])
@@ -325,6 +328,7 @@ function LiveWholeHome3D({onOpenRoom}){
     lg.add(createRoomAirConditioning(lobby))
     lg.add(createRoomTaskLighting(lobby))
     lg.add(createLobbyConcealedDoor(lobby))
+    const existingLobby=createExistingElectricalPoints('lobby',lobby,{wallFaceMm:WALL_THICKNESS_M*500});if(existingLobby){existingLobby.visible=false;lg.add(existingLobby)}
     const toilet=lobby.doors.find(door=>door.wall==='south'),bedDoor=lobby.doors.find(door=>door.wall==='north')
     roomEdge(lb,lobby.widthMm,lobby.lengthMm,'south',[{start:toilet.fromMm,end:toilet.fromMm+toilet.widthMm,top:toilet.heightMm/1000}])
     // The old plan door on this wall is closed (owner, 2026-09-29): sheet on the lobby face, medicine cabinet behind it.
@@ -833,10 +837,10 @@ function LiveWholeHome3D({onOpenRoom}){
     const interiorRoomIds=['bedroom3','study','balcony','terrace','kitchen','lobby','drawing','bedroom1','bedroom1-balcony','entry']
     const interiorScene=registerInteriorScene({id:'whole-home',scene,camera,renderer,zones:ROOMS.map((r,index)=>({id:interiorRoomIds[index],min:[X(r.bounds[0]),0,Z(r.bounds[1])],max:[X(r.bounds[2]),HEIGHT,Z(r.bounds[3])]}))})
     let raf=0;const render=()=>{controls.update();designerRender.render();raf=requestAnimationFrame(render)};render()
-    sceneRef.current={clearItem,setDesigner:on=>designerRender.setEnabled(on),setCavity:visible=>{cavityGroup.visible=visible},setRoomLight,setTvLabels:visible=>drawingLayouts.setLabels(visible),setDrawingLayout:key=>drawingLayouts.setLayout(key),setDrawingArm:pulled=>drawingLayouts.setArm(pulled),setElectrical:visible=>drawingLayouts?.setElectrical(visible),setDoorSwing:visible=>drawingLayouts.setDoorSwing(visible),setStorageOpen:open=>drawingLayouts.setStorageOpen(open),setDrawingTv:key=>drawingLayouts.setTvSize(key),setMedicineCabinetOpen:value=>doorInfill.userData.setOpen(value),setStorageCoverOpen:value=>storeStorage.userData.setCoverOpen(value),setMirrorOpen:value=>vanity.userData.setMirrorOpen?.(value),setPartitionOpen:value=>partition.userData.setOpen?.(value),setCamera,setWallsVisible:visible=>{walls.visible=visible},setBoardOpen:value=>{ironingStorage.userData.setBoardOpen(value)},setPoojaPersonVisible:visible=>{seatedPerson.visible=visible},setPoojaDoorsOpen:value=>{poojaDoors.userData.setDoorsOpen(value)},clearMark,setDaylight,setMeasure,clearMeasure}
+    sceneRef.current={clearItem,setDesigner:on=>designerRender.setEnabled(on),setCavity:visible=>{cavityGroup.visible=visible},setRoomLight,setTvLabels:visible=>drawingLayouts.setLabels(visible),setDrawingLayout:key=>drawingLayouts.setLayout(key),setDrawingArm:pulled=>drawingLayouts.setArm(pulled),setElectrical:visible=>drawingLayouts?.setElectrical(visible),setExistingElectrical:visible=>{for(const g of [existingDrawing,existingLobby])if(g)g.visible=visible},setDoorSwing:visible=>drawingLayouts.setDoorSwing(visible),setStorageOpen:open=>drawingLayouts.setStorageOpen(open),setDrawingTv:key=>drawingLayouts.setTvSize(key),setMedicineCabinetOpen:value=>doorInfill.userData.setOpen(value),setStorageCoverOpen:value=>storeStorage.userData.setCoverOpen(value),setMirrorOpen:value=>vanity.userData.setMirrorOpen?.(value),setPartitionOpen:value=>partition.userData.setOpen?.(value),setCamera,setWallsVisible:visible=>{walls.visible=visible},setBoardOpen:value=>{ironingStorage.userData.setBoardOpen(value)},setPoojaPersonVisible:visible=>{seatedPerson.visible=visible},setPoojaDoorsOpen:value=>{poojaDoors.userData.setDoorsOpen(value)},clearMark,setDaylight,setMeasure,clearMeasure}
     setRoomLight(roomLightRef.current/100)
     setDaylight(sunHourRef.current)
-    return()=>{interiorScene.dispose();cancelAnimationFrame(raf);designerRender.dispose();observer.disconnect();renderer.domElement.removeEventListener('pointerdown',onPointerDown);renderer.domElement.removeEventListener('pointerup',onPointerUp);renderer.domElement.removeEventListener('pointermove',onPointerMove);window.removeEventListener('keydown',onMeasureKey);cancelAnimationFrame(moveFrame);tip.remove();controls.dispose();model.traverse(object=>{object.geometry?.dispose?.();object.material?.dispose?.()});markedWallMaterial.dispose();texture.dispose();environment.dispose();pmrem.dispose();renderer.dispose();renderer.domElement.remove();sceneRef.current=null}
+    return()=>{interiorScene.dispose();cancelAnimationFrame(raf);existingDrawing?.userData.dispose();existingLobby?.userData.dispose();designerRender.dispose();observer.disconnect();renderer.domElement.removeEventListener('pointerdown',onPointerDown);renderer.domElement.removeEventListener('pointerup',onPointerUp);renderer.domElement.removeEventListener('pointermove',onPointerMove);window.removeEventListener('keydown',onMeasureKey);cancelAnimationFrame(moveFrame);tip.remove();controls.dispose();model.traverse(object=>{object.geometry?.dispose?.();object.material?.dispose?.()});markedWallMaterial.dispose();texture.dispose();environment.dispose();pmrem.dispose();renderer.dispose();renderer.domElement.remove();sceneRef.current=null}
   },[])
 
   useEffect(()=>{sceneRef.current?.setCamera(view)},[view])
@@ -853,6 +857,7 @@ function LiveWholeHome3D({onOpenRoom}){
   // A picked item's outline would be stale once the room, layout or visibility changes.
   useEffect(()=>{sceneRef.current?.clearItem?.();setPickedItem(null)},[drawingLayout,showWalls])
   useEffect(()=>{sceneRef.current?.setElectrical(showElectrical)},[showElectrical])
+  useEffect(()=>{sceneRef.current?.setExistingElectrical?.(showExisting)},[showExisting])
   useEffect(()=>{sceneRef.current?.setStorageOpen(storageOpen)},[storageOpen])
   useEffect(()=>{sceneRef.current?.setDrawingTv(tvSize)},[tvSize])
   useEffect(()=>{sceneRef.current?.setPartitionOpen(partitionOpen)},[partitionOpen])
@@ -881,6 +886,7 @@ function LiveWholeHome3D({onOpenRoom}){
         <button onClick={()=>setDoorSwing(value=>!value)} aria-pressed={doorSwing} style={buttonStyle(doorSwing)} title="The Drawing Room entry door opens into the room: red is the area its leaf sweeps">{doorSwing?'Hide entry door swing':'Show entry door swing'}</button>
         <button onClick={()=>setStorageOpen(value=>!value)} aria-pressed={storageOpen} style={buttonStyle(storageOpen)} title="The west cabinet of the entry pocket, entered through a narrow hidden door at the west end of the Drawing Room's north wall: the TV console is dragged out and the door, hidden in the wall panelling, swings outward to show the shelves">{storageOpen?'Close hidden west cabinet':'Open hidden west cabinet'}</button>
         {drawingLayout==='southSofas'&&<button onClick={()=>setShowElectrical(value=>!value)} aria-pressed={showElectrical} style={buttonStyle(showElectrical)} title="Proposed sockets, charging, switch, light and data points for layout C (docs/DRAWING_ROOM_ELECTRICAL.md)">{showElectrical?'Hide electrical points':'Show electrical points'}</button>}
+        <button onClick={()=>setShowExisting(value=>!value)} aria-pressed={showExisting} style={buttonStyle(showExisting)} title="The switchboards, distribution board, sockets and lights that are on the Drawing Room and Lobby walls TODAY (phone scan 2026-10-04): grey plates with a blue outline, at true size. The conflict list is on each room's own page">{showExisting?'Hide existing electrical points':'Show existing electrical points'}</button>
         {(drawingLayout==='cornerConsole'||drawingLayout==='southSofas')&&<>
           {drawingLayout==='cornerConsole'&&<button onClick={()=>setArmOut(value=>!value)} aria-pressed={armOut} style={buttonStyle(armOut)}>{armOut?'Park TV flat on the wall':'Pull TV out and turn it toward the north sofa'}</button>}
           <button onClick={()=>setTvSize(value=>value==='55'?'65':'55')} style={buttonStyle(tvSize==='65')}>TV size: {tvSize} inch (click for {tvSize==='55'?'65':'55'})</button>
