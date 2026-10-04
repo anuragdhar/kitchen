@@ -16,7 +16,7 @@ re-run the script (or tell the assistant which rate is wrong).
 
 ## Total
 
-**Rs 15,16,000 to Rs 26,32,000** (Rs 15.2 lakh to Rs 26.3 lakh) for the 87 tasks that could be
+**Rs 15,14,500 to Rs 26,29,000** (Rs 15.1 lakh to Rs 26.3 lakh) for the 87 tasks that could be
 estimated, out of 97. 10 tasks are not estimated (listed below), so the true total is higher.
 The total includes the OPTIONAL skirting replacement (Rs 17,000 to Rs 35,000).
 
@@ -31,7 +31,7 @@ The total includes the OPTIONAL skirting replacement (Rs 17,000 to Rs 35,000).
 | 5. Plaster, making good and flooring | 4 | Rs 37,500 | Rs 72,500 |  |
 | 6. Carpentry and steel fabrication | 19 | Rs 9,21,500 | Rs 14,84,500 | 1 |
 | 7. Painting and polish | 2 | Rs 95,000 | Rs 1,74,500 |  |
-| 8. Fit-out: lights, switches, AC units, nets, blinds, plumbing fittings | 17 | Rs 2,71,500 | Rs 4,96,000 | 3 |
+| 8. Fit-out: lights, switches, AC units, nets, blinds, plumbing fittings | 17 | Rs 2,70,000 | Rs 4,93,000 | 3 |
 | 9. Furnish, snag and handover | 2 | Rs 6,000 | Rs 12,000 | 1 |
 
 ### Trade
@@ -39,7 +39,7 @@ The total includes the OPTIONAL skirting replacement (Rs 17,000 to Rs 35,000).
 | Trade | Tasks | Low | High | Not estimated |
 | --- | ---: | ---: | ---: | ---: |
 | Civil / structure | 11 | Rs 93,500 | Rs 2,06,500 |  |
-| Electrical | 30 | Rs 1,99,500 | Rs 4,05,000 | 2 |
+| Electrical | 30 | Rs 1,98,000 | Rs 4,02,000 | 2 |
 | Plumbing | 3 | Rs 0 | Rs 0 | 2 |
 | Carpentry | 19 | Rs 9,21,000 | Rs 14,84,000 | 1 |
 | Steel fabrication | 5 | Rs 50,500 | Rs 88,500 | 1 |
@@ -54,10 +54,10 @@ The total includes the OPTIONAL skirting replacement (Rs 17,000 to Rs 35,000).
 | Room | Tasks | Low | High | Not estimated |
 | --- | ---: | ---: | ---: | ---: |
 | Main entry | 12 | Rs 1,02,500 | Rs 1,79,500 | 1 |
-| Drawing Room | 30 | Rs 3,50,000 | Rs 6,46,500 | 1 |
-| Lobby / Dining | 6 | Rs 1,01,000 | Rs 1,74,500 |  |
+| Drawing Room | 30 | Rs 3,49,500 | Rs 6,45,500 | 1 |
+| Lobby / Dining | 6 | Rs 1,00,500 | Rs 1,73,500 |  |
 | Bedroom 1 | 12 | Rs 2,40,000 | Rs 3,98,500 |  |
-| Bedroom 3 | 6 | Rs 1,07,500 | Rs 1,84,500 |  |
+| Bedroom 3 | 6 | Rs 1,07,000 | Rs 1,83,500 |  |
 | Study | 4 | Rs 26,500 | Rs 52,500 | 1 |
 | Home Office | 2 | Rs 58,500 | Rs 98,000 |  |
 | Kitchen | 6 | Rs 4,14,000 | Rs 6,66,000 |  |
@@ -140,7 +140,7 @@ Rupees, 2025-26, Delhi NCR, mid-range quality. "Used for" is the total quantity 
 | Wooden window shutters to match, glazed, with hardware | sq ft | 1,200 | 2,000 | 10.7 |
 | Strip paint from old woodwork, stain and PU polish | sq ft | 250 | 450 | 86.9 |
 | Repaint: putty touch-up, primer, two coats of premium emulsion | sq ft | 22 | 40 | 3,359 |
-| 48 V magnetic surface track with end feed | m | 900 | 1,800 | 27.9 |
+| 48 V magnetic surface track with end feed | m | 900 | 1,800 | 25.9 |
 | Track spot head, 7 W | each | 900 | 1,800 | 16 |
 | Track linear diffused head, 15 W | each | 1,300 | 2,500 | 14 |
 | Track reading or down-light head, 12 W | each | 1,200 | 2,200 | 13 |
@@ -245,10 +245,10 @@ Rupees, 2025-26, Delhi NCR, mid-range quality. "Used for" is the total quantity 
 | Putty, primer and paint | Whole home | Rs 73,500 | Rs 1,35,000 | medium | walls and ceilings: 3359 sq ft x Rs 22-40. Eight spaces from the model, less 20 % for openings and cabinets; toilets and balconies not included. Colours pending the palette note. |
 | Drawing Room: fit switches, sockets and USB chargers; test every circuit | Drawing Room | Rs 2,000 | Rs 4,000 | medium | fit and test: 1 job x Rs 2,000-4,000. The plates and switches are inside the point rates. |
 | Other rooms: fit switches and sockets; test every circuit | Other rooms |  |  |  | Not estimated: Follows the point plans for the other rooms (pending the electrical plans note). |
-| Drawing Room: buy and fit the track lights | Drawing Room | Rs 22,000 | Rs 44,000 | medium | track: 4.7 m x Rs 900-1,800; spot heads: 3 each x Rs 900-1,800; diffused heads: 2 each x Rs 1,300-2,500; reading heads: 3 each x Rs 1,200-2,200; 60 W drivers: 1 each x Rs 1,800-3,000; 100 W drivers: 1 each x Rs 2,500-4,500; dimmers: 2 each x Rs 1,500-3,500; fixing: 2 run x Rs 1,000-2,000. Counts from the lighting config; one maker for track, heads and drivers. |
-| Lobby / Dining: buy and fit the track lights | Lobby / Dining | Rs 18,500 | Rs 37,000 | medium | track: 4.1 m x Rs 900-1,800; spot heads: 3 each x Rs 900-1,800; diffused heads: 2 each x Rs 1,300-2,500; reading heads: 1 each x Rs 1,200-2,200; 60 W drivers: 2 each x Rs 1,800-3,000; dimmers: 2 each x Rs 1,500-3,500; fixing: 2 run x Rs 1,000-2,000. Counts from the lighting config; one maker for track, heads and drivers. |
+| Drawing Room: buy and fit the track lights | Drawing Room | Rs 21,500 | Rs 43,000 | medium | track: 4 m x Rs 900-1,800; spot heads: 3 each x Rs 900-1,800; diffused heads: 2 each x Rs 1,300-2,500; reading heads: 3 each x Rs 1,200-2,200; 60 W drivers: 1 each x Rs 1,800-3,000; 100 W drivers: 1 each x Rs 2,500-4,500; dimmers: 2 each x Rs 1,500-3,500; fixing: 2 run x Rs 1,000-2,000. Counts from the lighting config; one maker for track, heads and drivers. |
+| Lobby / Dining: buy and fit the track lights | Lobby / Dining | Rs 18,000 | Rs 36,000 | medium | track: 3.5 m x Rs 900-1,800; spot heads: 3 each x Rs 900-1,800; diffused heads: 2 each x Rs 1,300-2,500; reading heads: 1 each x Rs 1,200-2,200; 60 W drivers: 2 each x Rs 1,800-3,000; dimmers: 2 each x Rs 1,500-3,500; fixing: 2 run x Rs 1,000-2,000. Counts from the lighting config; one maker for track, heads and drivers. |
 | Bedroom 1: buy and fit the track lights | Bedroom 1 | Rs 21,000 | Rs 42,000 | medium | track: 3.8 m x Rs 900-1,800; spot heads: 4 each x Rs 900-1,800; diffused heads: 2 each x Rs 1,300-2,500; reading heads: 2 each x Rs 1,200-2,200; 60 W drivers: 1 each x Rs 1,800-3,000; 100 W drivers: 1 each x Rs 2,500-4,500; dimmers: 2 each x Rs 1,500-3,500; fixing: 2 run x Rs 1,000-2,000. Counts from the lighting config; one maker for track, heads and drivers. |
-| Bedroom 3: buy and fit the track lights | Bedroom 3 | Rs 22,500 | Rs 45,000 | medium | track: 6.1 m x Rs 900-1,800; spot heads: 3 each x Rs 900-1,800; diffused heads: 2 each x Rs 1,300-2,500; reading heads: 3 each x Rs 1,200-2,200; 60 W drivers: 2 each x Rs 1,800-3,000; dimmers: 2 each x Rs 1,500-3,500; fixing: 2 run x Rs 1,000-2,000. Counts from the lighting config; one maker for track, heads and drivers. |
+| Bedroom 3: buy and fit the track lights | Bedroom 3 | Rs 22,000 | Rs 44,000 | medium | track: 5.5 m x Rs 900-1,800; spot heads: 3 each x Rs 900-1,800; diffused heads: 2 each x Rs 1,300-2,500; reading heads: 3 each x Rs 1,200-2,200; 60 W drivers: 2 each x Rs 1,800-3,000; dimmers: 2 each x Rs 1,500-3,500; fixing: 2 run x Rs 1,000-2,000. Counts from the lighting config; one maker for track, heads and drivers. |
 | Study: buy and fit the track lights | Study | Rs 22,500 | Rs 45,500 | medium | track: 5.2 m x Rs 900-1,800; spot heads: 3 each x Rs 900-1,800; diffused heads: 3 each x Rs 1,300-2,500; reading heads: 2 each x Rs 1,200-2,200; 60 W drivers: 1 each x Rs 1,800-3,000; 100 W drivers: 1 each x Rs 2,500-4,500; dimmers: 2 each x Rs 1,500-3,500; fixing: 2 run x Rs 1,000-2,000. Counts from the lighting config; one maker for track, heads and drivers. |
 | Kitchen: buy and fit the ceiling track | Kitchen | Rs 14,500 | Rs 29,500 | medium | track: 4 m x Rs 900-1,800; diffused heads: 3 each x Rs 1,300-2,500; reading heads: 2 each x Rs 1,200-2,200; 100 W drivers: 1 each x Rs 2,500-4,500; dimmers: 1 each x Rs 1,500-3,500; fixing: 1 run x Rs 1,000-2,000. Counts from the lighting config; one maker for track, heads and drivers. The under-cabinet strips are part of the kitchen cabinets. |
 | Entry: fit the four round lights and the two switches, and test | Main entry | Rs 1,000 | Rs 3,000 | medium | round panels: 4 each x Rs 350-700. |
