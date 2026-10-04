@@ -30,7 +30,7 @@ test('the old strip lights are gone from the Lobby and the Pooja alcove; the pen
   // fixtures (owner 2026-10-04: "old strip lights ... remove them").
   assert.equal(ROOM_LIGHTING.lobby.ownFixtures, true)
   assert.equal(ROOM_LIGHTING.pooja.ownFixtures, true)
-  assert.equal(ROOM_LIGHTING.entry.ownFixtures, false, 'rooms without their own fixtures keep the overlay')
+  assert.equal(ROOM_LIGHTING.balcony.ownFixtures, false, 'rooms without their own fixtures keep the overlay')
   assert.equal(LOBBY_LIGHTING.pendant.label, 'Dining pendant')
   assert.equal(LOBBY_LIGHTING.tracks.runs.length, 2)
 })
