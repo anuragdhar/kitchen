@@ -7,9 +7,12 @@ export const ROOM_LIGHTING=Object.freeze(Object.fromEntries(HOME_ROOMS.map(r=>[r
   task:r.id==='kitchen'?[.22,.49,.5]:r.id==='study'||r.id==='balcony'?[.65,.42,.66]:r.id.startsWith('bedroom')?[.2,.4,.56]:[.32,.55,.58],
   cabinet:r.id==='kitchen'?[.09,.5,.5]:r.id.startsWith('bedroom')?[.1,.72,.48]:r.id==='entry'?[.22,.75,.94]:[.16,.64,.42],
   taskGain:['kitchen','study','balcony'].includes(r.id)?1.3:.65,
-  // The Drawing Room draws its own fixtures (track lights, panel cap strip, sofa glow), so the generic strip meshes of this
-  // overlay are not drawn there; they floated in mid-air over the west sofa (owner 2026-10-04). The lights themselves stay.
-  ownFixtures:r.id==='drawing',
+  // Rooms that draw their own fixtures do not get the generic strip meshes of this overlay (the lights themselves stay):
+  // the Drawing Room's floated in mid-air over the west sofa (owner 2026-10-04), and the Lobby's white strips along the north
+  // and south walls and in the Pooja alcove were leftovers of the earlier design once the track lights came (owner, later
+  // 2026-10-04: "old strip lights ... remove them"). Bedroom 1, Bedroom 3, the Study (Bedroom 2) and the Kitchen got track
+  // lights the same day (config/*LightingConfig.js); the kitchen also draws its real under-cabinet LED strips itself.
+  ownFixtures:['drawing','lobby','pooja','bedroom1','bedroom3','study','kitchen'].includes(r.id),
 })])));
 const object=v=>v&&typeof v==='object'&&!Array.isArray(v);
 function layers(value,partial=false){if(!object(value))throw Error('Invalid lighting layers.');const out={};for(const [key,v] of Object.entries(value)){if(!LAYERS.includes(key)||typeof v!=='boolean')throw Error('Unknown layer or non-boolean switch.');out[key]=v;}if(!partial&&LAYERS.some(k=>!(k in out)))throw Error('Missing lighting layer.');return Object.freeze(out);}
