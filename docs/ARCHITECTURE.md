@@ -19,6 +19,7 @@ Paths below are relative to `react-configurator/` unless otherwise stated.
 | Headless kitchen inspection | scripts/headless-query.cjs; scripts/browser-helpers.cjs |
 | Screenshot smoke checks | scripts/visual-qa.cjs |
 | Dependency-free basic layout checks | src/domain/layoutChecks.mjs |
+| Whole-home AC plan (units, pipe and drain routes, checks) | src/config/acPlanConfig.js; src/domain/acPlan.mjs; src/config/acOutdoorUnitsConfig.js; src/rooms/shared/AcPipeRoutes.js; repository docs/AC_PLAN.md |
 | Current-baseline and negative tests | tests/ |
 | CAD input selection / generation | repository freecad/generate_kitchen_rule9.py |
 

@@ -25,8 +25,10 @@ import {createBedroom3Wardrobe} from './rooms/bedroom3/Bedroom3Wardrobe.js'
 import {createBedroom3WestChest} from './rooms/bedroom3/Bedroom3WestChest.js'
 import {createWindowDetail} from './rooms/shared/WindowDetail.js'
 import {createLobbyEastIroningStorage} from './rooms/lobby/LobbyEastIroningStorage.js'
-import {createRoomAirConditioning} from './rooms/shared/RoomAirConditioning.js'
+import {createRoomAirConditioning,createPlannedAcIndoorUnit} from './rooms/shared/RoomAirConditioning.js'
 import {createAcOutdoorUnits} from './rooms/shared/AcOutdoorUnit.js'
+import {createAcPipeRoutes} from './rooms/shared/AcPipeRoutes.js'
+import AcRoutesLegend from './home/AcRoutesLegend.jsx'
 import {createRoomTaskLighting,createRoomTrackLighting} from './rooms/shared/RoomTaskLighting.js'
 import {STUDY_LIGHTING} from './config/studyLightingConfig.js'
 import {KITCHEN_LIGHTING} from './config/kitchenLightingConfig.js'
@@ -118,6 +120,7 @@ function LiveWholeHome3D({onOpenRoom}){
   const roomLightRef=useRef(100)
   const [measureMode,setMeasureMode]=useState(false)
   const [showCavity,setShowCavity]=useState(false)
+  const [showAcRoutes,setShowAcRoutes]=useState(false) // pipe and drain routes of the whole-home AC plan (config/acPlanConfig.js)
   const [measureResult,setMeasureResult]=useState(null)
   const [planMark,setPlanMark]=useState(()=>{try{return JSON.parse(localStorage.getItem(PLAN_MARK_KEY)||'{}')}catch{return {}}})
 
@@ -394,6 +397,7 @@ function LiveWholeHome3D({onOpenRoom}){
     b3g.add(createBedroom3SouthExtension(bedroom3))
     // AC outdoor units at the owner's plan marks (config/acOutdoorUnitsConfig.js), in plan coordinates.
     model.add(createAcOutdoorUnits(X,Z))
+    const acRoutes=createAcPipeRoutes(X,Z);model.add(acRoutes) // hidden until 'Show AC pipe routes'
     b3g.add(createBedroom3Bed(bedroom3))
     const vanity=createBedroom3DressingTable(bedroom3);b3g.add(vanity);vanity.userData.setMirrorOpen(mirrorOpen)
     b3g.add(createBedroom3EntryDoor(bedroom3))
@@ -405,6 +409,7 @@ function LiveWholeHome3D({onOpenRoom}){
     const sg=roomGroup(sb,sd.widthMm,sd.lengthMm)
     sg.add(createStudyTerrace(study))
     sg.add(createStudyFurniture(study).group)
+    sg.add(createPlannedAcIndoorUnit('study')) // AC plan: west wall, just north of the Home Office opening
     sg.add(createRoomTrackLighting(STUDY_LIGHTING,sd)) // tracks and the assumed fan (config/studyLightingConfig.js)
     const sDoor=study.openings.mainDoor,sTerrace=study.openings.terraceDoor,sOffice=study.openings.balconyOffice
     const built=study.cabinetry.southBuiltIn
@@ -869,10 +874,10 @@ function LiveWholeHome3D({onOpenRoom}){
     const interiorRoomIds=['bedroom3','study','balcony','terrace','kitchen','lobby','drawing','bedroom1','bedroom1-balcony','entry']
     const interiorScene=registerInteriorScene({id:'whole-home',scene,camera,renderer,zones:ROOMS.map((r,index)=>({id:interiorRoomIds[index],min:[X(r.bounds[0]),0,Z(r.bounds[1])],max:[X(r.bounds[2]),HEIGHT,Z(r.bounds[3])]}))})
     let raf=0;const render=()=>{controls.update();designerRender.render();raf=requestAnimationFrame(render)};render()
-    sceneRef.current={clearItem,setDesigner:on=>designerRender.setEnabled(on),setCavity:visible=>{cavityGroup.visible=visible},setRoomLight,setTvLabels:visible=>drawingLayouts.setLabels(visible),setDrawingLayout:key=>drawingLayouts.setLayout(key),setDrawingArm:pulled=>drawingLayouts.setArm(pulled),setElectrical:visible=>drawingLayouts?.setElectrical(visible),setExistingElectrical:visible=>{for(const g of [existingDrawing,existingLobby])if(g)g.visible=visible},setDoorSwing:visible=>drawingLayouts.setDoorSwing(visible),setStorageOpen:open=>drawingLayouts.setStorageOpen(open),setDrawingTv:key=>drawingLayouts.setTvSize(key),setMedicineCabinetOpen:value=>doorInfill.userData.setOpen(value),setStorageCoverOpen:value=>storeStorage.userData.setCoverOpen(value),setMirrorOpen:value=>vanity.userData.setMirrorOpen?.(value),setPartitionOpen:value=>partition.userData.setOpen?.(value),setCamera,setWallsVisible:visible=>{walls.visible=visible},setBoardOpen:value=>{ironingStorage.userData.setBoardOpen(value)},setPoojaPersonVisible:visible=>{seatedPerson.visible=visible},setPoojaDoorsOpen:value=>{poojaDoors.userData.setDoorsOpen(value)},clearMark,setDaylight,setMeasure,clearMeasure}
+    sceneRef.current={clearItem,setAcRoutes:visible=>{acRoutes.visible=visible},setDesigner:on=>designerRender.setEnabled(on),setCavity:visible=>{cavityGroup.visible=visible},setRoomLight,setTvLabels:visible=>drawingLayouts.setLabels(visible),setDrawingLayout:key=>drawingLayouts.setLayout(key),setDrawingArm:pulled=>drawingLayouts.setArm(pulled),setElectrical:visible=>drawingLayouts?.setElectrical(visible),setExistingElectrical:visible=>{for(const g of [existingDrawing,existingLobby])if(g)g.visible=visible},setDoorSwing:visible=>drawingLayouts.setDoorSwing(visible),setStorageOpen:open=>drawingLayouts.setStorageOpen(open),setDrawingTv:key=>drawingLayouts.setTvSize(key),setMedicineCabinetOpen:value=>doorInfill.userData.setOpen(value),setStorageCoverOpen:value=>storeStorage.userData.setCoverOpen(value),setMirrorOpen:value=>vanity.userData.setMirrorOpen?.(value),setPartitionOpen:value=>partition.userData.setOpen?.(value),setCamera,setWallsVisible:visible=>{walls.visible=visible},setBoardOpen:value=>{ironingStorage.userData.setBoardOpen(value)},setPoojaPersonVisible:visible=>{seatedPerson.visible=visible},setPoojaDoorsOpen:value=>{poojaDoors.userData.setDoorsOpen(value)},clearMark,setDaylight,setMeasure,clearMeasure}
     setRoomLight(roomLightRef.current/100)
     setDaylight(sunHourRef.current)
-    return()=>{interiorScene.dispose();cancelAnimationFrame(raf);existingDrawing?.userData.dispose();existingLobby?.userData.dispose();designerRender.dispose();observer.disconnect();renderer.domElement.removeEventListener('pointerdown',onPointerDown);renderer.domElement.removeEventListener('pointerup',onPointerUp);renderer.domElement.removeEventListener('pointermove',onPointerMove);window.removeEventListener('keydown',onMeasureKey);cancelAnimationFrame(moveFrame);tip.remove();controls.dispose();model.traverse(object=>{object.geometry?.dispose?.();object.material?.dispose?.()});markedWallMaterial.dispose();texture.dispose();environment.dispose();pmrem.dispose();renderer.dispose();renderer.domElement.remove();sceneRef.current=null}
+    return()=>{acRoutes.userData.dispose();interiorScene.dispose();cancelAnimationFrame(raf);existingDrawing?.userData.dispose();existingLobby?.userData.dispose();designerRender.dispose();observer.disconnect();renderer.domElement.removeEventListener('pointerdown',onPointerDown);renderer.domElement.removeEventListener('pointerup',onPointerUp);renderer.domElement.removeEventListener('pointermove',onPointerMove);window.removeEventListener('keydown',onMeasureKey);cancelAnimationFrame(moveFrame);tip.remove();controls.dispose();model.traverse(object=>{object.geometry?.dispose?.();object.material?.dispose?.()});markedWallMaterial.dispose();texture.dispose();environment.dispose();pmrem.dispose();renderer.dispose();renderer.domElement.remove();sceneRef.current=null}
   },[])
 
   useEffect(()=>{sceneRef.current?.setCamera(view)},[view])
@@ -898,6 +903,7 @@ function LiveWholeHome3D({onOpenRoom}){
   useEffect(()=>{roomLightRef.current=roomLightPercent;sceneRef.current?.setRoomLight(roomLightPercent/100)},[roomLightPercent])
   useEffect(()=>{sceneRef.current?.setMeasure(measureMode)},[measureMode])
   useEffect(()=>{sceneRef.current?.setCavity(showCavity)},[showCavity])
+  useEffect(()=>{sceneRef.current?.setAcRoutes(showAcRoutes)},[showAcRoutes])
 
   return <section style={{background:'#fff',border:'1px solid #dbe3e9',borderRadius:22,overflow:'hidden',boxShadow:'0 16px 42px rgba(23,32,51,.1)'}}>
     <div style={{padding:'14px 16px',display:'flex',justifyContent:'space-between',alignItems:'center',gap:12,flexWrap:'wrap',borderBottom:'1px solid #e2e8f0'}}>
@@ -928,10 +934,12 @@ function LiveWholeHome3D({onOpenRoom}){
         <button onClick={()=>setPoojaDoorsOpen(value=>!value)} style={buttonStyle(poojaDoorsOpen)}>{poojaDoorsOpen?'Close Pooja doors':'Open Pooja doors'}</button>
         <button {...designer.button(buttonStyle(designer.on))}/>
         <button onClick={()=>setShowCavity(value=>!value)} aria-pressed={showCavity} style={buttonStyle(showCavity)} title="The empty 3 ft deep cavity on the Main Entry side of the Drawing Room north wall, and the wall between them">{showCavity?'Hide entry wall cavity':'Show entry wall cavity'}</button>
+        <button onClick={()=>setShowAcRoutes(value=>!value)} aria-pressed={showAcRoutes} style={buttonStyle(showAcRoutes)} title="The whole-home AC plan (docs/AC_PLAN.md): refrigerant pipes from each indoor unit to its outdoor unit with the length to order, and the drain pipes to where they discharge. A proposal from typical figures; nothing is measured.">{showAcRoutes?'Hide AC pipe routes':'Show AC pipe routes'}</button>
         <button onClick={()=>setMeasureMode(value=>!value)} aria-pressed={measureMode} style={buttonStyle(measureMode)}>{measureMode?'Stop measuring':'Measure'}</button>
         <button onClick={()=>setMarkMode(value=>!value)} style={buttonStyle(markMode)}>{markMode?'Back to 3D':'Mark area on plan'}</button>
       </div>
     </div>
+    {!markMode&&showAcRoutes&&<AcRoutesLegend/>}
     {!markMode&&measureMode&&<div role="status" style={{display:'flex',gap:14,alignItems:'center',flexWrap:'wrap',padding:'8px 16px',borderBottom:'1px solid #fcd9a8',background:'#fff7ea',fontSize:13,color:'#7c4a12'}}>
       <b>Measure:</b>
       {!measureResult&&<span>click a first point on any surface…</span>}

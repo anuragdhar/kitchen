@@ -1,36 +1,40 @@
 import * as THREE from 'three'
+import {AC_PLAN} from '../../config/acPlanConfig.js'
+import {indoorUnitBox} from '../../domain/acPlan.mjs'
 
-// Concept locations only; equipment size and service clearances need installation drawings.
+// Indoor units of the whole-home AC plan (config/acPlanConfig.js, docs/AC_PLAN.md), drawn at TYPICAL casing sizes in the room
+// frame in metres (x from the west wall, z from the north wall, y up). Proposals, not installation drawings.
+const SPACE_OF_ROOM={'Drawing Room':'drawing','Lobby / Dining':'lobby'}
+
+/** One wall-mounted indoor unit of the plan (space id of AC_SPACES): casing, air outlet toward the side it blows, top trim. */
+export function createPlannedAcIndoorUnit(spaceId){
+  const space=AC_PLAN.spaces.find(s=>s.id===spaceId),box=indoorUnitBox(space,AC_PLAN)
+  const group=new THREE.Group();group.name=space.name+' AC indoor unit ('+space.status+', '+space.tons+' ton)'
+  const shell=new THREE.MeshStandardMaterial({color:'#f1f3f1',roughness:.48}),trim=new THREE.MeshStandardMaterial({color:'#aebbc0',metalness:.28,roughness:.44}),grille=new THREE.MeshStandardMaterial({color:'#626c70',metalness:.3,roughness:.5})
+  const alongZ=box.wall==='west'||box.wall==='east',w=(alongZ?box.z2-box.z1:box.x2-box.x1)/1000,d=(alongZ?box.x2-box.x1:box.z2-box.z1)/1000,h=(box.topMm-box.bottomMm)/1000
+  const cx=(box.x1+box.x2)/2000,cz=(box.z1+box.z2)/2000,y=box.bottomMm/1000,out=box.wall==='west'||box.wall==='north'?1:-1 // +1: the front faces +x or +z
+  const part=(along,high,deep,offset,py,material)=>{
+    const mesh=new THREE.Mesh(new THREE.BoxGeometry(alongZ?deep:along,high,alongZ?along:deep),material)
+    mesh.position.set(cx+(alongZ?offset:0),py,cz+(alongZ?0:offset));mesh.castShadow=true;mesh.receiveShadow=true;group.add(mesh)
+  }
+  part(w,h,d,0,y+h/2,shell)
+  part(w*.87,.025,.015,out*(d/2+.006),y+.03,grille)
+  part(w*.82,.018,.015,out*(d/2+.006),y+h-.01,trim)
+  return group
+}
+
 export function createRoomAirConditioning(room){
   const group=new THREE.Group()
   group.name=`${room.name} air conditioning`
   const shell=new THREE.MeshStandardMaterial({color:'#f1f3f1',roughness:.48})
   const trim=new THREE.MeshStandardMaterial({color:'#aebbc0',metalness:.28,roughness:.44})
   const grille=new THREE.MeshStandardMaterial({color:'#626c70',metalness:.3,roughness:.5})
-  const box=(w,h,d,x,y,z,material)=>{
-    const mesh=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),material)
-    mesh.position.set(x,y,z);mesh.castShadow=true;mesh.receiveShadow=true;group.add(mesh)
-  }
-  if(room.name==='Drawing Room'){
-    const z=room.furniture.sofa.centerZmm/1000
-    box(.22,.28,1.02,.14,2.37,z,shell)
-    box(.015,.025,.89,.26,2.26,z,grille)
-    box(.015,.018,.84,.26,2.50,z,trim)
-  }
-  if(room.name==='Lobby / Dining'){
-    const x=2.58
-    box(1.02,.28,.22,x,2.37,.14,shell)
-    box(.89,.025,.015,x,2.26,.26,grille)
-    box(.84,.018,.015,x,2.50,.26,trim)
-  }
+  if(SPACE_OF_ROOM[room.name])group.add(createPlannedAcIndoorUnit(SPACE_OF_ROOM[room.name]))
   if(room.name==='Bedroom 1'&&room.balconyExtension){
-    // The clear west-wall stretch south of the wardrobe holds the room unit.
-    box(.22,.28,.90,.14,2.37,2.48,shell)
-    box(.015,.025,.78,.26,2.26,2.48,grille)
+    // Bedroom 1 is cooled by the owner's window AC alone. The split indoor unit that was drawn on the west wall and the concept
+    // Lobby condenser outside the balcony are no longer drawn (AC plan 2026-10-05: acPlanConfig.js bedroom1.splitAlternative;
+    // the Lobby's outdoor unit is the one at the owner's plan mark outside the kitchen wall, drawn by AcOutdoorUnit.js).
     const outerX=(room.widthMm+room.balconyExtension.depthMm)/1000
-    // The Lobby condenser sits outside the east glazing, below its one-metre sill (concept position). Bedroom 1's own
-    // outdoor unit is drawn from the owner's plan mark instead (config/acOutdoorUnitsConfig.js, Whole home 3D), a little
-    // further north-east, so the Lobby one moved from z 1.46 to the south slot to stay clear of it (2026-10-05).
     const ac=room.balconyExtension.windowAc
     if(ac){
       // The owner's 1.5 ton window AC in the balcony's east side, on an iron frame (roomShellConfig.js, 2026-10-05).
@@ -45,16 +49,6 @@ export function createRoomAirConditioning(room){
       const out=d-inside
       part(out+.04,.03,w+.06,outerX+out/2,y-.015,z,grille)
       for(const side of [-1,1]){const strut=part(Math.hypot(out,.45),.03,.03,outerX+out/2,y-.24,z+side*(w/2+.015),grille);strut.rotation.z=Math.atan2(.45,out)}
-    }
-    for(const [label,z] of [['Lobby / Dining',.46]]){
-      const unit=new THREE.Group();unit.name=`${label} outdoor AC unit`;group.add(unit)
-      const cx=outerX+.20
-      const body=new THREE.Mesh(new THREE.BoxGeometry(.36,.52,.70),shell)
-      body.position.set(cx,.58,z);body.castShadow=true;unit.add(body)
-      const fan=new THREE.Mesh(new THREE.CylinderGeometry(.19,.19,.018,28),grille)
-      fan.rotation.z=Math.PI/2;fan.position.set(cx+.19,.58,z);unit.add(fan)
-      const cross=new THREE.Mesh(new THREE.BoxGeometry(.025,.35,.025),trim)
-      cross.position.set(cx+.205,.58,z);unit.add(cross)
     }
   }
   return group

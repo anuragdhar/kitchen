@@ -1,6 +1,7 @@
 import {registerInteriorScene} from './render/interiorScene.js'
 import {tagSurfaceMaterial} from './render/surfaceRoles.mjs'
 import {createStudyFurniture} from './rooms/study/StudyFurniture.js'
+import {createPlannedAcIndoorUnit} from './rooms/shared/RoomAirConditioning.js'
 import React,{useEffect,useRef,useState} from 'react'
 import * as THREE from 'three'
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js'
@@ -180,6 +181,7 @@ export default function StudyRoom3D(){
     rug.rotation.x=-Math.PI/2;rug.position.set(W/2,.006,L/2);rug.receiveShadow=true;room.add(rug)
     const {group:kidsGroup,nightBeds,daySeats}=createStudyFurniture(STUDY_ROOM)
     room.add(kidsGroup)
+    room.add(createPlannedAcIndoorUnit('study')) // AC plan (config/acPlanConfig.js): west wall, just north of the Home Office opening
     // Decor pass (owner request 2026-09-28): rug, plant, wall art and a floor
     // lamp, placed clear of the bookshelf, all three openings and the south
     // cabinet. Decorative only - no layout or opening changes.
