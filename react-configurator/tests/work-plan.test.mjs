@@ -3,8 +3,10 @@ import assert from 'node:assert/strict'
 import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
-import {validateWorkPlan, orderedTasks, planWarnings, readyTasks, planSummary, newTaskId} from '../src/home/workPlan.mjs'
+import {validateWorkPlan, orderedTasks, planWarnings, readyTasks, planSummary, newTaskId, checkDependencies, downstreamTasks, openItemImpact, readyTaskImpact, budgetTotals, roomGroup, formatInr, SHARED_ROOM} from '../src/home/workPlan.mjs'
+import {RATES, ESTIMATORS, QUANTITIES, estimateTask, applyEstimates, rateContributions} from '../src/home/workPlanEstimate.mjs'
 import {savePlan} from '../scripts/work-plan-plugin.mjs'
+import {readOpenItems, budgetDocument, nextStepsDocument} from '../scripts/work-plan-estimate.mjs'
 
 const file = new URL('../../work-plan/plan.json', import.meta.url)
 const load = () => JSON.parse(fs.readFileSync(file, 'utf8'))
@@ -34,10 +36,12 @@ test('the owner\'s civil items are in the plan and wait for structural approval'
 test('ready tasks follow status changes; started work with unfinished prerequisites is flagged', () => {
   const plan = load(), set = (id, status) => { plan.tasks.find(task => task.id === id).status = status }
   set('site-measure', 'done')
+  assert.ok(!readyTasks(plan).some(task => task.id === 'engineer-check'), 'the engineer needs the shaft inspection too')
+  set('pocket-check', 'done')
   assert.ok(readyTasks(plan).some(task => task.id === 'engineer-check'))
   set('north-wall-door', 'in-progress')
   assert.match(planWarnings(plan).map(w => w.message).join(' '), /Cut the cabinet door opening.*is in progress but/)
-  assert.equal(planSummary(plan).all.done, 1)
+  assert.equal(planSummary(plan).all.done, 2)
 })
 
 test('validation refuses unknown references, duplicates and loops', () => {
@@ -69,4 +73,156 @@ test('saving validates first, replaces the file and keeps a backup', async () =>
     await assert.rejects(savePlan(target, plan), /unknown status/)
     assert.equal(JSON.parse(fs.readFileSync(target, 'utf8')).tasks[0].status, 'done', 'a refused save leaves the file alone')
   } finally { fs.rmSync(dir, {recursive: true, force: true}) }
+})
+
+// ---- 2026-10-05: buildable order, budget, open items ----
+
+const PHASES = ['measure', 'civil', 'plumbing-rough', 'electrical-rough', 'surfaces', 'carpentry', 'paint', 'second-fix', 'finish']
+const openItems = () => readOpenItems(fs.readFileSync(new URL('../../work-plan/OPEN_ITEMS.md', import.meta.url), 'utf8'))
+
+test('the dependency check passes on the project plan and finds missing tasks, loops and later-phase dependencies', () => {
+  const plan = load()
+  assert.deepEqual(checkDependencies(plan), [])
+  assert.deepEqual(plan.phases.map(phase => phase.id), PHASES)
+  const broken = mutate => { const copy = load(); mutate(Object.fromEntries(copy.tasks.map(task => [task.id, task]))); return checkDependencies(copy) }
+  assert.deepEqual(broken(t => { t.plaster.dependsOn.push('nope') }).map(p => [p.kind, p.task, p.dependsOn]), [['missing', 'plaster', 'nope']])
+  // The first task waiting for the last one closes many loops (one per task that needs the measurements) and is out of phase.
+  assert.deepEqual([...new Set(broken(t => { t['site-measure'].dependsOn = ['snag'] }).map(p => p.kind))].sort(), ['cycle', 'later-phase'])
+  assert.deepEqual(broken(t => { t['north-wall-door'].dependsOn.push('paint') }).filter(p => p.kind === 'later-phase').map(p => [p.task, p.dependsOn]), [['north-wall-door', 'paint']])
+  const loop = broken(t => { t['pocket-check'].dependsOn = ['engineer-check'] }) // same phase, so only a loop
+  assert.deepEqual(loop.map(p => p.kind), ['cycle'])
+  assert.match(loop[0].message, /engineer-check -> pocket-check -> engineer-check|pocket-check -> engineer-check -> pocket-check/)
+  assert.deepEqual(checkDependencies({}), [])
+})
+
+test('the order of work is buildable: approvals, civil, first fix and AC pipes before plaster, carpentry, paint, fit-out, snag', () => {
+  const plan = load(), byId = Object.fromEntries(plan.tasks.map(task => [task.id, task])), phase = id => PHASES.indexOf(byId[id].phase)
+  const order = orderedTasks(plan).map(task => task.id), before = (a, b) => assert.ok(order.indexOf(a) < order.indexOf(b), `${a} must come before ${b}`)
+  // No wall is cut before the structural approval and the society's permission.
+  for (const id of ['shoe-rack-wall', 'north-wall-door', 'lobby-bedroom3-opening']) for (const need of ['engineer-check', 'society-permission']) assert.ok(byId[id].dependsOn.includes(need), `${id} needs ${need}`)
+  // The Lobby switchboard moves before the Bedroom 1 doorway is cut; the old doorway closes only after the new one is open.
+  before('lobby-switchboard-move', 'lobby-bedroom3-opening'); before('lobby-bedroom3-opening', 'bedroom1-old-door-close')
+  // Everything that goes into a wall is in before plaster: every first-fix task except the floor box, which goes before flooring.
+  for (const task of plan.tasks.filter(task => task.phase === 'electrical-rough' && task.id !== 'elec-floor-box')) assert.ok(byId.plaster.dependsOn.includes(task.id), `plaster must wait for ${task.id}`)
+  assert.ok(byId.flooring.dependsOn.includes('elec-floor-box'))
+  for (const id of ['ac-piping', 'ac-piping-other', 'plumbing-rough', 'debris']) assert.ok(byId.plaster.dependsOn.includes(id), `plaster must wait for ${id}`)
+  // Carpentry and steel fabrication before paint; fittings after it.
+  for (const task of plan.tasks.filter(task => task.phase === 'carpentry')) assert.ok(byId.paint.dependsOn.includes(task.id), `paint must wait for ${task.id}`)
+  for (const id of ['lights-track-drawing', 'lights-track-kitchen', 'ac-install', 'ac-window-install', 'elec-second-fix', 'lobby-shutter']) { assert.ok(byId[id].dependsOn.includes('paint'), `${id} follows paint`); assert.equal(phase(id), 7) }
+  // The trial blind comes before the outside screen is chosen, and can start today.
+  before('window-screen-trial', 'window-outside-chick'); assert.ok(readyTasks(plan).some(task => task.id === 'window-screen-trial'))
+  // Everything leads to the snag list.
+  assert.equal(downstreamTasks(plan, ['snag']).size, 0)
+  for (const task of plan.tasks) if (task.id !== 'snag') assert.ok(downstreamTasks(plan, [task.id]).has('snag'), `${task.id} does not lead to the snag list`)
+})
+
+test('the catch-up of 2026-10-05 is in the plan, and proposals stay proposals', () => {
+  const plan = load(), byId = Object.fromEntries(plan.tasks.map(task => [task.id, task]))
+  assert.equal(plan.tasks.length, 97)
+  assert.ok(plan.tasks.every(task => task.status === 'todo'))
+  assert.match(byId['main-gate'].detail, /VENTILATED/); assert.match(byId['elec-entry-lights'].title, /four round lights/)
+  for (const room of ['bedroom1', 'bedroom3', 'study', 'kitchen', 'lobby']) assert.ok(byId[`elec-track-feed-${room}`] && byId[`lights-track-${room}`], `track tasks for ${room}`)
+  assert.ok(!byId['elec-track-feed-rooms'] && !byId['carp-other'], 'the two catch-all tasks are split per room')
+  assert.match(byId['drawing-switchboard-decide'].detail, /behind the TV/); assert.match(byId['elec-drawing-west-sockets'].title, /behind the west sofa/)
+  assert.match(byId['lobby-bedroom3-opening'].title, /Bedroom 1 door/); assert.doesNotMatch(byId['lobby-bedroom3-opening'].title, /Bedroom 3/)
+  assert.match(byId['carp-office-desk'].detail, /1,500 x 762/); assert.match(byId['carp-office-desk'].detail, /743/)
+  assert.match(byId['ac-window-frame'].title, /iron frame for the window AC/); assert.equal(byId['ac-window-frame'].trade, 'fabrication')
+  assert.match(byId['ac-choose'].detail, /Neither place is decided/); assert.match(byId['shoe-rack-support'].detail, /not decided/)
+  assert.match(byId['window-screen-trial'].detail, /ONE ready-made outdoor HDPE roll-up blind/)
+  // Room for the five notes still being written.
+  const pending = plan.tasks.filter(task => /PENDING/.test(task.detail)).map(task => task.id)
+  for (const id of ['ac-plan-home', 'bedroom1-design-freeze', 'palette-choose', 'lighting-track-mouldings', 'elec-other-rooms']) assert.ok(pending.includes(id), `${id} holds a place for its note`)
+})
+
+test('every open item a task names exists in OPEN_ITEMS.md and is still open', () => {
+  const plan = load(), items = openItems()
+  for (const task of plan.tasks) for (const id of task.openItems ?? []) {
+    assert.ok(items.has(id), `${task.id} names ${id}, which is not in OPEN_ITEMS.md`)
+    assert.ok(!items.get(id).closed, `${task.id} names ${id}, which is answered`)
+  }
+  assert.ok(items.get('B5').closed && items.get('C21').closed && items.get('E2').closed)
+  for (const id of ['A21', 'A22', 'A23', 'A24', 'C20', 'C28', 'C29', 'C30', 'C31']) assert.ok(plan.tasks.some(task => task.openItems?.includes(id)), `no task waits for ${id}`)
+})
+
+test('"what to do first" is computed from the tasks that name each open item and everything behind them', () => {
+  const plan = load(), impact = openItemImpact(plan), byItem = Object.fromEntries(impact.map(row => [row.item, row]))
+  for (let i = 1; i < impact.length; i++) assert.ok(impact[i - 1].waiting >= impact[i].waiting)
+  for (const row of impact) assert.equal(row.waiting, row.direct.length + downstreamTasks(plan, row.direct).size)
+  assert.deepEqual(byItem.A11.direct, ['lobby-shutter']); assert.equal(byItem.A11.waiting, 2) // the doors and the snag list
+  assert.ok(byItem.D2.waiting > byItem.A3.waiting && byItem.A3.waiting > byItem.A11.waiting)
+  // A tiny plan by hand: A1 is named by aa and cc, and bb is behind aa; C2 is named only by cc.
+  const tiny = {phases: [{id: 'p', name: 'P'}], trades: [{id: 't', name: 'T'}], tasks: [
+    {id: 'aa', phase: 'p', trade: 't', title: 'A', dependsOn: [], status: 'todo', openItems: ['A1']},
+    {id: 'bb', phase: 'p', trade: 't', title: 'B', dependsOn: ['aa'], status: 'todo'},
+    {id: 'cc', phase: 'p', trade: 't', title: 'C', dependsOn: ['aa'], status: 'todo', openItems: ['C2', 'A1']},
+  ]}
+  assert.deepEqual(openItemImpact(tiny), [{item: 'A1', direct: ['aa', 'cc'], waiting: 3}, {item: 'C2', direct: ['cc'], waiting: 1}])
+  assert.deepEqual(readyTaskImpact(tiny), [{task: 'aa', waiting: 2}])
+  tiny.tasks[0].status = 'done' // a finished task no longer waits for its item
+  assert.deepEqual(openItemImpact(tiny).map(row => [row.item, row.direct]), [['A1', ['cc']], ['C2', ['cc']]])
+  const page = nextStepsDocument(plan, openItems())
+  assert.match(page, /\| 1 \| [A-E]\d+ \|/); assert.doesNotMatch(page, /not in OPEN_ITEMS/)
+})
+
+test('estimates: optional fields, validated; a plan without them still loads', () => {
+  const old = load(); for (const task of old.tasks) for (const key of ['estimateLow', 'estimateHigh', 'estimateBasis', 'estimateConfidence', 'openItems']) delete task[key]
+  assert.equal(old.schemaVersion, 1); validateWorkPlan(old)
+  assert.deepEqual(budgetTotals(old).all, {id: 'all', name: 'Whole plan', tasks: 97, estimated: 0, notEstimated: 97, low: 0, high: 0})
+  const bad = values => { const plan = load(); Object.assign(plan.tasks[0], values); return () => validateWorkPlan(plan) }
+  assert.throws(bad({estimateLow: 100, estimateHigh: undefined}), /both a low and a high/)
+  assert.throws(bad({estimateLow: 200, estimateHigh: 100}), /above the high/)
+  assert.throws(bad({estimateLow: -1, estimateHigh: 100}), /whole rupees/)
+  assert.throws(bad({estimateLow: 10.5, estimateHigh: 100}), /whole rupees/)
+  assert.throws(bad({estimateLow: 1, estimateHigh: 2, estimateConfidence: 'high'}), /low or medium/)
+  assert.throws(bad({estimateLow: undefined, estimateHigh: undefined, estimateConfidence: 'low'}), /without an estimate/)
+  assert.throws(bad({estimateBasis: 'x'.repeat(2001)}), /estimateBasis/)
+  assert.throws(bad({openItems: ['Z9']}), /not an open-item id/)
+  assert.throws(bad({openItems: ['A1', 'A1']}), /listed twice/)
+})
+
+test('budget totals add up by phase, trade and room; unestimated tasks are counted, not guessed', () => {
+  const plan = load(), totals = budgetTotals(plan), sum = (rows, key) => rows.reduce((total, row) => total + row[key], 0)
+  for (const rows of [totals.byPhase, totals.byTrade, totals.byRoom]) for (const key of ['low', 'high', 'tasks', 'estimated', 'notEstimated']) assert.equal(sum(rows, key), totals.all[key], key)
+  assert.equal(totals.all.estimated + totals.all.notEstimated, 97)
+  assert.equal(totals.notEstimated.length, totals.all.notEstimated)
+  for (const row of totals.notEstimated) assert.match(row.reason, /^Not estimated: /, row.id)
+  assert.ok(totals.all.low > 500000 && totals.all.high < 6000000 && totals.all.low < totals.all.high, 'a few lakh to a few tens of lakh')
+  for (const task of plan.tasks) assert.ok(task.estimateBasis, `${task.id} has no basis`)
+  assert.equal(roomGroup('Drawing Room / Lobby'), 'Drawing Room'); assert.equal(roomGroup('Lobby / Dining'), 'Lobby / Dining')
+  assert.equal(roomGroup('Whole home'), SHARED_ROOM); assert.equal(roomGroup(undefined), SHARED_ROOM)
+  assert.equal(formatInr(0), 'Rs 0'); assert.equal(formatInr(950), 'Rs 950'); assert.equal(formatInr(12500), 'Rs 12,500')
+  assert.equal(formatInr(1234567), 'Rs 12,34,567'); assert.equal(formatInr(1234567, {short: true}), 'Rs 12.3 lakh'); assert.equal(formatInr(250000, {short: true}), 'Rs 2.50 lakh')
+})
+
+test('estimates are quantity x rate from the configs, and the stored figures match the estimator', () => {
+  for (const [id, rate] of Object.entries(RATES)) assert.ok(rate.label && rate.unit && rate.low > 0 && rate.low <= rate.high, id)
+  // Quantities come from the configs, not from the plan text.
+  assert.deepEqual(QUANTITIES.tracks.drawing, {runs: 2, metres: 4.7, spot: 3, diffuse: 2, reading: 3, driver60: 1, driver100: 1})
+  assert.equal(Object.values(QUANTITIES.tracks).reduce((total, track) => total + track.runs, 0), 11)
+  assert.deepEqual([QUANTITIES.outerDoor.widthMm, QUANTITIES.outerDoor.heightMm], [905, 2200])
+  assert.deepEqual(QUANTITIES.kitchen, {eastRunMm: 4746, westRunMm: 3298, openAppliancesMm: 1200})
+  assert.deepEqual(QUANTITIES.windowBays.map(Math.round), [934, 899, 867])
+  // One worked example: the entry wiring is four light points and two switch drops at the light-point rate.
+  assert.deepEqual(estimateTask('elec-entry-ceiling'), {estimateLow: 5000, estimateHigh: 9000, estimateBasis: 'light points: 4 point x Rs 900-1,500; switch drops: 2 point x Rs 900-1,500.', estimateConfidence: 'medium'})
+  assert.deepEqual(estimateTask('plumbing-rough'), {estimateBasis: 'Not estimated: No plumbing change is listed yet (plumbing-scope).'})
+  assert.equal(estimateTask('no-such-task'), null)
+  const plan = load(), fresh = structuredClone(plan)
+  assert.deepEqual(applyEstimates(fresh), [], 'every task has an estimator')
+  assert.deepEqual(Object.keys(ESTIMATORS).filter(id => !plan.tasks.some(task => task.id === id)), [], 'no estimator for a task that is gone')
+  validateWorkPlan(fresh)
+  // The stored figures are the estimator's. A config change by itself (a longer track, a wider wardrobe) may drift a
+  // little before the plan is regenerated (node scripts/work-plan-estimate.mjs); a large drift fails here.
+  const stored = budgetTotals(plan).all, now = budgetTotals(fresh).all
+  assert.equal(now.estimated, stored.estimated)
+  for (const key of ['low', 'high']) assert.ok(Math.abs(now[key] - stored[key]) <= 0.15 * stored[key], `the ${key} total drifted from ${stored[key]} to ${now[key]}: run node scripts/work-plan-estimate.mjs`)
+  // What moves the total: the rate rows cover the whole high total (each task is rounded to Rs 500 or Rs 1,000).
+  const rows = rateContributions(plan.tasks.map(task => task.id))
+  assert.ok(Math.abs(rows.reduce((total, row) => total + row.high, 0) - now.high) < 1000 * now.estimated)
+  assert.equal(rows[0].rate, 'carpTall')
+  assert.match(budgetDocument(plan), /## The five numbers the total is most sensitive to/)
+})
+
+test('the plan file is written the way the Work plan page writes it', () => {
+  const raw = fs.readFileSync(file, 'utf8')
+  assert.equal(raw.replace(/\r\n/g, '\n'), `${JSON.stringify(JSON.parse(raw), null, 2)}\n`)
 })

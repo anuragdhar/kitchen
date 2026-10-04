@@ -1,6 +1,6 @@
 import React,{useEffect,useMemo,useRef,useState} from 'react'
 import seedPlan from '../../work-plan/plan.json'
-import {validateWorkPlan,orderedTasks,planWarnings,planSummary,readyTasks,newTaskId,STATUSES,STATUS_LABELS} from './home/workPlan.mjs'
+import {validateWorkPlan,orderedTasks,planWarnings,planSummary,readyTasks,newTaskId,budgetTotals,formatInr,STATUSES,STATUS_LABELS} from './home/workPlan.mjs'
 
 // The renovation work plan (work-plan/plan.json): every task, by trade, in the order the work has to happen.
 // When the app runs from the local dev server, changes are saved straight back to that file (scripts/work-plan-plugin.mjs)
@@ -8,13 +8,21 @@ import {validateWorkPlan,orderedTasks,planWarnings,planSummary,readyTasks,newTas
 const ENDPOINT='/__work_plan',LOCAL_KEY='home-interior.work-plan.v1'
 const STATUS_COLOURS={todo:['#f1f5f9','#334155'],'in-progress':['#dbeafe','#1e40af'],blocked:['#fee2e2','#991b1b'],done:['#dcfce7','#166534']}
 const input={padding:'7px 9px',borderRadius:8,border:'1px solid #cbd5e1',font:'inherit',fontSize:13}
+const cell={padding:'4px 8px',borderBottom:'1px solid #f1f5f9',textAlign:'right',whiteSpace:'nowrap'}
+// One budget table: a row per phase, trade or room, with the planning range and how many of its tasks have no figure.
+function BudgetTable({title,rows}){
+  return <table data-budget={title} style={{borderCollapse:'collapse',fontSize:12,color:'#334155',background:'#fff',border:'1px solid #e2e8f0',borderRadius:10,flex:'1 1 330px'}}>
+    <thead><tr><th style={{...cell,textAlign:'left',color:'#172033'}}>{title}</th><th style={{...cell,color:'#172033'}}>Low</th><th style={{...cell,color:'#172033'}}>High</th><th style={{...cell,color:'#172033'}} title="Tasks with no figure">No figure</th></tr></thead>
+    <tbody>{rows.map(row=><tr key={row.id}><td style={{...cell,textAlign:'left',whiteSpace:'normal'}}>{row.name}</td><td style={cell}>{row.estimated?formatInr(row.low):'-'}</td><td style={cell}>{row.estimated?formatInr(row.high):'-'}</td><td style={cell}>{row.notEstimated||''}</td></tr>)}</tbody>
+  </table>
+}
 const button=active=>({padding:'8px 12px',borderRadius:9,border:'1px solid #cbd5e1',background:active?'#172033':'#fff',color:active?'#fff':'#172033',fontWeight:800,cursor:'pointer'})
 
 export default function WorkPlan(){
   const [plan,setPlan]=useState(()=>validateWorkPlan(structuredClone(seedPlan)))
   const [storage,setStorage]=useState('loading') // 'file' | 'browser' | 'loading'
   const [message,setMessage]=useState('')
-  const [group,setGroup]=useState('phase'),[show,setShow]=useState('all')
+  const [group,setGroup]=useState('phase'),[show,setShow]=useState('all'),[showBudget,setShowBudget]=useState(true)
   const [draft,setDraft]=useState({title:'',trade:'civil',phase:'civil',room:'',detail:''})
   const saveTimer=useRef(0)
 
@@ -59,6 +67,7 @@ export default function WorkPlan(){
 
   const ordered=useMemo(()=>orderedTasks(plan),[plan])
   const summary=useMemo(()=>planSummary(plan),[plan]),warnings=useMemo(()=>planWarnings(plan),[plan])
+  const budget=useMemo(()=>budgetTotals(plan),[plan])
   const ready=useMemo(()=>new Set(readyTasks(plan).map(task=>task.id)),[plan])
   const titles=useMemo(()=>new Map(plan.tasks.map(task=>[task.id,task.title])),[plan])
   const number=useMemo(()=>new Map(ordered.map((task,index)=>[task.id,index+1])),[ordered])
@@ -68,7 +77,7 @@ export default function WorkPlan(){
 
   return <main style={{padding:'24px clamp(18px,3vw,48px) 60px',maxWidth:1500,margin:'0 auto'}}>
     <h1 style={{fontSize:30,margin:'0 0 4px',color:'#172033'}}>Work plan</h1>
-    <p style={{fontSize:14,color:'#475569',margin:'0 0 14px',maxWidth:900}}>Every job for the renovation, by trade, in the order it has to happen. A task is <b>ready</b> when everything it depends on is done. Sizes come from the 3D model, not from site measurements.</p>
+    <p style={{fontSize:14,color:'#475569',margin:'0 0 14px',maxWidth:900}}>Every job for the renovation, by trade, in the order it has to happen. A task is <b>ready</b> when everything it depends on is done. Sizes come from the 3D model, not from site measurements. What to measure and decide first: docs/NEXT_STEPS.md.</p>
     <div style={{display:'flex',gap:10,flexWrap:'wrap',marginBottom:12}}>
       <div style={{padding:'10px 14px',borderRadius:12,background:'#172033',color:'#fff'}}><b style={{fontSize:20}}>{summary.all.done}/{summary.all.total}</b><div style={{fontSize:11}}>tasks done</div></div>
       {summary.byTrade.filter(trade=>trade.total).map(trade=><div key={trade.id} style={{padding:'10px 14px',borderRadius:12,background:'#fff',border:'1px solid #e2e8f0'}}><b style={{fontSize:16,color:'#172033'}}>{trade.done}/{trade.total}</b><div style={{fontSize:11,color:'#64748b'}}>{trade.name}</div></div>)}
@@ -77,6 +86,18 @@ export default function WorkPlan(){
       {storage==='loading'?'Loading the plan…':storage==='file'?'Changes are saved to work-plan/plan.json in the project folder (commit it to keep history).':'This copy cannot write to the project folder: changes stay in this browser only. Run the app locally to save them to work-plan/plan.json.'}
       {message&&<b style={{marginLeft:8}}>{message}</b>}
     </div>
+    <section aria-label="Budget" style={{padding:'12px 14px',borderRadius:12,background:'#f8fafc',border:'1px solid #dbe3e9',marginBottom:12}}>
+      <div style={{display:'flex',gap:12,flexWrap:'wrap',alignItems:'baseline'}}>
+        <b style={{fontSize:13,color:'#172033'}}>Rough budget</b>
+        <b data-budget-total style={{fontSize:20,color:'#172033'}}>{budget.all.estimated?`${formatInr(budget.all.low,{short:true})} to ${formatInr(budget.all.high,{short:true})}`:'No estimates yet'}</b>
+        <span style={{fontSize:12,color:'#64748b'}}>{budget.all.estimated} of {budget.all.tasks} tasks estimated{budget.all.notEstimated>0&&`; ${budget.all.notEstimated} have no figure, so the real total is higher`}</span>
+        <button aria-expanded={showBudget} onClick={()=>setShowBudget(value=>!value)} style={{...button(false),padding:'4px 10px',fontSize:12}}>{showBudget?'Hide the breakdown':'Show the breakdown'}</button>
+      </div>
+      <div style={{fontSize:12,color:'#9a3412',marginTop:4,maxWidth:980}}>Planning ranges, not quotes: model sizes multiplied by typical 2025-26 Delhi NCR rates for mid-range quality. GST, a contingency, appliances and loose furniture are not included. Rates and what moves the total most: docs/WORK_PLAN_BUDGET.md.</div>
+      {showBudget&&budget.all.estimated>0&&<div style={{display:'flex',gap:10,flexWrap:'wrap',alignItems:'flex-start',marginTop:10}}>
+        <BudgetTable title="Phase" rows={budget.byPhase}/><BudgetTable title="Trade" rows={budget.byTrade}/><BudgetTable title="Room" rows={budget.byRoom}/>
+      </div>}
+    </section>
     {warnings.length>0&&<div style={{padding:'10px 14px',borderRadius:12,background:'#fff7ed',border:'1px solid #fed7aa',marginBottom:12,fontSize:13,color:'#7c2d12'}}><b>Check the order:</b><ul style={{margin:'4px 0 0',paddingLeft:18}}>{warnings.map((warning,index)=><li key={index}>{warning.message}</li>)}</ul></div>}
     <div style={{display:'flex',gap:8,flexWrap:'wrap',alignItems:'center',marginBottom:14}}>
       <b style={{fontSize:13}}>Group by</b>
@@ -86,13 +107,15 @@ export default function WorkPlan(){
       {[['all','All'],['open','Not done'],['ready','Ready to start'],['blocked','Blocked']].map(([key,label])=><button key={key} aria-pressed={show===key} onClick={()=>setShow(key)} style={button(show===key)}>{label}</button>)}
     </div>
     {groups.map(item=><section key={item.id} style={{background:'#fff',border:'1px solid #dbe3e9',borderRadius:16,marginBottom:14,overflow:'hidden'}}>
-      <h2 style={{fontSize:16,margin:0,padding:'11px 16px',background:'#f8fafc',borderBottom:'1px solid #e2e8f0',color:'#172033'}}>{item.name} <span style={{fontWeight:400,color:'#64748b',fontSize:13}}>· {item.tasks.filter(task=>task.status==='done').length}/{item.tasks.length} done</span></h2>
+      <h2 style={{fontSize:16,margin:0,padding:'11px 16px',background:'#f8fafc',borderBottom:'1px solid #e2e8f0',color:'#172033'}}>{item.name} <span style={{fontWeight:400,color:'#64748b',fontSize:13}}>· {item.tasks.filter(task=>task.status==='done').length}/{item.tasks.length} done{item.tasks.some(task=>task.estimateLow!=null)&&` · ${formatInr(item.tasks.reduce((total,task)=>total+(task.estimateLow??0),0))} to ${formatInr(item.tasks.reduce((total,task)=>total+(task.estimateHigh??0),0))}`}</span></h2>
       {item.tasks.map(task=>{const [bg,fg]=STATUS_COLOURS[task.status];return <article key={task.id} data-task={task.id} style={{padding:'12px 16px',borderBottom:'1px solid #f1f5f9',display:'grid',gridTemplateColumns:'minmax(0,1fr) auto',gap:12,opacity:task.status==='done'?.62:1}}>
         <div>
           <div style={{fontSize:15,fontWeight:800,color:'#172033'}}><span style={{color:'#94a3b8',fontWeight:700}}>{number.get(task.id)}.</span> {task.title} {ready.has(task.id)&&<span style={{fontSize:11,fontWeight:800,padding:'2px 7px',borderRadius:999,background:'#ecfccb',color:'#3f6212',marginLeft:4}}>ready</span>}</div>
           <div style={{fontSize:12,color:'#64748b',marginTop:2}}>{group==='phase'?nameOf(plan.trades,task.trade):nameOf(plan.phases,task.phase)}{task.room&&` · ${task.room}`}{task.source&&` · ${task.source}`}</div>
           {task.detail&&<div style={{fontSize:13,color:'#334155',marginTop:5,maxWidth:980}}>{task.detail}</div>}
           {task.needs&&<div style={{fontSize:12,fontWeight:800,color:'#9a3412',marginTop:5}}>Needs: {task.needs}</div>}
+          {task.openItems?.length>0&&<div style={{fontSize:12,color:'#9a3412',marginTop:3}}>Open items (work-plan/OPEN_ITEMS.md): {task.openItems.join(', ')}</div>}
+          {(task.estimateLow!=null||task.estimateBasis)&&<div data-estimate={task.id} style={{fontSize:12,color:'#475569',marginTop:4,maxWidth:980}}><b style={{color:'#172033'}}>{task.estimateLow==null?'No estimate':task.estimateHigh===0?'No cost':`Estimate: ${formatInr(task.estimateLow)} to ${formatInr(task.estimateHigh)}`}</b>{task.estimateConfidence&&task.estimateHigh>0&&` (${task.estimateConfidence} confidence)`}{task.estimateBasis&&` · ${task.estimateBasis}`}</div>}
           {task.dependsOn?.length>0&&<div style={{fontSize:12,color:'#64748b',marginTop:4}}>After: {task.dependsOn.map(dep=>`${number.get(dep)}. ${titles.get(dep)}`).join('; ')}</div>}
           <input aria-label={`Notes for ${task.title}`} value={task.notes??''} onChange={event=>patch(task.id,{notes:event.target.value})} placeholder="Notes: contractor, date, cost, what was agreed…" style={{...input,width:'100%',maxWidth:980,marginTop:7,boxSizing:'border-box'}}/>
         </div>
