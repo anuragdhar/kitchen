@@ -197,7 +197,7 @@ test('budget totals add up by phase, trade and room; unestimated tasks are count
 test('estimates are quantity x rate from the configs, and the stored figures match the estimator', () => {
   for (const [id, rate] of Object.entries(RATES)) assert.ok(rate.label && rate.unit && rate.low > 0 && rate.low <= rate.high, id)
   // Quantities come from the configs, not from the plan text.
-  assert.deepEqual(QUANTITIES.tracks.drawing, {runs: 2, metres: 4.7, spot: 3, diffuse: 2, reading: 3, driver60: 1, driver100: 1})
+  assert.deepEqual(QUANTITIES.tracks.drawing, {runs: 2, metres: 3.95, spot: 3, diffuse: 2, reading: 3, driver60: 1, driver100: 1})
   assert.equal(Object.values(QUANTITIES.tracks).reduce((total, track) => total + track.runs, 0), 11)
   assert.deepEqual([QUANTITIES.outerDoor.widthMm, QUANTITIES.outerDoor.heightMm], [905, 2200])
   assert.deepEqual(QUANTITIES.kitchen, {eastRunMm: 4746, westRunMm: 3298, openAppliancesMm: 1200})
