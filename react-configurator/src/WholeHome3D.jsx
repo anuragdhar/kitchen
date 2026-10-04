@@ -372,11 +372,12 @@ function LiveWholeHome3D({onOpenRoom}){
     const {cabinet:b3Cabinet,balcony:b3Balcony}=bedroom3.southExtension
     roomEdge(b3b,bedroom3.widthMm,bedroom3.lengthMm,'south',[
       {start:b3Cabinet.fromWestMm,end:b3Cabinet.fromWestMm+b3Cabinet.widthMm,bottom:b3Cabinet.floorClearanceMm/1000,top:(b3Cabinet.floorClearanceMm+b3Cabinet.heightMm)/1000},
-      // Enclosed balcony (phone scan 2026-10-04): open to the room under the beam; its outer window is drawn by createBedroom3SouthExtension.
-      ...(b3Balcony.enclosed?[{start:b3Balcony.opening.fromWestMm,end:b3Balcony.opening.toMm,bottom:0,top:b3Balcony.opening.headMm/1000}]:[
-        {start:b3Balcony.doorFromWestMm,end:b3Balcony.doorFromWestMm+b3Balcony.doorWidthMm,bottom:0,top:b3Balcony.doorHeightMm/1000,glass:true},
-        {start:b3Balcony.windowFromWestMm,end:b3Balcony.windowFromWestMm+b3Balcony.windowWidthMm,bottom:b3Balcony.windowSillMm/1000,top:b3Balcony.windowTopMm/1000,glass:true}]),
+      {start:b3Balcony.doorFromWestMm,end:b3Balcony.doorFromWestMm+b3Balcony.doorWidthMm,bottom:0,top:b3Balcony.doorHeightMm/1000,glass:true},
+      {start:b3Balcony.windowFromWestMm,end:b3Balcony.windowFromWestMm+b3Balcony.windowWidthMm,bottom:b3Balcony.windowSillMm/1000,top:b3Balcony.windowTopMm/1000,glass:true},
     ])
+    // Scanned transoms and mid rail on the balcony door and window (phone scan 2026-10-04), from the shared window builder.
+    if(b3Balcony.doorTransomMm)b3g.add(createWindowDetail({kind:'glassDoor',from:b3Balcony.doorFromWestMm/1000,to:(b3Balcony.doorFromWestMm+b3Balcony.doorWidthMm)/1000,bottom:0,top:b3Balcony.doorHeightMm/1000,frameStyle:'dark',design:{fromMm:b3Balcony.doorFromWestMm,widthMm:b3Balcony.doorWidthMm,bottomMm:0,topMm:b3Balcony.doorHeightMm,transomMm:b3Balcony.doorTransomMm}},{z:bedroom3.lengthMm/1000,outward:1,materials:{frame:cabinet,darkFrame:aluminium,glass,handle:aluminium}}))
+    if(b3Balcony.windowTransomMm)b3g.add(createWindowDetail({kind:'window',from:b3Balcony.windowFromWestMm/1000,to:(b3Balcony.windowFromWestMm+b3Balcony.windowWidthMm)/1000,bottom:b3Balcony.windowSillMm/1000,top:b3Balcony.windowTopMm/1000,frameStyle:'dark',mullionFractions:[],design:{fromMm:b3Balcony.windowFromWestMm,widthMm:b3Balcony.windowWidthMm,bottomMm:b3Balcony.windowSillMm,topMm:b3Balcony.windowTopMm,transomMm:b3Balcony.windowTransomMm,railsMm:b3Balcony.windowRailsMm}},{z:bedroom3.lengthMm/1000,outward:1,materials:{frame:cabinet,darkFrame:aluminium,glass,handle:aluminium}}))
     b3g.add(createBedroom3SouthExtension(bedroom3))
     b3g.add(createBedroom3Bed(bedroom3))
     const vanity=createBedroom3DressingTable(bedroom3);b3g.add(vanity);vanity.userData.setMirrorOpen(mirrorOpen)

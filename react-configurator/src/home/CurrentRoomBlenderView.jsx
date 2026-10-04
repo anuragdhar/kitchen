@@ -125,7 +125,7 @@ export default function CurrentRoomBlenderView({room,mode='model'}){
     {!result&&<div>
       <p>For repository defaults, run from the repository root:</p>
       <pre style={{whiteSpace:'pre-wrap',overflowWrap:'anywhere'}}>python scripts/render_archviz_rooms.py --export-defaults --rooms {room.key} --quality draft</pre>
-      <p>For your saved edits, export this room through Interior studio, then use <code>--input "path/to/exports"</code> without <code>--export-defaults</code>. Bedroom 3’s <strong>Balcony opening + window</strong> view includes the south openings.</p>
+      <p>For your saved edits, export this room through Interior studio, then use <code>--input "path/to/exports"</code> without <code>--export-defaults</code>. Bedroom 3’s <strong>Balcony door + window</strong> view includes the south openings.</p>
     </div>}
     {result&&<>
       <p><small>Job {result.job} · {result.quality} · {result.reviewStatus||'unreviewed'} · snapshot {result.capturedAt||'date unavailable'}</small></p>

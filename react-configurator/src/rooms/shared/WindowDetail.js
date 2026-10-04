@@ -40,6 +40,7 @@ export function createWindowDetail(opening, {z, outward = 1, materials}) {
   const mm = v => v / 1000, g = windowGeometry(design), wallFrom = opening.from - mm(design.fromMm)
   const X = v => wallFrom + mm(v)
   if (g.transomMm) box(width, .05, .065, center, mm(g.transomMm), z, windowFrame)
+  for (const rail of g.railsMm) box(width, .04, .06, center, mm(rail), z, windowFrame)
   const leafFace = z + .018 * outward, stile = .045
   for (const leaf of g.leaves) {
     const lw = mm(leaf.toMm - leaf.fromMm), lx = X((leaf.fromMm + leaf.toMm) / 2), lb = mm(leaf.bottomMm) + .05, lt = mm(leaf.topMm) - .05, lh = lt - lb

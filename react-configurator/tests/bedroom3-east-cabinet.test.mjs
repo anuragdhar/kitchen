@@ -7,9 +7,10 @@ const r=EMPTY_ROOM_SHELLS.bedroom3,c=r.furniture.eastCabinet,b=r.furniture.bed
 test('owner east-cabinet layout keeps the bed and openings, removes the west run',()=>{
   assert.deepEqual([r.widthMm,r.lengthMm,r.heightMm],[3963,3726,2700])
   assert.deepEqual(b,{lengthMm:1829,widthMm:1829,headWall:'east',centerFromNorthMm:1863})
-  assert.deepEqual(r.doors.map(d=>[d.wall,d.fromMm,d.widthMm,d.heightMm]),[['north',0,900,2100],['north',2850,700,2100]])
-  // Phone scan 2026-10-04: the balcony's west end wall is 1538 from the west wall (was 1771, scaled from the plan).
-  assert.deepEqual(r.southExtension.cabinet,{fromWestMm:0,widthMm:1538,depthMm:610,heightMm:2400,floorClearanceMm:100})
+  // Phone scan 2026-10-04 (docs/SITE_SCAN_2026-10-04_BEDROOM3.md): toilet door 2525 + 780 x 2000 (was 2850 + 700 x 2100);
+  // the existing wardrobe fills the south bay at x 365-1905, 2450 high (was 0-1771 x 2400).
+  assert.deepEqual(r.doors.map(d=>[d.wall,d.fromMm,d.widthMm,d.heightMm]),[['north',0,900,2100],['north',2525,780,2000]])
+  assert.deepEqual(r.southExtension.cabinet,{fromWestMm:365,widthMm:1540,depthMm:610,heightMm:2450,floorClearanceMm:100,source:'phone scan 2026-10-04'})
   assert.equal(r.furniture.westWardrobe,undefined)
   assert.equal(r.furniture.bedsideCabinetIdea,undefined)
   assert.equal(c.depthMm,18*25.4)

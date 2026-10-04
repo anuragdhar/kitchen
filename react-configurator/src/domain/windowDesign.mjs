@@ -5,6 +5,7 @@
 //   mullionFractions      vertical mullions as fractions of widthMm, from the west edge; none = one bay
 // Optional design fields (a window without them is a plain frame with mullions, drawn exactly as before):
 //   transomMm             a horizontal rail at this height; fixed top lights fill the band from it to the head
+//   railsMm               further horizontal rails (e.g. a mid rail between a fixed lower panel and the shutters)
 //   bays                  one entry per bay, west to east: {shutters: n} (0 = fixed glass), {wasFixed: true} is a note
 //   shutters              {opens: 'outward'|'inward'} for every bay that has shutters
 //   rollerNet             {perBay: true, cassette: 'top'|'side', cassetteMm} roller mosquito net on the room side
@@ -36,12 +37,13 @@ export function windowGeometry(win) {
     widthMm: screen.widthMm ?? win.widthMm, dropMm: screen.dropMm ?? (win.topMm - sill),
     centerMm: win.fromMm + win.widthMm / 2, parkedCenterHeightMm: win.topMm - (screen.rollDiameterMm ?? 100) / 2 - 10,
   } : null
+  const railsMm = (win.railsMm ?? []).filter(r => r > sill && r < shutterTop)
   return {
-    bays, leaves, rollerNets, outsideScreen,
+    bays, leaves, rollerNets, outsideScreen, railsMm,
     sillMm: sill, headMm: win.topMm, transomMm: transom,
     topLightHeightMm: transom ? win.topMm - transom : 0,
     shutterHeightMm: shutterTop - sill,
-    designed: Boolean(transom || win.bays || net || screen),
+    designed: Boolean(transom || win.bays || net || screen || railsMm.length),
   }
 }
 

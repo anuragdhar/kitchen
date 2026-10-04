@@ -26,28 +26,25 @@ export const EMPTY_ROOM_SHELLS={
   bedroom3:{
     name:'Bedroom 3',widthMm:3963,lengthMm:3726,heightMm:2700,color:'#db8b47',source:'A501 floor plan',
     // The plan labels the two adjacent south projections as 1925 and 2383 mm. Phone scan 2026-10-04
-    // (docs/SITE_SCAN_2026-10-04_BEDROOM3.md): the balcony is 2425 wide between its end walls, so the cabinet bay is
-    // 0-1538 (was 1771, scaled from the plan); the bay itself was not scanned, so its 610 depth and 2400 height stay.
+    // (docs/SITE_SCAN_2026-10-04_BEDROOM3.md; room scanned 3915 x 3665, ceiling 2770; the box above is NOT changed):
+    //  cabinet   the existing olive-green wardrobe that fills the bay, its doors flush with the south wall line:
+    //            x 365-1905, about 2450 high with lofts (was 0-1771 x 2400, scaled from the plan). Its depth is hidden.
+    //  balcony   door 2005-2705 (700 clear) with a top light above a transom at 2040; window 2785-3705 (920), sill 920,
+    //            mid rail 1350, transom 1910, head 2360 (was door 1771 + 1000 x 2200, window 2771 + 1192, sill 900 / 2200).
+    //            The wall east of the window (3705-3963) is solid. Balcony depth beyond the glass was not scanned.
+    //            doorTransomMm / windowTransomMm / windowRailsMm are read by src/domain/windowDesign.mjs.
     southExtension:{
-      cabinet:{fromWestMm:0,widthMm:1538,depthMm:610,heightMm:2400,floorClearanceMm:100},
-      // The balcony is ENCLOSED and merged with the room (phone scan 2026-10-04): the old door and window on the room line
-      // are gone; the room opens into it under a beam. Millimetres, x east from the west wall, z south from the north wall.
-      //  depthMm      room wall line (z 3726) to the inner face of the outer wall
-      //  ceilingMm    balcony soffit above the floor (the room's own ceiling scanned at about 2800; heightMm stays 2700)
-      //  opening      clear width from the room into the balcony and the beam underside over it
-      //  beam         width into the room from the wall line (its north face is at lengthMm - widthMm)
-      //  westJamb     the opening's west jamb runs this far into the room, flush with the beam face (a column, width assumed)
-      //  eastColumn   a column at the east end projecting into the balcony; the 340 mm of wall between opening.toMm and the
-      //               east wall is the stub left on the room line
-      //  outerWindow  on the outer wall; the frame reaches the east wall; frameStyle 'light' = the scanned cream frame
-      // railingHeightMm is kept for the open-balcony drawing path, which is not used while enclosed is true.
-      balcony:{fromWestMm:1538,widthMm:2425,depthMm:1065,ceilingMm:2690,enclosed:true,railingHeightMm:1050,source:'phone scan 2026-10-04',
-        opening:{fromWestMm:1538,toMm:3385,headMm:2440},
-        beam:{widthMm:250,undersideMm:2440},
-        westJamb:{intoRoomMm:250,widthMm:230,widthAssumed:true},
-        eastColumn:{fromWestMm:3725,depthMm:415},
-        outerWindow:{fromWestMm:2725,widthMm:1238,sillMm:1060,topMm:2060,frameStyle:'light',mullionFractions:[.5],sliding:true,source:'phone scan 2026-10-04'},
-      },
+      cabinet:{fromWestMm:365,widthMm:1540,depthMm:610,heightMm:2450,floorClearanceMm:100,source:'phone scan 2026-10-04'},
+      balcony:{fromWestMm:1905,widthMm:2058,depthMm:1200,railingHeightMm:1050,
+        doorFromWestMm:2005,doorWidthMm:700,doorHeightMm:2360,doorTransomMm:2040,
+        windowFromWestMm:2785,windowWidthMm:920,windowSillMm:920,windowTopMm:2360,windowTransomMm:1910,windowRailsMm:[1350],
+        source:'phone scan 2026-10-04'},
+    },
+    // Existing items seen in the phone scan (2026-10-04), recorded for the design check; NOT drawn, because the owner's
+    // east cabinetry replaces the corner cupboard and encloses the AC. Same frame: x east, z south, mm.
+    existing:{
+      northEastCupboard:{fromWestMm:3273,widthMm:690,fromNorthMm:0,lengthMm:970,heightMm:1990,doorsFace:'west'},
+      acUnit:{wall:'east',fromNorthMm:1348,widthMm:930,bottomMm:2280,topMm:2600,depthMm:200},
     },
     furniture:{
       bed:{lengthMm:1829,widthMm:1829,headWall:'east',centerFromNorthMm:1863},
@@ -68,9 +65,12 @@ export const EMPTY_ROOM_SHELLS={
       },
     },
     doors:[
+      // Phone scan 2026-10-04: frame against the west wall, clear opening about 125-895; the head could not be read
+      // (clothes hang on the leaf), so this entry is unchanged. The leaf sits 90 mm back in its reveal.
       {wall:'north',fromMm:0,widthMm:900,heightMm:2100,leadsTo:'Bedroom 3'},
-      // Located within the plan's northeast toilet frontage; opening size is provisional.
-      {wall:'north',fromMm:2850,widthMm:700,heightMm:2100,leadsTo:'Bedroom 3 toilet',opensIntoToilet:true},
+      // Phone scan 2026-10-04: jambs 2525 and 3305 (780 clear), head 2000; was 2850 + 700 x 2100 from the plan.
+      // The existing corner cupboard (existing.northEastCupboard) stands immediately east of the frame.
+      {wall:'north',fromMm:2525,widthMm:780,heightMm:2000,leadsTo:'Bedroom 3 toilet',opensIntoToilet:true,source:'phone scan 2026-10-04'},
     ],
   },
   lobby:{

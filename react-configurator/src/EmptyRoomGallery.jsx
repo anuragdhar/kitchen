@@ -129,12 +129,11 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
       if(side==='south'&&room.southExtension){
         const {cabinet,balcony}=room.southExtension
         result.push({kind:'passage',from:mm(cabinet.fromWestMm),to:mm(cabinet.fromWestMm+cabinet.widthMm),bottom:mm(cabinet.floorClearanceMm),top:mm(cabinet.floorClearanceMm+cabinet.heightMm)})
-        // Enclosed balcony (phone scan 2026-10-04): the room line is open under the beam; the window is on the outer wall (Bedroom3SouthExtension.js).
-        if(balcony.enclosed) result.push({kind:'passage',from:mm(balcony.opening.fromWestMm),to:mm(balcony.opening.toMm),bottom:0,top:mm(balcony.opening.headMm)})
-        else{
-          result.push({kind:'glassDoor',from:mm(balcony.doorFromWestMm),to:mm(balcony.doorFromWestMm+balcony.doorWidthMm),bottom:0,top:mm(balcony.doorHeightMm),frameStyle:'dark'})
-          result.push({kind:'window',from:mm(balcony.windowFromWestMm),to:mm(balcony.windowFromWestMm+balcony.windowWidthMm),bottom:mm(balcony.windowSillMm),top:mm(balcony.windowTopMm),frameStyle:'dark',mullionFractions:[]})
-        }
+        // `design` (transom, rails) lets the shared window builder draw the scanned top lights and mid rail; absent fields draw as before.
+        const doorDesign=balcony.doorTransomMm?{fromMm:balcony.doorFromWestMm,widthMm:balcony.doorWidthMm,bottomMm:0,topMm:balcony.doorHeightMm,transomMm:balcony.doorTransomMm}:undefined
+        const windowDesign=balcony.windowTransomMm||balcony.windowRailsMm?{fromMm:balcony.windowFromWestMm,widthMm:balcony.windowWidthMm,bottomMm:balcony.windowSillMm,topMm:balcony.windowTopMm,transomMm:balcony.windowTransomMm,railsMm:balcony.windowRailsMm}:undefined
+        result.push({kind:'glassDoor',from:mm(balcony.doorFromWestMm),to:mm(balcony.doorFromWestMm+balcony.doorWidthMm),bottom:0,top:mm(balcony.doorHeightMm),frameStyle:'dark',design:doorDesign})
+        result.push({kind:'window',from:mm(balcony.windowFromWestMm),to:mm(balcony.windowFromWestMm+balcony.windowWidthMm),bottom:mm(balcony.windowSillMm),top:mm(balcony.windowTopMm),frameStyle:'dark',mullionFractions:[],design:windowDesign})
       }
       for(const door of room.doors||[]) if(door.wall===side) result.push({kind:'door',from:mm(door.fromMm),to:mm(door.fromMm+door.widthMm),bottom:0,top:mm(door.heightMm)})
       // `design` carries the millimetre entry so the shared builder can draw bays, transom, shutters, nets and the outside screen.
@@ -600,7 +599,7 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
         {roomKey==='drawing'&&<button onClick={()=>setView('tvWall')} aria-pressed={view==='tvWall'} style={buttonStyle(view==='tvWall')}>TV wall view</button>}
         <button {...designer.button(buttonStyle(designer.on))}/>
         {roomKey==='drawing'&&<button onClick={()=>setView('northWall')} aria-pressed={view==='northWall'} style={buttonStyle(view==='northWall')}>North wall view</button>}
-        {roomKey==='bedroom3'&&<button onClick={()=>{setShowSouthWall(true);setView('southOpenings')}} aria-pressed={view==='southOpenings'} style={buttonStyle(view==='southOpenings')}>{room.southExtension?.balcony?.enclosed?'Balcony opening + window':'Balcony door + window'}</button>}
+        {roomKey==='bedroom3'&&<button onClick={()=>{setShowSouthWall(true);setView('southOpenings')}} aria-pressed={view==='southOpenings'} style={buttonStyle(view==='southOpenings')}>Balcony door + window</button>}
         {room.poojaAlcove&&<button onClick={()=>{setView('pooja');setPoojaDoorsOpen(true)}} aria-pressed={view==='pooja'} style={buttonStyle(view==='pooja')}>Pooja view</button>}
         {room.poojaAlcove&&<button onClick={()=>{setView('poojaDoor');setPoojaDoorsOpen(false)}} aria-pressed={view==='poojaDoor'} style={buttonStyle(view==='poojaDoor')}>Door front</button>}
         {roomKey==='bedroom3'&&<button onClick={()=>setView('eastWall')} aria-pressed={view==='eastWall'} style={buttonStyle(view==='eastWall')}>East cabinetry view</button>}

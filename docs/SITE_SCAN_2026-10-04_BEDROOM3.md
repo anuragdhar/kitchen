@@ -1,89 +1,91 @@
 # Site scan, Bedroom 3 (2026-10-04)
 
 The owner scanned "the third room" with a phone (Scaniverse, LiDAR) and exported `Scaniverse 2026-10-04 201236.glb`
-(113,285 vertices, 151,700 faces, one texture; kept in the owner's Downloads folder, not in this repository).
+(12.8 MB, 113,285 vertices, 151,700 faces, one texture; kept in the owner's Downloads folder, not in this repository).
 This file records what was measured from it, what was put into the app, and what was deliberately left alone.
-Method, tool and accuracy are the same as `docs/SITE_SCAN_2026-10-04.md` (Drawing Room and Lobby).
+Method, tool and accuracy are the same as `docs/SITE_SCAN_2026-10-04.md` (Drawing Room and Lobby): wall-aligned point
+cloud (rotated 0.45 degrees), 5 mm histograms for planes, textured elevations at 300 px/m for small items. Room sizes
++/- 30-50 mm, small items +/- 20 mm; nothing here replaces a tape for anything that will be cut or ordered.
 
-## What the scan covers, and what it does not
+Orientation was fixed from the A501 plan and the furniture: the wall carrying the toilet door and the entry door is the
+NORTH wall (app frame), the wall with the wide olive wardrobe, the glass door and the window is the SOUTH wall, and the
+bed head and the AC are on the EAST wall. Conversion from the scan: app x (east from the west wall) = 3963 - (scan z
++ 1878); app z (south from the north wall) = scan x + 1938. Units are millimetres; heights are above the floor.
 
-The scan is PARTIAL. The phone tracked the walls, floor and furniture of the ENCLOSED BALCONY only (about 2.4 x 1.1 m
-at the south end of the room) and, from there, the bedroom's ceiling at a grazing angle (about 4.0 x 3.3 m of it).
-The bedroom's own walls and floor were not captured: there is nothing of the north wall (entry door, toilet door), the
-west wall (chest), the east wall (bed, new cabinetry, AC) or the south-west bay that the app draws as a projecting
-cabinet. A second scan walked round the room at chest height, pointing at each wall, is needed for those.
-
-The mesh was rotated 0.45 degrees to line the walls up with the axes. Orientation from the A501 plan: the balcony is at
-the room's south-east (app frame), its east end wall is in line with the room's east wall, and the bedroom ceiling runs
-north from it; that fixes scan -z = south and scan +x = WEST. Conversion used throughout:
-app x (east from the west wall) = 3963 - (scan x + 1658), app z (south from the north wall) = 3726 - (scan z + 635),
-where 3726 is the room's south wall line and the balcony lies beyond it (app z > 3726). Units are millimetres; heights
-are above the balcony floor (scan y -0.002), which is continuous with the room floor.
-
-Also not captured: the fan (see below), anything behind the curtain on the balcony's outer wall (x 1538-2725 above
-about 1000), the depth of anything recessed, wall thickness.
+Not captured: the balcony beyond the glass (only glimpses through it), the depth of the wardrobe bay (closed doors
+flush with the wall), the fan body (only its medallion and hub), anything behind the headboard, the wall organiser and
+the wardrobe, and wall thickness. The entry door's leaf has clothes hanging on it, so its head is unclear.
 
 ## Bedroom 3
 
 | Item | Scan | App before | Action |
 | --- | --- | --- | --- |
-| Room width, east-west | about 4000 (the ceiling patch spans scan x -1.65 to 2.35; edges are fuzzy) | 3963 | consistent, unchanged |
-| Room length, north-south | not measured (the ceiling patch ends 200-500 mm short of the north wall) | 3726 | unchanged |
-| Ceiling height, bedroom | about 2800 (ceiling plane at scan y 2.797) | 2700 | NOT changed (whole-home 2700 ceiling); tape it (OPEN_ITEMS A15) |
-| Ceiling height, balcony | 2690 (soffit at scan y 2.68-2.70) | 2700 (same as the room) | recorded as `ceilingMm: 2690`; it sets the balcony wall heights (no slab is drawn, so the overview still sees into the balcony) |
-| Entry door, north wall | not in the scan | 0-900, 2100 high | unchanged |
-| Toilet door, north wall | not in the scan | 2850-3550, 2100 high | unchanged |
-| South-west bay ("cabinet", the plan's 1925 projection) | not in the scan; its east side is the balcony's west end wall at x 1538 | 0-1771 x 610 deep x 2400 high | width APPLIED 1771 -> 1538; depth and height unchanged |
-| Balcony width, between end walls | 2425 (x 1538-3963) | 2192 (x 1771-3963); plan says 2383 | APPLIED |
-| Balcony depth, room wall line to the inner face of the outer wall | 1065 | 1200 (plan figure, probably to the outer face) | APPLIED |
-| Balcony door and window on the room line | NONE: the balcony is enclosed and merged with the room. The room line is open 1538-3385 (1847 clear) under a beam | glass door 1771-2771 (2200 high) + window 2771-3963 (sill 900, head 2200), open balcony with railings | APPLIED: door and window removed, opening + beam drawn, walls round the balcony |
-| Beam over the opening | 250 wide (its north face 250 into the room), underside 2440 (300 below the balcony soffit, about 360 below the room ceiling) | none | APPLIED |
-| West jamb of the opening | at x 1538, runs 250 into the room, flush with the beam face (a column; its width is hidden by the bay) | none | APPLIED with an assumed 230 width |
-| East end of the room line | 340 of wall left at x 3385-3725, then a column x 3725-3963 projecting 415 into the balcony (z 3726-4141) | wall 0 (the window reached the east wall) | APPLIED |
-| Window on the balcony's outer wall | frame x 2725-3963 (1238 wide; the frame reaches the east end wall), sill 1060, head 2060; one vertical division near the middle, read as two sliding panes; cream frame; glass seen as night sky | none (the app's window was on the room line) | APPLIED as `outerWindow` |
-| Outer wall x 1538-2725 | wall up to about 1000, then hidden by a floral curtain to the soffit; a desk with a monitor stands against it | solid in the app | unchanged; whether a second window is behind the curtain is unknown |
-| Ceiling fan | NOT FOUND: the room ceiling was seen only at a grazing angle from the balcony; no rosette, hub, rod or blade shadow is visible, and no data gap of fan size (a running fan usually leaves one) | fan not drawn | not recorded; tape it (OPEN_ITEMS A16) |
-| AC | none in the scanned part; the east wall was not scanned | placeholder in the east overhead run | unchanged |
-| Switchboards, sockets | see the table below | not drawn | recorded here only |
-| Beams or pillars inside the room | none seen on the ceiling patch; the beam and two columns above are all on the balcony line | none | as above |
+| Width, east-west | 3915 (wall faces at scan z -1.878 and 2.037) | 3963 | consistent (48 less), unchanged |
+| Length, north-south | 3665 (north wall face at scan x -1.938; both door leaves sit 90 back in their reveals) | 3726 | NOT changed (61 less); tape it (OPEN_ITEMS A15) |
+| Ceiling height | 2770 (ceiling plane 2.762, floor -0.007) | 2700 | NOT changed, whole-home ceiling; A15 |
+| Entry door, north wall | frame against the west wall; clear about 125-895 (770); leaf 90 back in the reveal; head not readable (about 2000-2130) | 0-900, 2100 high | unchanged (within the frame-versus-clear difference); head on A16 |
+| Toilet door, north wall | jambs 2525 and 3305 (780 clear), head 2000; leaf 90 back in the reveal; handle and two tower bolts on the room side | 2850-3550, 2100 high | APPLIED 2525 + 780, 2000 high |
+| South bay ("cabinet"), the plan's 1925 projection | filled by the existing olive-green wardrobe, doors flush with the south wall line: x 365-1905, floor to about 2450 (two rows of doors, lofts above 2000, plinth about 100); depth hidden | 0-1771 x 610 deep x 2400 high | APPLIED x 365 + 1540, 2450 high; depth 610 kept (A17) |
+| Balcony door, south wall | jambs 2005 and 2705 (700 clear), leaf with a handle at 900, frosted glass panels, transom at 2040, top light to 2360 | 1771-2771, 2200 high | APPLIED 2005 + 700, 2360 high, transom 2040 |
+| Balcony window, south wall | jambs 2785 and 3705 (920 clear); sill 920; rails at 1350 and 1910; head 2360 (top light 1910-2360 continuous with the door's); mullion 2705-2785 between door and window; solid wall 3705-3963 | 2771-3963, sill 900, head 2200 | APPLIED 2785 + 920, sill 920, head 2360, transom 1910, mid rail 1350 |
+| Balcony floor | not scanned (glimpses only) | 1771-3963 x 1200 deep | start moved to 1905 (end of the wardrobe bay); depth 1200 kept |
+| Ceiling fan point | medallion (four-lobed plaster, about 700 across) centred 2030 from the west wall, 1820 from the north wall; hub about 100 across hanging 70 below the ceiling; the blades are not in the scan | not recorded | recorded here only (lighting files belong to another task) |
+| Existing corner cupboard | north-east corner, x 3273-3963 (690 deep east-west), z 0-970 along the north wall, 1990 high, wooden doors facing west; bags on top | not drawn | recorded in `bedroom3.existing.northEastCupboard`, not drawn (the planned east cabinetry replaces it) |
+| AC indoor unit | east wall, 1348-2278 from the north (930 wide), 2280-2600 high, 200 off the wall | placeholder 1000 x 280 x 230 centred 1863, bottom 2280 | recorded in `bedroom3.existing.acUnit` for the check below |
+| Beams or pillars | none; flat ceiling with a plaster border about 400 in from the walls and corner rings, like the Drawing Room | none | - |
+| Switchboard and sockets | see below | not drawn | recorded here only |
 
-Existing items in the balcony that are not building fabric (recorded, not drawn): a desk with a monitor against the
-outer wall under the curtain, x about 1540-2700, top about 820-880 high; an office chair; a small wooden panel with a
-handle on the balcony's east end wall, about 550 wide x 700 high, 300-1000 above the floor, z 4190-4740 (465-1015
-beyond the room line); it reads as a cabinet door, flush with or recessed into the wall, depth not measurable. If this
-is "the existing cabinet" the owner means, its size is as given here and its depth needs a tape.
+Other existing items (recorded, not drawn): the bed (1840 wide x about 2050 long with its headboard, head on the east
+wall, z 1160-3000, mattress top 530) which is 300 further south and 220 longer than the planned 1829 x 1829 bed; a striped
+daybed in front of the wardrobe (x 1015-3260, z 2960-3665, seat 530); a wall-hung organiser on the east wall, z 2240-2990,
+1050-1700 high, about 40 deep; an open shelf unit in the south-east corner, x 3640-3963, z 3110-3665, about 1800 high;
+a small dark cabinet on the west wall, z 2880-3220, about 330 wide x 170 deep x 700 high; a round mirror and a hook rail
+on the north wall at x about 1000-1400, 2000-2250 high; a bath mat in front of the toilet door.
 
-Existing electrical points (recorded here only, for the "existing electrical" layer). Positions on the balcony's west
-end wall are measured from the room's south wall line (z 3726) SOUTH into the balcony; that wall is at x 1538 and faces
-east.
+Existing electrical points (recorded here only; positions along the wall from the west end for the north wall, from
+the north end for the east and west walls):
 
 | Item | Wall | Position | Height |
 | --- | --- | --- | --- |
-| Water heater (small storage geyser, about 280 wide, 320 deep) | balcony west end wall (x 1538, faces east) | 525-805 beyond the room line (z 4251-4531) | 2030-2500 |
-| Two switch/socket plates side by side (each about 70 x 70) | balcony west end wall | 465-535 and 295-395 beyond the room line (z 4191-4261 and 4021-4121) | about 1700-1800 |
-| One plate (about 70 x 90) | balcony west end wall, on the jamb at the room line | -35 to 135 (z 3691-3861, straddling the room line) | about 1470-1570 |
-| Two small white fittings (about 40 each), purpose unknown | balcony outer wall (z 4791, faces north), under the window | x about 3800-3860 (100-160 from the east end wall) | about 940 |
+| Switchboard, about 170 x 140 (white area up to 200 x 260: possibly two plates) | north | 1385-1550 from the west (485 east of the entry door jamb) | 1235-1365 (white points 1230-1490) |
+| AC indoor unit (its point is behind it) | east | 1348-2278 from the north | 2280-2600 |
+| Wall light, dark fitting with a flex | west | 1740-2020 from the north | 2110-2350 |
+| Ceiling fan point | ceiling | 2030 from the west, 1820 from the north | hub 2700 |
 
-Cables run on the surface of the west end wall from the plates up to the geyser and down to the desk.
+No socket plates could be identified on the east, west or south walls: the headboard, the organiser, the daybed and the
+wardrobe cover the lower walls.
 
 ## What changed in the app
 
-- `roomShellConfig.js` `bedroom3.southExtension`: cabinet width 1771 -> 1538; balcony 1771 + 2192 x 1200 open with a
-  door and a window -> 1538 + 2425 x 1065, `enclosed: true`, `ceilingMm 2690`, `opening 1538-3385 head 2440`,
-  `beam 250 / 2440`, `westJamb 250 into the room (230 wide, assumed)`, `eastColumn 3725-3963 x 415`,
-  `outerWindow 2725 + 1238, sill 1060, head 2060, two panes`.
-- `Bedroom3SouthExtension.js`: draws the enclosed balcony (end walls to 2690, outer wall with the window, beam,
-  jamb and column) when `enclosed` is set; the railed balcony path is unchanged otherwise.
-- `EmptyRoomGallery.jsx` and `WholeHome3D.jsx`: the south room line gets a passage for the opening instead of the glass
-  door and the window. The view button reads "Balcony opening + window".
-- `tests/bedroom3-east-cabinet.test.mjs` (cabinet width) and `tests/window-design.test.mjs` (balcony fixture).
+- `roomShellConfig.js` `bedroom3`: toilet door 2850 + 700 x 2100 -> 2525 + 780 x 2000; `southExtension.cabinet`
+  0 + 1771 x 2400 -> 365 + 1540 x 2450; `southExtension.balcony` 1771 + 2192 -> 1905 + 2058, door 1771 + 1000 x 2200 ->
+  2005 + 700 x 2360 with `doorTransomMm 2040`, window 2771 + 1192 sill 900 / 2200 -> 2785 + 920 sill 920 / 2360 with
+  `windowTransomMm 1910` and `windowRailsMm [1350]`; new `existing` record (corner cupboard, AC unit), not drawn.
+- The balcony door and window are drawn by the shared window builder (`rooms/shared/WindowDetail.js`) with their
+  transoms and the mid rail, on the room page and in Whole home 3D.
+- `tests/bedroom3-east-cabinet.test.mjs` (doors, cabinet) and `tests/window-design.test.mjs` (south side fixture and
+  the design check below).
+
+## Check of the planned east cabinetry, chest and AC bay against the scan
+
+- Toilet door: the north dressing cabinet (x 3506-3963, z 150-900) was 44 mm inside the plan door's x range; against
+  the scanned door (2525-3305) it is 201 mm clear. The door leaf opens into the toilet.
+- Corner cupboard: the planned north unit (750 x 457, from z 150) lies inside the existing cupboard's footprint
+  (690 x 970, from z 0); the design replaces that cupboard, as the owner intended when the cabinetry moved east.
+- AC: the existing unit (930 wide, centre 1813 from the north) sits inside the 1200 mm slatted bay centred 1863, 2280
+  to 2600 high; the bay's top panel is at 2632, so about 30 mm of headroom if the unit stays. It is 200 deep (the
+  placeholder assumes 230). Tape and the unit's service clearances are on A17.
+- Bed: the existing bed is 220 longer and 300 further south than the planned one, so the south-east low cabinet
+  (z 2826-3576) would overlap it; the design assumes the bed is moved to centre 1863, as drawn.
+- Window and door: the east cabinetry ends at z 3576, 150 short of the south line, and the window's east jamb is 258
+  from the corner; the cabinetry does not cover the window. The daybed stands in front of the wardrobe doors.
+- West chest (z 1163-2563): the only existing item on that wall is the small cabinet at z 2880-3220, outside the chest.
+- No change to the planned furniture was needed.
 
 ## Left alone, and why
 
 - **Room box and ceiling.** The whole-home model draws every room inside the A501 outline with one 2700 mm ceiling
-  (the same reason as for the Drawing Room). The balcony's own 2690 soffit is recorded and sets its wall heights.
-- **Doors, the east cabinetry, the west chest, the AC.** Not in the scan. The design check against the scan is therefore
-  limited to the south end: the opening ends 578 mm from the east wall (340 of wall plus the 238 column), so the
-  457 mm deep east cabinetry stands against that wall stub and does not reach the opening; the overhead run ends at
-  z 3576, 150 mm short of the room line; nothing in the new design stands in the balcony. No clash found there.
-- **The desk, chair and curtain** in the balcony are existing furniture, not design.
+  (the same reason as for the Drawing Room). Items measured from the west and north walls keep those distances.
+- **Entry door**: 770 clear is the leaf-plus-frame reading on a door covered with clothes; the 900 opening stays.
+- **Existing furniture** is recorded, not drawn; the planned furniture is the design.
+- **Fan**: recorded here; the lighting configs are another task's.

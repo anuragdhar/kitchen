@@ -50,32 +50,39 @@ test('the checker rejects a transom outside the frame, a bay count mismatch and 
   assert.ok(checkWindowDesign(narrow).issues.some(m => /narrower than 250/.test(m)))
 })
 
-test('Bedroom 3 balcony as scanned: enclosed, merged with the room under a beam, window on the outer wall', () => {
+test('Bedroom 3 south side as scanned: wardrobe bay, balcony door and window with top lights and a mid rail', () => {
   assert.deepEqual([b3.widthMm, b3.lengthMm, b3.heightMm], [3963, 3726, 2700], 'the room box is not changed by the scan')
-  assert.equal(balcony.enclosed, true)
-  assert.deepEqual([balcony.fromWestMm, balcony.widthMm, balcony.depthMm, balcony.ceilingMm], [1538, 2425, 1065, 2690])
-  assert.equal(balcony.fromWestMm + balcony.widthMm, b3.widthMm, 'the balcony ends at the east wall line')
-  assert.equal(b3.southExtension.cabinet.fromWestMm + b3.southExtension.cabinet.widthMm, balcony.fromWestMm, 'the cabinet bay ends at the balcony west wall')
-  assert.deepEqual(balcony.opening, {fromWestMm: 1538, toMm: 3385, headMm: 2440})
-  assert.equal(balcony.opening.toMm - balcony.opening.fromWestMm, 1847)
-  assert.equal(balcony.beam.undersideMm, balcony.opening.headMm)
-  assert.equal(balcony.eastColumn.fromWestMm + 238, b3.widthMm)
-  const w = balcony.outerWindow
-  assert.deepEqual([w.fromWestMm, w.widthMm, w.sillMm, w.topMm], [2725, 1238, 1060, 2060])
-  assert.equal(w.fromWestMm + w.widthMm, b3.widthMm, 'the window frame reaches the east wall')
-  assert.deepEqual(windowBays({...w, fromMm: w.fromWestMm, bottomMm: w.sillMm}).map(b => b.widthMm), [619, 619])
-  for (const key of ['doorFromWestMm', 'windowFromWestMm']) assert.equal(balcony[key], undefined, 'the old door and window on the room line are gone')
+  const cab = b3.southExtension.cabinet
+  assert.deepEqual([cab.fromWestMm, cab.widthMm, cab.heightMm], [365, 1540, 2450])
+  assert.equal(cab.fromWestMm + cab.widthMm, balcony.fromWestMm, 'the balcony floor starts where the wardrobe bay ends')
+  assert.equal(balcony.fromWestMm + balcony.widthMm, b3.widthMm)
+  assert.deepEqual([balcony.doorFromWestMm, balcony.doorWidthMm, balcony.doorHeightMm, balcony.doorTransomMm], [2005, 700, 2360, 2040])
+  assert.deepEqual([balcony.windowFromWestMm, balcony.windowWidthMm, balcony.windowSillMm, balcony.windowTopMm, balcony.windowTransomMm, balcony.windowRailsMm], [2785, 920, 920, 2360, 1910, [1350]])
+  assert.ok(balcony.doorFromWestMm + balcony.doorWidthMm < balcony.windowFromWestMm, 'a mullion separates the door and the window')
+  assert.equal(b3.widthMm - (balcony.windowFromWestMm + balcony.windowWidthMm), 258, 'solid wall east of the window')
+  const w = windowGeometry({fromMm: balcony.windowFromWestMm, widthMm: balcony.windowWidthMm, bottomMm: balcony.windowSillMm, topMm: balcony.windowTopMm, transomMm: balcony.windowTransomMm, railsMm: balcony.windowRailsMm})
+  assert.equal(w.designed, true)
+  assert.deepEqual([w.transomMm, w.topLightHeightMm, w.railsMm], [1910, 450, [1350]])
+  assert.deepEqual(w.leaves, [], 'no shutters are recorded for the Bedroom 3 window')
+  const d = windowGeometry({fromMm: balcony.doorFromWestMm, widthMm: balcony.doorWidthMm, bottomMm: 0, topMm: balcony.doorHeightMm, transomMm: balcony.doorTransomMm})
+  assert.equal(d.topLightHeightMm, 320)
+  assert.deepEqual(windowGeometry({fromMm: 0, widthMm: 1000, bottomMm: 900, topMm: 2000, railsMm: [500, 2500]}).railsMm, [], 'rails outside the frame are ignored')
 })
 
-test('Bedroom 3 east cabinetry stays clear of the balcony opening, and the review describes the enclosed balcony', () => {
-  const c = b3.furniture.eastCabinet
-  const stub = b3.widthMm - balcony.opening.toMm
-  assert.equal(stub, 578, '340 mm of wall plus the 238 mm column remain on the room line at the east end')
-  assert.ok(c.depthMm < stub, 'the 457.2 mm deep cabinets stand against the wall stub, not in the opening')
+test('Bedroom 3 design check against the scan: toilet door, corner cupboard, AC unit and the east cabinetry', () => {
+  const c = b3.furniture.eastCabinet, toilet = b3.doors[1], e = b3.existing
+  assert.deepEqual([toilet.fromMm, toilet.widthMm, toilet.heightMm], [2525, 780, 2000])
+  const northUnitWest = b3.widthMm - c.depthMm
+  assert.equal(Math.round(northUnitWest - (toilet.fromMm + toilet.widthMm)), 201, 'the north dressing cabinet clears the scanned toilet door by 201 mm (it was 44 mm into the plan door)')
+  assert.ok(e.northEastCupboard.fromWestMm <= northUnitWest && c.north.fromNorthMm + c.north.widthMm <= e.northEastCupboard.lengthMm, 'the new north unit lies inside the existing cupboard footprint: it replaces it')
+  const bayWest = c.ac.centerFromNorthMm - c.ac.bayWidthMm / 2, bayEast = c.ac.centerFromNorthMm + c.ac.bayWidthMm / 2
+  assert.ok(e.acUnit.fromNorthMm >= bayWest && e.acUnit.fromNorthMm + e.acUnit.widthMm <= bayEast, 'the existing AC unit sits inside the slatted bay')
+  assert.ok(e.acUnit.bottomMm >= c.bridge.bottomMm && e.acUnit.topMm <= c.bridge.bottomMm + c.bridge.heightMm - c.panelMm, 'and between the bay bottom and the top panel')
+  assert.ok(e.acUnit.depthMm + c.ac.wallGapMm < c.depthMm - c.panelMm)
   assert.ok(c.bridge.fromNorthMm + c.bridge.widthMm <= b3.lengthMm)
   const review = buildRoomReview({roomKey: 'bedroom3', room: b3})
-  assert.match(review.text, /ENCLOSED balcony merged with the room/)
-  assert.match(review.text, /x 1538-3385/)
+  assert.match(review.text, /glass door x 2005-2705 \(2360 mm high, top light above 2040 mm\)/)
+  assert.match(review.text, /corner cupboard x 3273-3963/)
   const drawingReview = buildRoomReview({roomKey: 'drawing', room: drawing})
   assert.match(drawingReview.text, /3 bays of 934.2 \/ 899.1 \/ 866.7 mm, fixed top lights above a transom at 2040 mm, 6 outward shutters/)
 })
