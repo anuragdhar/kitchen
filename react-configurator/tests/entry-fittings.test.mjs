@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import {ENTRY} from '../src/config/entryConfig.js'
 import {ENTRY_LIGHTING} from '../src/config/entryLightingConfig.js'
 import {ROOM_LIGHTING} from '../src/home/lighting.mjs'
-import {entrySections, checkEntryLighting, checkEntryOuterDoor, entryOuterDoorGeometry, VENT_OPEN_FRACTION_MIN} from '../src/domain/entryFittings.mjs'
+import {entrySections, checkEntryLighting, checkEntryOuterDoor, entryOuterDoorGeometry, VENT_OPEN_FRACTION_MIN, checkShoeRackAcBay} from '../src/domain/entryFittings.mjs'
 
 test('the entry has four sections in walking order; the corridor and the inner gallery are the two a person walks through', () => {
   const sections = entrySections(ENTRY)
@@ -63,4 +63,26 @@ test('the light checks catch a strip, a light over the shaft, one against a wall
   assert.match(bad(c => { c.fittings.splice(3, 1) }), /gallery: an end of it/)
   assert.match(bad(c => { c.fittings[2].kind = 'recessed' }), /surface-mounted/)
   assert.match(bad(c => { c.switching[0].lights.push('E9') }), /unknown light E9/)
+})
+
+test('the AC outdoor unit under the shoe rack (owner proposal 2026-10-05) fits lengthwise, not across, at the drawn 865 mm width', () => {
+  const bay = ENTRY.shoeRack.acBay
+  assert.match(bay.status, /proposal.*not decided/)
+  assert.equal(bay.orientation, 'lengthwise')
+  const long = checkShoeRackAcBay(ENTRY)
+  assert.deepEqual(long.issues, [])
+  assert.deepEqual([long.neededWidthMm, long.bayWidthMm, long.bayDepthMm, long.beyondWallMm, long.neededHeightMm], [440, 865, 1130, 900, 750])
+  assert.deepEqual([long.shoeBottomMm, long.shoeHeightLeftMm], [840, 1294])
+  assert.ok(long.unknowns.some(u => /free air/.test(u)) && long.unknowns.some(u => /opposite side/.test(u)) && long.unknowns.some(u => /engineer/.test(u)))
+  const across = checkShoeRackAcBay(ENTRY, 'across')
+  assert.deepEqual([across.neededWidthMm, across.bayDepthMm, across.beyondWallMm], [1200, 670, 440])
+  assert.match(across.issues.join(' | '), /865 mm wide.*needs 1200 mm/)
+  // The checks catch a bay too low for the unit, a grille that is mostly metal, and a fan face set too far back.
+  const bad = patch => { const e = structuredClone(ENTRY); patch(e.shoeRack.acBay); return checkShoeRackAcBay(e).issues.join(' | ') }
+  assert.match(bad(b => { b.heightMm = 700 }), /needs 750 mm/)
+  assert.match(bad(b => { b.grille.barMm = 30 }), /grille is only 50% open/)
+  assert.match(bad(b => { b.clearance.frontGapMm = 120 }), /hot air would come back/)
+  assert.match(bad(b => { b.outsideClearMm = 400 }), /only 400 mm of free air/)
+  // The plain rack is unchanged: the proposal does not alter its drawn size.
+  assert.deepEqual([ENTRY.shoeRack.widthMm, ENTRY.shoeRack.heightMm, ENTRY.shoeRack.projectionMm], [865, 2134, 381])
 })

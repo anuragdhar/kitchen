@@ -98,8 +98,8 @@
       "phase": "measure",
       "trade": "civil",
       "title": "Get the builder or structural engineer to approve every wall opening",
-      "room": "Drawing Room / Main entry",
-      "detail": "Three openings need approval: the cabinet door through the 9-inch Drawing Room north wall, the entry pocket, and the wall to be removed on the left after the entry for the shoe rack. Ask which walls are load-bearing and what support (lintel or beam) each needs.",
+      "room": "Drawing Room / Main entry / Lobby / Bedroom 3",
+      "detail": "Four openings need approval: the cabinet door through the 9-inch Drawing Room north wall, the entry pocket, the wall to be removed on the left after the entry for the shoe rack, and the new doorway at the northwest corner of the Lobby into Bedroom 3 (owner 2026-10-04; this doorway does not exist yet). Ask which walls are load-bearing and what support (lintel or beam) each needs.",
       "dependsOn": [
         "site-measure"
       ],
@@ -183,7 +183,7 @@
       "trade": "general",
       "title": "Drawing Room AC: choose the size, the indoor position and where the outdoor unit goes",
       "room": "Drawing Room",
-      "detail": "Owner 2026-10-04: the Drawing Room has no AC; one has to be bought. The room is about 3.35 x 5.34 m (18 sq m, 193 sq ft), but its east side is open to the Lobby/Dining (about 16 sq m more), so the AC cools both unless that opening can be closed. Starting point: an inverter split AC of 1.5 ton if only the Drawing Room is cooled, 2 ton if the opening stays open; ask the dealer to confirm for the top-floor heat and sun on the south window. The electrical plan already has the AC point on the west wall, 3,080 mm from the north wall and 2,300 high, above the west sofa. Decide where the outdoor unit hangs, because that fixes the pipe route and its length. Update 2026-10-04: glass sliding doors between the Drawing Room and the Lobby are decided, so the AC can be sized for the Drawing Room alone (about 1.5 ton), to be confirmed by the dealer.",
+      "detail": "Owner 2026-10-04: the Drawing Room has no AC; one has to be bought. The room is about 3.35 x 5.34 m (18 sq m, 193 sq ft), but its east side is open to the Lobby/Dining (about 16 sq m more), so the AC cools both unless that opening can be closed. Starting point: an inverter split AC of 1.5 ton if only the Drawing Room is cooled, 2 ton if the opening stays open; ask the dealer to confirm for the top-floor heat and sun on the south window. The electrical plan already has the AC point on the west wall, 3,080 mm from the north wall and 2,300 high, above the west sofa. Decide where the outdoor unit hangs, because that fixes the pipe route and its length. Update 2026-10-04: glass sliding doors between the Drawing Room and the Lobby are decided, so the AC can be sized for the Drawing Room alone (about 1.5 ton), to be confirmed by the dealer. Owner proposal 2026-10-05: stand the outdoor unit on the shoe rack platform at the north end of the entry, in the bottom of the rack, behind a fixed grille, with a service door on the inside (docs/changes/2026-10-05-shoe-rack-ac-bay.md; toggle on the Main entry page). By typical sizes it fits turned lengthwise, not across. Ask the dealer for the chosen model's clearances and the pipe length from the indoor position (about 9-10 m from the west wall, about 4-5 m from the north or east wall near the entry door).",
       "dependsOn": [
         "site-measure"
       ],
@@ -288,13 +288,28 @@
       "trade": "fabrication",
       "title": "Fix an iron-angle support frame for the shoe rack to stand on",
       "room": "Main entry",
-      "detail": "Owner 2026-10-04: before the shoe rack goes in, something has to carry it, ideally an iron angle. A welded angle frame (a base the size of the rack, with brackets or legs) anchored into the wall and the slab edge, set level. Because it sits in an opening to the outside, use galvanised or stainless angle, or mild steel with anti-rust primer and two coats of paint. The fabricator sizes the angle for a full rack of shoes plus the cabinet itself; ask the engineer to confirm the fixing into the wall.",
+      "detail": "Owner 2026-10-04: before the shoe rack goes in, something has to carry it, ideally an iron angle. A welded angle frame (a base the size of the rack, with brackets or legs) anchored into the wall and the slab edge, set level. Because it sits in an opening to the outside, use galvanised or stainless angle, or mild steel with anti-rust primer and two coats of paint. The fabricator sizes the angle for a full rack of shoes plus the cabinet itself; ask the engineer to confirm the fixing into the wall. If the AC outdoor unit goes under the rack (owner proposal 2026-10-05, not decided), the frame becomes a platform projecting about 900 mm beyond the outer wall and carries about 35 kg more with vibration: the engineer and the fabricator must size it for that, with anti-vibration pads, a fall to the outside for rain, and a fixed welded grille on three sides.",
       "dependsOn": [
         "shoe-rack-wall",
         "engineer-check"
       ],
       "status": "todo",
       "needs": "Final shoe rack size, so the frame matches it: 15 in (381 mm) deep is decided; height about 6 1/2 ft and the width are to be confirmed"
+    },
+    {
+      "id": "lobby-bedroom3-opening",
+      "phase": "civil",
+      "trade": "civil",
+      "title": "Lobby northwest corner: cut a new doorway into Bedroom 3",
+      "room": "Lobby / Bedroom 3",
+      "detail": "Owner 2026-10-04: this doorway does not exist yet. Mark the new opening at the northwest corner of the Lobby into Bedroom 3 on site, agreeing its exact position and finished size with the door installer. Check for services in the wall before cutting. Form the opening with the support specified in the structural approval, remove debris and prepare the jambs and head for the frame. Coordinate frame fixing and making good with the door installer.",
+      "dependsOn": [
+        "engineer-check",
+        "society-permission",
+        "electrician-survey"
+      ],
+      "status": "todo",
+      "needs": "Confirm exact opening position, width and height on site; structural approval and any required support; door frame type and fixing sequence"
     },
     {
       "id": "north-wall-door",
@@ -378,6 +393,7 @@
       "dependsOn": [
         "shoe-rack-wall",
         "north-wall-door",
+        "lobby-bedroom3-opening",
         "pocket-partition"
       ],
       "status": "todo"
@@ -583,8 +599,8 @@
       "phase": "surfaces",
       "trade": "civil",
       "title": "Flooring and skirting repairs where walls were cut",
-      "room": "Drawing Room / Main entry",
-      "detail": "",
+      "room": "Drawing Room / Main entry / Lobby / Bedroom 3",
+      "detail": "Include floor and skirting repairs at the new Lobby northwest doorway into Bedroom 3.",
       "dependsOn": [
         "plaster",
         "elec-floor-box"
@@ -673,7 +689,7 @@
       "trade": "carpentry",
       "title": "New shoe rack on the left after the main door, on the iron-angle support",
       "room": "Main entry",
-      "detail": "Built to sit on the support frame in the opening where the window and the wall below it were. Depth: 15 in (381 mm) overall, decided by the owner 2026-10-04, so shoes go in lengthwise, toe to the back; that leaves about 340 mm clear inside after an 18 mm door and the back panel. Height about 6 1/2 ft (about 1,980 mm): the owner will confirm, so treat it as provisional. Width to suit the opening. The back and sides that face outside need a weatherproof finish (exterior-grade board or a metal or tile cladding) and a sealed joint to the wall. The 3D model draws the rack 865 wide x 2,134 (7 ft) high x 381 deep; width and height are updated once confirmed.",
+      "detail": "Built to sit on the support frame in the opening where the window and the wall below it were. Depth: 15 in (381 mm) overall, decided by the owner 2026-10-04, so shoes go in lengthwise, toe to the back; that leaves about 340 mm clear inside after an 18 mm door and the back panel. Height about 6 1/2 ft (about 1,980 mm): the owner will confirm, so treat it as provisional. Width to suit the opening. The back and sides that face outside need a weatherproof finish (exterior-grade board or a metal or tile cladding) and a sealed joint to the wall. The 3D model draws the rack 865 wide x 2,134 (7 ft) high x 381 deep; width and height are updated once confirmed. If the AC outdoor unit goes under the rack (owner proposal 2026-10-05, not decided), the bottom 840 mm becomes its bay: a closed, insulated divider under the shoes and a sealed, lined service door the full width of the bay on the gallery side; about 1,290 mm of a 7 ft rack is left for shoes.",
       "dependsOn": [
         "shoe-rack-support",
         "plaster"
@@ -694,6 +710,21 @@
       ],
       "status": "todo",
       "needs": "Confirm the wall and position once the shoe rack is in; choose the seat finish"
+    },
+    {
+      "id": "carp-lobby-bedroom3-door",
+      "phase": "carpentry",
+      "trade": "carpentry",
+      "title": "Lobby northwest corner: install the new door into Bedroom 3",
+      "room": "Lobby / Bedroom 3",
+      "detail": "Owner 2026-10-04: supply and install a new door at the new northwest Lobby opening into Bedroom 3. Measure the approved opening, fit the frame and leaf with hinges, handles, latch or lock and a door stop. Coordinate any frame fixing needed before plaster with the mason. Confirm hinge side and opening direction against circulation and furniture on both sides. Finish the door and trim, make good frame joints and check that it opens, closes and latches freely.",
+      "dependsOn": [
+        "lobby-bedroom3-opening",
+        "plaster",
+        "flooring"
+      ],
+      "status": "todo",
+      "needs": "Choose door and frame material, finish and hardware; confirm final size, hinge side and swing"
     },
     {
       "id": "carp-other",
@@ -732,6 +763,7 @@
         "plaster",
         "carp-west-cabinet",
         "carp-tv-console",
+        "carp-lobby-bedroom3-door",
         "window-wood-finish"
       ],
       "status": "todo"

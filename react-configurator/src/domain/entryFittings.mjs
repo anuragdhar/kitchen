@@ -102,3 +102,50 @@ export function checkEntryOuterDoor(entry) {
   need(['north', 'south'].includes(d.hinge), 'hinge must be on the north or south jamb of this west-wall opening')
   return {ok: issues.length === 0, issues, ...g}
 }
+
+export const GRILLE_OPEN_FRACTION_MIN = 0.7 // a condenser grille must be mostly air, or the fan pushes against it
+
+/**
+ * The owner's proposal (2026-10-05) to stand the AC outdoor unit in the bottom of the shoe rack (ENTRY.shoeRack.acBay), as
+ * sizes in mm for one orientation ('across' or 'lengthwise'; default: the configured one): the width the unit needs across
+ * the rack, how deep the bay becomes and how far it projects beyond the wall and the rack, and what is left for shoes.
+ */
+export function shoeRackAcBayGeometry(entry, orientation = entry.shoeRack.acBay.orientation) {
+  const rack = entry.shoeRack, bay = rack.acBay, u = bay.unit, c = bay.clearance, lengthwise = orientation === 'lengthwise'
+  const shoeBottomMm = bay.heightMm + bay.dividerMm
+  // Across: coil at the back, fan face out. Lengthwise: valves at the wall line, coil end toward the outer grille.
+  const neededWidthMm = lengthwise ? c.rearMm + u.depthMm + c.frontGapMm : u.widthMm + c.intakeSideMm + c.serviceSideMm
+  const bayDepthMm = bay.wallThicknessMm + (lengthwise ? u.widthMm + c.intakeSideMm : c.rearMm + u.depthMm + c.frontGapMm)
+  return {
+    orientation, bayWidthMm: rack.widthMm, bayHeightMm: bay.heightMm, bayDepthMm, neededWidthMm,
+    neededHeightMm: c.feetMm + u.heightMm + c.topMm,
+    beyondWallMm: bayDepthMm - bay.wallThicknessMm, beyondRackMm: Math.max(0, bayDepthMm - rack.projectionMm),
+    dischargeThrough: lengthwise ? `the ${bay.dischargeSide} side of the cage` : 'the outer face of the cage',
+    grilleOpenFraction: Math.round((bay.grille.pitchMm - bay.grille.barMm) / bay.grille.pitchMm * 100) / 100,
+    shoeBottomMm, shoeHeightLeftMm: rack.heightMm - shoeBottomMm,
+    shoeHeightLostFraction: Math.round(shoeBottomMm / rack.heightMm * 100) / 100,
+  }
+}
+
+/**
+ * Does the outdoor unit fit the bay with room to breathe and be serviced? `issues` are things that do not work as drawn;
+ * `unknowns` are site facts the answer still depends on. Typical figures only: the chosen model's manual governs.
+ */
+export function checkShoeRackAcBay(entry, orientation = entry.shoeRack.acBay.orientation) {
+  const bay = entry.shoeRack.acBay, c = bay.clearance, g = shoeRackAcBayGeometry(entry, orientation)
+  const issues = [], unknowns = [], need = (ok, message) => { if (!ok) issues.push(message) }
+  need(['across', 'lengthwise'].includes(orientation), `unknown orientation ${orientation}`)
+  need(g.bayWidthMm >= g.neededWidthMm, orientation === 'lengthwise'
+    ? `the bay is ${g.bayWidthMm} mm wide; the unit turned lengthwise with air behind its coil needs ${g.neededWidthMm} mm`
+    : `the bay is ${g.bayWidthMm} mm wide; the unit with air on one side and hands on the valve side needs ${g.neededWidthMm} mm`)
+  need(g.bayHeightMm >= g.neededHeightMm, `the bay is ${g.bayHeightMm} mm high; the unit on its pads with air above needs ${g.neededHeightMm} mm`)
+  need(c.frontGapMm <= c.frontToGrilleMaxMm, `the fan face would sit ${c.frontGapMm} mm behind the grille (at most ${c.frontToGrilleMaxMm}), so hot air would come back round into the intake`)
+  need(g.grilleOpenFraction >= GRILLE_OPEN_FRACTION_MIN, `the grille is only ${Math.round(g.grilleOpenFraction * 100)}% open (needs ${GRILLE_OPEN_FRACTION_MIN * 100}%)`)
+  need(g.shoeHeightLeftMm >= 1000, `only ${g.shoeHeightLeftMm} mm of rack height is left for shoes`)
+  if (bay.outsideClearMm == null) unknowns.push(`free air beyond ${g.dischargeThrough} is not measured (needs about ${c.outsideFrontMm} mm, open to the sky, not a closed shaft or corridor)`)
+  else need(bay.outsideClearMm >= c.outsideFrontMm, `only ${bay.outsideClearMm} mm of free air beyond ${g.dischargeThrough} (needs ${c.outsideFrontMm})`)
+  if (orientation === 'lengthwise') unknowns.push('the opposite side of the cage must be open air too: the coil breathes through it')
+  unknowns.push(`the platform would project ${g.beyondWallMm} mm beyond the outer wall face and carry about ${bay.unit.weightKg} kg more, with vibration (structural engineer and fabricator)`)
+  unknowns.push(`the wall is assumed ${bay.wallThicknessMm} mm thick and the opening width is not measured (work-plan/OPEN_ITEMS.md A3); the rack is drawn ${g.bayWidthMm} mm wide`)
+  return {ok: issues.length === 0, issues, unknowns, ...g}
+}

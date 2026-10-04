@@ -313,3 +313,12 @@ dimensions, the defaults chosen without asking the owner, and what is not verifi
 
 Tools added the same day: `react-configurator/scripts/room-shots.cjs` and `scripts/scan_measure.py` (docs/TESTING.md).
 Blender exports and stills were not regenerated for any of this.
+
+## 2026-10-05: ceiling heights left at 2700; AC outdoor unit under the shoe rack (proposal)
+
+- Ceiling heights from the phone scans (2760-2775) are NOT applied: where a taped height exists (Home Office, 2642) the
+  scan read about 38 mm high. Reasoning in `docs/SITE_SCAN_2026-10-04.md`; tape items A13 and A18.
+- Owner proposal, not decided: the Drawing Room AC outdoor unit on the shoe rack platform, in the bottom of the rack.
+  `ENTRY.shoeRack.acBay`, checks in `src/domain/entryFittings.mjs`, a toggle on the Main entry page (off by default; the
+  plain rack 865 x 2134 x 381 is unchanged). By typical sizes it fits lengthwise (platform about 900 mm beyond the wall)
+  and not across (needs 1200 of width). Details and conditions: `docs/changes/2026-10-05-shoe-rack-ac-bay.md`.

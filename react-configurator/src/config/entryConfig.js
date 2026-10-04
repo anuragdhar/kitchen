@@ -17,6 +17,34 @@ export const ENTRY = {
     // projectionMm is the rack's depth. Owner 2026-10-04: 15 in (381 mm), so shoes go in lengthwise (was 305). The height is
     // still the earlier 7 ft; the owner is considering about 6 1/2 ft and will confirm (work-plan task carp-shoe-rack).
     widthMm: 865, heightMm: 2134, projectionMm: 381, doorCount: 2, projects: 'north-outside',
+    // PROPOSAL, not decided (owner 2026-10-05): the Drawing Room AC's OUTDOOR unit stands on the rack's platform, in the
+    // bottom of the rack where it projects outside the north wall, inside a fixed grille; a sealed service door on the
+    // gallery side is the only way to reach it (the flat is on an upper floor); a closed, insulated divider separates it
+    // from the shoes above. Shown only by the "AC outdoor unit under the shoe rack" toggle on the Main entry page; the rack
+    // is drawn without it by default. Millimetres.
+    //  orientation 'across': the long fan face looks straight out (the owner's first idea). 'lengthwise' (the owner's
+    //              follow-up, "put it in the long way"): turned a quarter turn, so the long side runs outward, the fan
+    //              blows out through one SIDE of the cage (dischargeSide) and the coil breathes through the other side;
+    //              the service valves are at the inner end, right behind the service door.
+    //  wallThicknessMm  the outer wall the rack passes through, ASSUMED 9 inches (work-plan/OPEN_ITEMS.md A3). The unit
+    //              must stand beyond it, or masonry blocks the air at its sides.
+    //  heightMm    clear height of the bay, platform to the underside of the divider
+    //  unit        a TYPICAL compact 1.5 ton inverter outdoor unit including its valve cover; the chosen model governs
+    //  clearance   typical installation-manual figures: behind the coil, beside the coil end (intake side), beside the
+    //              service valves, above the casing, the designed gap from the fan face to the grille and the most it may
+    //              be (further back and the hot air comes round into the intake), the pads under the unit, and the free
+    //              air needed beyond the grille on the discharge side.
+    //  grille      fixed bars on the outer face and both sides of the bay
+    //  outsideClearMm  free air beyond the grille on the discharge side: NOT measured (the owner: "the area in front is clear")
+    acBay: {
+      status: 'proposal by the owner 2026-10-05, not decided; nothing measured',
+      orientation: 'lengthwise', dischargeSide: 'east', wallThicknessMm: 230, wallThicknessAssumed: true,
+      heightMm: 800, dividerMm: 40,
+      unit: {label: 'typical compact 1.5 ton inverter outdoor unit', widthMm: 800, heightMm: 550, depthMm: 300, weightKg: 35, serviceSide: 'west'},
+      clearance: {rearMm: 100, intakeSideMm: 100, serviceSideMm: 300, topMm: 150, frontGapMm: 40, frontToGrilleMaxMm: 50, feetMm: 50, outsideFrontMm: 1000},
+      grille: {barMm: 10, pitchMm: 60},
+      outsideClearMm: null,
+    },
   },
   shaft: {planX1: 575, planY1: 775, planX2: 688, planY2: 810},
   arrivalDoor: {wallPlanX:575,fromPlanY:810,toPlanY:874,heightMm:2200,openAngleDegrees:80,hinge:'north',opens:'west-outside'},

@@ -13,14 +13,17 @@ import {createEntryFoldSeat} from './rooms/entry/EntryFoldSeat.js'
 import {createEntryEastCabinet} from './rooms/entry/EntryEastCabinet.js'
 import {createEntryOuterDoor} from './rooms/entry/EntryOuterDoor.js'
 import {createEntryCeilingLights} from './rooms/entry/EntryCeilingLights.js'
+import {createShoeRackWithAcBay} from './rooms/entry/ShoeRackAcBay.js'
+import {checkShoeRackAcBay} from './domain/entryFittings.mjs'
 import shoeRackWoodTexture from '../../Interior/entry-textures/shoe-rack-wood.png'
 import {createDesignerRender} from './render/designerRender.js'
 import {useDesignerRender} from './render/useDesignerRender.js'
 
+const acBayCheck=checkShoeRackAcBay(ENTRY),acBayOther=checkShoeRackAcBay(ENTRY,acBayCheck.orientation==='lengthwise'?'across':'lengthwise')
 const buttonStyle=active=>({padding:'7px 11px',borderRadius:9,border:'1px solid #cbd5e1',background:active?'#172033':'#fff',color:active?'#fff':'#172033',fontWeight:800,cursor:'pointer'})
 
 export default function EntryGallery3D(){
-  const [view,setView]=useState('overview')
+  const [view,setView]=useState('overview'),[acBay,setAcBay]=useState(false),acBayRef=useRef(false)
   const mountRef=useRef(null),sceneRef=useRef(null)
   const designer=useDesignerRender(sceneRef)
 
@@ -87,12 +90,17 @@ export default function EntryGallery3D(){
 
     const rack=ENTRY.shoeRack,rackWidth=rack.widthMm/1000,rackDepth=rack.projectionMm/1000,rackHeight=rack.heightMm/1000
     const rackX=x((rack.planX1+rack.planX2)/2),rackFront=z(rack.planNorthY)-.005
-    addBox(rackWidth,rackHeight,rackDepth,rackX,rackHeight/2,rackFront+rackDepth/2,timber)
+    const plainRack=new THREE.Group();model.add(plainRack)
+    addBox(rackWidth,rackHeight,rackDepth,rackX,rackHeight/2,rackFront+rackDepth/2,timber,plainRack)
     for(let i=0;i<rack.doorCount;i++){
       const panelWidth=rackWidth/rack.doorCount,panelX=rackX-rackWidth/2+(i+.5)*panelWidth
-      addBox(panelWidth-.012,rackHeight-.06,.024,panelX,rackHeight/2,rackFront-.012,rackMirror)
-      addBox(.025,.24,.026,panelX+(i===0?.11:-.11),1.08,rackFront-.04,metal)
+      addBox(panelWidth-.012,rackHeight-.06,.024,panelX,rackHeight/2,rackFront-.012,rackMirror,plainRack)
+      addBox(.025,.24,.026,panelX+(i===0?.11:-.11),1.08,rackFront-.04,metal,plainRack)
     }
+    // Owner proposal 2026-10-05 (ENTRY.shoeRack.acBay): the AC outdoor unit in the bottom of the rack; shown by a toggle.
+    const acBayRack=createShoeRackWithAcBay({timber,mirror:rackMirror,metal});acBayRack.position.set(rackX,0,rackFront);model.add(acBayRack)
+    const setAcBay=on=>{plainRack.visible=!on;acBayRack.visible=on}
+    setAcBay(acBayRef.current)
 
     // Door into the Drawing Room is at the south end of this plan-shaped entry.
     const innerWidth=x(inner.toPlanX)-x(inner.fromPlanX)
@@ -133,6 +141,7 @@ export default function EntryGallery3D(){
     const sun=new THREE.DirectionalLight('#fff3dc',1.3);sun.position.set(-2,7,4);sun.castShadow=true;scene.add(sun)
     const setCamera=key=>{
       if(key==='top'){camera.position.set(width/2,10.3,length/2+.01);camera.up.set(0,0,-1);controls.target.set(width/2,0,length/2)}
+      else if(key==='acBay'){camera.position.set(rackX-2.2,1.7,length+2.9);camera.up.set(0,1,0);controls.target.set(rackX,.7,length+.4)}
       else{camera.position.set(width/2+3.2,8.6,length+4.3);camera.up.set(0,1,0);controls.target.set(width/2,.55,length/2)}
       camera.lookAt(controls.target);controls.update()
     }
@@ -141,17 +150,24 @@ export default function EntryGallery3D(){
     const observer=new ResizeObserver(resize);observer.observe(mount);resize()
     const interiorScene=registerInteriorScene({id:'entry',scene,camera,renderer,zones:[{id:'entry',min:[0,0,0],max:[width,height,length]}]})
     let raf=0;const render=()=>{controls.update();designerRender.render();raf=requestAnimationFrame(render)};render()
-    sceneRef.current={setCamera,setDesigner:on=>designerRender.setEnabled(on)}
+    sceneRef.current={setCamera,setAcBay,setDesigner:on=>designerRender.setEnabled(on)}
     return()=>{interiorScene.dispose();cancelAnimationFrame(raf);designerRender.dispose();observer.disconnect();controls.dispose();labelTextures.forEach(texture=>texture.dispose());model.traverse(object=>{object.geometry?.dispose?.();if(Array.isArray(object.material))object.material.forEach(material=>material.dispose());else object.material?.dispose?.()});environment.dispose();pmrem.dispose();renderer.dispose();renderer.domElement.remove();sceneRef.current=null}
   },[])
 
   useEffect(()=>{sceneRef.current?.setCamera(view)},[view])
+  useEffect(()=>{acBayRef.current=acBay;sceneRef.current?.setAcBay(acBay)},[acBay])
 
   return <section style={{background:'#fff',border:'1px solid #dbe3e9',borderRadius:22,overflow:'hidden',boxShadow:'0 16px 42px rgba(23,32,51,.1)'}}>
     <div style={{padding:'14px 16px',display:'flex',gap:12,alignItems:'center',justifyContent:'space-between',flexWrap:'wrap',borderBottom:'1px solid #e2e8f0'}}>
       <div><b style={{fontSize:18,color:'#172033'}}>Northwest entry gallery</b><div style={{fontSize:12,color:'#64748b',marginTop:3}}>Ventilated stainless outer door · corridor with round lights · shaft · arrival door · shoe rack · door to Drawing Room</div></div>
-      <div style={{display:'flex',gap:7}}><button {...designer.button(buttonStyle(designer.on))}/><button onClick={()=>setView('overview')} style={buttonStyle(view==='overview')}>Overview</button><button onClick={()=>setView('top')} style={buttonStyle(view==='top')}>Top</button></div>
+      <div style={{display:'flex',gap:7}}><button {...designer.button(buttonStyle(designer.on))}/><button onClick={()=>setView('overview')} style={buttonStyle(view==='overview')}>Overview</button><button onClick={()=>setView('top')} style={buttonStyle(view==='top')}>Top</button><button onClick={()=>{setView(acBay?'overview':'acBay');setAcBay(!acBay)}} style={buttonStyle(acBay)}>{acBay?'Hide':'Show'} AC outdoor unit under the shoe rack</button></div>
     </div>
+    {acBay&&<div style={{margin:'10px 16px',padding:'10px 12px',borderRadius:10,background:'#fff7ed',border:'1px solid #fed7aa',fontSize:13,color:'#7c2d12'}}>
+      <b>Proposal, not decided: the AC outdoor unit in the bottom of the shoe rack.</b> Seen from outside. Drawn {acBayCheck.orientation}: the fan blows out through {acBayCheck.dischargeThrough}. Bay {acBayCheck.bayWidthMm} wide x {acBayCheck.bayHeightMm} high x {acBayCheck.bayDepthMm} deep from the gallery face, {acBayCheck.beyondWallMm} mm beyond the outer wall; {acBayCheck.shoeHeightLeftMm} mm of rack height is left for shoes ({Math.round(acBayCheck.shoeHeightLostFraction*100)}% lost).
+      {acBayCheck.issues.map(issue=><div key={issue} style={{color:'#b91c1c'}}>Does not work as drawn: {issue}.</div>)}
+      {acBayCheck.unknowns.map(unknown=><div key={unknown}>To find out: {unknown}.</div>)}
+      <div style={{marginTop:6}}>The other way round ({acBayOther.orientation}): needs {acBayOther.neededWidthMm} mm of width and projects {acBayOther.beyondWallMm} mm beyond the wall; {acBayOther.issues.length?`does not work as drawn: ${acBayOther.issues.join('; ')}`:'fits as drawn'}.</div>
+    </div>}
     <div ref={mountRef} style={{height:'clamp(620px,82vh,1100px)',width:'100%'}}/>
     <div style={{padding:'0 16px 15px',fontSize:12,color:'#64748b'}}>S ↑ · N ↓ · E ← · W → · This view uses the same entry wall coordinates as Whole home 3D.</div>
   </section>
