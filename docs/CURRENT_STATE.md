@@ -286,3 +286,30 @@ head 2430, three bays; layout C chandelier (1676, 2850) -> (1600, 2705) and ceil
 3150 x 5276 x 2775, Lobby ceiling 2760, beam 260 wide with its underside at 2445) because the whole-home model uses the
 A501 outline and one 2700 ceiling; the Lobby north door, which the app shows at its planned position after civil work
 (today it is at about 2580-3530). Fan blade size and drop are still assumed. Blender exports and stills were not regenerated.
+
+## Changes of 2026-10-04 (evening): entry, lighting, scans, home office
+
+Five pieces of work were built in parallel and merged; each has its own note in `docs/changes/` with before/after
+dimensions, the defaults chosen without asking the owner, and what is not verified.
+
+- **Main entry** (`2026-10-04-entry.md`): the outer opening has a ventilated stainless steel door (leaf 815 x 2145, grille
+  panels, about 38 % open); the generic linear strips are replaced by four round 8 W panel lights; no track there. The
+  wooden door to the Drawing Room stays.
+- **Lighting** (`2026-10-04-lighting.md`, `docs/LIGHTING.md`): one track run = one circuit with its own driver and wall
+  dimmer (individual heads cannot be dimmed); sliders are per circuit. The old overlay strips are gone from the Lobby and
+  Pooja alcove. Bedroom 1, Bedroom 3, the Study (Bedroom 2) and the Kitchen have track lighting configs, checks and
+  sliders. Fans in Bedroom 1 and the Study are assumed at the room centre.
+- **Existing electrical points** (`2026-10-04-existing-electrical.md`): "Show existing electrical points" on the Drawing
+  Room, Lobby and Bedroom 3 pages and in Whole home 3D, from the phone scans, with a list of conflicts against the plan.
+- **Bedroom 3 scan and windows** (`2026-10-04-bedroom3-windows.md`, `docs/SITE_SCAN_2026-10-04_BEDROOM3.md`): toilet door
+  2850 + 700 x 2100 -> 2525 + 780 x 2000; south wardrobe bay 0 + 1771 x 2400 -> 365 + 1540 x 2450; balcony door 1771 +
+  1000 x 2200 -> 2005 + 700 x 2360 with a transom at 2040; window 2771 + 1192, sill 900, head 2200 -> 2785 + 920, sill
+  920, head 2360; fan point (2030, 1820) from the scan; wardrobe spots on track B2 moved from x 450 / 1350 to 650 / 1620.
+  The room box (scan 3915 x 3665 x 2770) is not changed. Windows are drawn by a shared builder with transoms, top lights,
+  shutters, roller nets and the outside screen (Drawing Room) from config.
+- **Home Office, the balcony of Bedroom 2** (`2026-10-04-home-office.md`, `docs/SITE_SCAN_2026-10-04_HOME_OFFICE.md`):
+  sit-stand top 2268 -> 1500 long; a fixed 743 section at the south end at 838 high with a cabinet below; 25 mm gaps. The
+  scanned room box (2460 x 1065) and the wall and column at the south-east corner are recorded, not drawn.
+
+Tools added the same day: `react-configurator/scripts/room-shots.cjs` and `scripts/scan_measure.py` (docs/TESTING.md).
+Blender exports and stills were not regenerated for any of this.

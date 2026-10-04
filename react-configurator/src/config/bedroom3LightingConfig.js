@@ -5,9 +5,9 @@
 // How the room is used (roomShellConfig.js, 2026-10-04): the six-foot bed has its head at the east wall between the two
 // bedside cabinets (x 2134-3963, z 948-2778; sleepers about 420 mm either side of z 1863); the east cabinetry carries a
 // bridge run at 2200-2650 along the whole east wall (x 3506-3963), so no track may go there; the mirrored dressing cabinet
-// is at the north-east (z 150-900, mirror facing west); the wardrobe is the cabinet through the south wall (x 0-1771); the
+// is at the north-east (z 150-900, mirror facing west); the wardrobe is the cabinet through the south wall (x 365-1905, phone scan); the
 // low chest with artwork is on the west wall; the entry door is at the north-west (x 0-900) and the toilet door at the
-// north-east (x 2850-3550), both in the north wall; wall art hangs on the north wall at x 2300.
+// north-east (x 2525-3305, phone scan), both in the north wall; wall art hangs on the north wall at x 2300.
 //
 // THE FAN POINT: one field. Phone scan 2026-10-04 (docs/SITE_SCAN_2026-10-04_BEDROOM3.md): the ceiling medallion and the
 // fan hub are 2030 from the west wall and 1820 from the north wall (was assumed at the room centre, 1981 / 1863). The
@@ -28,12 +28,13 @@ export const BEDROOM3_LIGHTING = {
       {kind: 'spot', atMm: 2300, watts: 7, lumens: 600, aim: 'north'},
       {kind: 'reading', atMm: 2950, watts: 12, lumens: 1000, targetMm: {xMm: 3200, zMm: 1450}},
       {kind: 'reading', atMm: 3300, watts: 12, lumens: 1000}]},
-    // South side, 626 mm off the south wall: two spots graze the wardrobe fronts (the cabinet through the south wall), a
+    // South side, 626 mm off the south wall: two spots graze the wardrobe fronts (x 365-1905; the spots stand 285 mm inside
+    // each end, moved from 450 and 1350 when the scan placed the wardrobe), a
     // diffused head for the soft layer, and the south sleeper's reading head, aimed the same way from the foot side.
     {id: 'B2', label: 'Bedroom 3 track 2: south side, wardrobe and south reading', axis: 'x', atMm: 3100, fromMm: 300, toMm: 3350, driverWatts: 60, heads: [
-      {kind: 'spot', atMm: 450, watts: 7, lumens: 600, aim: 'south'},
-      {kind: 'diffuse', atMm: 900, watts: 15, lumens: 1400, lengthMm: 300},
-      {kind: 'spot', atMm: 1350, watts: 7, lumens: 600, aim: 'south'},
+      {kind: 'spot', atMm: 650, watts: 7, lumens: 600, aim: 'south'},
+      {kind: 'diffuse', atMm: 1135, watts: 15, lumens: 1400, lengthMm: 300},
+      {kind: 'spot', atMm: 1620, watts: 7, lumens: 600, aim: 'south'},
       {kind: 'reading', atMm: 2950, watts: 12, lumens: 1000, targetMm: {xMm: 3200, zMm: 2280}}]},
   ]},
 }
