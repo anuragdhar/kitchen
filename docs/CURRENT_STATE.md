@@ -374,3 +374,13 @@ Six pieces of work, each with a note in `docs/changes/2026-10-05-*.md`:
 - 2026-10-06: Drawing Room track feeds. Points C2 and C3 (one driver feed per track, at the run end nearest the
   switchboard), `DRAWING_LIGHT_FEEDS` (rotary LED dimmer per circuit, cable routes from the existing north-wall
   switchboard X-D1: 2.4 m and 4.5 m), `checkLightFeeds`; the routes draw with "Show electrical points".
+
+## 2026-10-06: furniture models
+
+Sofas, scatter cushions and rug (`docs/changes/2026-10-06-furniture-seating.md`), beds and bedding
+(`2026-10-06-furniture-beds.md`), tables, chairs, lamps, plants and hamper (`2026-10-06-furniture-tables-chairs.md`) are
+now shaped procedural models in `src/rooms/shared/furniture/` instead of boxes. Footprints, positions and heights are
+unchanged and measured by tests (`sofa-models`, `bed-furniture`, `furniture-bounds`). Drawing corrections made on the
+way, with no config change: the Lobby page drew the dining table turned 90 degrees (it is 700 east-west by 1200
+north-south, as config and Whole home 3D have it); lamp tables drawn 570 high are now the configured 550; the sofa seat
+is drawn about 443 high (was about 560). No models or textures were downloaded.
