@@ -1,0 +1,32 @@
+{
+  "run": "20261005T161819Z-89ebb6bae6ac-dca806c9",
+  "sourceCommit": "89ebb6bae6ac1083a2a53cf15edb17bcb322a15b",
+  "job": {
+    "version": 1,
+    "enabled": true,
+    "request": "patch-2b2f066f3548f9ac",
+    "rooms": [
+      "lobby"
+    ],
+    "quality": "draft",
+    "device": "AUTO"
+  },
+  "inputMode": "repository-defaults",
+  "status": "failed",
+  "visualReview": "unreviewed",
+  "steps": [
+    {
+      "name": "dependencies",
+      "exitCode": 0,
+      "seconds": 0,
+      "cached": true
+    },
+    {
+      "name": "build-tests",
+      "exitCode": 1,
+      "seconds": 3.02
+    }
+  ],
+  "rooms": [],
+  "error": "build-tests failed with exit 1"
+}
