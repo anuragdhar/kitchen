@@ -66,10 +66,24 @@ export const EMPTY_ROOM_SHELLS={
       // Owner 2026-10-03: replace west run with east bedside cabinetry, existing honey oak.
       // All mm; x east from west wall, z south from north wall, y up. Depth includes fronts.
       // 18 inches = 457.2 mm. North/south setbacks keep cabinetry off the opening wall planes.
+      // Owner 2026-10-05 ("in room 3 swap the place of dressing, move it to south side; in place of dressing show full depth
+      // cabinet till ceiling"; docs/changes/2026-10-05-bedroom3-dressing-swap.md). Was: north = the mirror dressing cabinet
+      // 750 x 2200 (mirror 580-2130), south = a low cabinet 750 x 600 with two drawers, bridge z 150-3576 (3426 long, 4 doors).
+      // Checks: src/domain/bedroom3EastCabinet.mjs.
       eastCabinet:{wall:'east',depthMm:457.2,panelMm:18,
-        north:{fromNorthMm:150,widthMm:750,heightMm:2200,mirrorBottomMm:580,mirrorTopMm:2130},
-        south:{fromNorthMm:2826,widthMm:750,heightMm:600,drawerCount:2},
-        bridge:{fromNorthMm:150,widthMm:3426,bottomMm:2200,heightMm:450,doorCount:4},
+        // Full-height storage in place of the dressing: floor to the 2700 ceiling of this model (= heightMm of the room; the
+        // scan read about 2770, so the carpenter scribes a top filler), a pair of solid leaves up to loftBottomMm and a loft
+        // pair above, on the line of the overhead run. depthMm is this unit's own (default: the run's 18 in). 610 (24 in,
+        // wardrobe depth) would leave only about 48 mm between its front and the toilet door frame at x 3305.
+        north:{kind:'storage',fromNorthMm:150,widthMm:750,depthMm:457.2,heightMm:2700,doorCount:2,loftBottomMm:2200,shelvesMm:[400,800,1200,1600]},
+        // The mirror dressing cabinet, moved here from the north end with the same size and mirror band. Two drawers below the
+        // mirror door. mirrorHinge: the edge the mirror door hangs on; 'north' keeps the open door beside the bed, away from
+        // the balcony window ('south' would stand it 168 mm in front of the window). standDepthMm: the floor in front of the
+        // mirror where a person stands (also the target of the dressing down light).
+        south:{kind:'dressing',fromNorthMm:2826,widthMm:750,heightMm:2200,mirrorBottomMm:580,mirrorTopMm:2130,mirrorHinge:'north',drawerCount:2,standDepthMm:650},
+        // Starts where the full-height north cabinet ends (was from 150, 3426 long); doorCount is shared out between the two
+        // closed compartments either side of the AC bay by their length (1 north, 2 south).
+        bridge:{fromNorthMm:900,widthMm:2676,bottomMm:2200,heightMm:450,doorCount:3},
         ac:{centerFromNorthMm:1863,bayWidthMm:1200,slatHeightMm:18,slatGapMm:18,
           unitWidthMm:1000,unitHeightMm:280,unitDepthMm:230,bottomMm:2280,wallGapMm:25},
         shelf:{fromNorthMm:900,widthMm:1926,depthMm:250,heightMm:1650},

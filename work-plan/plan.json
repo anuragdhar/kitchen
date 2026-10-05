@@ -1567,7 +1567,7 @@
       "trade": "carpentry",
       "title": "Bedroom 3: cabinets on both sides of the bed, the overhead run and the slatted AC bay",
       "room": "Bedroom 3",
-      "detail": "Owner 2026-10-03, honey oak, 18 in (457 mm) deep overall. North of the bed: a mirror dressing cabinet 750 wide x 2,200 high. South of the bed: a low cabinet 750 x 600 with two drawers. Above: an overhead run 3,426 wide x 450 high from 2,200 to 2,650, with a central 1,200 mm slatted bay, open underneath, around the existing AC (about 30 mm of headroom by the scan). A headboard shelf between the cabinets. Model sizes, checked against the phone scan: the dressing cabinet clears the toilet door by about 200 mm.",
+      "detail": "Owner 2026-10-03, honey oak, 18 in (457 mm) deep overall; the two ends swapped by the owner 2026-10-05. North of the bed: a full-height storage cabinet 750 wide, floor to ceiling (2,700 in the model; the scan read about 2,770, so allow a scribed top filler), a pair of solid doors with a loft pair above 2,200. South of the bed: the mirror dressing cabinet 750 wide x 2,200 high (mirror door 580-2,130, hinged on its north edge), two drawers below. Above: an overhead run 2,676 wide x 450 high from 2,200 to 2,650, from the storage cabinet to the south end, with a central 1,200 mm slatted bay, open underneath, around the existing AC (about 30 mm of headroom by the scan). A headboard shelf between the cabinets. Model sizes, checked against the phone scan: the storage cabinet clears the toilet door frame by about 200 mm; the dressing cabinet stands 150 mm in front of the east 199 mm of the balcony window (see docs/changes/2026-10-05-bedroom3-dressing-swap.md).",
       "dependsOn": [
         "bedroom3-cupboard-remove",
         "finalise-layouts",
@@ -1580,9 +1580,9 @@
         "A19",
         "A20"
       ],
-      "estimateLow": 63500,
-      "estimateHigh": 101000,
-      "estimateBasis": "dressing cabinet 750 x 2200: 17.8 sq ft x Rs 1,500-2,300; overhead run 3426 x 450: 16.6 sq ft x Rs 1,500-2,300; low cabinet 750: 2.5 running ft x Rs 3,500-6,000; mirror: 12.5 sq ft x Rs 150-280; headboard shelf: 5.2 sq ft x Rs 350-600. The slatted AC bay is priced as overhead cabinet front.",
+      "estimateLow": 82000,
+      "estimateHigh": 128000,
+      "estimateBasis": "full-height storage cabinet 750 x 2700: 21.8 sq ft x Rs 1,500-2,300; dressing cabinet 750 x 2200: 17.8 sq ft x Rs 1,500-2,300; overhead run 2676 x 450: 13 sq ft x Rs 1,500-2,300; mirror: 12.5 sq ft x Rs 150-280; headboard shelf: 5.2 sq ft x Rs 350-600. The slatted AC bay is priced as overhead cabinet front.",
       "estimateConfidence": "low"
     },
     {
@@ -1972,9 +1972,9 @@
       "openItems": [
         "C27"
       ],
-      "estimateLow": 22000,
-      "estimateHigh": 44000,
-      "estimateBasis": "track: 5.5 m x Rs 900-1,800; spot heads: 3 each x Rs 900-1,800; diffused heads: 2 each x Rs 1,300-2,500; reading heads: 3 each x Rs 1,200-2,200; 60 W drivers: 2 each x Rs 1,800-3,000; dimmers: 2 each x Rs 1,500-3,500; fixing: 2 run x Rs 1,000-2,000. Counts from the lighting config; one maker for track, heads and drivers.",
+      "estimateLow": 23000,
+      "estimateHigh": 45500,
+      "estimateBasis": "track: 5.5 m x Rs 900-1,800; spot heads: 3 each x Rs 900-1,800; diffused heads: 2 each x Rs 1,300-2,500; reading heads: 3 each x Rs 1,200-2,200; 60 W drivers: 1 each x Rs 1,800-3,000; 100 W drivers: 1 each x Rs 2,500-4,500; dimmers: 2 each x Rs 1,500-3,500; fixing: 2 run x Rs 1,000-2,000. Counts from the lighting config; one maker for track, heads and drivers.",
       "estimateConfidence": "medium"
     },
     {

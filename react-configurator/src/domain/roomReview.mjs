@@ -7,6 +7,7 @@ import {windowGeometry} from './windowDesign.mjs'
 import {describeExistingElectrical} from './existingElectrical.mjs'
 import {bedroom1Review} from './bedroom1Layout.mjs'
 import {BEDROOM1_DESIGN} from '../config/bedroom1LayoutConfig.js'
+import {checkBedroom3EastCabinet, eastCabinetRoles} from './bedroom3EastCabinet.mjs'
 
 const mm = v => `${Math.round(v)} mm`
 const size = (a, b) => `${Math.round(a)} x ${Math.round(b)}`
@@ -228,12 +229,29 @@ function genericPlanItems(roomKey, room) {
     const chest = f.westChest
     if (chest) add(`West chest ${chest.widthMm}x${chest.depthMm}`, 0, chest.fromNorthMm, chest.depthMm, chest.fromNorthMm+chest.widthMm, 'fixed')
     const c = f.eastCabinet
-    if (c) for (const [key, label] of [['north', 'NE dressing cabinet'], ['south', 'SE bedside cabinet']]) {
-      const unit = c[key]
-      add(`${label} ${unit.widthMm}x${c.depthMm}`, W-c.depthMm, unit.fromNorthMm, W, unit.fromNorthMm+unit.widthMm, 'fixed')
+    // Owner 2026-10-05: the mirror dressing cabinet is the south unit, the full-height storage cabinet the north one.
+    const kind = unit => unit.mirrorTopMm != null ? 'dressing cabinet' : unit.kind === 'storage' ? 'full-height storage cabinet' : 'bedside cabinet'
+    if (c) for (const [key, end] of [['north', 'NE'], ['south', 'SE']]) {
+      const unit = c[key], depth = unit.depthMm ?? c.depthMm
+      add(`${end} ${kind(unit)} ${unit.widthMm}x${depth}x${unit.heightMm}`, W-depth, unit.fromNorthMm, W, unit.fromNorthMm+unit.widthMm, 'fixed')
     }
   }
   return items
+}
+
+// Bedroom 3 east cabinetry (owner 2026-10-03; the dressing and the storage swapped ends 2026-10-05), with the results of
+// src/domain/bedroom3EastCabinet.mjs.
+function describeBedroom3EastCabinet(room) {
+  const c = room.furniture.eastCabinet, roles = eastCabinetRoles(room), check = checkBedroom3EastCabinet(room), m = check.measures
+  const end = key => key === 'north' ? 'North-east' : 'South-east'
+  const parts = [`East cabinetry: ${mm(c.depthMm)} (18 inches) overall depth, honey oak.`]
+  if (roles.storage) { const s = c[roles.storage]; parts.push(`${end(roles.storage)}: a full-height storage cabinet ${s.widthMm} wide x ${Math.round(s.depthMm ?? c.depthMm)} deep, floor to the ${mm(s.heightMm)} ceiling, ${s.doorCount} solid doors with a loft pair above ${mm(s.loftBottomMm)}.`) }
+  if (roles.dressing) { const d = c[roles.dressing]; parts.push(`${end(roles.dressing)}: the mirror dressing cabinet ${d.widthMm} x ${mm(d.heightMm)}, mirror door ${d.mirrorBottomMm}-${d.mirrorTopMm} mm hinged on its ${m.mirrorDoor.hinge} edge, ${d.drawerCount} drawers below; a standing spot ${d.standDepthMm} mm deep in front of it, ${mm(m.standingSpot.toBalconyDoorPathMm)} clear of the balcony door's path.`) }
+  parts.push(`Overhead cupboards z ${c.bridge.fromNorthMm}-${c.bridge.fromNorthMm + c.bridge.widthMm} at ${c.bridge.bottomMm}-${c.bridge.bottomMm + c.bridge.heightMm} mm with a slatted AC cover with an open underside; AC dimensions are a concept placeholder; equipment, airflow and service access are not verified.`)
+  parts.push(`The north unit's front is ${mm(m.toiletFrameGapMm)} east of the toilet door frame.`)
+  for (const w of check.warnings) parts.push(`Check: ${w[0].toUpperCase()}${w.slice(1)}.`)
+  for (const i of check.issues) parts.push(`CLASH: ${i}.`)
+  return parts.join(' ')
 }
 
 function describeExtras(room) {
@@ -250,7 +268,7 @@ function describeExtras(room) {
     const c=room.furniture.westChest,a=c.artwork,b=room.furniture.bed
     lines.push(`West honey-oak chest: ${c.widthMm} mm along the wall x ${c.depthMm} mm deep x ${c.heightMm} mm high, ${c.drawerRows*c.drawerColumns} drawers. Framed artwork ${a.widthMm} x ${a.heightMm} mm, bottom ${a.bottomMm} mm above floor. Closed chest to bed foot: ${room.widthMm-b.lengthMm-c.depthMm} mm.`)
   }
-  if (room.furniture?.eastCabinet) lines.push('East bedside cabinetry: 18 inches (457.2 mm) overall depth, honey oak. Northeast mirror dressing cabinet, southeast low cabinet, overhead cupboards and a slatted AC cover with an open underside. AC dimensions are a concept placeholder; equipment, airflow and service access are not verified. The north cabinet starts 150 mm off the toilet wall; doorway approach and mirror-door use need site review.')
+  if (room.furniture?.eastCabinet) lines.push(describeBedroom3EastCabinet(room))
   if (room.name === 'Lobby / Dining') {
     const bounds = HOME_ROOM_LAYOUTS.find(r => r.name === room.name).bounds
     const span = closedDoorSpanMm(BEDROOM1_CLOSED_DOOR, bounds, room.widthMm)

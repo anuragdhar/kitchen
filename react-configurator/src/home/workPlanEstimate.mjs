@@ -243,11 +243,12 @@ export const ESTIMATORS = {
     item(`wall mirror ${b.dressingTable.mirror.widthMm} x ${b.dressingTable.mirror.heightMm}`, [0, sqft(b.dressingTable.mirror.widthMm, b.dressingTable.mirror.heightMm)], 'mirror'),
     item(`bedside table ${b.bedsideTable.widthMm} long`, [0, rft(b.bedsideTable.widthMm)], 'carpLow'),
   ], 'Nothing if layout A stays (C35). The stool and any acoustic board behind the bed head are not included.') },
+  // Owner 2026-10-05: full-height storage at the north end, the mirror dressing cabinet at the south end (was a low cabinet).
   'carp-bedroom3-east': () => priced('low', [
-    item(`dressing cabinet ${east.north.widthMm} x ${east.north.heightMm}`, sqft(east.north.widthMm, east.north.heightMm), 'carpTall'),
+    item(`full-height storage cabinet ${east.north.widthMm} x ${east.north.heightMm}`, sqft(east.north.widthMm, east.north.heightMm), 'carpTall'),
+    item(`dressing cabinet ${east.south.widthMm} x ${east.south.heightMm}`, sqft(east.south.widthMm, east.south.heightMm), 'carpTall'),
     item(`overhead run ${east.bridge.widthMm} x ${east.bridge.heightMm}`, sqft(east.bridge.widthMm, east.bridge.heightMm), 'carpTall'),
-    item(`low cabinet ${east.south.widthMm}`, rft(east.south.widthMm), 'carpLow'),
-    item('mirror', sqft(east.north.widthMm, east.north.mirrorTopMm - east.north.mirrorBottomMm), 'mirror'),
+    item('mirror', sqft(east.south.widthMm, east.south.mirrorTopMm - east.south.mirrorBottomMm), 'mirror'),
     item('headboard shelf', sqft(east.shelf.widthMm, east.shelf.depthMm), 'carpTop'),
   ], 'The slatted AC bay is priced as overhead cabinet front.'),
   'carp-bedroom3-chest': () => priced('medium', [item(`chest ${chest.widthMm} long, six drawers`, rft(chest.widthMm), 'carpLow')], 'The artwork is the owner\'s purchase and is not included.'),
