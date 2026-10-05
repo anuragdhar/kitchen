@@ -19,8 +19,9 @@ export function createAcOutdoorUnit(unit, {frame = 'plan'} = {}) {
   box(.03, h * .7, .012, -w * .12, bottom + h / 2, d / 2 + .014, steel)
   box(h * .7, .03, .012, -w * .12, bottom + h / 2, d / 2 + .014, steel)
   box(.06, h * .45, d * .5, w / 2 - .03, bottom + h * .3, 0, dark) // valve cover
-  // Two rails under the casing: a stand on a floor, or the arms of a wall bracket.
-  if (bottom > .02) for (const x of [-w / 2 + .1, w / 2 - .1]) box(.04, bottom, d + .06, x, bottom / 2, 0, steel)
+  // Under the casing: the legs of a low floor stand, or (above 500 mm) the two arms of a wall bracket with a short strut.
+  if (bottom > .5) for (const x of [-w / 2 + .1, w / 2 - .1]) { box(.04, .04, d + .1, x, bottom - .02, -.05, steel); box(.04, .3, .04, x, bottom - .15, -d / 2 - .08, steel) }
+  else if (bottom > .02) for (const x of [-w / 2 + .1, w / 2 - .1]) box(.04, bottom, d + .06, x, bottom / 2, 0, steel)
   const direction = compassVector(unit.fanFaces, frame)
   group.rotation.y = Math.atan2(direction.x, direction.z)
   return group
