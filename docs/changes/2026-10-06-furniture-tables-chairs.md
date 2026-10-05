@@ -63,10 +63,47 @@ with the wood maps already bundled with the app (public/materials). No new packa
   Drawing Room pieces. With the default Materials setting (teak) the tagged oak pieces show teak, as every other tagged
   wood in the flat does.
 
+## Size of the new pieces (triangles)
+
+Dining table 4,100; each dining chair 1,100 (one geometry shared by the four; the whole set 8,500); coffee table 2,200;
+lamp/corner table 1,900; table lamp 2,000; floor lamp 2,900; plant 2,800; hamper 3,000; balcony table 1,200; balcony chair
+1,250; dressing stool 830; study desk 1,100. Wooden parts that share a grain direction, and all the steel of one piece, are
+merged, so the number of separate objects drawn went down slightly (Lobby 913 to 871 draw calls per frame, Whole home 3D
+4,899 to 4,861).
+
 ## Frame rates
 
-FRAME_RATES
+Measured in a headless Chrome on this machine's graphics card, alternating the code before this round and after it on the
+same server port, four times (other agents were using the graphics card at the same time, so single readings vary by
+2-4 frames per second):
+
+- Room pages (Lobby / Dining, Drawing Room, Bedroom 1): 75 frames per second before and after (the display rate, never
+  below it in any run).
+- Whole home 3D: 22.2 frames per second before, 21.6 after (mean of four runs each; runs ranged 21.2-23.3 before and
+  19.6-22.9 after). The difference is smaller than the spread between runs; I cannot say it is a real drop, nor rule out
+  about half a frame per second.
 
 ## Not verified
 
-NOT_VERIFIED
+- The pictures were looked at for the Lobby (overview, top, four close-ups, electrical points on), the Drawing Room
+  layouts C and A (overview, top, coffee, side and corner tables, the window plant), Bedroom 1 layouts A and B (balcony,
+  stool, hamper), the Study (desk, chair, floor lamp) and Whole home 3D (top with electrical points, existing points and
+  AC routes on, close-ups of the dining set and coffee table). Layouts B, B2 and B3 of the Drawing Room and Bedroom 3's
+  plant were not looked at closely (they use the same builders).
+- Evening mode, Draft and Standard quality, the palette preview with another palette, and click-for-dimensions were not
+  driven in the browser; the new names come from the same markItem call the other pieces use.
+- The Blender export was not run. The lamp tables, coffee table, dining set and hamper now carry wood maps or a woven
+  texture; the export copies materials with their maps, but no render was made to see how they come out.
+- In Whole home 3D the north end of the dining table touches the wall drawing (the table is configured 20 mm from the north
+  wall and the wall is drawn thick); this was the same with the old box table and was left alone.
+- The lobby rug (1.9 x 1.5 m, not mine to change this round) still runs under the north wall as before.
+- Browser suites `npm run test:materials`, `test:lighting`, `test:browser` were not run.
+- Small duplication: hardForms.js has its own rounded-slab and fabric helpers; the sofa agent's softForms.js / fabric.js
+  may hold similar ones. They can be merged in a later round.
+
+## Questions for the owner (not added to work-plan/OPEN_ITEMS.md this round; the lead owns that file)
+
+- Dining table: keep the oval pedestal, or would you prefer a rectangular top on four legs? Either fits the same 700 x 1200
+  footprint.
+- The dining table is configured with its short end 20 mm from the north wall (centre z 620, length 1200). Is that the
+  intended position (table end against the wall), or should it come out from the wall?
