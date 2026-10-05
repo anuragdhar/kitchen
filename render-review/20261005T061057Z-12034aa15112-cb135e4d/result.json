@@ -1,0 +1,46 @@
+{
+  "run": "20261005T061057Z-12034aa15112-cb135e4d",
+  "sourceCommit": "12034aa151127365f899126c3d929b67a2cd383c",
+  "job": {
+    "version": 1,
+    "enabled": true,
+    "request": "patch-2b2f066f3548f9ac",
+    "rooms": [
+      "lobby"
+    ],
+    "quality": "draft",
+    "device": "AUTO"
+  },
+  "inputMode": "repository-defaults",
+  "status": "failed",
+  "visualReview": "unreviewed",
+  "steps": [
+    {
+      "name": "dependencies",
+      "exitCode": 0,
+      "seconds": 15.53
+    },
+    {
+      "name": "build-tests",
+      "exitCode": 0,
+      "seconds": 16.53
+    },
+    {
+      "name": "archviz-tests",
+      "exitCode": 0,
+      "seconds": 0.51
+    },
+    {
+      "name": "python-archviz",
+      "exitCode": 0,
+      "seconds": 0.56
+    },
+    {
+      "name": "python-profiles",
+      "exitCode": 1,
+      "seconds": 0.56
+    }
+  ],
+  "rooms": [],
+  "error": "python-profiles failed with exit 1"
+}
