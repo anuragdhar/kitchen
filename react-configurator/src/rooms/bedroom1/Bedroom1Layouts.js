@@ -1,6 +1,7 @@
 import * as THREE from 'three'
 import {tagSurfaceMaterial} from '../../render/surfaceRoles.mjs'
-import {createRug, createPottedPlant, createWallArt, createCushion, createLaundryHamper} from '../shared/RoomDecor.js'
+import {createRug, createPottedPlant, createWallArt, createLaundryHamper} from '../shared/RoomDecor.js'
+import {createBedMaterials, createMadeBed} from '../shared/furniture/Bed.js'
 import {createRoomTrackLighting} from '../shared/RoomTaskLighting.js'
 import {BEDROOM1_DESIGN, BEDROOM1_LAYOUT_KEYS, bedroom1LightingFor} from '../../config/bedroom1LayoutConfig.js'
 import {BEDROOM1_LIGHTING} from '../../config/bedroom1LightingConfig.js'
@@ -10,16 +11,14 @@ import {bedroom1Plan} from '../../domain/bedroom1Layout.mjs'
 // Bedroom 1 furniture for every layout of config/bedroom1LayoutConfig.js, built once and shown one layout at a time.
 // Room frame in metres: x east from the west wall, z south from the north wall, y up; the balcony continues east of the
 // room. Every position and size comes from bedroom1Plan() (src/domain/bedroom1Layout.mjs), the same rectangles the checks
-// use. Only finishing details of a few centimetres (handles, legs, the bed cover's turn-down) are drawn here by eye.
+// use. Only finishing details of a few centimetres (handles, legs, the bedding of rooms/shared/furniture/Bed.js) are drawn
+// here by eye.
 const m = v => v / 1000
 
 function materials() {
   const wood = (color, roughness) => { const material = new THREE.MeshStandardMaterial({color, roughness}); tagSurfaceMaterial(material, 'wood'); return material }
   return {
-    bedFrame: wood('#806047', .68), headboard: wood('#9a7656', .74),
-    bedUpholstery: new THREE.MeshStandardMaterial({color: '#efe8dc', roughness: .94}),
-    bedCover: new THREE.MeshStandardMaterial({color: '#b7c7bd', roughness: .96}),
-    pillow: new THREE.MeshStandardMaterial({color: '#fbf8f1', roughness: .98}),
+    bed: createBedroom1BedMaterials(),
     wardrobeBody: wood('#d0c0aa', .76), wardrobeFront: wood('#e9e1d4', .66),
     handle: new THREE.MeshStandardMaterial({color: '#373b3c', metalness: .62, roughness: .31}),
     tabletop: wood('#b28a60', .67),
@@ -35,22 +34,32 @@ const boxInto = parent => (w, h, d, x, y, z, material) => {
   mesh.position.set(x, y, z); mesh.castShadow = true; mesh.receiveShadow = true; parent.add(mesh); return mesh
 }
 
-/** The bed, built with its length along local +x (head at the +x end), then turned to its head wall. */
-function createBed(bed, mat) {
-  const group = new THREE.Group(); group.name = 'Bedroom 1 bed'
-  const box = boxInto(group)
-  const length = m(bed.lengthMm), width = m(bed.widthMm), base = m(bed.baseMm), mattress = m(bed.mattressMm), head = m(bed.headboardMm), headTop = m(bed.headboardTopMm)
-  box(length, base, width, 0, base / 2, 0, mat.bedFrame)
-  box(length - .035, mattress, width - .035, 0, base + mattress / 2, 0, mat.bedUpholstery)
-  box(length - .470, .065, width - .100, -.235, base + mattress + .025, 0, mat.bedCover)
-  box(head, headTop - base, width, length / 2 - head / 2, (headTop + base) / 2, 0, mat.headboard)
-  for (const side of [-1, 1]) {
-    box(.38, .08, .61, length / 2 - .26, base + mattress + .07, side * width * .23, mat.pillow)
-    const cushion = createCushion(.34, side < 0 ? '#8d9c8f' : '#b48b60'); cushion.position.set(length / 2 - .333, .445, side * .28); cushion.rotation.y = Math.PI / 2; group.add(cushion)
-  }
+// The owner's bed colours (unchanged by the 2026-10-06 furniture pass): timber base and headboard, ivory sheet, sage duvet,
+// white pillows and the two accent cushions that were on the bed. The oatmeal knit throw is new (a default, see the note).
+const BEDROOM1_BED_COLOURS = {frame: '#806047', headboard: '#9a7656', mattress: '#efe8dc', duvet: '#b7c7bd', pillow: '#fbf8f1',
+  throw: '#bfa98a', cushions: ['#8d9c8f', '#b48b60']}
+/** Materials for the Bedroom 1 bed (frame and headboard tagged 'wood', as before). */
+export const createBedroom1BedMaterials = () => createBedMaterials(BEDROOM1_BED_COLOURS)
+
+/** The bed of a bedroom1Plan() layout, built with its length along local +x (head at the +x end), then turned to its head wall. */
+function createBed(bed, materials) {
+  const group = createMadeBed({
+    name: 'Bedroom 1 bed', lengthMm: bed.lengthMm, widthMm: bed.widthMm,
+    base: {topMm: bed.baseMm}, mattressMm: bed.mattressMm,
+    headboard: {thicknessMm: bed.headboardMm, topMm: bed.headboardTopMm, bottomMm: bed.baseMm},
+    pillows: 2, cushions: 2, throw: {fromFootMm: 110, lengthMm: 430}, seed: 1,
+  }, materials)
   group.position.set(m((bed.x1 + bed.x2) / 2), 0, m((bed.z1 + bed.z2) / 2))
   if (bed.headWall === 'south') group.rotation.y = -Math.PI / 2
   return group
+}
+
+/**
+ * The Bedroom 1 bed alone, for Whole home 3D (which draws the rest of the room itself): layout A ('present') unless asked.
+ * Room frame in metres, as on the room page.
+ */
+export function createBedroom1Bed(room, layoutKey = 'present', materials = createBedroom1BedMaterials()) {
+  return createBed(bedroom1Plan(room, layoutKey).bed, materials)
 }
 
 function createWestWardrobe(wardrobe, mat) {
@@ -127,7 +136,7 @@ function createCabinetFace(cabinet, lengthMm, wallFaceMm, mat) {
 function createLayout(room, key, mat, wallFaceMm) {
   const plan = bedroom1Plan(room, key), W = m(plan.widthMm), L = m(plan.lengthMm)
   const furniture = new THREE.Group(); furniture.name = `Bedroom 1 furniture, layout ${plan.label}`
-  furniture.add(createBed(plan.bed, mat), createWestWardrobe(plan.wardrobe, mat), createBalconyFurniture(plan.balcony, mat))
+  furniture.add(createBed(plan.bed, mat.bed), createWestWardrobe(plan.wardrobe, mat), createBalconyFurniture(plan.balcony, mat))
   if (plan.dressingTable) furniture.add(createDressingTable(plan.dressingTable, mat))
   if (plan.bedsideTable) furniture.add(createBedsideTable(plan.bedsideTable, mat))
   // Decor and the laundry hamper (owner requests 2026-09-28 and 2026-09-29); positions from the layout's `loose` list.
