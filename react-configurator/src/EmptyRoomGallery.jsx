@@ -523,6 +523,7 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
         {roomKey==='drawing'&&<button onClick={()=>setShowDrawingRender(value=>!value)} aria-pressed={showDrawingRender} style={buttonStyle(showDrawingRender)}>{showDrawingRender?'Hide Blender preview':'Show Blender preview'}</button>}
         {(roomKey==='drawing'||roomKey==='lobby')&&<button onClick={()=>setPartitionOpen(value=>!value)} style={buttonStyle(partitionOpen)}>{partitionOpen?'Close drawing partition':'Open drawing partition'}</button>}
         {room.poojaAlcove&&<label style={{fontSize:12}}>Pooja door <select aria-label="Pooja door option" value={poojaDoorStyle} onChange={event=>setPoojaDoorStyle(event.target.value)}>{Object.entries(room.poojaAlcove.door.options).map(([key,label])=><option key={key} value={key}>{label}</option>)}</select></label>}
+        {room.poojaAlcove&&poojaDoorStyle==='bifoldInWest'&&<span style={{fontSize:12}}>Fold doors before sitting; seated position needs to shift east.</span>}
         {room.poojaAlcove&&<button onClick={()=>setPoojaDoorsOpen(value=>!value)} style={buttonStyle(poojaDoorsOpen)}>{poojaDoorsOpen?'Close Pooja doors':'Open Pooja doors'}</button>}
         {roomKey==='lobby'&&<button onClick={()=>setShowIroningBoard(value=>!value)} style={buttonStyle(showIroningBoard)}>{showIroningBoard?'Stow ironing board':'Pull out ironing board'}</button>}
         <button onClick={()=>setShowSouthWall(value=>!value)} style={buttonStyle(showSouthWall)}>{showSouthWall?'Hide south wall':'Show south wall'}</button>

@@ -110,6 +110,7 @@ function LiveWholeHome3D({onOpenRoom}){
   const [showPoojaPerson,setShowPoojaPerson]=useState(true)
   const [showIroningBoard,setShowIroningBoard]=useState(false)
   const [poojaDoorsOpen,setPoojaDoorsOpen]=useState(true)
+  const [poojaDoorStyle,setPoojaDoorStyle]=useState(EMPTY_ROOM_SHELLS.lobby.poojaAlcove.door.style)
   const [partitionOpen,setPartitionOpen]=useState(false)
   const [mirrorOpen,setMirrorOpen]=useState(false)
   const [medicineCabinetOpen,setMedicineCabinetOpen]=useState(false)
@@ -810,7 +811,7 @@ function LiveWholeHome3D({onOpenRoom}){
     const interiorRoomIds=['bedroom3','study','balcony','terrace','kitchen','lobby','drawing','bedroom1','bedroom1-balcony','entry']
     const interiorScene=registerInteriorScene({id:'whole-home',scene,camera,renderer,zones:ROOMS.map((r,index)=>({id:interiorRoomIds[index],min:[X(r.bounds[0]),0,Z(r.bounds[1])],max:[X(r.bounds[2]),HEIGHT,Z(r.bounds[3])]}))})
     let raf=0;const render=()=>{controls.update();view.render();raf=requestAnimationFrame(render)};render()
-    sceneRef.current={clearItem,liveView:view,setEntryDoorsOpen,setAcRoutes:visible=>{acRoutes.visible=visible},setDesigner:on=>view.setDesigner(on),setCavity:visible=>{cavityGroup.visible=visible},setRoomLight,setTvLabels:visible=>drawingLayouts.setLabels(visible),setDrawingLayout:key=>drawingLayouts.setLayout(key),setDrawingArm:pulled=>drawingLayouts.setArm(pulled),setElectrical:visible=>drawingLayouts?.setElectrical(visible),setExistingElectrical:visible=>{for(const g of [existingDrawing,existingLobby])if(g)g.visible=visible},setDoorSwing:visible=>drawingLayouts.setDoorSwing(visible),setStorageOpen:open=>drawingLayouts.setStorageOpen(open),setDrawingTv:key=>drawingLayouts.setTvSize(key),setTvWall:key=>drawingLayouts.setTvWall(key),setMedicineCabinetOpen:value=>doorInfill.userData.setOpen(value),setStorageCoverOpen:value=>storeStorage.userData.setCoverOpen(value),setMirrorOpen:value=>vanity.userData.setMirrorOpen?.(value),setPartitionOpen:value=>partition.userData.setOpen?.(value),setCamera,setWallsVisible:visible=>{walls.visible=visible},setBoardOpen:value=>{ironingStorage.userData.setBoardOpen(value)},setPoojaPersonVisible:visible=>{seatedPerson.visible=visible},setPoojaDoorsOpen:value=>{poojaDoors.userData.setDoorsOpen(value)},clearMark,setDaylight,setMeasure,clearMeasure}
+    sceneRef.current={clearItem,liveView:view,setEntryDoorsOpen,setAcRoutes:visible=>{acRoutes.visible=visible},setDesigner:on=>view.setDesigner(on),setCavity:visible=>{cavityGroup.visible=visible},setRoomLight,setTvLabels:visible=>drawingLayouts.setLabels(visible),setDrawingLayout:key=>drawingLayouts.setLayout(key),setDrawingArm:pulled=>drawingLayouts.setArm(pulled),setElectrical:visible=>drawingLayouts?.setElectrical(visible),setExistingElectrical:visible=>{for(const g of [existingDrawing,existingLobby])if(g)g.visible=visible},setDoorSwing:visible=>drawingLayouts.setDoorSwing(visible),setStorageOpen:open=>drawingLayouts.setStorageOpen(open),setDrawingTv:key=>drawingLayouts.setTvSize(key),setTvWall:key=>drawingLayouts.setTvWall(key),setMedicineCabinetOpen:value=>doorInfill.userData.setOpen(value),setStorageCoverOpen:value=>storeStorage.userData.setCoverOpen(value),setMirrorOpen:value=>vanity.userData.setMirrorOpen?.(value),setPartitionOpen:value=>partition.userData.setOpen?.(value),setCamera,setWallsVisible:visible=>{walls.visible=visible},setBoardOpen:value=>{ironingStorage.userData.setBoardOpen(value)},setPoojaPersonVisible:visible=>{seatedPerson.visible=visible},setPoojaDoorStyle:value=>{poojaDoors.userData.setDoorStyle(value)},setPoojaDoorsOpen:value=>{poojaDoors.userData.setDoorsOpen(value)},clearMark,setDaylight,setMeasure,clearMeasure}
     const standing=createStandingCamera({camera,controls,domElement:renderer.domElement,bounds:{minX:.2,maxX:W-.2,minZ:.2,maxZ:L-.2},onChange:setStand});sceneRef.current.standing=standing
     setRoomLight(roomLightRef.current/100)
     setDaylight(sunHourRef.current)
@@ -837,6 +838,7 @@ function LiveWholeHome3D({onOpenRoom}){
   useEffect(()=>{sceneRef.current?.setTvWall?.(tvWall)},[tvWall])
   useEffect(()=>{sceneRef.current?.setPartitionOpen(partitionOpen)},[partitionOpen])
   useEffect(()=>{sceneRef.current?.setPoojaDoorsOpen(poojaDoorsOpen)},[poojaDoorsOpen])
+  useEffect(()=>{sceneRef.current?.setPoojaDoorStyle(poojaDoorStyle)},[poojaDoorStyle])
   useEffect(()=>{sunHourRef.current=sunHour;sceneRef.current?.setDaylight(sunHour)},[sunHour])
   useEffect(()=>{roomLightRef.current=roomLightPercent;sceneRef.current?.setRoomLight(roomLightPercent/100)},[roomLightPercent])
   useEffect(()=>{sceneRef.current?.setMeasure(measureMode)},[measureMode])
@@ -872,6 +874,8 @@ function LiveWholeHome3D({onOpenRoom}){
         {drawingLayout==='southSofas'&&<button onClick={()=>setTvWall(value=>value==='panel'?'slatStrip':'panel')} aria-pressed={tvWall!=='panel'} style={buttonStyle(tvWall!=='panel')} title="Layout C TV wall. Full panelling (default): fluted panelling from the west wall to the entry door, up to the door head. Slat strip (owner idea 2026-10-06, not chosen): floor-to-ceiling round timber slats over the hidden door only, the rest of the wall plain (docs/DRAWING_ROOM_TV_WALL.md)">TV wall: {TV_WALL_TREATMENTS.find(t=>t.key===tvWall).label}</button>}
         <button onClick={()=>setTvLabels(value=>!value)} aria-pressed={tvLabels} style={buttonStyle(tvLabels)}>{tvLabels?'Hide TV wall labels':'Show TV wall labels'}</button>
         <button onClick={()=>setPartitionOpen(value=>!value)} style={buttonStyle(partitionOpen)}>{partitionOpen?'Close drawing partition':'Open drawing partition'}</button>
+        <label style={{fontSize:12}}>Pooja door <select aria-label="Pooja door option" value={poojaDoorStyle} onChange={event=>setPoojaDoorStyle(event.target.value)}>{Object.entries(EMPTY_ROOM_SHELLS.lobby.poojaAlcove.door.options).map(([key,label])=><option key={key} value={key}>{label}</option>)}</select></label>
+        {poojaDoorStyle==='bifoldInWest'&&<span style={{fontSize:12}}>Fold doors before sitting; seated position needs to shift east.</span>}
         <button onClick={()=>setPoojaDoorsOpen(value=>!value)} style={buttonStyle(poojaDoorsOpen)}>{poojaDoorsOpen?'Close Pooja doors':'Open Pooja doors'}</button>
         <button {...designer.button(buttonStyle(designer.on))}/>
         <RenderQualityControls sceneRef={sceneRef} name="whole-home" buttonStyle={buttonStyle}/>

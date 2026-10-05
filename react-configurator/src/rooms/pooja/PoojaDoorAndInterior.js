@@ -24,12 +24,14 @@ export function createPoojaDoorAndInterior(pooja,ceilingHeightMm=2700,floorTopMm
   }
 
   // Fixed walnut frame and a light plaster lintel above the two leaves.
-  for(const x of [from+.04,east-.04])addBox(group,.08,doorHeight,.12,x,doorHeight/2,.035,wood)
+  const platformTop=(floorTopMm+pooja.platformHeightMm)/1000
+  for(const x of [from+.04,east-.04])addBox(group,.08,doorHeight-platformTop,.12,x,(doorHeight+platformTop)/2,.035,wood)
   addBox(group,width,.10,.12,center,doorHeight-.05,.035,wood)
   addBox(group,width,ceilingHeightMm/1000-doorHeight,.11,center,(ceilingHeightMm/1000+doorHeight)/2,0,warmWall)
 
-  const makeLeaf=(parent,hinge,direction,offsetZ,leafWidth)=>{
-    const leaf=new THREE.Group();leaf.position.set(hinge,0,offsetZ);parent.add(leaf)
+  const makeLeaf=(parent,hinge,direction,offsetZ,leafWidth,faceOffset=0)=>{
+    const pivot=new THREE.Group();pivot.position.set(hinge,0,offsetZ);parent.add(pivot)
+    const leaf=new THREE.Group();leaf.position.z=faceOffset;pivot.add(leaf)
     const x=direction*leafWidth/2
     const innerWidth=leafWidth-.12,innerX=x
     const leafBottom=(floorTopMm+pooja.platformHeightMm)/1000+d.bottomGapMm/1000,leafTop=doorHeight-d.headInsetMm/1000
@@ -68,14 +70,26 @@ export function createPoojaDoorAndInterior(pooja,ceilingHeightMm=2700,floorTopMm
       petal.position.set(innerX+side*.034,medallionY,.044);petal.scale.set(1,.46,.3);leaf.add(petal)
     }
     addBox(leaf,.015,.12,.025,innerX+direction*.14,medallionY,.06,brass)
-    return leaf
+    return pivot
   }
   // All styles reuse the same leaf detail; pure room-mm kinematics become Three metres here.
   const assemblies={}
   for(const style of Object.keys(d.options)){
     const assembly=new THREE.Group();assembly.name='Pooja doors: '+style;group.add(assembly)
     const specs=poojaDoorLeaves(pooja,style,false)
-    const meshes=specs.map(l=>{const mesh=makeLeaf(assembly,l.x/1000,l.direction,l.z/1000,l.width/1000);mesh.name=l.id;return mesh})
+    const meshes=specs.map(l=>{const mesh=makeLeaf(assembly,l.x/1000,l.direction,l.z/1000,l.width/1000,(l.faceOffset??0)/1000);mesh.name=l.id;return mesh})
+    if(style==='bifoldInWest'){
+      const packing=(d.inwardHingeInsetMm-d.jambMm)/1000
+      addBox(assembly,packing,doorHeight-platformTop,.12,from+d.jambMm/1000+packing/2,(doorHeight+platformTop)/2,.035,wood)
+      // PROPOSAL guide on top of the step, below the free leaf; never across the drawer front.
+      addBox(assembly,d.guideWidthMm/1000,d.guideHeightMm/1000,d.guideDepthMm/1000,east-d.jambMm/1000,platformTop+d.guideHeightMm/2000,d.inwardFaceMm/1000,brass)
+      addBox(assembly,(pooja.widthMm-d.inwardHingeInsetMm-d.jambMm)/1000,d.railHeightMm/1000,d.railDepthMm/1000,(specs[0].x+specs[0].width)/1000,doorHeight-d.headInsetMm/1000+d.railHeightMm/2000,d.inwardFaceMm/1000,brass)
+      // Reuse the original hinge sketch dimensions; pivot axes now sit on the west jamb and middle fold.
+      for(const x of [0,specs[0].width/1000]){
+        const hinge=new THREE.Mesh(new THREE.CylinderGeometry(d.hingeRadiusMm/1000,d.hingeRadiusMm/1000,doorHeight-platformTop-2*d.headInsetMm/1000,10),brass)
+        hinge.position.set(x,(doorHeight+platformTop)/2,0);meshes[0].add(hinge)
+      }
+    }
     const sliding=style==='slideWest'||style==='fixedEastSlideWest'
     if(sliding){
       // PROPOSAL: top-hung rail only. No guide or track crosses the platform drawer front.
@@ -105,7 +119,7 @@ export function createPoojaDoorAndInterior(pooja,ceilingHeightMm=2700,floorTopMm
   addBox(group,width-.13,1.82,.02,center,1.23,-depth+.055,warmWall)
   addBox(group,.020,1.4,depth-.20,from+.045,1.30,-depth/2,warmWall)
   const templeDepth=pooja.templeDepthMm/1000
-  addBox(group,templeDepth,.045,.72,east-templeDepth/2,.77,-depth/2,edgeWood)
+  addBox(group,templeDepth,.045,pooja.templeLengthMm/1000,east-templeDepth/2,.77,-depth/2,edgeWood)
   addBox(group,.027,1.08,.72,east-.025,1.34,-depth/2,wood)
   for(const z of [-depth/2-.27,-depth/2+.27])addBox(group,.035,.90,.038,east-.06,1.37,z,brass)
   addBox(group,.040,.035,.58,east-.08,1.84,-depth/2,brass)

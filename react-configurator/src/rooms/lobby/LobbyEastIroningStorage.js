@@ -1,6 +1,6 @@
 import {tagSurfaceMaterial} from '../../render/surfaceRoles.mjs'
 import * as THREE from 'three'
-import {ironingStorageTopMm} from '../../domain/lobbyIroningStorage.mjs'
+import {ironingStorageTopMm,ironingStorageBays} from '../../domain/lobbyIroningStorage.mjs'
 
 // The same room-local group is used by the lobby view and the whole-home view.
 export function createLobbyEastIroningStorage(room){
@@ -26,13 +26,12 @@ export function createLobbyEastIroningStorage(room){
   box(depth,.065,length,centerX,height-.03,centerZ,body)
   for(const z of [from+.025,from+length-.025])box(depth,height-.1,.05,centerX,height/2,z,body)
   box(.025,height-.1,length,east-.02,height/2,centerZ,body)
-  const centerBay=(item.centerBayWidthMm||600)/1000
-  const bayWidths=[(length-centerBay)/2,centerBay,(length-centerBay)/2]
+  const bays=ironingStorageBays(room),bayWidths=bays.map(b=>b.width/1000)
   const centerPanel=[]
   let cursor=from
   for(let i=0;i<bayWidths.length;i++){
     const span=bayWidths[i],z=cursor+span/2
-    if(i===1){
+    if(bays[i].ironing){
       box(.028,.65,span-.012,east-depth-.015,.405,z,door)
       box(.024,.14,.025,east-depth-.04,.48,z,metal)
       centerPanel.push(box(.028,.14,span-.012,east-depth-.015,.845,z,door))
@@ -42,13 +41,13 @@ export function createLobbyEastIroningStorage(room){
       box(.024,.14,.025,east-depth-.04,height*.56,z,metal)
     }
     cursor+=span
-    if(i<2)box(depth-.04,height-.12,.018,centerX,height/2,cursor,body)
+    if(i<bayWidths.length-1)box(depth-.04,height-.12,.018,centerX,height/2,cursor,body)
   }
   // Owner 2026-10-06: extend to the ceiling; original lower meshes above remain unchanged.
   // The proposed open scribe allowance is NOT filled across the existing ceiling corner ring.
   if(item.upper?.toCeiling){
     const u=item.upper,top=ironingStorageTopMm(room)/1000,h=top-height,p=u.panelMm/1000,y=(top+height)/2
-    const upper=new THREE.Group();upper.name='Upper ironing storage: three aligned bays';group.add(upper)
+    const upper=new THREE.Group();upper.name='Upper ironing storage: aligned bays';group.add(upper)
     for(const level of [height+p/2,top-p/2])box(depth,p,length,centerX,level,centerZ,body,upper)
     for(const z of [from+p/2,from+length-p/2])box(depth,h,p,centerX,y,z,body,upper)
     box(p,h,length,east-p/2,y,centerZ,body,upper)
@@ -64,12 +63,13 @@ export function createLobbyEastIroningStorage(room){
   const deployed=new THREE.Group()
   deployed.name='Pull-out ironing board deployed'
   const boardLength=item.boardLengthMm/1000,boardWidth=item.boardWidthMm/1000
+  const boardZ=bays.find(b=>b.ironing).center/1000
   const front=east-depth
-  box(boardLength,.04,boardWidth,front-boardLength/2,.89,centerZ,board,deployed)
-  box(boardLength-.05,.018,boardWidth-.04,front-boardLength/2,.919,centerZ,new THREE.MeshStandardMaterial({color:'#e7ded2',roughness:1}),deployed)
-  box(.006,.003,boardWidth-.03,front-boardLength/2,.930,centerZ,metal,deployed)
-  for(const z of [centerZ-.12,centerZ+.12])box(.40,.018,.015,front-.12,.855,z,metal,deployed)
-  box(.03,.87,.03,front-boardLength+.14,.435,centerZ,metal,deployed)
+  box(boardLength,.04,boardWidth,front-boardLength/2,.89,boardZ,board,deployed)
+  box(boardLength-.05,.018,boardWidth-.04,front-boardLength/2,.919,boardZ,new THREE.MeshStandardMaterial({color:'#e7ded2',roughness:1}),deployed)
+  box(.006,.003,boardWidth-.03,front-boardLength/2,.930,boardZ,metal,deployed)
+  for(const z of [boardZ-.12,boardZ+.12])box(.40,.018,.015,front-.12,.855,z,metal,deployed)
+  box(.03,.87,.03,front-boardLength+.14,.435,boardZ,metal,deployed)
   deployed.visible=false
   group.add(deployed)
   group.userData.setBoardOpen=value=>{deployed.visible=value;centerPanel.forEach(mesh=>{mesh.visible=!value})}

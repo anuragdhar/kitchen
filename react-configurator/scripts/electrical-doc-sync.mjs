@@ -20,7 +20,14 @@ const replaceRow = (prefix, cells, keepFrom) => {
 }
 for (const key of roomElectricalKeys()) {
   const {points, check: result} = roomElectricalReport(key)
-  for (const p of points) replaceRow(`| ${p.id} | `, [`| ${p.id}`, p.name, p.where], 3)
+  for (const p of points) {
+    // 2026-10-06: these reviewed Pooja/cabinet access notes must follow the config as well as the position.
+    // Other authored prose remains untouched; preserve the document's outlet/hidden annotations.
+    if (['L-E2', 'L-P1'].includes(p.id)) {
+      const row = lines.find(line => line.startsWith(`| ${p.id} | `))
+      replaceRow(`| ${p.id} | `, [`| ${p.id}`, p.name, p.where, row?.split(' | ')[3], `${p.use} |`], 5)
+    } else replaceRow(`| ${p.id} | `, [`| ${p.id}`, p.name, p.where], 3)
+  }
   for (const c of result.load.circuits) replaceRow(`| ${c.id} | ${c.name} | `, [`| ${c.id}`, c.name, `${c.mcbA} A`, c.points.join(', '), `${c.watts} W`], 5)
   if (!lines.join('\n').includes(`about ${result.load.totalW} W`)) missing.push(`${key}: total "about ${result.load.totalW} W" (edit that sentence by hand)`)
 }

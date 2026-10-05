@@ -91,7 +91,8 @@ function lobbyModel() {
       toiletDoorLatch: {wall: 'south', alongMm: toilet.fromMm + toilet.widthMm + 150},
       diningTableWall: {wall: 'north', alongMm: t.centerXmm},
       diningTableCentre: {wall: 'ceiling', xMm: t.centerXmm, zMm: t.centerZmm},
-      ironingStorageMiddle: {wall: 'east', alongMm: iron.fromNorthMm + iron.lengthMm / 2},
+      ironingStorageMiddle: {wall: 'east', alongMm: iron.ironingBayCenterMm ?? iron.fromNorthMm + iron.lengthMm / 2},
+      ironingStorageNorthBay: {wall: 'east', alongMm: iron.fromNorthMm + iron.northBayMm / 2},
       // West of the unit: the Pooja alcove opens on its east side. The same place as the AC plan's power point.
       'acBeside:split': {wall: ac.wall, alongMm: ac.a - 150},
       poojaAlcoveSide: {wall: 'free', xMm: alcove.fromMm + 40, zMm: -alcove.depthMm / 2, place: 'west return of the Pooja alcove'},

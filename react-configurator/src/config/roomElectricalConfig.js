@@ -74,8 +74,10 @@ export const ROOM_ELECTRICAL = {
         outlets: '1 x 16 A socket (or isolator) on its own circuit', use: 'the split AC indoor unit on the north wall; beside the unit, not behind it'},
       {id: 'L-E1', name: 'Iron point', kind: 'power', wall: 'east', anchor: 'ironingStorageMiddle', heightMm: 1250, hidden: true, loadW: W.socket16A,
         outlets: '1 x 16 A socket with a switch and an indicator lamp', use: 'PROPOSAL 2026-10-06: stays at 1250 high inside the centre upper cabinet bay behind its door; open that door to use the iron, owner to confirm access and cable route'},
-      {id: 'L-E2', name: 'Utility socket', kind: 'power', wall: 'east', alongMm: 350, heightMm: 300, loadW: W.socket16A,
-        outlets: '1 x 6/16 A combined socket', use: 'vacuum cleaner, festival lights, a room heater; in the corner between the Pooja opening and the tall ironing storage; clear of the proposed half-slider, but the original east bi-fold covers access when parked'},
+      // PROPOSAL 2026-10-06: old z 350 is behind the extension. Re-anchor to the added bay centre (z 425),
+      // retain 300 height; intentionally inside the lower bay, door open for use; cable exit needs design.
+      {id: 'L-E2', name: 'Utility socket', kind: 'power', wall: 'east', anchor: 'ironingStorageNorthBay', heightMm: 300, hidden: true, loadW: W.socket16A,
+        outlets: '1 x 6/16 A combined socket', use: 'PROPOSED inside the added north lower cabinet bay, behind its door; vacuum cleaner or festival lights with the door open; agree accessible back cut-out and cable exit, not a heater inside storage'},
       {id: 'L-S1', name: 'Toilet switches', kind: 'lighting', wall: 'south', anchor: 'toiletDoorLatch', heightMm: 1200, switchboard: true, forDoor: 'toilet', loadW: 60,
         outlets: 'switches for the toilet light and exhaust fan', use: 'outside the toilet door, on its latch side (the hinge side of the door is not recorded: mirror this if it hangs the other way)'},
       {id: 'L-S2', name: 'Track 1 driver feed', kind: 'lighting', existing: 'X-L3', driverFor: 'L1',
@@ -90,7 +92,7 @@ export const ROOM_ELECTRICAL = {
       {id: 'L-C3', name: 'Track 2 driver feed', kind: 'lighting', existing: 'X-L5', driverFor: 'L2',
         outlets: 'switched 230 V point for the 60 W / 48 V track driver (dimmer at L-N1)', use: 'reuses the existing small ceiling light point, 280 mm from the run; that light comes off'},
       {id: 'L-P1', name: 'Pooja light and socket', kind: 'lighting', anchor: 'poojaAlcoveSide', heightMm: 1200, hidden: true, loadW: W.switchboard + W.lightPoint,
-        outlets: 'switch for the alcove light + 1 x 6 A socket', use: 'inside the Pooja alcove, on its west return behind the doors: the alcove light and an electric diya or bell'},
+        outlets: 'switch for the alcove light + 1 x 6 A socket', use: 'inside the Pooja alcove, on its west return behind the doors: the alcove light and an electric diya or bell; 2026-10-06 inward west fold covers access while parked: relocation unresolved'},
     ],
     circuits: [
       {id: 'L-light', name: 'Lighting, fan and 6 A outlets', mcbA: 10, rcd: true, points: ['L-N1', 'L-N3', 'L-S1', 'L-S2', 'L-C1', 'L-C2', 'L-C3', 'L-P1']},

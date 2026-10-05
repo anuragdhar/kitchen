@@ -6,8 +6,9 @@ import {EMPTY_ROOM_SHELLS} from '../src/config/roomShellConfig.js'
 import {ROOM_LIGHTING} from '../src/home/lighting.mjs'
 
 const room = EMPTY_ROOM_SHELLS.lobby, s = room.furniture.eastIroningStorage
-// The ironing board pulled out westward from the east-wall storage.
-const board = {x1: room.widthMm - s.depthMm - s.boardLengthMm, x2: room.widthMm - s.depthMm, z1: s.fromNorthMm, z2: s.fromNorthMm + s.lengthMm}
+// 2026-10-06: the cabinet extends north, but the board stays in its existing 600 bay at z 1375.
+// Use its actual 300 width, not the footprint of the entire (now longer) cabinet as a work spot.
+const board = {x1: room.widthMm - s.depthMm - s.boardLengthMm, x2: room.widthMm - s.depthMm, z1: s.ironingBayCenterMm - s.boardWidthMm / 2, z2: s.ironingBayCenterMm + s.boardWidthMm / 2}
 
 test('the Lobby has two wall-hugging tracks with wall spots, diffused heads and a down spot over the ironing board', () => {
   const result = checkTrackLighting(room, LOBBY_LIGHTING, {downTargets: [board]})

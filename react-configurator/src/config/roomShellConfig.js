@@ -111,10 +111,23 @@ export const EMPTY_ROOM_SHELLS={
     // office"): one round surface LED panel in the middle of the alcove ceiling. Size and wattage are the typical figures of the
     // round panels already used for the Main entry (entryLightingConfig.js: 170 mm across, 35 deep, 8 W, 800 lm); the fitting
     // in the Home Office was not measured, so copy its make and colour of light from the real one.
-    poojaAlcove:{wall:'north',fromMm:3793,widthMm:1200,depthMm:1000,altarVisible:false,templeDepthMm:254,seatedPersonFromWestMm:400,platformHeightMm:190,drawerDepthMm:550,
+    poojaAlcove:{wall:'north',fromMm:3793,widthMm:1200,depthMm:1000,altarVisible:false,templeDepthMm:254,seatedPersonFromWestMm:400,platformHeightMm:190,drawerDepthMm:700,
+      // Owner 2026-10-06: "door should be above the platform" / "platform needs to extend a bit outward".
+      // PROPOSAL: 150 projection supports the frame/guide, with a 12.5 radius bullnose on the existing 25 top.
+      // Drawer gains the same 150 depth (550 -> 700); narrower west drawer avoids the extended east cabinet.
+      // PROPOSAL: front x +70..+730 (660 wide), 70 clearance to the nominal cabinet, 18 to its existing handle.
+      platformProjectionMm:150,nosingRadiusMm:12.5,drawerFromWestMm:70,drawerWidthMm:660,
+      // Existing builder shelf length, extracted unchanged for the swing check (not a new site measurement).
+      templeLengthMm:720,
       // Owner 2026-10-06: "single slider door which slides to left" / "fix the half door on the east".
-      // PROPOSAL: default avoids the north dining chair hit by slideWest (domain/poojaDoor.mjs).
-      door:{style:'fixedEastSlideWest',options:{bifoldEast:'Original east bi-fold',slideWest:'Full leaf slides west',fixedEastSlideWest:'East fixed / west slides east',fixedEastSwingIn:'East fixed / west swings inward'},
+      // Owner 2026-10-06: "open it inside, west side, this double foldable"; keep earlier alternatives selectable.
+      door:{style:'bifoldInWest',options:{bifoldEast:'Original east bi-fold',slideWest:'Full leaf slides west',fixedEastSlideWest:'East fixed / west slides east',fixedEastSwingIn:'East fixed / west swings inward',bifoldInWest:'West bi-fold into Pooja'},
+        // PROPOSAL: rear frame pivot at z -40; 150 west inset includes a 70 packing stile beyond the 80 jamb.
+        // This keeps the folded handles off the existing west lining. 3 face offset leaves a 1 mm fold gap.
+        inwardFaceMm:-40,inwardHingeInsetMm:150,inwardFaceOffsetMm:3,
+        hingeRadiusMm:12, // original builder hinge sketch, reused; not measured hardware
+        // PROPOSAL: small bottom guide ON the platform, not a track across the drawer; all dimensions mm.
+        guideWidthMm:20,guideDepthMm:20,guideHeightMm:10,
         // Existing builder dimensions, now shared with the checks; not site measurements.
         heightMm:2240,headInsetMm:100,jambMm:80,bifoldInsetMm:75,bottomGapMm:20,faceMm:95,leafBackMm:-2.5,leafFrontMm:72.5,bifoldAngleDeg:86.4,
         // PROPOSAL/ASSUMPTION 2026-10-06: second top-hung lane 90 mm in front; no floor track.
@@ -124,7 +137,13 @@ export const EMPTY_ROOM_SHELLS={
       ceilingLight:{kind:'round surface LED panel, as in the Home Office',diameterMm:170,depthMm:35,watts:8,lumens:800,centred:true,status:'owner 2026-10-05; size typical, not measured'}},
     furniture:{
       diningTable:{centerXmm:2200,centerZmm:620,widthMm:700,lengthMm:1200,heightMm:745},chairRowsZmm:[290,950],chairOffsetXmm:620,
-      eastIroningStorage:{fromNorthMm:650,lengthMm:1450,depthMm:400,heightMm:1000,doorCount:3,centerBayWidthMm:600,boardLengthMm:950,boardWidthMm:300,
+      // Owner 2026-10-06: "then we bring this cabinet ... on the east side".
+      // PROPOSAL: start 200 = platform front 150 + 50 gap; retain south end 2100, add one 450 north bay.
+      // Original 425/600/425 bays and board centre 1375 stay fixed; no recentering of the ironing bay.
+      eastIroningStorage:{fromNorthMm:200,lengthMm:1900,depthMm:400,heightMm:1000,doorCount:4,centerBayWidthMm:600,boardLengthMm:950,boardWidthMm:300,
+        northBayMm:450,platformGapMm:50,ironingBayCenterMm:1375,
+        // PROPOSAL: L-E2 inside the new bay, at its centre and original 300 height; access behind its door.
+        utilitySocket:{anchor:'ironingStorageNorthBay',placement:'inside added north lower bay; proposed, owner to confirm'},
         // Owner 2026-10-06: "cabinet that is on the east wall go to the top of the ceiling". heightMm remains the lower unit.
         // PROPOSAL: carcass stops 30 mm below ceiling, open scribe allowance; do not bridge the corner moulding yet.
         upper:{toCeiling:true,scribeGapMm:30,panelMm:18,doorThicknessMm:28,doorGapMm:12,handleLengthMm:140,handleThicknessMm:24},

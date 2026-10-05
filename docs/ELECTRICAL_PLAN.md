@@ -118,13 +118,13 @@ Status: proposed 2026-10-05; nothing verified on site. Shown on: Lobby / Dining 
 | L-N3 | Dining point | north wall, x 2200, 900 high | 2 x 6 A sockets + 1 USB-A + USB-C | phones and a laptop at the dining table, 155 mm above the table top; a kettle or toaster stays in the kitchen (no 16 A outlet here: owner to confirm) |
 | L-N4 | AC point | north wall, x 2473, 2300 high | 1 x 16 A socket (or isolator) on its own circuit | the split AC indoor unit on the north wall; beside the unit, not behind it |
 | L-E1 | Iron point | east wall, z 1375, 1250 high | 1 x 16 A socket with a switch and an indicator lamp | PROPOSAL 2026-10-06: stays at 1250 high inside the centre upper cabinet bay behind its door; open that door to use the iron, owner to confirm access and cable route |
-| L-E2 | Utility socket | east wall, z 350, 300 high | 1 x 6/16 A combined socket | vacuum cleaner, festival lights, a room heater; in the corner between the Pooja opening and the tall ironing storage; clear of the proposed half-slider, but the original east bi-fold covers access when parked |
+| L-E2 | Utility socket | east wall, z 425, 300 high | 1 x 6/16 A combined socket | PROPOSED inside the added north lower cabinet bay, behind its door; vacuum cleaner or festival lights with the door open; agree accessible back cut-out and cable exit, not a heater inside storage |
 | L-S1 | Toilet switches | south wall, x 1815, 1200 high | switches for the toilet light and exhaust fan | outside the toilet door, on its latch side (the hinge side of the door is not recorded: mirror this if it hangs the other way) |
 | L-S2 | Track 1 driver feed | south wall, x 2735, 2260 high | switched 230 V point for the 60 W / 48 V track driver (dimmer at L-N1) | reuses the existing tube-light point on the south wall, 540 mm from the run; the tube light comes off |
 | L-C1 | Dining shelf light | ceiling, x 2200, z 620 | new feed or swag (no existing point); accessible dimmable LED driver | 3000 K recessed LED beneath the oak planter shelf, dimmed at L-N1; four separate RCC slab anchors, load not engineered |
 | L-C2 | Ceiling fan | ceiling, x 2605, z 1600 | ceiling fan point with a hook rated for the fan | the existing centre ceiling point (medallion); regulator at L-N1 |
 | L-C3 | Track 2 driver feed | ceiling, x 3770, z 1615 | switched 230 V point for the 60 W / 48 V track driver (dimmer at L-N1) | reuses the existing small ceiling light point, 280 mm from the run; that light comes off |
-| L-P1 | Pooja light and socket | west return of the Pooja alcove, x 3833, z -500, 1200 high | switch for the alcove light + 1 x 6 A socket (hidden on purpose) | inside the Pooja alcove, on its west return behind the doors: the alcove light and an electric diya or bell |
+| L-P1 | Pooja light and socket | west return of the Pooja alcove, x 3833, z -500, 1200 high | switch for the alcove light + 1 x 6 A socket (hidden on purpose) | inside the Pooja alcove, on its west return behind the doors: the alcove light and an electric diya or bell; 2026-10-06 inward west fold covers access while parked: relocation unresolved |
 
 Circuits (proposed breakers; the electrician sizes cables and breakers):
 
