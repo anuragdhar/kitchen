@@ -10,7 +10,6 @@ export function createStudyFurniture(study){
     const oak=new THREE.MeshStandardMaterial({color:'#b98a5d',roughness:.7})
     tagSurfaceMaterial(oak,'wood','study')
     const bedding=new THREE.MeshStandardMaterial({color:'#e7e9e7',roughness:.95})
-    const blue=new THREE.MeshStandardMaterial({color:'#647d91',roughness:.9})
     const rose=new THREE.MeshStandardMaterial({color:'#b68689',roughness:.9})
     const deskTop=new THREE.MeshStandardMaterial({color:'#f3e6cf',roughness:.66})
     tagSurfaceMaterial(deskTop,'wood','study')

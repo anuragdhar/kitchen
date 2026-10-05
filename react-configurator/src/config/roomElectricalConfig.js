@@ -220,7 +220,7 @@ export const ROOM_ELECTRICAL = {
       {id: 'ST-W1', name: 'Utility socket', kind: 'power', wall: 'west', alongMm: 1500, heightMm: 300, loadW: W.socket16A,
         outlets: '1 x 6/16 A combined socket', use: 'vacuum cleaner; on the free west wall between the bookshelf and the Home Office opening'},
       {id: 'ST-W2', name: 'AC point (unit position assumed)', kind: 'dedicated', wall: 'west', alongMm: 2350, heightMm: 2300, loadW: W.splitAc15Ton, assumed: true,
-        outlets: '1 x 16 A socket (or isolator) on its own circuit', use: 'the Study has an AC (its outdoor unit is outside the Home Office west wall) but the indoor unit is not in the model: assumed on the west wall north of the opening; move this point beside the real unit'},
+        outlets: '1 x 16 A socket (or isolator) on its own circuit', use: 'beside the AC indoor unit of the Study, which the AC plan draws on the west wall just north of the Home Office opening (its real position was never recorded; the outdoor unit is outside the Home Office west wall): move this point beside the real unit'},
       {id: 'ST-C1', name: 'Ceiling fan', kind: 'lighting', fan: 1, loadW: W.fan,
         outlets: 'ceiling fan point with a hook rated for the fan', use: 'ceiling fan (position assumed at the room centre, not measured); regulator at ST-E1'},
       {id: 'ST-C2', name: 'Track 1 driver feed', kind: 'lighting', driverFor: 'S1', runEnd: 'to',
@@ -235,7 +235,7 @@ export const ROOM_ELECTRICAL = {
     ],
     verify: [
       'This room has no scan: where today\'s switchboard, sockets, fan point and AC indoor unit are.',
-      'The AC indoor unit is not modelled; ST-W2 is a placeholder on the west wall and no check covers it.',
+      'The AC indoor unit is drawn where the AC plan assumes it (docs/AC_PLAN.md); ST-W2 follows that assumed position and must move with the real unit.',
       'The bed and desk follow the kids layout of rooms/study/StudyFurniture.js (mirrored in studyLightingConfig.js downTargets), which has no furniture config of its own.',
       'Which way the entry door and the terrace door hang (latch assumed at the south jamb of the entry door and the west jamb of the terrace door).',
       'Whether a terrace light exists and where it is switched today.',

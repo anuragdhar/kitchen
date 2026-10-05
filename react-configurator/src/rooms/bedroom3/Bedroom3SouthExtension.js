@@ -22,11 +22,7 @@ export function createBedroom3SouthExtension(room){
   const cabX=(cabinet.fromWestMm+cabinet.widthMm/2)/1000
   const cabW=cabinet.widthMm/1000,cabD=cabinet.depthMm/1000,cabH=cabinet.heightMm/1000,cabBottom=cabinet.floorClearanceMm/1000
   addBox(cabW,cabH,cabD,cabX,cabBottom+cabH/2,wallZ+cabD/2-.04,wood)
-  // The west run masks the corner: put usable fronts beyond it, with a filler.
-  const blocked=room.furniture?.westWardrobe?(room.furniture.westWardrobe.depthMm+60)/1000:0
-  const frontStart=Math.max(cabinet.fromWestMm/1000,blocked)
-  const usable=cabinet.fromWestMm/1000+cabW-frontStart
-  if(blocked>0)addBox(blocked,cabH,.025,blocked/2,cabBottom+cabH/2,wallZ-.065,wood)
+  const frontStart=cabinet.fromWestMm/1000,usable=cabW
   for(let i=0;i<2;i++){
     const x=frontStart+usable*(i+.5)/2
     addBox(usable/2-.018,cabH-.05,.025,x,cabBottom+cabH/2,wallZ-.065,front)
