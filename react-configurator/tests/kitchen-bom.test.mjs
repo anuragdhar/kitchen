@@ -10,7 +10,8 @@ const isCabinetLikeItem = it => !String(it.id||'').startsWith('powerPoint')
 const planLabel = id => ({gas:'Gas cooktop', sink:'Sink'}[id] || id)
 
 function bomCtx(overrides = {}) {
-  const KITCHEN = {westGap: {to: 600}, shaft: {y: 3800}}
+  // Synthetic room bounds supplied for the 2026-10-06 proposed mirror rows.
+  const KITCHEN = {width: 2400, length: 4000, westGap: {to: 600}, shaft: {y: 3800}}
   return {
     KITCHEN, eastRunLength: 4000, westRunLength: 3400, BACKSPLASH_HEIGHT: 600,
     eastModules: [{width: 700, drawers: 2}, {width: 300, drawers: 0}],
@@ -46,7 +47,8 @@ test('buildBOMCsv quotes every field and includes one row per appliance and note
   assert.ok(rows.some(r => r.includes('"Appliance gas"') && r.includes('"Gas cooktop"')))
   assert.ok(rows.some(r => r.includes('"Appliance sink"') && r.includes('"Sink"')))
   assert.ok(rows.some(r => r.includes('"Door clear zone y0-y600"')))
-  assert.equal(rows.length, 9 /* header + 8 summary rows */ + 2 /* appliances */ + 6 /* notes */)
+  // Owner asked for mirror behind hob/sink (2026-10-06): two finish rows and a proposal note.
+  assert.equal(rows.length, 9 /* header + 8 summary rows */ + 2 /* mirrors */ + 2 /* appliances */ + 7 /* notes */)
 })
 
 test('buildBOMMarkdown lists every module row and every appliance', () => {

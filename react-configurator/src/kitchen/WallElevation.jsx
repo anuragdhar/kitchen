@@ -6,7 +6,8 @@
 // the height-guide toggle, and the cabinet-select callback) is a prop.
 import React from 'react'
 import {KITCHEN, PLINTH_HEIGHT} from '../config/kitchenConfig.js'
-import {HEIGHT_GUIDES} from '../config/renderConfig.js'
+import {HEIGHT_GUIDES, KITCHEN_MIRROR_MATERIAL} from '../config/renderConfig.js'
+import {mirrorSplashbackRectangles} from '../domain/mirrorSplashback.mjs'
 
 export default function WallElevation({items, isEast, modules, showHeightGuides, renderStyle, moduleSegmentsFromNorth, onSelectItem}) {
   const frame={x:72,y:52,w:1060,h:560}
@@ -19,6 +20,17 @@ export default function WallElevation({items, isEast, modules, showHeightGuides,
   const clearDoor=spanOf(0,KITCHEN.westGap.to)
   const windowSpan=spanOf(KITCHEN.length-600, KITCHEN.length)
   const key=isEast?'east':'west'
+  const mirrors=mirrorSplashbackRectangles({[key]:items})
+  const mirrorFinish=(mounting)=>mirrors.filter(p=>p.mounting===mounting).map(p=>{
+    const span=spanOf(p.y,p.y+p.w)
+    // ASSUMPTION, 2026-10-06: reuse the elevation's 11 px label size.
+    return <g key={p.id} pointerEvents="none">
+      <rect x={span.x} y={yOf(p.z+p.h)} width={span.w} height={yOf(p.z)-yOf(p.z+p.h)} fill={KITCHEN_MIRROR_MATERIAL.color}>
+        <title>Proposed bronze mirror: {p.w} x {p.h} mm, {p.mounting}</title>
+      </rect>
+      <text x={span.x+span.w/2} y={yOf(p.z+p.h/2)} textAnchor="middle" fontSize="11">Bronze mirror (proposed)</text>
+    </g>
+  })
   const itemName={applianceGarage:'Appliance garage',gas:'Gas cooktop',dishwasher:'Dishwasher',washing:'Washing',microwave:'Microwave',foodprocessor:'Processor',waterpurifier:'Purifier cabinet',sink:'Sink',shaft:'Shaft',westGarage:'Food processor garage',garage_NE:'Tall cabinet',eastBacksplashSlider:'4in slider',westSixInchSlider:'6in slider'}
   const runStart=isEast?0:KITCHEN.westGap.to
   const topUpperY=yOf(2700)
@@ -120,6 +132,7 @@ export default function WallElevation({items, isEast, modules, showHeightGuides,
     <text x={frame.x+frame.w} y="31" textAnchor="end" fontSize="15" fontWeight="800" fill="#61584f">{isEast?'North (N) left to South (S) right':'South (S) left to North (N) right'}, length {KITCHEN.length} mm, height {KITCHEN.height} mm</text>
     <rect x={frame.x} y={frame.y} width={frame.w} height={frame.h} fill={`url(#${key}WallWash)`} stroke="#171717" strokeWidth="2"/>
     <rect x={cabinetRun.x} y={backsplashY} width={cabinetRun.w} height={backsplashH} fill={`url(#${key}Backsplash)`}/>
+    {mirrorFinish('wall')}
     <rect x={cabinetRun.x} y={counterY-4} width={cabinetRun.w} height="18" fill={renderStyle.counter} stroke="#3a2d24" strokeWidth="1.4"/>
     <g filter={`url(#${key}SoftShadow)`}>{basePanels()}</g>
     <rect x={cabinetRun.x} y={plinthY} width={cabinetRun.w} height={yOf(0)-plinthY} fill="#43372f"/>
@@ -146,6 +159,7 @@ export default function WallElevation({items, isEast, modules, showHeightGuides,
         const bottom=yOf(it.z??900)
         return (<g key={it.id}>
           <rect x={x+2} y={top} width={Math.max(12,width-4)} height={bottom-top} fill="#d9c6af" stroke="#111" strokeWidth="1.2" rx="4" opacity="0.94"/>
+          {it.id==='eastBacksplashSlider'&&mirrorFinish('slider face')}
           <line x1={x+12} y1={top+22} x2={x+width-12} y2={top+22} stroke="#5a4632" strokeWidth="2" strokeDasharray="10 7"/>
           <line x1={x+12} y1={bottom-22} x2={x+width-12} y2={bottom-22} stroke="#5a4632" strokeWidth="2" strokeDasharray="10 7"/>
           <rect x={x+Math.max(18,width*.18)} y={top+36} width={Math.max(36,width*.24)} height={Math.max(24,bottom-top-72)} fill="#f7efe4" stroke="#6f5842" strokeWidth="1.1" opacity="0.86"/>

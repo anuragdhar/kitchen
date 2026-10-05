@@ -1,5 +1,14 @@
 import { KITCHEN, PLINTH_HEIGHT } from './kitchenConfig.js'
 
+// PROPOSAL, 2026-10-06: warm bronze mirror appearance, not a fabrication spec.
+// Flush finish planes use a small depth-buffer bias, with no added storage depth.
+// Reflections use the existing scene environment (no real-time reflector).
+export const KITCHEN_MIRROR_MATERIAL = {
+  color:'#b99470', metalness:1, roughness:.08,
+  clearcoat:1, clearcoatRoughness:.04, envMapIntensity:1,
+  polygonOffset:true, polygonOffsetFactor:-1, polygonOffsetUnits:-1,
+}
+
 export const DEFAULT_MATERIALS={
   cabinetBody:'#efe9df',
   shutters:'#b99673',
