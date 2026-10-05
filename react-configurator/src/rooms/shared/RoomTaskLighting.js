@@ -4,6 +4,7 @@ import {BEDROOM1_LIGHTING} from '../../config/bedroom1LightingConfig.js'
 import {BEDROOM3_LIGHTING} from '../../config/bedroom3LightingConfig.js'
 import {STUDY_LIGHTING} from '../../config/studyLightingConfig.js'
 import {createTrackLights,createCeilingFans,createCeilingMouldings} from '../drawing/DrawingRoomLighting.js'
+import {createDiningShelfLight} from './DiningShelfLight.js'
 
 // Track lighting configs by room page (the Drawing Room's lives with its layouts: rooms/drawing/DrawingRoomLighting.js;
 // the Kitchen's frame is converted in rooms/kitchen/KitchenTrackLights.js).
@@ -22,35 +23,20 @@ export function createRoomTrackLighting(config,{widthMm,lengthMm,heightMm},{real
   return group
 }
 
-// Fixtures of the shell rooms (EmptyRoomGallery.jsx and Whole home 3D): the Lobby's dining pendant and tracks, and the
+// Fixtures of the shell rooms (EmptyRoomGallery.jsx and Whole home 3D): the Lobby's dining shelf light and tracks, and the
 // tracks of Bedroom 1 and Bedroom 3. `room` is an EMPTY_ROOM_SHELLS entry.
 export function createRoomTaskLighting(room,{realLights=false}={}){
   const group=new THREE.Group();group.name=`${room.name} task lighting`
   const config=TRACK_CONFIGS[room.name]
   const tracks=config?createRoomTrackLighting(config,room,{realLights}):null
   if(tracks)group.add(tracks)
-  let pendant=null,pendantBase=0
+  let pendant=null
   if(room.name==='Lobby / Dining'){
-    const metal=new THREE.MeshStandardMaterial({color:'#514941',roughness:.55,metalness:.4})
-    const warm=new THREE.MeshStandardMaterial({color:'#fff1d4',emissive:'#ffcf8b',emissiveIntensity:.7,roughness:.8})
-    warm.userData.taskLightGlow=true
-    const box=(w,h,d,x,y,z,material)=>{
-      const mesh=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),material)
-      mesh.position.set(x,y,z);group.add(mesh)
-    }
-    // The linear pendant over the dining table (config/lobbyLightingConfig.js pendant): its own circuit ('chandelier').
-    // The sizes below are recorded there too (bar canopy 100 x 750, body 160 x 900) for the ceiling check; there is no
-    // existing ceiling point here and the canopy as drawn straddles the north moulding (see the config note).
-    const table=room.furniture.diningTable,x=table.centerXmm/1000,z=table.centerZmm/1000
-    box(.10,.04,.75,x,room.heightMm/1000-.03,z,metal)
-    for(const dz of [-.3,.3])box(.006,.90,.006,x,2.17,z+dz,metal)
-    box(.16,.075,.90,x,1.70,z,metal)
-    box(.13,.01,.87,x,1.657,z,warm)
-    if(realLights){pendant=new THREE.PointLight('#ffd9a8',1.4,5,1.5);pendant.position.set(x,1.6,z);group.add(pendant);pendantBase=pendant.intensity}
+    pendant=createDiningShelfLight(config.pendant,room.furniture.diningTable,room.heightMm,{realLights});group.add(pendant)
   }
-  // Dimmer, one circuit at a time: 'chandelier' is the dining pendant; a run id ('L1', 'B1', ...) is one track run.
+  // Keep the existing id/slider: 'chandelier' dims both the shelf's LED glow and its real light.
   group.userData.setTrackLight=(circuit,level)=>{
-    if(circuit==='chandelier'){if(pendant){pendant.userData.dimLevel=level;pendant.intensity=pendantBase*level}}
+    if(circuit==='chandelier')pendant?.userData.setLevel(level)
     else tracks?.userData.setTrackLight(circuit,level)
   }
   // Drawing Room fixtures depend on the seating layout: see rooms/drawing/DrawingRoomLighting.js.

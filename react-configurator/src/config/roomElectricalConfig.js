@@ -62,7 +62,7 @@ export const ROOM_ELECTRICAL = {
     points: [
       {id: 'L-N1', name: 'Main switchboard', kind: 'lighting', wall: 'north', anchor: 'bedroom1DoorLatch', heightMm: 1200, switchboard: true, forDoor: 'bedroom1', replaces: 'X-L1',
         switches: ['chandelier', 'L1', 'L2', 'fan1'], loadW: W.switchboard,
-        outlets: 'dimmers for the dining pendant, track 1 and track 2; fan regulator; wall-light switch; 1 x 6 A socket',
+        outlets: 'dimmers for the dining shelf light, track 1 and track 2; fan regulator; wall-light switch; 1 x 6 A socket',
         use: 'takes over from the existing switchboard X-L1, which stands in the planned Bedroom 1 door; on the latch side of that door, 200 mm past the frame, and the first wall you pass coming from the Drawing Room'},
       {id: 'L-N2', name: 'Junction box above the door', kind: 'lighting', wall: 'north', alongMm: 475, heightMm: 2300, noLoad: true, replaces: 'X-L1',
         outlets: 'junction box with a screwed blank plate, kept reachable (never plastered over)',
@@ -80,8 +80,11 @@ export const ROOM_ELECTRICAL = {
         outlets: 'switches for the toilet light and exhaust fan', use: 'outside the toilet door, on its latch side (the hinge side of the door is not recorded: mirror this if it hangs the other way)'},
       {id: 'L-S2', name: 'Track 1 driver feed', kind: 'lighting', existing: 'X-L3', driverFor: 'L1',
         outlets: 'switched 230 V point for the 60 W / 48 V track driver (dimmer at L-N1)', use: 'reuses the existing tube-light point on the south wall, 540 mm from the run; the tube light comes off'},
-      {id: 'L-C1', name: 'Dining pendant', kind: 'lighting', anchor: 'diningTableCentre', light: 'chandelier', loadW: 30,
-        outlets: 'ceiling light point with a hook', use: 'the linear pendant over the dining table, dimmed at L-N1'},
+      // Owner 2026-10-06: "Let's use this as a dining table light" (planter-shelf photo). Existing 30 W allowance retained;
+      // PROPOSAL: dimmable driver kept accessible and dry; its rating/location and the new feed or swag remain undecided.
+      {id: 'L-C1', name: 'Dining shelf light', kind: 'lighting', anchor: 'diningTableCentre', light: 'chandelier', loadW: 30,
+        outlets: 'new feed or swag (no existing point); accessible dimmable LED driver',
+        use: '3000 K recessed LED beneath the oak planter shelf, dimmed at L-N1; four separate RCC slab anchors, load not engineered'},
       {id: 'L-C2', name: 'Ceiling fan', kind: 'lighting', existing: 'X-L4', fan: 1, loadW: W.fan,
         outlets: 'ceiling fan point with a hook rated for the fan', use: 'the existing centre ceiling point (medallion); regulator at L-N1'},
       {id: 'L-C3', name: 'Track 2 driver feed', kind: 'lighting', existing: 'X-L5', driverFor: 'L2',

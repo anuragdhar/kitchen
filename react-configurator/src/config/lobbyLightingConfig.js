@@ -41,14 +41,29 @@ export const LOBBY_LIGHTING = {
   ceilingFans: {status: 'probable, from the scan', bladeDiameterMm: 1200, dropMm: 300, chandelierRadiusMm: 0,
     fans: [{xMm: 2605, zMm: 1600, label: 'Ceiling fan', status: 'probable, from the scan'}]},
   ceilingMouldings: LOBBY_CEILING_MOULDINGS,
-  // The linear pendant over the dining table stays (RoomTaskLighting.js draws it at the table centre); it is its own circuit.
+  // Owner 2026-10-06, with the planter-shelf photo: "Let's use this as a dining table light."
   // 2026-10-05: there is NO ceiling point over the table (2200, 620). The two real points are on the room's centre line
-  // (existingCeilingPoints); the nearest is the fan medallion about 1060 mm away, which the fan occupies. So the pendant
-  // needs a NEW point or a swag; and its 750 mm bar canopy, as drawn, would straddle the north moulding (390-450 from the
-  // wall), so it needs a compact canopy inboard of the moulding instead (domain/drawingLighting.mjs pendantCeilingReport).
-  // Decision pending with the owner; nothing is moved. canopyLengthMm / canopyWidthMm are the bar canopy that
-  // RoomTaskLighting.js draws; canopy and body both run north-south (axis 'z'), bodyWidthMm is the body's width.
-  pendant: {label: 'Dining pendant', lengthMm: 900, bottomMm: 1657, bodyWidthMm: 160, canopyLengthMm: 750, canopyWidthMm: 100, axis: 'z',
+  // (existingCeilingPoints); the nearest is the fan medallion about 1060 mm away, which the fan occupies. The feed STILL
+  // needs a NEW point or a swag, undecided. The old 750 x 100 bar canopy crossed the north moulding (z 390-450).
+  // PROPOSAL 2026-10-06: light oak shelf, north-south like the table. All dimensions/weights/render settings below are
+  // proposals, not measured hardware. Underside 1780 (was 1657) gives 1035 above the 745 table: higher for sight lines,
+  // but NOT standing headroom when leaning beneath it. Four separate mounts at x +/-110, z +/-320 avoid the moulding;
+  // the small central cap is for the unresolved electrical feed, not the structural support. Keep the legacy keys/id.
+  pendant: {label: 'Dining shelf light', kind: 'planterShelf', lengthMm: 1000, bottomMm: 1780, bodyWidthMm: 300,
+    canopyLengthMm: 80, canopyWidthMm: 60, canopyDepthMm: 20, axis: 'z', thicknessMm: 40,
+    rods: {endInsetMm: 180, sideInsetMm: 40, diameterMm: 6, mountDiameterMm: 40, mountDepthMm: 12},
+    led: {kelvin: 3000, lengthMm: 880, widthMm: 16, thicknessMm: 2, recessMm: 2,
+      channelLengthMm: 900, channelWidthMm: 22, channelDepthMm: 8, cableDiameterMm: 3},
+    plants: {alongMm: [-310, 0, 310], heightMm: 350, spreadMm: 220,
+      trailDropMm: 240, trailOverhangMm: 35, leafLengthMm: 55, leafWidthMm: 32, stemDiameterMm: 3,
+      // Conservative plan envelope includes leaves, for the table-edge/leaning check; keep growth trimmed inside it.
+      envelopeOverhangMm: 65},
+    load: {boardDensityKgM3: 700, wetPotKg: 2, hardwareKg: 1.6},
+    // ASSUMPTION: the existing fan sketch puts the lower blade face 14 below its nominal drop (10 offset + 4 half-thickness).
+    clearance: {standingHeightMm: 1800, headReachOverEdgeMm: 150, anchorToBladeMm: 100, anchorToMouldingMm: 40, fanBladeBelowDropMm: 14},
+    appearance: {oak: '#d5bb91', metal: '#b9b4aa', glowIntensity: .7,
+      // Existing point-light preview strength retained; offset below the shelf prevents the wood masking it.
+      lightIntensity: 1.4, lightRangeM: 5, lightDecay: 1.5, lightBelowMm: 60},
     ceilingPoint: {status: 'none exists over the table; a new point or a swag is needed, not decided'}},
   // MOULDINGS (2026-10-05): both runs sit on flat slab.
   //  L1 stays 537 mm off the south wall (97 mm inboard of the south moulding, 370-440) but ran x 2100-4700, through the
@@ -72,8 +87,8 @@ export const LOBBY_LIGHTING = {
   ]},
 }
 
-// Sliders shown on the Lobby page, one per circuit: [circuit id, label]. 'chandelier' is the dining pendant; the others are
+// Sliders shown on the Lobby page, one per circuit: [circuit id, label]. 'chandelier' is the dining shelf light; the others are
 // the run ids above (rooms/shared/RoomLightDimmer.jsx).
 export const LOBBY_DIMMER_CIRCUITS = [
-  ['chandelier', 'Dining pendant'], ['L1', 'Lobby track 1 (south wall)'], ['L2', 'Lobby track 2 (ironing storage)'],
+  ['chandelier', 'Dining shelf light'], ['L1', 'Lobby track 1 (south wall)'], ['L2', 'Lobby track 2 (ironing storage)'],
 ]
