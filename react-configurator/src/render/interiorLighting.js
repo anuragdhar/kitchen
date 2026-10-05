@@ -11,7 +11,7 @@ import {lampLinear} from './renderQuality.mjs';
 // soft fill by day and become the room's main light at night. Colour: lampLinear (render/renderQuality.mjs) renders the
 // Kelvin of each mode with the same white balance as the rooms' own track lights, so 4500 K day reads neutral and 2700 K
 // night warm (kelvinRgb alone made 4500 K peach).
-export const PREVIEW_GAIN=.15;
+export const PREVIEW_GAIN=.25;
 const nativePoint=(zone,f)=>zone.min.map((n,i)=>n+(zone.max[i]-n)*f[i]);
 /** Authored geometry stays intact. This adds a removable proposed fixture overlay. */
 export function bindInteriorLighting(record,onUpdate){
