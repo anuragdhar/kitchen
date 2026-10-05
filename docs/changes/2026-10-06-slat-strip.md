@@ -98,7 +98,7 @@ it is a sound second choice, best with the 55-inch TV, and the cable chasing and
 ## Not verified
 
 - Nothing is measured on site: the wall flatness (slats fixed straight to the wall need a flat wall), whether the north wall
-  may be chased for cables (it is the wall of the entry-side pocket), and the real ceiling height (the scan read about 2,740;
+  may be chased for cables (it is the wall of the entry-side pocket), and the real ceiling height (the phone scan read 2,775, and scans read ceilings about 40 mm high;
   the slats are scribed to the ceiling).
 - The offset pivot is a type of hardware, not a chosen product; its offset and load must be checked with the supplier. The
   leaf with slats weighs a few kg more than a flat leaf.
