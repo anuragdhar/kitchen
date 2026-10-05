@@ -113,7 +113,7 @@ Status: proposed 2026-10-05; nothing verified on site. Shown on: Lobby / Dining 
 
 | ID | Point | Where | What to fit | Use |
 | --- | --- | --- | --- | --- |
-| L-N1 | Main switchboard | north wall, x 1200, 1200 high | dimmers for the dining pendant, track 1 and track 2; fan regulator; wall-light switch; 1 x 6 A socket | takes over from the existing switchboard X-L1, which stands in the planned Bedroom 1 door; on the latch side of that door, 200 mm past the frame, and the first wall you pass coming from the Drawing Room |
+| L-N1 | Main switchboard | north wall, x 1200, 1200 high | dimmers for the dining shelf light, track 1 and track 2; fan regulator; wall-light switch; 1 x 6 A socket | takes over from the existing switchboard X-L1, which stands in the planned Bedroom 1 door; on the latch side of that door, 200 mm past the frame, and the first wall you pass coming from the Drawing Room |
 | L-N2 | Junction box above the door | north wall, x 475, 2300 high | junction box with a screwed blank plate, kept reachable (never plastered over) | the riser of the old switchboard X-L1 is cut back to here, above the new door head (2100), and extended across the lintel to L-N1 |
 | L-N3 | Dining point | north wall, x 2200, 900 high | 2 x 6 A sockets + 1 USB-A + USB-C | phones and a laptop at the dining table, 155 mm above the table top; a kettle or toaster stays in the kitchen (no 16 A outlet here: owner to confirm) |
 | L-N4 | AC point | north wall, x 2473, 2300 high | 1 x 16 A socket (or isolator) on its own circuit | the split AC indoor unit on the north wall; beside the unit, not behind it |
@@ -121,7 +121,7 @@ Status: proposed 2026-10-05; nothing verified on site. Shown on: Lobby / Dining 
 | L-E2 | Utility socket | east wall, z 350, 300 high | 1 x 6/16 A combined socket | vacuum cleaner, festival lights, a room heater; in the corner between the Pooja opening and the ironing storage |
 | L-S1 | Toilet switches | south wall, x 1815, 1200 high | switches for the toilet light and exhaust fan | outside the toilet door, on its latch side (the hinge side of the door is not recorded: mirror this if it hangs the other way) |
 | L-S2 | Track 1 driver feed | south wall, x 2735, 2260 high | switched 230 V point for the 60 W / 48 V track driver (dimmer at L-N1) | reuses the existing tube-light point on the south wall, 540 mm from the run; the tube light comes off |
-| L-C1 | Dining pendant | ceiling, x 2200, z 620 | ceiling light point with a hook | the linear pendant over the dining table, dimmed at L-N1 |
+| L-C1 | Dining shelf light | ceiling, x 2200, z 620 | new feed or swag (no existing point); accessible dimmable LED driver | 3000 K recessed LED beneath the oak planter shelf, dimmed at L-N1; four separate RCC slab anchors, load not engineered |
 | L-C2 | Ceiling fan | ceiling, x 2605, z 1600 | ceiling fan point with a hook rated for the fan | the existing centre ceiling point (medallion); regulator at L-N1 |
 | L-C3 | Track 2 driver feed | ceiling, x 3770, z 1615 | switched 230 V point for the 60 W / 48 V track driver (dimmer at L-N1) | reuses the existing small ceiling light point, 280 mm from the run; that light comes off |
 | L-P1 | Pooja light and socket | west return of the Pooja alcove, x 3833, z -500, 1200 high | switch for the alcove light + 1 x 6 A socket (hidden on purpose) | inside the Pooja alcove, on its west return behind the doors: the alcove light and an electric diya or bell |

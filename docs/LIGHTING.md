@@ -62,7 +62,7 @@ chest, a desk or a worktop with a gentle tilt). Watts and lumens are typical cat
 run has its own 48 V driver (`driverWatts`, loaded to 80% at most; sizes 60 W or 100 W, the next standard step above the
 load divided by 0.8) and its own wall dimmer, and the mix of light on a run is fixed by which heads are clipped on. The
 3D pages have one slider per circuit (`rooms/shared/RoomLightDimmer.jsx`: Dark room, All off, Planned level), the general light
-first where a room has one (chandelier, dining pendant, the kitchen's under-cabinet strips as a second circuit).
+first where a room has one (chandelier, dining shelf light, the kitchen's under-cabinet strips as a second circuit).
 
 Configs (millimetres, x from the west wall, z from the north wall): `src/config/drawingLightingConfig.js`,
 `lobbyLightingConfig.js`, `bedroom1LightingConfig.js`, `bedroom3LightingConfig.js`, `studyLightingConfig.js`,
@@ -121,11 +121,24 @@ any of these. Owner's note with the measurements, the before/after of every run 
 
 - **Lobby fan**: the centre medallion is modelled as a fan with `status: 'probable, from the scan'` at (2605, 1600) in
   the room frame, 1200 mm blades assumed. L1 is 540 mm and L2 895 mm outside the blade circle.
-- **Dining pendant** (`pendantCeilingReport`): there is no ceiling point over the table at (2200, 620); the real points are
-  on the centre line at z about 1600, the nearest (the fan's medallion) 1060 mm away. The 750 mm bar canopy as drawn lies
-  across the north moulding, and is only 101 mm outside the assumed blade circle in plan (the body 22 mm, 670 mm below
-  the blades). It needs a new point with a compact canopy inboard of the moulding, or a different fitting; not decided,
-  nothing moved.
+- **Dining shelf light** (owner 2026-10-06: "Let's use this as a dining table light", planter-shelf photo): replaces the
+  linear pendant with a PROPOSED light-oak board, 1000 long north-south x 300 wide x 40 thick, three potted trailing plants
+  and a recessed 3000 K LED. Underside 1780 mm above floor (was 1657), 1035 above the unchanged 745-high dining table.
+  The `chandelier` circuit and slider stay; its label is now Dining shelf light and it dims both glow and illumination.
+  `pendantCeilingReport` checks four separate rod mounts at (2090, 300), (2310, 300), (2090, 940), (2310, 940): minimum
+  70 mm from scanned mouldings and 103 mm from the assumed 1200 mm fan circle, including the proposed 40 mm mounts.
+  These small margins need site checking: a 1400 mm fan leaves only 3 mm at the closest mount. The wider board overlaps
+  the assumed blade circle in plan by 56 mm, but is 566 mm below the modelled lower blade face; proposed plant tops are
+  216 mm below it (the fan sketch's lower blade face is 14 mm below its nominal 300 mm drop).
+  The 80 x 60 mm central electrical cap replaces the 750 x 100 bar canopy that crossed the north moulding; it carries no
+  structural load. There is still **no ceiling point above the table** at (2200, 620). The nearest existing point is the
+  occupied fan medallion, 1060 mm away. New feed or swag and an accessible, dry, dimmer-compatible driver remain undecided.
+  Proposed hanging weight is 16 kg (8.4 board + 6 wet pots + 1.6 hardware/LED allowance). Four anchors into the RCC slab
+  are needed; the load is not engineered. The shelf is over-table furniture, not standing headroom: at the assumed
+  1800 mm standing height its underside is 20 mm too low when someone leans underneath. The conservative foliage
+  envelope reaches about 1553 mm above floor; trim it and keep the table beneath. Use closed cachepots and water away
+  from the table/electrics, or good artificial plants. Real pothos needs daylight the Lobby may not have. Allow access
+  to dust the board/leaves and remove pots for cleaning. Details and owner questions: [owner note](changes/2026-10-06-dining-shelf-light.md).
 - **Bedroom 3 fan tolerance**: 400 mm about the room centre became 150 mm about the scanned point.
 - **3D**: `createCeilingMouldings` (`DrawingRoomLighting.js`) draws the same shapes the check uses on the Drawing Room,
   Lobby and Bedroom 3 ceilings, on the room pages and in Whole home 3D. The painted border colour is not drawn.

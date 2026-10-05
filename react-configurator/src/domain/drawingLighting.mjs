@@ -91,13 +91,22 @@ const distanceToRectangle = (run, rect) => {
 // Gap between a run (or a piece of one) and a moulding shape from mouldingShapes; 0 when it lies on the moulding.
 const distanceToMoulding = (run, shape) => shape.radius === undefined ? distanceToRectangle(run, shape) : Math.max(0, distanceToRun(run, shape) - shape.radius)
 
+/** Four vertical rods in the room frame, mm; shared by the ceiling report and the shelf builder. */
+export function pendantRodAnchors(p, centre) {
+  if (!p.rods) return []
+  const along = p.lengthMm / 2 - p.rods.endInsetMm, across = p.bodyWidthMm / 2 - p.rods.sideInsetMm
+  return [-along, along].flatMap(a => [-across, across].map(b => p.axis === 'x'
+    ? {x: centre.x + a, z: centre.z + b} : {x: centre.x + b, z: centre.z + a}))
+}
+
 /**
- * A linear pendant against what is really on the ceiling (the Lobby's dining pendant; pure, millimetres, room frame).
+ * A pendant against what is really on the ceiling (pure, millimetres, room frame).
  * `centre` {x, z} is where it hangs; `pendant` gives lengthMm and bodyWidthMm of the body, canopyLengthMm and canopyWidthMm
  * of the ceiling canopy, and axis ('x' or 'z', the way both run). Returns the plan gap from the canopy and from the body to
  * each fan's blade circle, the mouldings the canopy lies on (it cannot be fixed flat there either), and the distance to
  * each existing ceiling point ({xMm, zMm, label} in the same frame): a pendant with no point above it needs a new point
- * or a swag.
+ * or a swag. A planter shelf adds four actual rod mounts, a conservative foliage envelope, table-edge head/leaning
+ * checks and a wet-weight estimate. Negative gaps mean overlap/insufficient height, not installation approval.
  */
 export function pendantCeilingReport(room, config, centre, existingPoints = []) {
   const p = config.pendant, alongX = p.axis === 'x', fans = config.ceilingFans ?? {fans: [], bladeDiameterMm: 0}
@@ -107,12 +116,47 @@ export function pendantCeilingReport(room, config, centre, existingPoints = []) 
   const canopy = rect(p.canopyLengthMm, p.canopyWidthMm), body = rect(p.lengthMm, p.bodyWidthMm)
   const toPoint = (r, x, z) => Math.hypot(Math.max(r.x1 - x, 0, x - r.x2), Math.max(r.z1 - z, 0, z - r.z2))
   const overlaps = (r, s) => s.radius === undefined ? r.x1 < s.x2 && r.x2 > s.x1 && r.z1 < s.z2 && r.z2 > s.z1 : toPoint(r, s.x, s.z) < s.radius
-  return {
+  const report = {
     canopy, body,
     fans: fans.fans.map(f => ({label: f.label, canopyToBladesMm: Math.round(toPoint(canopy, f.xMm, f.zMm) - fans.bladeDiameterMm / 2), bodyToBladesMm: Math.round(toPoint(body, f.xMm, f.zMm) - fans.bladeDiameterMm / 2)})),
     canopyOnMouldings: mouldingShapes(room, config.ceilingMouldings).filter(s => overlaps(canopy, s)).map(s => s.label),
     existingPoints: existingPoints.map(e => ({label: e.label, distanceMm: Math.round(Math.hypot(e.xMm - centre.x, e.zMm - centre.z))})),
   }
+  if (p.kind !== 'planterShelf') return report
+  const mouldings = mouldingShapes(room, config.ceilingMouldings), clearance = p.clearance, radius = p.rods.mountDiameterMm / 2
+  const table = room.furniture.diningTable, foliage = rect(p.lengthMm + 2 * p.plants.envelopeOverhangMm, p.bodyWidthMm + 2 * p.plants.envelopeOverhangMm)
+  const foliageBottomMm = p.bottomMm + p.thicknessMm - p.plants.trailDropMm - p.plants.leafLengthMm / 2
+  const topMm = p.bottomMm + p.thicknessMm + p.plants.heightMm
+  report.rodAnchors = pendantRodAnchors(p, centre).map((a, index) => {
+    const gaps = mouldings.map(s => ({label: s.label, gapMm: Math.round((s.radius === undefined
+      ? toPoint(s, a.x, a.z) : Math.max(0, Math.hypot(a.x - s.x, a.z - s.z) - s.radius)) - radius)}))
+    const bladeGaps = fans.fans.map(f => ({label: f.label, gapMm: Math.round(Math.hypot(a.x - f.xMm, a.z - f.zMm) - fans.bladeDiameterMm / 2 - radius)}))
+    return {...a, id: `rod-${index + 1}`, mouldings: gaps, fans: bladeGaps,
+      insideRoom: a.x - radius >= 0 && a.x + radius <= room.widthMm && a.z - radius >= 0 && a.z + radius <= room.lengthMm,
+      clearOfMouldings: gaps.every(g => g.gapMm >= clearance.anchorToMouldingMm), clearOfBlades: bladeGaps.every(g => g.gapMm >= clearance.anchorToBladeMm)}
+  })
+  report.fans = report.fans.map((f, index) => ({...f,
+    foliageToBladesMm: Math.round(toPoint(foliage, fans.fans[index].xMm, fans.fans[index].zMm) - fans.bladeDiameterMm / 2),
+    boardBelowBladesMm: room.heightMm - fans.dropMm - clearance.fanBladeBelowDropMm - (p.bottomMm + p.thicknessMm),
+    foliageBelowBladesMm: room.heightMm - fans.dropMm - clearance.fanBladeBelowDropMm - topMm}))
+  const tableRect = {x1: table.centerXmm - table.widthMm / 2, x2: table.centerXmm + table.widthMm / 2,
+    z1: table.centerZmm - table.lengthMm / 2, z2: table.centerZmm + table.lengthMm / 2}
+  const edgeInsets = r => ({west: r.x1 - tableRect.x1, east: tableRect.x2 - r.x2, north: r.z1 - tableRect.z1, south: tableRect.z2 - r.z2})
+  const boardInsets = edgeInsets(body), foliageInsets = edgeInsets(foliage)
+  report.clearance = {aboveTableMm: p.bottomMm - table.heightMm, foliageAboveTableMm: foliageBottomMm - table.heightMm,
+    boardBottomMm: p.bottomMm, foliageBottomMm, assumedStandingHeightMm: clearance.standingHeightMm,
+    headReachOverEdgeMm: clearance.headReachOverEdgeMm, boardHeadMarginMm: p.bottomMm - clearance.standingHeightMm,
+    foliageHeadMarginMm: foliageBottomMm - clearance.standingHeightMm,
+    tableEdges: Object.keys(boardInsets).map(edge => ({edge, boardInsetMm: boardInsets[edge], foliageInsetMm: foliageInsets[edge],
+      boardHeadConflict: boardInsets[edge] <= clearance.headReachOverEdgeMm && p.bottomMm < clearance.standingHeightMm,
+      foliageHeadConflict: foliageInsets[edge] <= clearance.headReachOverEdgeMm && foliageBottomMm < clearance.standingHeightMm})),
+    advice: 'Over-table fixture, not standing headroom: a person leaning in from an edge can meet the board or trailing leaves. Keep the table underneath and trim growth.'}
+  const boardKg = p.lengthMm * p.bodyWidthMm * p.thicknessMm / 1e9 * p.load.boardDensityKgM3
+  const wetPotsKg = p.plants.alongMm.length * p.load.wetPotKg
+  report.hangingLoad = {boardKg, wetPotsKg, hardwareKg: p.load.hardwareKg, totalKg: boardKg + wetPotsKg + p.load.hardwareKg,
+    anchorCount: report.rodAnchors.length,
+    advice: 'Four anchors into the RCC slab are needed, not into plaster or mouldings. The load is not engineered; verify slab, fixings, wet weight and unequal loading before installation.'}
+  return report
 }
 
 /** Floor footprints of the layout C sofas (the west sofa faces east, the south sofa faces north). */

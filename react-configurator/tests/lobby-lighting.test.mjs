@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import {checkTrackLighting, headPosition, pendantCeilingReport, TRACK_TO_MOULDING_MM} from '../src/domain/drawingLighting.mjs'
+import {checkTrackLighting, headPosition, pendantCeilingReport, pendantRodAnchors, TRACK_TO_MOULDING_MM} from '../src/domain/drawingLighting.mjs'
 import {LOBBY_LIGHTING, LOBBY_DIMMER_CIRCUITS, LOBBY_CEILING_MOULDINGS} from '../src/config/lobbyLightingConfig.js'
 import {EMPTY_ROOM_SHELLS} from '../src/config/roomShellConfig.js'
 import {ROOM_LIGHTING} from '../src/home/lighting.mjs'
@@ -31,7 +31,7 @@ test('the old strip lights are gone from the Lobby and the Pooja alcove; the pen
   assert.equal(ROOM_LIGHTING.lobby.ownFixtures, true)
   assert.equal(ROOM_LIGHTING.pooja.ownFixtures, true)
   assert.equal(ROOM_LIGHTING.balcony.ownFixtures, false, 'rooms without their own fixtures keep the overlay')
-  assert.equal(LOBBY_LIGHTING.pendant.label, 'Dining pendant')
+  assert.equal(LOBBY_LIGHTING.pendant.label, 'Dining shelf light')
   assert.equal(LOBBY_LIGHTING.tracks.runs.length, 2)
 })
 
@@ -94,20 +94,60 @@ test('the Lobby mouldings are recorded and both tracks sit on flat slab, with no
   assert.match(bad(c => { c.tracks.runs[1].atMm = 4150 }), /L2 is 23 mm from the north-east corner ring/)
 })
 
-test('the dining pendant has no ceiling point above it, its bar canopy straddles the north moulding, and it is beside the fan', () => {
+test('the dining shelf keeps the table and circuit, avoids the north moulding, and still has no ceiling feed', () => {
   const table = room.furniture.diningTable, points = LOBBY_LIGHTING.existingCeilingPoints.map(p => ({...p, xMm: p.xMm - 40}))
   const report = pendantCeilingReport(room, LOBBY_LIGHTING, {x: table.centerXmm, z: table.centerZmm}, points)
   assert.deepEqual([table.centerXmm, table.centerZmm], [2200, 620], 'the dining table is not moved')
   // The real points are on the room's centre line (z about 1600); the nearest is the fan's own medallion.
   assert.deepEqual(report.existingPoints.map(p => p.distanceMm), [1060, 1859])
   assert.match(LOBBY_LIGHTING.pendant.ceilingPoint.status, /none exists over the table; a new point or a swag is needed/)
-  assert.deepEqual(report.canopyOnMouldings, ['north border moulding'])
-  // In plan the canopy is 101 mm and the body 22 mm outside the assumed 1200 mm blade circle; the body hangs 670 mm below the blades.
-  assert.deepEqual(report.fans, [{label: 'Ceiling fan', canopyToBladesMm: 101, bodyToBladesMm: 22}])
-  const fans = LOBBY_LIGHTING.ceilingFans
-  assert.ok(room.heightMm - fans.dropMm - (LOBBY_LIGHTING.pendant.bottomMm + 75) >= 650)
+  assert.deepEqual(report.canopyOnMouldings, [])
+  // Owner 2026-10-06: "Let's use this as a dining table light." The dimensions below freeze our PROPOSAL, not a survey.
+  const p = LOBBY_LIGHTING.pendant
+  assert.deepEqual([p.lengthMm, p.bodyWidthMm, p.thicknessMm, p.bottomMm, p.axis, p.led.kelvin], [1000, 300, 40, 1780, 'z', 3000])
+  assert.deepEqual([table.widthMm, table.lengthMm, table.heightMm], [700, 1200, 745])
+  assert.deepEqual(LOBBY_DIMMER_CIRCUITS[0], ['chandelier', 'Dining shelf light'])
+  assert.deepEqual(report.rodAnchors.map(a => [a.x, a.z]), [[2090, 300], [2310, 300], [2090, 940], [2310, 940]])
+  assert.ok(report.rodAnchors.every(a => a.insideRoom && a.clearOfMouldings && a.clearOfBlades))
+  assert.equal(Math.min(...report.rodAnchors.flatMap(a => a.mouldings.map(g => g.gapMm))), 70)
+  assert.equal(Math.min(...report.rodAnchors.flatMap(a => a.fans.map(g => g.gapMm))), 103)
+  assert.equal(report.fans[0].bodyToBladesMm, -56, 'the wider shelf overlaps the blade circle in plan: height matters')
+  assert.equal(report.fans[0].boardBelowBladesMm, 566)
+  assert.equal(report.fans[0].foliageBelowBladesMm, 216)
   const bigger = structuredClone(LOBBY_LIGHTING); bigger.ceilingFans.bladeDiameterMm = 1400
-  assert.equal(pendantCeilingReport(room, bigger, {x: table.centerXmm, z: table.centerZmm}).fans[0].canopyToBladesMm, 1, 'a 1400 mm fan would reach the canopy')
+  const largerFan = pendantCeilingReport(room, bigger, {x: table.centerXmm, z: table.centerZmm})
+  assert.equal(largerFan.rodAnchors[3].fans[0].gapMm, 3)
+  assert.equal(largerFan.rodAnchors[3].clearOfBlades, false, 'assumed blade diameter cannot certify the mounts')
+})
+
+test('the shelf report exposes standing/leaning conflicts and wet weight without claiming engineered support', () => {
+  const table = room.furniture.diningTable, centre = {x: table.centerXmm, z: table.centerZmm}
+  const report = pendantCeilingReport(room, LOBBY_LIGHTING, centre), c = report.clearance, load = report.hangingLoad
+  assert.equal(c.aboveTableMm, 1035); assert.equal(c.foliageAboveTableMm, 807.5)
+  assert.equal(c.boardHeadMarginMm, -20); assert.equal(c.foliageHeadMarginMm, -247.5)
+  assert.deepEqual(c.tableEdges.map(e => [e.edge, e.boardInsetMm, e.foliageInsetMm, e.boardHeadConflict, e.foliageHeadConflict]),
+    [['west', 200, 135, false, true], ['east', 200, 135, false, true], ['north', 100, 35, true, true], ['south', 100, 35, true, true]])
+  assert.match(c.advice, /not standing headroom/)
+  assert.deepEqual([load.boardKg, load.wetPotsKg, load.hardwareKg, load.totalKg, load.anchorCount], [8.4, 6, 1.6, 16, 4])
+  assert.match(load.advice, /Four anchors into the RCC slab/); assert.match(load.advice, /not engineered/)
+  const heavier = structuredClone(LOBBY_LIGHTING); heavier.pendant.load.wetPotKg = 4
+  assert.equal(pendantCeilingReport(room, heavier, centre).hangingLoad.totalKg, 22)
+  const low = structuredClone(LOBBY_LIGHTING); low.pendant.bottomMm = 1600
+  assert.equal(pendantCeilingReport(room, low, centre).clearance.boardHeadMarginMm, -200)
+})
+
+test('rod checks follow the configured axis and catch moulding clashes and mounts outside the room', () => {
+  const p = LOBBY_LIGHTING.pendant, centre = {x: 2200, z: 620}
+  assert.deepEqual(pendantRodAnchors({...p, axis: 'x'}, centre), [{x: 1880, z: 510}, {x: 1880, z: 730}, {x: 2520, z: 510}, {x: 2520, z: 730}])
+  const bad = structuredClone(LOBBY_LIGHTING); bad.pendant.rods.endInsetMm = 300
+  const clash = pendantCeilingReport(room, bad, centre).rodAnchors[0]
+  assert.equal(clash.clearOfMouldings, false)
+  assert.equal(clash.mouldings.find(m => m.label === 'north border moulding').gapMm, -20)
+  assert.ok(pendantCeilingReport(room, LOBBY_LIGHTING, {x: 100, z: 100}).rodAnchors.some(a => !a.insideRoom))
+  const noFan = structuredClone(LOBBY_LIGHTING); delete noFan.ceilingFans
+  assert.deepEqual(pendantCeilingReport(room, noFan, centre).fans, [])
+  const legacy = structuredClone(LOBBY_LIGHTING); delete legacy.pendant.kind
+  assert.equal(pendantCeilingReport(room, legacy, centre).rodAnchors, undefined, 'legacy report keys remain usable')
 })
 
 test('the Pooja Ghar has one round ceiling light in the middle of the alcove (owner 2026-10-05)', () => {
