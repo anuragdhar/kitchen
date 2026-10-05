@@ -25,7 +25,7 @@ import {createRug,createPottedPlant,createWallArt,createFloorLamp} from './rooms
 import {createDrawingRoomLayouts,DRAWING_LAYOUTS} from './rooms/drawing/DrawingRoomLayouts.js'
 import {createBedroom1Layouts} from './rooms/bedroom1/Bedroom1Layouts.js'
 import {Bedroom1LayoutToggle,Bedroom1LayoutPanel,BEDROOM1_DEFAULT_LAYOUT} from './rooms/bedroom1/Bedroom1LayoutPanel.jsx'
-import DrawingLightDimmer from './rooms/drawing/DrawingLightDimmer.jsx'
+import RoomLightDimmer from './rooms/shared/RoomLightDimmer.jsx'
 import {ROOM_DIMMER_CIRCUITS} from './config/roomLightingCircuits.js'
 import {buildRoomReview} from './domain/roomReview.mjs'
 import {composeReviewSheet,canvasToBlob} from './render/reviewSheet.js'
@@ -549,7 +549,7 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
         {roomKey==='bedroom1'&&<Bedroom1LayoutToggle layout={bedroom1Layout} onChange={setBedroom1Layout} style={buttonStyle}/>}
         {roomKey==='drawing'&&<button onClick={()=>setDoorSwing(value=>!value)} aria-pressed={doorSwing} style={buttonStyle(doorSwing)} title="The entry door opens into the room: red is the area its leaf sweeps">{doorSwing?'Hide entry door swing':'Show entry door swing'}</button>}
         {roomKey==='drawing'&&<button onClick={()=>setStorageOpen(value=>!value)} aria-pressed={storageOpen} style={buttonStyle(storageOpen)} title="The west cabinet of the entry pocket, entered through a narrow hidden door at the west end of the Drawing Room's north wall: the TV console is dragged out and the door, hidden in the wall panelling, swings outward to show the shelves">{storageOpen?'Close hidden west cabinet':'Open hidden west cabinet'}</button>}
-        {ROOM_DIMMER_CIRCUITS[roomKey]&&(roomKey!=='drawing'||drawingLayout==='southSofas')&&<DrawingLightDimmer key={roomKey} circuits={ROOM_DIMMER_CIRCUITS[roomKey]} onChange={(circuit,level)=>sceneRef.current?.setTrackLight?.(circuit,level)} onDarkRoom={on=>sceneRef.current?.setDarkRoom?.(on)}/>}
+        {ROOM_DIMMER_CIRCUITS[roomKey]&&(roomKey!=='drawing'||drawingLayout==='southSofas')&&<RoomLightDimmer key={roomKey} circuits={ROOM_DIMMER_CIRCUITS[roomKey]} onChange={(circuit,level)=>sceneRef.current?.setTrackLight?.(circuit,level)} onDarkRoom={on=>sceneRef.current?.setDarkRoom?.(on)}/>}
         {roomKey==='drawing'&&drawingLayout==='southSofas'&&<button onClick={()=>setShowElectrical(value=>!value)} aria-pressed={showElectrical} style={buttonStyle(showElectrical)} title="Proposed sockets, charging, switch, light and data points for layout C (docs/DRAWING_ROOM_ELECTRICAL.md)">{showElectrical?'Hide electrical points':'Show electrical points'}</button>}
         {hasRoomElectrical(roomKey)&&<button onClick={()=>setShowElectrical(value=>!value)} aria-pressed={showElectrical} style={buttonStyle(showElectrical)} title="Proposed sockets, charging, switch, light and AC points for this room, with the check results below the view (docs/ELECTRICAL_PLAN.md)">{showElectrical?'Hide electrical points':'Show electrical points'}</button>}
         {roomKey==='drawing'&&(drawingLayout==='cornerConsole'||drawingLayout==='southSofas')&&<>

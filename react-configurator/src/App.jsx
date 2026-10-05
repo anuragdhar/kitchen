@@ -9,7 +9,7 @@ import {EAST_BASE_DEPTH} from './config/kitchenConfig.js'
 import {storeStorageParts} from './rooms/shared/StoreStorage.js'
 import {createKitchenRoomLights} from './rooms/kitchen/KitchenTrackLights.js'
 import {KITCHEN_DIMMER_CIRCUITS} from './config/kitchenLightingConfig.js'
-import DrawingLightDimmer from './rooms/drawing/DrawingLightDimmer.jsx'
+import RoomLightDimmer from './rooms/shared/RoomLightDimmer.jsx'
 import React,{useState,useEffect,useRef,useMemo} from 'react'
 import {KITCHEN,KITCHEN_REFRIGERATOR,KITCHEN_STORE_STORAGE,EAST_INIT,WEST_INIT,AIRY_WEST_INIT,EAST_TOP_UPPER_DEPTH,WEST_TOP_UPPER_DEPTH,KITCHEN_AUTOSAVE_KEY,NORTH_HOB_OPTION_Y_MM, LAYOUT_MODEL, MODULE_WIDTHS, PLINTH_HEIGHT, COUNTER_THICKNESS, BACKSPLASH_HEIGHT, autoFillModules} from './config/kitchenConfig.js'
 import { DEFAULT_MATERIALS, VIEW_STYLE, HEIGHT_GUIDES, RENDER_CONFIG } from './config/renderConfig.js'
@@ -2038,7 +2038,7 @@ ${westRows}
         <button onClick={()=>{setInteractionMode('measure'); setMeasureMode(true); setMeasurePoints([])}} style={{padding:'6px 10px',background:interactionMode==='measure'?'#d97706':'#fff',color:interactionMode==='measure'?'#fff':'#d97706',border:'1px solid #d97706',borderRadius:8,fontWeight:800}}>Measure</button>
         <button onClick={()=>{setSelectedId(null); setMeasurePoints([])}} style={{padding:'6px 10px',background:'#fff',border:'1px solid #111',borderRadius:8,fontWeight:700}}>Clear</button>
       </div>
-    </div><DrawingLightDimmer circuits={KITCHEN_DIMMER_CIRCUITS} onChange={(circuit,level)=>threeViewRef.current?.setTrackLight?.(circuit,level)} onDarkRoom={on=>threeViewRef.current?.setDarkRoom?.(on)}/><ThreeDRender/></div>}
+    </div><RoomLightDimmer circuits={KITCHEN_DIMMER_CIRCUITS} onChange={(circuit,level)=>threeViewRef.current?.setTrackLight?.(circuit,level)} onDarkRoom={on=>threeViewRef.current?.setDarkRoom?.(on)}/><ThreeDRender/></div>}
     {view==='top'&&(<div ref={activeViewRef} style={{background:'#fff',borderRadius:14,padding:14,scrollMarginTop:12}}>
       <svg width="900" height={planSvgHeight} viewBox={viewBoxTop} preserveAspectRatio="xMidYMid meet" onClick={(e)=>{if(interactionMode!=='measure') return; const rect=e.currentTarget.getBoundingClientRect(); const vbW=KITCHEN.width+pad*2, vbH=KITCHEN.length+pad*2; const sx=(e.clientX-rect.left)/rect.width*vbW - pad; const sy=(e.clientY-rect.top)/rect.height*vbH - pad; const ky=KITCHEN.length - sy; if(sx<-pad||sx>KITCHEN.width+pad||ky<-pad||ky>KITCHEN.length+pad) return; setMeasurePoints(prev=> prev.length>=2 ? [{x:sx,y:ky}] : [...prev,{x:sx,y:ky}])}} style={{background:'#FFFEFB',border:'1px solid #e5e0d5',borderRadius:10,width:'100%',maxWidth:900,height:'auto',display:'block',margin:'0 auto',cursor:interactionMode==='measure'?'crosshair':interactionMode==='dimension'?'pointer':interactionMode==='transparent'?'cell':interactionMode==='cabinet'?'pointer':'default'}}>
         <rect x={-pad} y={-pad} width={KITCHEN.width+pad*2} height={KITCHEN.length+pad*2} fill="#f6f2ec"/>

@@ -37,7 +37,8 @@ export function findImportProblems(text, file) {
     // Used anywhere outside the import statements; `a.name` is a property, not a use, but `...name` is.
     if (!new RegExp(`(^|[^\\w$.]|\\.\\.\\.)${escaped}(?![\\w$])`).test(body)) problems.push(`'${name}' is imported but never used`)
   }
-  if (jsx && !names.includes('React')) problems.push("a .jsx file must import React (classic JSX transform)")
+  // A .jsx file that only re-exports has no JSX and needs no React.
+  if (jsx && /<[A-Za-z>]/.test(body) && !names.includes('React')) problems.push("a .jsx file must import React (classic JSX transform)")
   return problems
 }
 

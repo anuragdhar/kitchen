@@ -61,7 +61,7 @@ chest, a desk or a worktop with a gentle tilt). Watts and lumens are typical cat
 **One track = one circuit.** The heads on a run cannot be dimmed one by one, only the whole run (owner 2026-10-04). So each
 run has its own 48 V driver (`driverWatts`, loaded to 80% at most; sizes 60 W or 100 W, the next standard step above the
 load divided by 0.8) and its own wall dimmer, and the mix of light on a run is fixed by which heads are clipped on. The
-3D pages have one slider per circuit (`DrawingLightDimmer.jsx`: Dark room, All off, Planned level), the general light
+3D pages have one slider per circuit (`rooms/shared/RoomLightDimmer.jsx`: Dark room, All off, Planned level), the general light
 first where a room has one (chandelier, dining pendant, the kitchen's under-cabinet strips as a second circuit).
 
 Configs (millimetres, x from the west wall, z from the north wall): `src/config/drawingLightingConfig.js`,

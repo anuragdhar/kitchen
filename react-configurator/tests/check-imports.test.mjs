@@ -18,6 +18,7 @@ test('a .jsx file must import React; React itself is not reported unused there',
   assert.deepEqual(findImportProblems("import Thing from './t.jsx'\nexport default () => <Thing/>\n", 'a.jsx'), ['a .jsx file must import React (classic JSX transform)'])
   assert.deepEqual(findImportProblems("﻿import React from 'react'\nexport default () => <div/>\n", 'b.jsx'), [])
   assert.deepEqual(findImportProblems("import React from 'react'\n", 'c.js'), ["'React' is imported but never used"])
+  assert.deepEqual(findImportProblems("export {default} from './Other.jsx'\n", 'd.jsx'), [], 'a re-export has no JSX')
 })
 
 test('the app, scripts and tests have no import problems', () => {
