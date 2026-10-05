@@ -149,7 +149,7 @@ test('the catch-up of 2026-10-05 is in the plan, and proposals stay proposals', 
   assert.match(byId['lights-pooja'].detail, /8 W round surface LED panel/); assert.ok(byId['lights-pooja'].dependsOn.includes('elec-first-fix-lobby'))
   assert.match(byId['carp-bedroom3-east'].detail, /dressing cabinet moves to the SOUTH side/); assert.match(byId['carp-bedroom3-east'].estimateBasis, /full-height storage cabinet 750 x 2700.*dressing cabinet 750 x 2200/)
   // Folded in earlier: tracks moved off the ceiling mouldings, and the Bedroom 1 design.
-  assert.match(byId['lighting-plan-drawing'].detail, /Totals: 3\.95 m of track/); assert.match(byId['lighting-plan-lobby'].detail, /Totals: 3\.5 m of track/); assert.match(byId['lighting-plan-bedroom3'].detail, /Totals: 5\.5 m of track/)
+  assert.match(byId['lighting-plan-drawing'].detail, /Totals: 3\.95 m of track/); assert.match(byId['lighting-plan-lobby'].detail, /Totals: 3\.5 m of track/); assert.match(byId['lighting-plan-bedroom3'].detail, /Totals: 5\.3 m of track/)
   for (const room of ['', '-lobby', '-bedroom1', '-bedroom3', '-study', '-kitchen']) assert.ok(byId[`elec-track-feed${room}`].dependsOn.includes('elec-track-setout'), `the ${room || 'drawing'} feed waits for the set-out`)
   assert.match(byId['lobby-pendant-decide'].detail, /NO ceiling point/); assert.ok(byId['elec-lobby-pendant-feed'].dependsOn.includes('lobby-pendant-decide'))
   // Layout B is recommended, not chosen: a decision task and a conditional task whose estimate starts at nothing.
