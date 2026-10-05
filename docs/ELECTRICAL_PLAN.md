@@ -64,11 +64,11 @@ number of circuits, and sizes nothing.
 | --- | --- | --- | --- |
 | Lobby / Dining | 12 | 3 | about 4405 W |
 | Bedroom 1 | 11 | 4 | about 5295 W |
-| Bedroom 3 | 11 | 3 | about 4465 W |
+| Bedroom 3 | 12 | 3 | about 4505 W |
 | Study (Bedroom 2) | 9 | 3 | about 4355 W |
 | Home Office | 9 (7 from the office config) | 3 | about 3320 W |
 | Main entry | 11 | 2 | about 1252 W |
-| Total of these six | 63 | 18 | about 23,092 W |
+| Total of these six | 64 | 18 | about 23,132 W |
 
 The Drawing Room (17 points, `docs/DRAWING_ROOM_ELECTRICAL.md`) and the Kitchen are not in this total. Six AC or heater
 circuits make up 10,700 W of it.
@@ -186,13 +186,14 @@ The electrician must verify:
 
 ## Bedroom 3
 
-Status: proposed 2026-10-05; switchboard, wall light and fan point reuse the scanned positions. Shown on: Bedroom 3 page. 11 points; connected load about 4465 W.
+Status: proposed 2026-10-05; switchboard, wall light and fan point reuse the scanned positions. Shown on: Bedroom 3 page. 12 points; connected load about 4505 W.
 
 | ID | Point | Where | What to fit | Use |
 | --- | --- | --- | --- | --- |
 | B3-N1 | Main switchboard (existing) | north wall, x 1468, 1300 high | new modular plate in the existing box: dimmers for track 1 and track 2, fan regulator, wall-light switch, 1 x 6 A socket | the existing switchboard X-B1 stays: it is on the latch side of the entry door (scan: 1300 high, 100 above the usual 1200) |
-| B3-N2 | Toilet switches + dressing socket | north wall, x 3405, 1200 high | switches for the toilet light and exhaust; 20 A double-pole switch with indicator for the geyser; 1 x 6/16 A socket | on the 200 mm of wall between the toilet door and the mirrored dressing cabinet: the hair dryer at the mirror, and the toilet switches outside its door |
+| B3-N2 | Toilet switches | north wall, x 3405, 1200 high | switches for the toilet light and exhaust; 20 A double-pole switch with indicator for the geyser | on the 200 mm of wall between the toilet door and the full-height storage cabinet: the toilet switches outside its door |
 | B3-N3 | Utility socket | north wall, x 1750, 300 high | 1 x 6/16 A combined socket | vacuum cleaner, a room heater; on the free north wall between the two doors |
+| B3-S1 | Dressing socket | south wall, x 3256, 750 high | 1 x 6/16 A combined socket | the hair dryer and a trimmer at the mirror: on the south wall under the balcony window sill (920), 250 mm west of the dressing cabinet front, beside the standing spot |
 | B3-E1 | Bedside point, north sleeper | east wall, z 1099, 1300 high | 1 x 6 A socket + 1 USB-A + USB-C + 2-way switch for track 1 (north reading) | above the headboard and under the shelf (1650), 150 mm in from the north edge of the bed |
 | B3-E2 | Bedside point, south sleeper | east wall, z 2528, 1300 high | 1 x 6 A socket + 1 USB-A + USB-C + 2-way switch for track 2 (south reading) | above the headboard and under the shelf, 250 mm in from the south edge of the bed |
 | B3-E3 | AC point | east wall, z 2613, 2400 high | 1 x 16 A socket (or isolator) on its own circuit (hidden on purpose) | inside the overhead cabinet run, in the bay next to the AC bay: reached by opening that cabinet door, never behind the unit |
@@ -200,19 +201,23 @@ Status: proposed 2026-10-05; switchboard, wall light and fan point reuse the sca
 | B3-W2 | Picture light (existing) | west wall, z 1880, 2230 high | the existing wall light point | kept as a picture light above the artwork over the chest; switched at B3-N1 |
 | B3-C1 | Ceiling fan | ceiling, x 2030, z 1820 | the existing ceiling fan point | ceiling fan at the scanned medallion; regulator at B3-N1 |
 | B3-C2 | Track 1 driver feed | ceiling, x 600, z 820 | switched 230 V point for the 60 W / 48 V track driver (dimmer at B3-N1) | at the west end of the north run, the end nearest the switchboard |
-| B3-C3 | Track 2 driver feed | ceiling, x 600, z 2906 | switched 230 V point for the 60 W / 48 V track driver (dimmer at B3-N1) | at the west end of the south run |
+| B3-C3 | Track 2 driver feed | ceiling, x 600, z 2906 | switched 230 V point for the 100 W / 48 V track driver (dimmer at B3-N1) | at the west end of the south run (its driver went from 60 to 100 W when the dressing light joined it, 2026-10-05) |
 
 Circuits (proposed breakers; the electrician sizes cables and breakers):
 
 | Circuit | What | Breaker | Points | Connected load | Protection |
 | --- | --- | --- | --- | --- | --- |
-| B3-light | Lighting, fan and 6 A outlets | 10 A | B3-N1, B3-E1, B3-E2, B3-W1, B3-W2, B3-C1, B3-C2, B3-C3 | 705 W | 30 mA RCBO/RCCB |
-| B3-power | Power sockets | 16 A | B3-N2, B3-N3 | 2060 W | 30 mA RCBO/RCCB |
+| B3-light | Lighting, fan and 6 A outlets | 10 A | B3-N1, B3-E1, B3-E2, B3-W1, B3-W2, B3-C1, B3-C2, B3-C3 | 745 W | 30 mA RCBO/RCCB |
+| B3-power | Power sockets | 16 A | B3-N2, B3-N3, B3-S1 | 2060 W | 30 mA RCBO/RCCB |
 | B3-ac | AC | 20 A | B3-E3 | 1700 W | MCB sized to the unit nameplate |
 
-Points that follow furniture and must be re-checked if it moves: B3-E1 (bed), B3-E2 (bed), B3-W1 (west chest).
+Points that follow furniture and must be re-checked if it moves: B3-E1 (bed), B3-E2 (bed), B3-W1 (west chest), B3-S1 (dressing cabinet).
 
-Checked by the app: 9 of 9 rules pass (11 points; 5 openings; 7 pieces of furniture and door leaves; 2 doors; 2 bed sides, desks and seats; 1 AC unit; 3 track runs and fans; 4 lighting circuits; 3 circuits).
+Owner 2026-10-05: the mirror dressing cabinet moved to the south end of the east wall and a full-height storage cabinet took
+its place (docs/changes/2026-10-05-bedroom3-dressing-swap.md). The dressing socket that was part of B3-N2 is now B3-S1 at the
+new mirror, and the track 2 driver is 100 W because the dressing down light moved onto that run.
+
+Checked by the app: 9 of 9 rules pass (12 points; 5 openings; 7 pieces of furniture and door leaves; 2 doors; 2 bed sides, desks and seats; 1 AC unit; 3 track runs and fans; 4 lighting circuits; 3 circuits).
 
 The electrician must verify:
 
@@ -220,6 +225,7 @@ The electrician must verify:
 - Whether the white area above X-B1 in the scan is a second plate.
 - Where the existing AC is fed from: the AC point moves into the overhead cabinet next to the AC bay.
 - The geyser switch at B3-N2 assumes the toilet has a geyser fed from this room's board.
+- B3-S1 follows the dressing cabinet (moved to the south end 2026-10-05): under the balcony window sill, so check the wall below the sill is solid masonry and the sill does not project over the box.
 
 ## Study (Bedroom 2)
 

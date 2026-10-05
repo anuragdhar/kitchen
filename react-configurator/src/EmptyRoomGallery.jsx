@@ -408,7 +408,8 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
         camera.updateProjectionMatrix();camera.position.set(W-.35,1.5,L/2);camera.up.set(0,1,0);controls.target.set(0,1.25,L/2)
       }
       else if(roomKey==='bedroom3'&&key==='eastWall'){
-        // Keep both bedside units in frame on narrow screens without moving through the west wall.
+        // Keep both east units (full-height storage at the north end, the mirror dressing cabinet at the south end since the
+        // owner's swap of 2026-10-05) in frame on narrow screens without moving through the west wall.
         const distance=W-mm(room.furniture.eastCabinet.depthMm)-.25
         camera.fov=Math.max(46,THREE.MathUtils.radToDeg(2*Math.atan((L/2+.1)/(distance*camera.aspect))))
         camera.updateProjectionMatrix();camera.position.set(.25,1.5,L/2);camera.up.set(0,1,0);controls.target.set(W,1.4,L/2)
@@ -559,7 +560,7 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
         {room.poojaAlcove&&<button onClick={()=>{setView('poojaDoor');setPoojaDoorsOpen(false)}} aria-pressed={view==='poojaDoor'} style={buttonStyle(view==='poojaDoor')}>Door front</button>}
         {roomKey==='bedroom3'&&<button onClick={()=>setView('eastWall')} aria-pressed={view==='eastWall'} style={buttonStyle(view==='eastWall')}>East cabinetry view</button>}
         {roomKey==='bedroom3'&&<button onClick={()=>setView('westWall')} aria-pressed={view==='westWall'} style={buttonStyle(view==='westWall')}>West chest view</button>}
-        {roomKey==='bedroom3'&&<button onClick={()=>setMirrorOpen(value=>!value)} style={buttonStyle(mirrorOpen)}>{mirrorOpen?'Close vanity mirror':'Open vanity mirror'}</button>}
+        {roomKey==='bedroom3'&&<button onClick={()=>setMirrorOpen(value=>!value)} style={buttonStyle(mirrorOpen)}>{mirrorOpen?'Close dressing mirror (south-east)':'Open dressing mirror (south-east)'}</button>}
         {roomKey==='bedroom3'&&<button onClick={()=>setShowBedroom3Renders(value=>!value)} aria-pressed={showBedroom3Renders} style={buttonStyle(showBedroom3Renders)}>{showBedroom3Renders?'Hide previous renders':'Show previous renders'}</button>}
         {roomKey==='drawing'&&<label style={{display:'flex',alignItems:'center',gap:6,fontWeight:800,fontSize:13}}>Layout
           <select value={drawingLayout} onChange={event=>setDrawingLayout(event.target.value)} style={{padding:'7px 8px',borderRadius:9,border:'1px solid #cbd5e1',maxWidth:360}}>{DRAWING_LAYOUTS.map(layout=><option key={layout.key} value={layout.key}>{layout.label}</option>)}</select>

@@ -16,7 +16,7 @@ re-run the script (or tell the assistant which rate is wrong).
 
 ## Total
 
-**Rs 15,92,500 to Rs 30,47,500** (Rs 15.9 lakh to Rs 30.5 lakh) for the 105 tasks that could be
+**Rs 16,13,500 to Rs 30,78,000** (Rs 16.1 lakh to Rs 30.8 lakh) for the 105 tasks that could be
 estimated, out of 112. 7 tasks are not estimated (listed below), so the true total is higher.
 The total includes the OPTIONAL skirting replacement (Rs 17,000 to Rs 35,000).
 
@@ -27,21 +27,21 @@ The total includes the OPTIONAL skirting replacement (Rs 17,000 to Rs 35,000).
 | 1. Measure, decide and get approvals | 27 | Rs 18,500 | Rs 50,000 | 1 |
 | 2. Demolition and civil work | 12 | Rs 97,000 | Rs 1,95,000 | 1 |
 | 3. Plumbing first fix | 1 | not estimated | not estimated | 1 |
-| 4. Electrical first fix and AC piping (before plaster) | 25 | Rs 1,21,000 | Rs 2,87,000 | 1 |
-| 5. Plaster, making good and flooring | 4 | Rs 51,500 | Rs 97,000 |  |
-| 6. Carpentry and steel fabrication | 20 | Rs 9,21,500 | Rs 15,12,000 | 1 |
+| 4. Electrical first fix and AC piping (before plaster) | 25 | Rs 1,22,000 | Rs 2,88,500 | 1 |
+| 5. Plaster, making good and flooring | 4 | Rs 52,000 | Rs 97,500 |  |
+| 6. Carpentry and steel fabrication | 20 | Rs 9,40,000 | Rs 15,39,000 | 1 |
 | 7. Painting and polish | 3 | Rs 95,000 | Rs 3,21,500 |  |
-| 8. Fit-out: lights, switches, AC units, nets, blinds, plumbing fittings | 18 | Rs 2,82,000 | Rs 5,73,000 | 1 |
+| 8. Fit-out: lights, switches, AC units, nets, blinds, plumbing fittings | 18 | Rs 2,83,000 | Rs 5,74,500 | 1 |
 | 9. Furnish, snag and handover | 2 | Rs 6,000 | Rs 12,000 | 1 |
 
 ### Trade
 
 | Trade | Tasks | Low | High | Not estimated |
 | --- | ---: | ---: | ---: | ---: |
-| Civil / structure | 11 | Rs 1,07,500 | Rs 2,31,000 |  |
-| Electrical | 38 | Rs 2,58,000 | Rs 5,43,000 | 1 |
+| Civil / structure | 11 | Rs 1,08,000 | Rs 2,31,500 |  |
+| Electrical | 38 | Rs 2,60,000 | Rs 5,46,000 | 1 |
 | Plumbing | 3 | Rs 0 | Rs 0 | 2 |
-| Carpentry | 20 | Rs 9,21,000 | Rs 15,11,500 | 1 |
+| Carpentry | 20 | Rs 9,39,500 | Rs 15,38,500 | 1 |
 | Steel fabrication | 5 | Rs 50,500 | Rs 88,500 | 1 |
 | False ceiling | 1 | Rs 2,000 | Rs 4,000 |  |
 | Air conditioning | 7 | Rs 48,500 | Rs 1,57,000 |  |
@@ -57,11 +57,11 @@ The total includes the OPTIONAL skirting replacement (Rs 17,000 to Rs 35,000).
 | Drawing Room | 30 | Rs 3,52,000 | Rs 6,57,500 | 1 |
 | Lobby / Dining | 12 | Rs 1,08,000 | Rs 2,59,000 |  |
 | Bedroom 1 | 14 | Rs 2,48,000 | Rs 4,39,500 |  |
-| Bedroom 3 | 7 | Rs 1,16,500 | Rs 2,08,000 |  |
+| Bedroom 3 | 7 | Rs 1,37,000 | Rs 2,38,000 |  |
 | Study | 6 | Rs 34,000 | Rs 73,500 | 1 |
 | Home Office | 3 | Rs 68,000 | Rs 1,22,500 |  |
 | Kitchen | 7 | Rs 4,14,000 | Rs 6,66,000 | 1 |
-| Whole home or several rooms | 21 | Rs 1,43,500 | Rs 4,31,500 | 3 |
+| Whole home or several rooms | 21 | Rs 1,44,000 | Rs 4,32,000 | 3 |
 
 ## The five numbers the total is most sensitive to
 
@@ -70,11 +70,11 @@ Each row is one rate and all the quantity priced with it. If the rate is 10 % of
 
 | # | Rate | Quantity | Rate (Rs) | Low | High | Share of the high total |
 | --- | --- | ---: | --- | ---: | ---: | ---: |
-| 1 | Wardrobe or tall cabinet: 18 mm waterproof ply, laminate, soft-close hardware, by front area | 253 sq ft | 1,500-2,300 | Rs 3,79,698 | Rs 5,82,203 | 19 % |
+| 1 | Wardrobe or tall cabinet: 18 mm waterproof ply, laminate, soft-close hardware, by front area | 271 sq ft | 1,500-2,300 | Rs 4,06,944 | Rs 6,23,981 | 20 % |
 | 2 | Kitchen wall cabinets, by front area | 117 sq ft | 1,400-2,100 | Rs 1,63,647 | Rs 2,45,470 | 8 % |
 | 3 | Kitchen base cabinets with drawers and soft-close fittings, by front area | 66.3 sq ft | 1,900-2,900 | Rs 1,25,974 | Rs 1,92,276 | 6 % |
 | 4 | Strip paint from old woodwork, stain and PU polish | 86.9 to 412 sq ft | 250-450 | Rs 21,724 | Rs 1,85,581 | 6 % |
-| 5 | Low unit, console or chest of drawers, by length along the wall | 24.4 to 28.7 running ft | 3,500-6,000 | Rs 85,472 | Rs 1,72,115 | 6 % |
+| 5 | Low unit, console or chest of drawers, by length along the wall | 22 to 26.2 running ft | 3,500-6,000 | Rs 76,859 | Rs 1,57,350 | 5 % |
 
 ## Not estimated, and why
 
@@ -105,7 +105,7 @@ Rupees, 2025-26, Delhi NCR, mid-range quality. "Used for" is the total quantity 
 | Mild steel, fabricated, primed, painted and fixed | kg | 110 | 170 | 114 |
 | Stainless steel 304 grille door with frame and insect mesh, fabricated and fixed | sq ft | 1,600 | 2,600 | 21.4 |
 | Mortise lock with lever handles, deadbolt and night latch | each | 5,000 | 12,000 | 1 |
-| Light or switch point: conduit, wire, box, modular switch | point | 900 | 1,500 | 25 to 26 |
+| Light or switch point: conduit, wire, box, modular switch | point | 900 | 1,500 | 26 to 27 |
 | 6 A socket or charging point with a modular plate (USB module included) | point | 1,200 | 2,000 | 18 to 21 |
 | 16 A power point with a modular plate | point | 1,800 | 3,000 | 14 |
 | Dedicated circuit from the board: 4 sq mm wire, own breaker, AC or power socket | each | 4,500 | 8,000 | 3 to 7 |
@@ -114,13 +114,13 @@ Rupees, 2025-26, Delhi NCR, mid-range quality. "Used for" is the total quantity 
 | Flush floor box, chased into the floor, with socket and USB | each | 4,500 | 9,000 | 0 to 1 |
 | Replace or move a switchboard: modular box, plate, switches and regulators, wires extended | each | 4,000 | 9,000 | 2 |
 | Feed point and a dimmed line back to the switchboard for one track run | run | 2,000 | 3,500 | 11 |
-| Close a wall chase and patch the plaster | running ft | 40 | 70 | 632 |
+| Close a wall chase and patch the plaster | running ft | 40 | 70 | 640 |
 | Floor and skirting repair at a cut wall, matched to the old floor | sq ft | 250 | 450 | 30 |
 | Take off the old skirting and fix a slim or flush tile skirting | running ft | 90 | 180 | 194 |
 | PVC plank ceiling on a frame, with edge trim | sq ft | 90 | 160 | 23 |
-| Wardrobe or tall cabinet: 18 mm waterproof ply, laminate, soft-close hardware, by front area | sq ft | 1,500 | 2,300 | 253 |
+| Wardrobe or tall cabinet: 18 mm waterproof ply, laminate, soft-close hardware, by front area | sq ft | 1,500 | 2,300 | 271 |
 | Shallow cabinet (under 150 mm deep) or a sliding cover: doors, shelves, laminate, by front area | sq ft | 800 | 1,300 | 59.8 |
-| Low unit, console or chest of drawers, by length along the wall | running ft | 3,500 | 6,000 | 24.4 to 28.7 |
+| Low unit, console or chest of drawers, by length along the wall | running ft | 3,500 | 6,000 | 22 to 26.2 |
 | Loose top or shelf: 25 mm ply, laminate, edged | sq ft | 350 | 600 | 23.6 |
 | Kitchen base cabinets with drawers and soft-close fittings, by front area | sq ft | 1,900 | 2,900 | 66.3 |
 | Kitchen wall cabinets, by front area | sq ft | 1,400 | 2,100 | 117 |
@@ -141,8 +141,8 @@ Rupees, 2025-26, Delhi NCR, mid-range quality. "Used for" is the total quantity 
 | Track spot head, 7 W | each | 900 | 1,800 | 16 |
 | Track linear diffused head, 15 W | each | 1,300 | 2,500 | 14 |
 | Track reading or down-light head, 12 W | each | 1,200 | 2,200 | 13 |
-| 48 V driver, 60 W, dimmable | each | 1,800 | 3,000 | 7 |
-| 48 V driver, 100 W, dimmable | each | 2,500 | 4,500 | 4 |
+| 48 V driver, 60 W, dimmable | each | 1,800 | 3,000 | 6 |
+| 48 V driver, 100 W, dimmable | each | 2,500 | 4,500 | 5 |
 | Wall dimmer matched to the driver, modular | each | 1,500 | 3,500 | 11 |
 | Fix one track run to the slab, connect, clip in and aim the heads (labour) | run | 1,000 | 2,000 | 11 |
 | Round LED panel light, 8 W, fitted | each | 350 | 700 | 5 |
@@ -212,7 +212,7 @@ Rupees, 2025-26, Delhi NCR, mid-range quality. "Used for" is the total quantity 
 | Run CAT6, coax, phone and intercom cables to the TV wall | Drawing Room | Rs 4,500 | Rs 9,000 | medium | cable runs: 4 run x Rs 1,200-2,200. CAT6, coax, phone, intercom. |
 | Lobby / Dining: electrical first fix (conduits and boxes for the room's point plan) | Lobby / Dining | Rs 7,500 | Rs 12,500 | low | light, fan and switch points: 3 point x Rs 900-1,500; socket and charging points: 1 point x Rs 1,200-2,000; 16 A points: 2 point x Rs 1,800-3,000. 6 of the 12 points in docs/ELECTRICAL_PLAN.md; the rest are priced in the track-feed, switchboard, pendant and AC tasks. Existing points that are reused are counted as new, so expect the low end. Includes the Pooja light switch and socket (L-P1). |
 | Bedroom 1: electrical first fix (conduits and boxes for the room's point plan) | Bedroom 1 | Rs 8,000 | Rs 13,500 | low | light, fan and switch points: 3 point x Rs 900-1,500; socket and charging points: 3 point x Rs 1,200-2,000; 16 A points: 1 point x Rs 1,800-3,000. 7 of the 11 points in docs/ELECTRICAL_PLAN.md; the rest are priced in the track-feed, switchboard, pendant and AC tasks. Existing points that are reused are counted as new, so expect the low end. Planned for layout A; in layout B the two bedside points move to the south wall (C35). The split AC point B1-W1 is left out until C31 is decided. |
-| Bedroom 3: electrical first fix (conduits and boxes for the room's point plan) | Bedroom 3 | Rs 9,500 | Rs 24,500 | low | light, fan and switch points: 3 point x Rs 900-1,500; socket and charging points: 3 point x Rs 1,200-2,000; 16 A points: 2 point x Rs 1,800-3,000; own circuit for an existing AC or water heater, if it has none: 0 to 1 each x Rs 4,500-8,000. 9 of the 11 points in docs/ELECTRICAL_PLAN.md; the rest are priced in the track-feed, switchboard, pendant and AC tasks. Existing points that are reused are counted as new, so expect the low end. |
+| Bedroom 3: electrical first fix (conduits and boxes for the room's point plan) | Bedroom 3 | Rs 10,500 | Rs 26,000 | low | light, fan and switch points: 4 point x Rs 900-1,500; socket and charging points: 3 point x Rs 1,200-2,000; 16 A points: 2 point x Rs 1,800-3,000; own circuit for an existing AC or water heater, if it has none: 0 to 1 each x Rs 4,500-8,000. 10 of the 12 points in docs/ELECTRICAL_PLAN.md; the rest are priced in the track-feed, switchboard, pendant and AC tasks. Existing points that are reused are counted as new, so expect the low end. |
 | Study: electrical first fix (conduits and boxes for the room's point plan) | Study | Rs 7,500 | Rs 21,000 | low | light, fan and switch points: 2 point x Rs 900-1,500; socket and charging points: 2 point x Rs 1,200-2,000; 16 A points: 2 point x Rs 1,800-3,000; own circuit for an existing AC or water heater, if it has none: 0 to 1 each x Rs 4,500-8,000. 7 of the 9 points in docs/ELECTRICAL_PLAN.md; the rest are priced in the track-feed, switchboard, pendant and AC tasks. Existing points that are reused are counted as new, so expect the low end. |
 | Home Office: electrical first fix (conduits and boxes for the room's point plan) | Home Office | Rs 9,500 | Rs 24,500 | low | light, fan and switch points: 2 point x Rs 900-1,500; socket and charging points: 4 point x Rs 1,200-2,000; 16 A points: 1 point x Rs 1,800-3,000; data points: 1 run x Rs 1,200-2,200; own circuit for an existing AC or water heater, if it has none: 0 to 1 each x Rs 4,500-8,000. 9 of the 9 points in docs/ELECTRICAL_PLAN.md; the rest are priced in the track-feed, switchboard, pendant and AC tasks. Existing points that are reused are counted as new, so expect the low end. The water heater and router points exist already. |
 | Kitchen: electrical first fix from the kitchen services plan | Kitchen |  |  |  | Not estimated: The kitchen has its own services plan, worked out in the kitchen planner from where the appliances stand; it has no fixed point schedule to count until the kitchen layout is frozen. |
@@ -229,7 +229,7 @@ Rupees, 2025-26, Delhi NCR, mid-range quality. "Used for" is the total quantity 
 | AC power points: Drawing Room, and the Lobby if agreed; each AC on its own breaker | Drawing Room / Lobby | Rs 4,500 | Rs 16,000 | medium | AC circuits: Drawing Room, and the Lobby if agreed: 1 to 2 each x Rs 4,500-8,000. |
 | Bedroom 1 balcony: dedicated power socket for the window AC | Bedroom 1 | Rs 4,500 | Rs 8,000 | medium | AC circuit: 1 each x Rs 4,500-8,000. |
 | Lobby AC, if agreed: lay the pipes, drain and cable through the Pooja alcove and the balcony | Lobby / Dining | Rs 0 | Rs 15,500 | low | pipe beyond the 3 m kit: 0 to 1.4 m x Rs 800-1,300; drain: 0 to 4.8 m x Rs 150-300; two core cuts and fixing: 0 to 1 each x Rs 3,000-6,000; solid panel in the balcony glazing head: 0 to 1 job x Rs 2,500-6,000. Nothing if no Lobby AC is wanted (C40). Route from docs/AC_PLAN.md: 4.4 m of pipe and 4.8 m of drain. |
-| Close chases, plaster and level the walls | Whole home | Rs 25,000 | Rs 44,500 | low | chases, about 79 points x 8 ft: 632 running ft x Rs 40-70. About 30 points in the Drawing Room, track feeds and AC lines plus the counted points of the six room plans; the kitchen adds to it. Opening reveals are priced with each opening. |
+| Close chases, plaster and level the walls | Whole home | Rs 25,500 | Rs 45,000 | low | chases, about 80 points x 8 ft: 640 running ft x Rs 40-70. About 30 points in the Drawing Room, track feeds and AC lines plus the counted points of the six room plans; the kitchen adds to it. Opening reveals are priced with each opening. |
 | Flooring and skirting repairs where walls were cut | Drawing Room / Main entry / Lobby / Bedroom 1 | Rs 7,500 | Rs 13,500 | low | patches at three openings and the closed doorway: 30 sq ft x Rs 250-450. Area assumed; matching an old floor is the risk. |
 | Optional: replace the old projecting skirting with modern flush skirting | Whole home | Rs 17,000 | Rs 35,000 | low | skirting: 194 running ft x Rs 90-180. OPTIONAL. Room perimeters less a quarter for doors and cabinets; flush skirting costs more than the range. |
 | Fit the entry ceiling: long PVC planks on a frame | Main entry | Rs 2,000 | Rs 4,000 | medium | corridor 2134 x 1000: 23 sq ft x Rs 90-160. A small job: expect a minimum charge near the high figure. |
@@ -242,7 +242,7 @@ Rupees, 2025-26, Delhi NCR, mid-range quality. "Used for" is the total quantity 
 | Bedroom 1: medicine cabinet in the closed old doorway | Bedroom 1 | Rs 14,500 | Rs 24,500 | low | shallow cabinet about 826 x 2100: 18.7 sq ft x Rs 800-1,300. Usable depth is only about 50 mm in the model; measure the wall first. |
 | Bedroom 1: the three wardrobes (balcony wardrobe with sliding doors) | Bedroom 1 | Rs 1,59,000 | Rs 2,44,000 | low | west wardrobe 1800 x 2400: 46.5 sq ft x Rs 1,500-2,300; north-east recess wardrobe 850 x 2700: 24.7 sq ft x Rs 1,500-2,300; balcony wardrobe 1200 x 2700: 34.9 sq ft x Rs 1,500-2,300. The same three wardrobes in layout A and layout B; sliding panels on the balcony wardrobe are inside the rate. |
 | Bedroom 1, only if layout B is chosen: dressing table with wall mirror, and a bedside table | Bedroom 1 | Rs 0 | Rs 27,500 | low | dressing table 900 long: 0 to 3 running ft x Rs 3,500-6,000; wall mirror 700 x 900: 0 to 6.8 sq ft x Rs 150-280; bedside table 400 long: 0 to 1.3 running ft x Rs 3,500-6,000. Nothing if layout A stays (C35). The stool and any acoustic board behind the bed head are not included. |
-| Bedroom 3: cabinets on both sides of the bed (storage north, mirror dressing cabinet south), the overhead run and the slatted AC bay | Bedroom 3 | Rs 63,500 | Rs 1,01,000 | low | north cabinet 750 x 2200: 17.8 sq ft x Rs 1,500-2,300; south low cabinet 750 long: 2.5 running ft x Rs 3,500-6,000; overhead run 3426 x 450: 16.6 sq ft x Rs 1,500-2,300; mirror: 12.5 sq ft x Rs 150-280; headboard shelf: 5.2 sq ft x Rs 350-600. Sizes as the model stands today. The cabinets are being rearranged (dressing cabinet to the south side, full-height storage on the north side); this figure is regenerated when that change is in the model. The slatted AC bay is priced as overhead cabinet front. |
+| Bedroom 3: cabinets on both sides of the bed (storage north, mirror dressing cabinet south), the overhead run and the slatted AC bay | Bedroom 3 | Rs 82,000 | Rs 1,28,000 | low | full-height storage cabinet 750 x 2700: 21.8 sq ft x Rs 1,500-2,300; dressing cabinet 750 x 2200: 17.8 sq ft x Rs 1,500-2,300; overhead run 2676 x 450: 13 sq ft x Rs 1,500-2,300; mirror: 12.5 sq ft x Rs 150-280; headboard shelf: 5.2 sq ft x Rs 350-600. The slatted AC bay is priced as overhead cabinet front. |
 | Bedroom 3: low chest of drawers on the west wall, with the artwork above | Bedroom 3 | Rs 16,000 | Rs 28,000 | medium | chest 1400 long, six drawers: 4.6 running ft x Rs 3,500-6,000. The artwork is the owner's purchase and is not included. |
 | Kitchen: base and wall cabinets, counter and backsplash | Kitchen | Rs 3,18,000 | Rs 5,01,000 | low | base cabinets, 4746 east + 2098 west, 900 high: 66.3 sq ft x Rs 1,900-2,900; wall cabinets, 4746 east + 3298 west, 1350 high in two tiers: 117 sq ft x Rs 1,400-2,100; counter: 52 sq ft x Rs 400-900; backsplash: 52 sq ft x Rs 150-300. Run lengths from the kitchen config. Sink, hob, chimney, dishwasher and other appliances are NOT included. |
 | Kitchen store: pull-out storage and its sliding cover | Kitchen | Rs 79,500 | Rs 1,32,000 | low | store unit 1092 x 2600: 30.6 sq ft x Rs 1,500-2,300; sliding cover 1000 x 2200: 23.7 sq ft x Rs 800-1,300; pull-out racks: 1 set x Rs 15,000-30,000. The refrigerator is not included. |
@@ -261,7 +261,7 @@ Rupees, 2025-26, Delhi NCR, mid-range quality. "Used for" is the total quantity 
 | Drawing Room: buy and fit the track lights | Drawing Room | Rs 21,500 | Rs 43,000 | medium | track: 4 m x Rs 900-1,800; spot heads: 3 each x Rs 900-1,800; diffused heads: 2 each x Rs 1,300-2,500; reading heads: 3 each x Rs 1,200-2,200; 60 W drivers: 1 each x Rs 1,800-3,000; 100 W drivers: 1 each x Rs 2,500-4,500; dimmers: 2 each x Rs 1,500-3,500; fixing: 2 run x Rs 1,000-2,000. Counts from the lighting config; one maker for track, heads and drivers. |
 | Lobby / Dining: buy and fit the track lights | Lobby / Dining | Rs 18,000 | Rs 36,000 | medium | track: 3.5 m x Rs 900-1,800; spot heads: 3 each x Rs 900-1,800; diffused heads: 2 each x Rs 1,300-2,500; reading heads: 1 each x Rs 1,200-2,200; 60 W drivers: 2 each x Rs 1,800-3,000; dimmers: 2 each x Rs 1,500-3,500; fixing: 2 run x Rs 1,000-2,000. Counts from the lighting config; one maker for track, heads and drivers. |
 | Bedroom 1: buy and fit the track lights | Bedroom 1 | Rs 21,000 | Rs 42,000 | medium | track: 3.8 m x Rs 900-1,800; spot heads: 4 each x Rs 900-1,800; diffused heads: 2 each x Rs 1,300-2,500; reading heads: 2 each x Rs 1,200-2,200; 60 W drivers: 1 each x Rs 1,800-3,000; 100 W drivers: 1 each x Rs 2,500-4,500; dimmers: 2 each x Rs 1,500-3,500; fixing: 2 run x Rs 1,000-2,000. Counts from the lighting config; one maker for track, heads and drivers. |
-| Bedroom 3: buy and fit the track lights | Bedroom 3 | Rs 22,000 | Rs 44,000 | medium | track: 5.5 m x Rs 900-1,800; spot heads: 3 each x Rs 900-1,800; diffused heads: 2 each x Rs 1,300-2,500; reading heads: 3 each x Rs 1,200-2,200; 60 W drivers: 2 each x Rs 1,800-3,000; dimmers: 2 each x Rs 1,500-3,500; fixing: 2 run x Rs 1,000-2,000. Counts from the lighting config; one maker for track, heads and drivers. |
+| Bedroom 3: buy and fit the track lights | Bedroom 3 | Rs 23,000 | Rs 45,500 | medium | track: 5.5 m x Rs 900-1,800; spot heads: 3 each x Rs 900-1,800; diffused heads: 2 each x Rs 1,300-2,500; reading heads: 3 each x Rs 1,200-2,200; 60 W drivers: 1 each x Rs 1,800-3,000; 100 W drivers: 1 each x Rs 2,500-4,500; dimmers: 2 each x Rs 1,500-3,500; fixing: 2 run x Rs 1,000-2,000. Counts from the lighting config; one maker for track, heads and drivers. |
 | Study: buy and fit the track lights | Study | Rs 22,500 | Rs 45,500 | medium | track: 5.2 m x Rs 900-1,800; spot heads: 3 each x Rs 900-1,800; diffused heads: 3 each x Rs 1,300-2,500; reading heads: 2 each x Rs 1,200-2,200; 60 W drivers: 1 each x Rs 1,800-3,000; 100 W drivers: 1 each x Rs 2,500-4,500; dimmers: 2 each x Rs 1,500-3,500; fixing: 2 run x Rs 1,000-2,000. Counts from the lighting config; one maker for track, heads and drivers. |
 | Kitchen: buy and fit the ceiling track | Kitchen | Rs 14,500 | Rs 29,500 | medium | track: 4 m x Rs 900-1,800; diffused heads: 3 each x Rs 1,300-2,500; reading heads: 2 each x Rs 1,200-2,200; 100 W drivers: 1 each x Rs 2,500-4,500; dimmers: 1 each x Rs 1,500-3,500; fixing: 1 run x Rs 1,000-2,000. Counts from the lighting config; one maker for track, heads and drivers. The under-cabinet strips are part of the kitchen cabinets. |
 | Entry: fit the four round lights and the two switches, and test | Main entry | Rs 1,000 | Rs 3,000 | medium | round panels: 4 each x Rs 350-700. |

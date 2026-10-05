@@ -161,6 +161,8 @@ function bedroom3Model() {
   const side = bedside(bed, headWall, openings, W, L)
   const ac = {id: 'split', name: 'split AC in the east cabinet bay', wall: 'east', a: c.ac.centerFromNorthMm - c.ac.bayWidthMm / 2, b: c.ac.centerFromNorthMm + c.ac.bayWidthMm / 2, bottom: c.ac.bottomMm, top: c.ac.bottomMm + c.ac.unitHeightMm}
   const fans = fanList(BEDROOM3_LIGHTING), art = chest.artwork, artEnd = chest.fromNorthMm + chest.widthMm / 2 + art.widthMm / 2
+  // The mirror dressing cabinet (the south unit since 2026-10-05) and the wall at its end of the run.
+  const dressing = [c.north, c.south].find(u => u.mirrorTopMm != null), dressingEnd = dressing === c.south ? 'south' : 'north'
   return {
     key: 'bedroom3', name: room.name, widthMm: W, lengthMm: L, heightMm: room.heightMm, walls: rectWalls(W, L), openings,
     blockers: [...plannedBlockers('bedroom3', room), ...bedBlockers(bed, headWall, W, L),
@@ -178,6 +180,8 @@ function bedroom3Model() {
       'acBeside:split': {wall: 'east', alongMm: ac.b + 150},
       // On the strip of wall above the chest, between the end of the artwork and the end of the chest.
       westChestSouthEnd: {wall: 'west', alongMm: (artEnd + chest.fromNorthMm + chest.widthMm) / 2},
+      // On the end wall beside the mirror, 250 mm west of the dressing cabinet front (south wall: under the window sill).
+      dressingSocket: {wall: dressingEnd, alongMm: W - (dressing.depthMm ?? c.depthMm) - 250},
     },
     existing: byId(existingPointsFor('bedroom3')),
   }

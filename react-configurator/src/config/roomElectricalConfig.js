@@ -160,9 +160,14 @@ export const ROOM_ELECTRICAL = {
         switches: ['B1', 'B2', 'fan1', 'wallLight'], loadW: W.switchboard,
         outlets: 'new modular plate in the existing box: dimmers for track 1 and track 2, fan regulator, wall-light switch, 1 x 6 A socket',
         use: 'the existing switchboard X-B1 stays: it is on the latch side of the entry door (scan: 1300 high, 100 above the usual 1200)'},
-      {id: 'B3-N2', name: 'Toilet switches + dressing socket', kind: 'power', wall: 'north', anchor: 'toiletDoorLatch', heightMm: 1200, switchboard: true, forDoor: 'toilet', loadW: W.socket16A + 60,
-        outlets: 'switches for the toilet light and exhaust; 20 A double-pole switch with indicator for the geyser; 1 x 6/16 A socket',
-        use: 'on the 200 mm of wall between the toilet door and the mirrored dressing cabinet: the hair dryer at the mirror, and the toilet switches outside its door'},
+      // Owner 2026-10-05: the dressing moved to the south end of the east wall, so the dressing socket left this board (was
+      // 'Toilet switches + dressing socket', 1060 W with a 6/16 A socket) and became B3-S1 beside the mirror.
+      {id: 'B3-N2', name: 'Toilet switches', kind: 'lighting', wall: 'north', anchor: 'toiletDoorLatch', heightMm: 1200, switchboard: true, forDoor: 'toilet', loadW: 60,
+        outlets: 'switches for the toilet light and exhaust; 20 A double-pole switch with indicator for the geyser',
+        use: 'on the 200 mm of wall between the toilet door and the full-height storage cabinet: the toilet switches outside its door'},
+      {id: 'B3-S1', name: 'Dressing socket', kind: 'power', wall: 'south', anchor: 'dressingSocket', heightMm: 750, dependsOn: 'dressing cabinet', loadW: W.socket16A,
+        outlets: '1 x 6/16 A combined socket',
+        use: 'the hair dryer and a trimmer at the mirror: on the south wall under the balcony window sill (920), 250 mm west of the dressing cabinet front, beside the standing spot'},
       {id: 'B3-N3', name: 'Utility socket', kind: 'power', wall: 'north', alongMm: 1750, heightMm: 300, loadW: W.socket16A,
         outlets: '1 x 6/16 A combined socket', use: 'vacuum cleaner, a room heater; on the free north wall between the two doors'},
       {id: 'B3-E1', name: 'Bedside point, north sleeper', kind: 'charging', anchor: 'bedsideA', heightMm: 1300, dependsOn: 'bed',
@@ -182,11 +187,12 @@ export const ROOM_ELECTRICAL = {
       {id: 'B3-C2', name: 'Track 1 driver feed', kind: 'lighting', driverFor: 'B1', runEnd: 'from',
         outlets: 'switched 230 V point for the 60 W / 48 V track driver (dimmer at B3-N1)', use: 'at the west end of the north run, the end nearest the switchboard'},
       {id: 'B3-C3', name: 'Track 2 driver feed', kind: 'lighting', driverFor: 'B2', runEnd: 'from',
-        outlets: 'switched 230 V point for the 60 W / 48 V track driver (dimmer at B3-N1)', use: 'at the west end of the south run'},
+        outlets: 'switched 230 V point for the 100 W / 48 V track driver (dimmer at B3-N1)', use: 'at the west end of the south run (its driver went from 60 to 100 W when the dressing light joined it, 2026-10-05)'},
     ],
     circuits: [
       {id: 'B3-light', name: 'Lighting, fan and 6 A outlets', mcbA: 10, rcd: true, points: ['B3-N1', 'B3-E1', 'B3-E2', 'B3-W1', 'B3-W2', 'B3-C1', 'B3-C2', 'B3-C3']},
-      {id: 'B3-power', name: 'Power sockets', mcbA: 16, rcd: true, points: ['B3-N2', 'B3-N3']},
+      // B3-N2 stays here for the geyser switch it carries (see verify).
+      {id: 'B3-power', name: 'Power sockets', mcbA: 16, rcd: true, points: ['B3-N2', 'B3-N3', 'B3-S1']},
       {id: 'B3-ac', name: 'AC', mcbA: 20, rcd: false, points: ['B3-E3']},
     ],
     verify: [
@@ -194,6 +200,7 @@ export const ROOM_ELECTRICAL = {
       'Whether the white area above X-B1 in the scan is a second plate.',
       'Where the existing AC is fed from: the AC point moves into the overhead cabinet next to the AC bay.',
       'The geyser switch at B3-N2 assumes the toilet has a geyser fed from this room\'s board.',
+      'B3-S1 follows the dressing cabinet (moved to the south end 2026-10-05): under the balcony window sill, so check the wall below the sill is solid masonry and the sill does not project over the box.',
     ],
     safety: SAFETY,
   },

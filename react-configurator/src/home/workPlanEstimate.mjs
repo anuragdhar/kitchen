@@ -287,18 +287,14 @@ export const ESTIMATORS = {
     item(`wall mirror ${b.dressingTable.mirror.widthMm} x ${b.dressingTable.mirror.heightMm}`, [0, sqft(b.dressingTable.mirror.widthMm, b.dressingTable.mirror.heightMm)], 'mirror'),
     item(`bedside table ${b.bedsideTable.widthMm} long`, [0, rft(b.bedsideTable.widthMm)], 'carpLow'),
   ], 'Nothing if layout A stays (C35). The stool and any acoustic board behind the bed head are not included.') },
-  // Written to follow the config whichever side the tall and the low cabinet stand on (the mirror dressing cabinet is
-  // moving to the south side and a floor-to-ceiling storage cabinet to the north side, owner 2026-10-05).
-  'carp-bedroom3-east': () => {
-    const cabinet = (side, c) => c.heightMm > 1000 ? item(`${side} cabinet ${c.widthMm} x ${c.heightMm}`, sqft(c.widthMm, c.heightMm), 'carpTall') : item(`${side} low cabinet ${c.widthMm} long`, rft(c.widthMm), 'carpLow')
-    const sides = [['north', east.north], ['south', east.south]].filter(([, c]) => c?.widthMm && c?.heightMm), mirrored = sides.map(([, c]) => c).find(c => c.mirrorTopMm)
-    return priced('low', [
-      ...sides.map(([side, c]) => cabinet(side, c)),
-      ...(east.bridge ? [item(`overhead run ${east.bridge.widthMm} x ${east.bridge.heightMm}`, sqft(east.bridge.widthMm, east.bridge.heightMm), 'carpTall')] : []),
-      ...(mirrored ? [item('mirror', sqft(mirrored.widthMm, mirrored.mirrorTopMm - mirrored.mirrorBottomMm), 'mirror')] : []),
-      ...(east.shelf ? [item('headboard shelf', sqft(east.shelf.widthMm, east.shelf.depthMm), 'carpTop')] : []),
-    ], 'Sizes as the model stands today. The cabinets are being rearranged (dressing cabinet to the south side, full-height storage on the north side); this figure is regenerated when that change is in the model. The slatted AC bay is priced as overhead cabinet front.')
-  },
+  // Owner 2026-10-05: full-height storage at the north end, the mirror dressing cabinet at the south end (was a low cabinet).
+  'carp-bedroom3-east': () => priced('low', [
+    item(`full-height storage cabinet ${east.north.widthMm} x ${east.north.heightMm}`, sqft(east.north.widthMm, east.north.heightMm), 'carpTall'),
+    item(`dressing cabinet ${east.south.widthMm} x ${east.south.heightMm}`, sqft(east.south.widthMm, east.south.heightMm), 'carpTall'),
+    item(`overhead run ${east.bridge.widthMm} x ${east.bridge.heightMm}`, sqft(east.bridge.widthMm, east.bridge.heightMm), 'carpTall'),
+    item('mirror', sqft(east.south.widthMm, east.south.mirrorTopMm - east.south.mirrorBottomMm), 'mirror'),
+    item('headboard shelf', sqft(east.shelf.widthMm, east.shelf.depthMm), 'carpTop'),
+  ], 'The slatted AC bay is priced as overhead cabinet front.'),
   'carp-bedroom3-chest': () => priced('medium', [item(`chest ${chest.widthMm} long, six drawers`, rft(chest.widthMm), 'carpLow')], 'The artwork is the owner\'s purchase and is not included.'),
   'carp-kitchen': () => { const k = QUANTITIES.kitchen, uppers = run('east-lower-upper').height + run('east-top-upper').height; return priced('low', [
     item(`base cabinets, ${k.eastRunMm} east + ${k.westRunMm - k.openAppliancesMm} west, 900 high`, sqft(k.eastRunMm + k.westRunMm - k.openAppliancesMm, run('east-base-run').height), 'kitchenBase'),

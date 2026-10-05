@@ -16,7 +16,7 @@ const openVanity = process.argv.includes('--open');
     await page.goto('http://127.0.0.1:5173/', { waitUntil: 'networkidle' });
     await page.locator('button').filter({ hasText: 'Whole home 3D' }).first().click();
     await page.getByRole('button', { name: 'Export for Coohom' }).waitFor();
-    if (openVanity) await page.getByRole('button', { name: 'Open vanity mirror' }).click();
+    if (openVanity) await page.getByRole('button', { name: 'Open dressing mirror' }).click();
     const downloadPromise = page.waitForEvent('download', { timeout: 120000 });
     await page.getByRole('button', { name: 'Export for Coohom' }).click();
     const download = await downloadPromise;

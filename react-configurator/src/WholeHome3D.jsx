@@ -916,7 +916,7 @@ function LiveWholeHome3D({onOpenRoom}){
         <button onClick={()=>setShowPoojaPerson(value=>!value)} style={buttonStyle(showPoojaPerson)}>{showPoojaPerson?'Hide seated person':'Show seated person'}</button>
         <button onClick={()=>setShowIroningBoard(value=>!value)} style={buttonStyle(showIroningBoard)}>{showIroningBoard?'Stow ironing board':'Pull out ironing board'}</button>
         <button onClick={()=>setStorageCoverOpen(value=>!value)} style={buttonStyle(storageCoverOpen)}>{storageCoverOpen?'Close storage cover':'Open storage cover'}</button>
-        <button onClick={()=>setMirrorOpen(value=>!value)} style={buttonStyle(mirrorOpen)}>{mirrorOpen?'Close vanity mirror':'Open vanity mirror'}</button>
+        <button onClick={()=>setMirrorOpen(value=>!value)} style={buttonStyle(mirrorOpen)}>{mirrorOpen?'Close dressing mirror (south-east)':'Open dressing mirror (south-east)'}</button>
         <button onClick={()=>setMedicineCabinetOpen(value=>!value)} aria-pressed={medicineCabinetOpen} style={buttonStyle(medicineCabinetOpen)}>{medicineCabinetOpen?'Close medicine cabinet':'Open medicine cabinet'}</button>
         <label style={{display:'flex',alignItems:'center',gap:6,fontWeight:800,fontSize:13}}>Drawing Room layout
           <select value={drawingLayout} onChange={event=>setDrawingLayout(event.target.value)} style={{padding:'7px 8px',borderRadius:9,border:'1px solid #cbd5e1',maxWidth:340}}>{DRAWING_LAYOUTS.map(layout=><option key={layout.key} value={layout.key}>{layout.label}</option>)}</select>

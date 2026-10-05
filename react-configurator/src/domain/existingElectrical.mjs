@@ -124,8 +124,10 @@ export function plannedBlockers(roomKey, room, layoutKey = null) {
       if (art) rows.push({name: 'artwork above the west chest', wall: 'west', a: mid - art.widthMm / 2, b: mid + art.widthMm / 2, bottom: art.bottomMm, top: art.bottomMm + art.heightMm})
     }
     if (c) {
-      rows.push({name: 'north-east dressing cabinet', wall: 'east', a: c.north.fromNorthMm, b: c.north.fromNorthMm + c.north.widthMm, bottom: 0, top: c.north.heightMm})
-      rows.push({name: 'south-east bedside cabinet', wall: 'east', a: c.south.fromNorthMm, b: c.south.fromNorthMm + c.south.widthMm, bottom: 0, top: c.south.heightMm})
+      // Owner 2026-10-05: the mirror dressing cabinet is the south unit, a full-height storage cabinet the north one.
+      const name = (unit, end) => `${end}-east ${unit.mirrorTopMm != null ? 'dressing cabinet' : unit.kind === 'storage' ? 'full-height storage cabinet' : 'bedside cabinet'}`
+      rows.push({name: name(c.north, 'north'), wall: 'east', a: c.north.fromNorthMm, b: c.north.fromNorthMm + c.north.widthMm, bottom: 0, top: c.north.heightMm})
+      rows.push({name: name(c.south, 'south'), wall: 'east', a: c.south.fromNorthMm, b: c.south.fromNorthMm + c.south.widthMm, bottom: 0, top: c.south.heightMm})
       rows.push({name: 'overhead cabinet run', wall: 'east', a: c.bridge.fromNorthMm, b: c.bridge.fromNorthMm + c.bridge.widthMm, bottom: c.bridge.bottomMm, top: c.bridge.bottomMm + c.bridge.heightMm})
     }
   }

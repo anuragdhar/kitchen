@@ -6,11 +6,29 @@ import {issuesWith, loads, passingReport, pointOf} from './room-electrical-helpe
 
 const room = EMPTY_ROOM_SHELLS.bedroom3, cab = room.furniture.eastCabinet
 
+// Baselines changed on purpose (owner 2026-10-05: "In room 3 swap the place of dressing, move it to south side; in place of
+// dressing show full depth cabinet till ceiling"). Before: 11 points, B3-light 705 W, total 4465 W; the dressing socket was
+// part of B3-N2 on the north wall. Now B3-S1 follows the dressing to the south end, and the track 2 driver is 100 W (was 60).
 test('Bedroom 3: the proposed plan passes every rule', () => {
   const r = passingReport('bedroom3')
-  assert.equal(r.points.length, 11)
+  assert.equal(r.points.length, 12)
   assert.deepEqual(r.model.lightingCircuits.map(c => c.id), ['B1', 'B2', 'fan1', 'wallLight'])
-  assert.deepEqual(loads(r), {circuits: [['B3-light', 705], ['B3-power', 2060], ['B3-ac', 1700]], totalW: 4465})
+  assert.deepEqual(loads(r), {circuits: [['B3-light', 745], ['B3-power', 2060], ['B3-ac', 1700]], totalW: 4505})
+})
+
+test('Bedroom 3 (dressing swap 2026-10-05): the dressing socket follows the mirror cabinet to the south end', () => {
+  const r = passingReport('bedroom3'), s = room.furniture.eastCabinet.south, b = room.southExtension.balcony
+  const socket = pointOf(r, 'B3-S1'), front = room.widthMm - cab.depthMm
+  assert.equal(socket.where, 'south wall, x 3256, 750 high')
+  assert.equal(socket.alongMm, Math.round(front - 250), '250 mm west of the dressing cabinet front, beside the standing spot')
+  assert.ok(socket.alongMm > front - s.standDepthMm && socket.alongMm < front)
+  assert.ok(socket.heightMm < b.windowSillMm - 100, 'under the window sill')
+  assert.equal(socket.dependsOn, 'dressing cabinet')
+  assert.equal(pointOf(r, 'B3-N2').name, 'Toilet switches')
+  assert.doesNotMatch(pointOf(r, 'B3-N2').outlets, /socket/, 'the north board no longer carries the dressing socket')
+  assert.match(issuesWith('bedroom3', 'B3-S1', {heightMm: 1100}), /is in the balcony window/)
+  assert.match(issuesWith('bedroom3', 'B3-S1', {anchor: undefined, wall: 'east', alongMm: 3200}), /hidden behind the south-east dressing cabinet/)
+  assert.match(pointOf(r, 'B3-C3').outlets, /100 W \/ 48 V track driver/)
 })
 
 test('Bedroom 3: the scanned switchboard, wall light and fan point are reused where they are', () => {
@@ -30,7 +48,8 @@ test('Bedroom 3: bedside points above the headboard, AC point hidden in the over
   assert.ok(Math.abs(a.alongMm - (bed.centerFromNorthMm - bed.widthMm / 2 + 150)) <= 1 && Math.abs(b.alongMm - (bed.centerFromNorthMm + bed.widthMm / 2 - 250)) <= 1)
   assert.ok(a.heightMm < cab.shelf.heightMm, 'under the shelf above the bed')
   assert.match(issuesWith('bedroom3', 'B3-E1', {heightMm: 800}), /hidden behind the bed headboard/)
-  assert.match(issuesWith('bedroom3', 'B3-E1', {anchor: undefined, wall: 'east', alongMm: 500}), /hidden behind the north-east dressing cabinet/)
+  assert.match(issuesWith('bedroom3', 'B3-E1', {anchor: undefined, wall: 'east', alongMm: 500}), /hidden behind the north-east full-height storage cabinet/)
+  assert.match(issuesWith('bedroom3', 'B3-E1', {anchor: undefined, wall: 'east', alongMm: 500, heightMm: 2600}), /hidden behind the north-east full-height storage cabinet/, 'it reaches the ceiling')
   const ac = pointOf(r, 'B3-E3')
   assert.equal(ac.where, 'east wall, z 2613, 2400 high'); assert.equal(ac.hidden, true)
   assert.equal(ac.alongMm, cab.ac.centerFromNorthMm + cab.ac.bayWidthMm / 2 + 150)
@@ -42,7 +61,7 @@ test('Bedroom 3: toilet board, chest point and utility socket stay clear of door
   const r = passingReport('bedroom3'), toilet = room.doors.find(d => /toilet/.test(d.leadsTo)), chest = room.furniture.westChest
   const board = pointOf(r, 'B3-N2')
   assert.equal(board.alongMm, toilet.fromMm + toilet.widthMm + 100)
-  assert.ok(board.alongMm < room.widthMm - cab.depthMm - 50, 'west of the dressing cabinet front')
+  assert.ok(board.alongMm < room.widthMm - cab.north.depthMm - 50, 'west of the full-height storage cabinet front')
   assert.match(issuesWith('bedroom3', 'B3-N2', {anchor: undefined, alongMm: 2900}), /is in the door to Bedroom 3 toilet/)
   const top = pointOf(r, 'B3-W1')
   assert.equal(top.where, 'west wall, z 2488, 950 high'); assert.ok(top.heightMm > chest.heightMm && top.heightMm < chest.artwork.bottomMm + 50)
