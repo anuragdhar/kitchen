@@ -16,7 +16,7 @@ re-run the script (or tell the assistant which rate is wrong).
 
 ## Total
 
-**Rs 16,13,500 to Rs 30,78,000** (Rs 16.1 lakh to Rs 30.8 lakh) for the 105 tasks that could be
+**Rs 16,13,000 to Rs 30,78,000** (Rs 16.1 lakh to Rs 30.8 lakh) for the 105 tasks that could be
 estimated, out of 112. 7 tasks are not estimated (listed below), so the true total is higher.
 The total includes the OPTIONAL skirting replacement (Rs 17,000 to Rs 35,000).
 
@@ -31,7 +31,7 @@ The total includes the OPTIONAL skirting replacement (Rs 17,000 to Rs 35,000).
 | 5. Plaster, making good and flooring | 4 | Rs 52,000 | Rs 97,500 |  |
 | 6. Carpentry and steel fabrication | 20 | Rs 9,40,000 | Rs 15,39,000 | 1 |
 | 7. Painting and polish | 3 | Rs 95,000 | Rs 3,21,500 |  |
-| 8. Fit-out: lights, switches, AC units, nets, blinds, plumbing fittings | 18 | Rs 2,83,000 | Rs 5,74,500 | 1 |
+| 8. Fit-out: lights, switches, AC units, nets, blinds, plumbing fittings | 18 | Rs 2,82,500 | Rs 5,74,500 | 1 |
 | 9. Furnish, snag and handover | 2 | Rs 6,000 | Rs 12,000 | 1 |
 
 ### Trade
@@ -39,7 +39,7 @@ The total includes the OPTIONAL skirting replacement (Rs 17,000 to Rs 35,000).
 | Trade | Tasks | Low | High | Not estimated |
 | --- | ---: | ---: | ---: | ---: |
 | Civil / structure | 11 | Rs 1,08,000 | Rs 2,31,500 |  |
-| Electrical | 38 | Rs 2,60,000 | Rs 5,46,000 | 1 |
+| Electrical | 38 | Rs 2,59,500 | Rs 5,46,000 | 1 |
 | Plumbing | 3 | Rs 0 | Rs 0 | 2 |
 | Carpentry | 20 | Rs 9,39,500 | Rs 15,38,500 | 1 |
 | Steel fabrication | 5 | Rs 50,500 | Rs 88,500 | 1 |
@@ -57,7 +57,7 @@ The total includes the OPTIONAL skirting replacement (Rs 17,000 to Rs 35,000).
 | Drawing Room | 30 | Rs 3,52,000 | Rs 6,57,500 | 1 |
 | Lobby / Dining | 12 | Rs 1,08,000 | Rs 2,59,000 |  |
 | Bedroom 1 | 14 | Rs 2,48,000 | Rs 4,39,500 |  |
-| Bedroom 3 | 7 | Rs 1,37,000 | Rs 2,38,000 |  |
+| Bedroom 3 | 7 | Rs 1,36,500 | Rs 2,38,000 |  |
 | Study | 6 | Rs 34,000 | Rs 73,500 | 1 |
 | Home Office | 3 | Rs 68,000 | Rs 1,22,500 |  |
 | Kitchen | 7 | Rs 4,14,000 | Rs 6,66,000 | 1 |
@@ -137,7 +137,7 @@ Rupees, 2025-26, Delhi NCR, mid-range quality. "Used for" is the total quantity 
 | Wooden window shutters to match, glazed, with hardware | sq ft | 1,200 | 2,000 | 10.7 |
 | Strip paint from old woodwork, stain and PU polish | sq ft | 250 | 450 | 86.9 to 412 |
 | Repaint: putty touch-up, primer, two coats of premium emulsion | sq ft | 22 | 40 | 3,359 |
-| 48 V magnetic surface track with end feed | m | 900 | 1,800 | 25.9 |
+| 48 V magnetic surface track with end feed | m | 900 | 1,800 | 25.7 |
 | Track spot head, 7 W | each | 900 | 1,800 | 16 |
 | Track linear diffused head, 15 W | each | 1,300 | 2,500 | 14 |
 | Track reading or down-light head, 12 W | each | 1,200 | 2,200 | 13 |
@@ -261,7 +261,7 @@ Rupees, 2025-26, Delhi NCR, mid-range quality. "Used for" is the total quantity 
 | Drawing Room: buy and fit the track lights | Drawing Room | Rs 21,500 | Rs 43,000 | medium | track: 4 m x Rs 900-1,800; spot heads: 3 each x Rs 900-1,800; diffused heads: 2 each x Rs 1,300-2,500; reading heads: 3 each x Rs 1,200-2,200; 60 W drivers: 1 each x Rs 1,800-3,000; 100 W drivers: 1 each x Rs 2,500-4,500; dimmers: 2 each x Rs 1,500-3,500; fixing: 2 run x Rs 1,000-2,000. Counts from the lighting config; one maker for track, heads and drivers. |
 | Lobby / Dining: buy and fit the track lights | Lobby / Dining | Rs 18,000 | Rs 36,000 | medium | track: 3.5 m x Rs 900-1,800; spot heads: 3 each x Rs 900-1,800; diffused heads: 2 each x Rs 1,300-2,500; reading heads: 1 each x Rs 1,200-2,200; 60 W drivers: 2 each x Rs 1,800-3,000; dimmers: 2 each x Rs 1,500-3,500; fixing: 2 run x Rs 1,000-2,000. Counts from the lighting config; one maker for track, heads and drivers. |
 | Bedroom 1: buy and fit the track lights | Bedroom 1 | Rs 21,000 | Rs 42,000 | medium | track: 3.8 m x Rs 900-1,800; spot heads: 4 each x Rs 900-1,800; diffused heads: 2 each x Rs 1,300-2,500; reading heads: 2 each x Rs 1,200-2,200; 60 W drivers: 1 each x Rs 1,800-3,000; 100 W drivers: 1 each x Rs 2,500-4,500; dimmers: 2 each x Rs 1,500-3,500; fixing: 2 run x Rs 1,000-2,000. Counts from the lighting config; one maker for track, heads and drivers. |
-| Bedroom 3: buy and fit the track lights | Bedroom 3 | Rs 23,000 | Rs 45,500 | medium | track: 5.5 m x Rs 900-1,800; spot heads: 3 each x Rs 900-1,800; diffused heads: 2 each x Rs 1,300-2,500; reading heads: 3 each x Rs 1,200-2,200; 60 W drivers: 1 each x Rs 1,800-3,000; 100 W drivers: 1 each x Rs 2,500-4,500; dimmers: 2 each x Rs 1,500-3,500; fixing: 2 run x Rs 1,000-2,000. Counts from the lighting config; one maker for track, heads and drivers. |
+| Bedroom 3: buy and fit the track lights | Bedroom 3 | Rs 22,500 | Rs 45,500 | medium | track: 5.3 m x Rs 900-1,800; spot heads: 3 each x Rs 900-1,800; diffused heads: 2 each x Rs 1,300-2,500; reading heads: 3 each x Rs 1,200-2,200; 60 W drivers: 1 each x Rs 1,800-3,000; 100 W drivers: 1 each x Rs 2,500-4,500; dimmers: 2 each x Rs 1,500-3,500; fixing: 2 run x Rs 1,000-2,000. Counts from the lighting config; one maker for track, heads and drivers. |
 | Study: buy and fit the track lights | Study | Rs 22,500 | Rs 45,500 | medium | track: 5.2 m x Rs 900-1,800; spot heads: 3 each x Rs 900-1,800; diffused heads: 3 each x Rs 1,300-2,500; reading heads: 2 each x Rs 1,200-2,200; 60 W drivers: 1 each x Rs 1,800-3,000; 100 W drivers: 1 each x Rs 2,500-4,500; dimmers: 2 each x Rs 1,500-3,500; fixing: 2 run x Rs 1,000-2,000. Counts from the lighting config; one maker for track, heads and drivers. |
 | Kitchen: buy and fit the ceiling track | Kitchen | Rs 14,500 | Rs 29,500 | medium | track: 4 m x Rs 900-1,800; diffused heads: 3 each x Rs 1,300-2,500; reading heads: 2 each x Rs 1,200-2,200; 100 W drivers: 1 each x Rs 2,500-4,500; dimmers: 1 each x Rs 1,500-3,500; fixing: 1 run x Rs 1,000-2,000. Counts from the lighting config; one maker for track, heads and drivers. The under-cabinet strips are part of the kitchen cabinets. |
 | Entry: fit the four round lights and the two switches, and test | Main entry | Rs 1,000 | Rs 3,000 | medium | round panels: 4 each x Rs 350-700. |

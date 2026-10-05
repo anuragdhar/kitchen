@@ -33,10 +33,10 @@ test('owner swap 2026-10-05: the mirror dressing cabinet is the south unit, a fu
   assert.deepEqual(eastCabinetRoles(r),{dressing:'south',storage:'north'})
   const s=c.south,n=c.north
   assert.deepEqual([s.fromNorthMm,s.widthMm,s.heightMm,s.mirrorBottomMm,s.mirrorTopMm,s.mirrorHinge,s.drawerCount],[2826,750,2200,580,2130,'north',2],'the dressing cabinet keeps its size and mirror band')
-  assert.equal(s.depthMm,undefined,'the dressing cabinet takes the run depth (18 in)')
+  assert.equal(s.depthMm,258,'owner, later 2026-10-05: the dressing cabinet is 258 deep, so it stops at the east edge of the balcony window');assert.equal(n.depthMm,658,'owner, later 2026-10-05: the storage cabinet fills the wall up to the toilet door jamb')
   assert.deepEqual([n.kind,n.fromNorthMm,n.widthMm,n.heightMm,n.doorCount,n.loftBottomMm],['storage',150,750,2700,2,2200])
   assert.equal(n.heightMm,r.heightMm,'floor to the ceiling of the model')
-  assert.equal(n.depthMm,c.depthMm,'"full depth" is the run\'s 18 in by default; the owner can change this field')
+  assert.equal(c.depthMm,457.2,'the overhead run keeps the 18 in depth of 2026-10-03')
   // The overhead run starts where the full-height cabinet ends and still reaches the south end.
   assert.deepEqual([c.bridge.fromNorthMm,c.bridge.widthMm,c.bridge.doorCount],[900,2676,3])
   assert.equal(c.bridge.fromNorthMm,n.fromNorthMm+n.widthMm)
@@ -51,29 +51,29 @@ test('the swapped cabinetry passes the pure checks: doors open, a person stands 
   const result=checkBedroom3EastCabinet(r),m=result.measures
   assert.deepEqual(result.issues,[])
   assert.deepEqual([m.northToBedMm,m.southToBedMm],[48.5,48.5])
-  assert.equal(m.toiletFrameGapMm,200.8,'the storage cabinet front is about 200 mm east of the toilet door frame (x 3305)')
+  assert.equal(m.toiletFrameGapMm,0,'the storage cabinet side is in line with the toilet door jamb (x 3305), as the owner asked')
   // Mirror door hinged on its north edge: open, it stands beside the bed, 873 mm off the window wall; it clears the bed.
   assert.deepEqual(m.mirrorDoor,{hinge:'north',widthMm:714,toBedMm:66.5,openToSouthWallMm:873,sweepToSouthWallMm:168})
   // Standing spot 650 deep in front of the mirror, clear of the bed and 151 mm east of the balcony door (x 2005-2705).
-  assert.deepEqual(m.standingSpot,{x1:2855.8,x2:3505.8,z1:2826,z2:3576,toBedMm:48.5,toBalconyDoorPathMm:150.8})
+  assert.deepEqual(m.standingSpot,{x1:3055,x2:3705,z1:2826,z2:3576,toBedMm:48.5,toBalconyDoorPathMm:350})
   assert.deepEqual(m.storageLeaves.map(l=>[l.hinge,l.widthMm,l.toBedMm]),[['north',357,423.5],['south',357,66.5]])
 })
 
 test('what the swap leaves for the owner: an open storage door narrows the toilet doorway; the dressing cabinet stands in front of part of the window',()=>{
   const result=checkBedroom3EastCabinet(r)
   assert.equal(result.warnings.length,3,result.warnings.join(' | '))
-  assert.match(result.warnings[0],/north-hinged door 1 of the north full-height storage cabinet reaches 156.2 mm into the line of the toilet doorway, 159 mm off the north wall/)
+  assert.match(result.warnings[0],/front is 0 mm from the toilet door jamb: it must be scribed to the door frame/);assert.match(result.warnings[1],/north-hinged door 1 of the north full-height storage cabinet reaches 357 mm into the line of the toilet doorway, 159 mm off the north wall/)
   // Not met: "nothing covers the balcony window". The window runs to x 3705 and the 18 in cabinets start at x 3505.8, so the
   // 2200 mm dressing cabinet stands 150 mm in front of the window's east 199 mm from the sill up (the old 600 mm low cabinet
   // was below the 920 sill). The overhead run already stood in front of the top light there before the swap.
-  assert.deepEqual(result.windowCover.map(w=>[w.unit,w.x1,w.x2,w.acrossMm,w.gapMm,w.fromMm,w.toMm]),[['south',3505.8,3705,199.2,150,920,2200],['bridge',3505.8,3705,199.2,150,2200,2360]])
+  assert.deepEqual(result.windowCover.map(w=>[w.unit,w.x1,w.x2,w.acrossMm,w.gapMm,w.fromMm,w.toMm]),[['bridge',3505.8,3705,199.2,150,2200,2360]] /* the 258 mm dressing cabinet no longer covers the window (owner, later 2026-10-05); the overhead run still crosses the top light */)
 })
 
 test('the checks catch a deeper north cabinet at the toilet door, a south-hinged mirror door at the window, and clashes',()=>{
   // 24 in (609.6 mm) wardrobe depth would leave about 48 mm to the toilet door frame.
   assert.equal(toiletFrameGapMm(r,609.6),48.4)
-  assert.match(patched(e=>{e.north.depthMm=609.6}).issues.join(' | '),/front is 48.4 mm from the toilet door frame \(at least 100\)/)
-  assert.ok(EAST_CABINET_RULES.toiletFrameMinMm===100)
+  assert.match(patched(e=>{e.north.depthMm=700}).issues.join(' | '),/the north unit reaches 42 mm into the toilet doorway/);assert.match(patched(e=>{e.south.depthMm=457.2}).warnings.join(' | '),/south mirror dressing cabinet stands 150 mm in front of the east 199.2 mm of the balcony window/)
+  assert.ok(EAST_CABINET_RULES.toiletFrameMinMm===0&&EAST_CABINET_RULES.toiletFrameWarnMm===100)
   assert.match(patched(e=>{e.south.mirrorHinge='south'}).issues.join(' | '),/standing open, the mirror door is 159 mm in front of the balcony window/)
   assert.match(patched(e=>{e.south.fromNorthMm=2700}).issues.join(' | '),/the south mirror dressing cabinet overlaps the bed/)
   assert.match(patched(e=>{e.south.standDepthMm=1400}).issues.join(' | '),/standing spot at the mirror is in the path of the balcony door/)
@@ -94,11 +94,11 @@ test('AC placeholder fits a distinct open-bottom slatted bay above the bed',()=>
 test('review plan names the storage and dressing cabinets and reports the window finding',()=>{
   const review=buildRoomReview({roomKey:'bedroom3',room:r})
   const cabinets=review.planItems.filter(i=>/cabinet/.test(i.label))
-  assert.deepEqual(cabinets.map(i=>i.label),['NE full-height storage cabinet 750x457.2x2700','SE dressing cabinet 750x457.2x2200'])
-  for(const item of cabinets){assert.equal(item.x1,r.widthMm-c.depthMm);assert.equal(item.x2,r.widthMm)}
+  assert.deepEqual(cabinets.map(i=>i.label),['NE full-height storage cabinet 750x658x2700','SE dressing cabinet 750x258x2200'])
+  assert.deepEqual(cabinets.map(i=>[i.x1,i.x2]),[[r.widthMm-658,r.widthMm],[r.widthMm-258,r.widthMm]])
   assert.match(review.text,/slatted AC cover/)
   assert.match(review.text,/South-east: the mirror dressing cabinet 750 x 2200 mm, mirror door 580-2130 mm hinged on its north edge/)
-  assert.match(review.text,/North-east: a full-height storage cabinet 750 wide x 457 deep, floor to the 2700 mm ceiling/)
+  assert.match(review.text,/North-east: a full-height storage cabinet 750 wide x 658 deep, floor to the 2700 mm ceiling/)
   assert.match(review.text,/stands 150 mm in front of the east 199.2 mm of the balcony window/)
   assert.doesNotMatch(review.text,/CLASH/)
 })

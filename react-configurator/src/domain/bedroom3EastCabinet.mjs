@@ -7,7 +7,8 @@
 // front of the balcony window. Door leaves are taken open at 90 degrees; their swing is the quarter circle of their width.
 
 export const EAST_CABINET_RULES = {
-  toiletFrameMinMm: 100, // the front of the north unit stays at least this far east of the toilet door frame
+  toiletFrameMinMm: 0,    // the north unit never reaches into the toilet doorway (owner 2026-10-05: its side may line up with the jamb)
+  toiletFrameWarnMm: 100, // closer than this to the jamb, the owner is told: the door frame and its trim need room
   doorApproachMm: 900,   // the floor in front of a door, into the room, that a person walks through
   doorwayLineMm: 600,    // an open leaf this close to a door's wall, across the door's width, narrows the way through
   windowFrontMm: 600,    // anything taller than the sill within this of the window plane, across its width, covers part of it
@@ -84,7 +85,8 @@ export function checkBedroom3EastCabinet(room, rules = EAST_CABINET_RULES) {
   const approach = {x1: toilet.fromMm, x2: toilet.fromMm + toilet.widthMm, z1: 0, z2: rules.doorApproachMm}
   for (const u of units) if (u.bottom < toilet.heightMm) need(!(overlap(u.x1, u.x2, approach.x1, approach.x2) > 0 && overlap(u.z1, u.z2, approach.z1, approach.z2) > 0), `the ${u.label} stands in front of the toilet door`)
   measures.toiletFrameGapMm = round(byKey.north.x1 - approach.x2)
-  need(measures.toiletFrameGapMm >= rules.toiletFrameMinMm, `the north unit's front is ${measures.toiletFrameGapMm} mm from the toilet door frame (at least ${rules.toiletFrameMinMm})`)
+  need(measures.toiletFrameGapMm >= rules.toiletFrameMinMm, `the north unit reaches ${-measures.toiletFrameGapMm} mm into the toilet doorway`)
+  if (measures.toiletFrameGapMm >= rules.toiletFrameMinMm && measures.toiletFrameGapMm < rules.toiletFrameWarnMm) warnings.push(`the north unit's front is ${measures.toiletFrameGapMm} mm from the toilet door jamb: it must be scribed to the door frame and its trim on site`)
 
   const leafIssues = (name, l) => {
     need(l.sweep.z1 >= rules.leafClearMm && l.sweep.z2 <= L - rules.leafClearMm, `the ${name} hits a wall as it opens`)

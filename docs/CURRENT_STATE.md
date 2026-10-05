@@ -357,3 +357,6 @@ Six pieces of work, each with a note in `docs/changes/2026-10-05-*.md`:
   changed: the dressing cabinet stands 150 mm in front of the east 199 mm of the balcony window (open item C46). Note:
   `docs/changes/2026-10-05-bedroom3-dressing-swap.md`.
 - Work plan: 112 tasks; rough total about Rs 16.1 to 30.8 lakh for 105 of them (planning ranges, not quotes).
+- Bedroom 3, later 2026-10-05 (owner): dressing cabinet depth 457.2 -> 258 (stops at the window edge); north storage
+  cabinet depth 457.2 -> 658 (fills the wall to the toilet door jamb at x 3305). Followed: toilet switches B3-N2 to the
+  west side of the toilet door (x 2375), track B1 end 3350 -> 3150, dressing socket to x 3455. The overhead run stays 457.2.

@@ -105,3 +105,34 @@ A new check (src/domain/bedroom3EastCabinet.mjs) looks at the doors, the standin
 - src/config/acPlanConfig.js, Bedroom 3 `tall: []`: the full-height storage cabinet (z 150-900) could be listed there. It
   stands 448 mm north of the existing AC unit, outside the 150 mm side zone, so it would pass. I left the file alone because
   you are editing it.
+
+## Later the same day: the two cabinet depths (owner)
+
+The owner settled the two open points: "make this one cabinet about 258 mm deep, reduce the depth of the mirror cabinet;
+increase the depth of the north-east cabinet so that it matches the wall".
+
+| Cabinet | Depth before | Depth now | Why |
+| --- | --- | --- | --- |
+| Mirror dressing cabinet, south end | 457 mm | 258 mm | it stops at the east edge of the balcony window, so it no longer stands in front of the glass |
+| Storage cabinet to the ceiling, north end | 457 mm | 658 mm | it fills the whole wall between the east wall and the toilet door, its side in line with the door jamb |
+
+The overhead run keeps its 457 mm depth, so over the dressing cabinet it overhangs by about 200 mm. It still crosses the
+top 160 mm of the window's east end (2200 to 2360), as it did before the swap.
+
+What had to follow:
+
+- **Toilet switches:** they were on the 200 mm of wall between the toilet door and the cabinet. That wall is now behind
+  the cabinet, so they moved to the west side of the toilet door (north wall, 2375 from the west wall, 1200 high), and
+  the door is taken to latch on that side.
+- **North ceiling track:** it ended 3350 from the west wall, which is now inside the deeper cabinet. It ends at 3150,
+  155 mm short of the cabinet; it is 2.55 m long (was 2.75 m). Its three heads did not move.
+- **Dressing socket:** it follows the shallower cabinet, now 3455 from the west wall under the window sill.
+- **Standing spot at the mirror** moved 200 mm east with the cabinet front; it is now 350 mm clear of the balcony door path.
+
+To know before building:
+
+- The storage cabinet's side is exactly at the scanned door jamb. A real door has a frame and trim outside the jamb, so
+  the carpenter must scribe the cabinet to them on site, or stop a little short.
+- Its north door, standing open, reaches 357 mm into the line of the toilet doorway (it was 156 mm with the shallower
+  cabinet). Shut it to walk through, or hinge that door on the other edge.
+- A 258 mm deep dressing cabinet holds folded items and toiletries, not hanging clothes.

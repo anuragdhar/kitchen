@@ -164,7 +164,7 @@ export const ROOM_ELECTRICAL = {
       // 'Toilet switches + dressing socket', 1060 W with a 6/16 A socket) and became B3-S1 beside the mirror.
       {id: 'B3-N2', name: 'Toilet switches', kind: 'lighting', wall: 'north', anchor: 'toiletDoorLatch', heightMm: 1200, switchboard: true, forDoor: 'toilet', loadW: 60,
         outlets: 'switches for the toilet light and exhaust; 20 A double-pole switch with indicator for the geyser',
-        use: 'on the 200 mm of wall between the toilet door and the full-height storage cabinet: the toilet switches outside its door'},
+        use: 'on the wall just west of the toilet door (the storage cabinet now fills the wall east of it): the toilet switches outside its door'},
       {id: 'B3-S1', name: 'Dressing socket', kind: 'power', wall: 'south', anchor: 'dressingSocket', heightMm: 750, dependsOn: 'dressing cabinet', loadW: W.socket16A,
         outlets: '1 x 6/16 A combined socket',
         use: 'the hair dryer and a trimmer at the mirror: on the south wall under the balcony window sill (920), 250 mm west of the dressing cabinet front, beside the standing spot'},

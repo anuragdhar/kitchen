@@ -170,13 +170,14 @@ function bedroom3Model() {
       leafBlocker('entry door', 'west', 0, entry.widthMm, entry.heightMm)],
     doors: [
       {id: 'entry', name: 'entry door', wall: 'north', fromMm: entry.fromMm, widthMm: entry.widthMm, latch: 'to', latchAssumed: true},
-      {id: 'toilet', name: 'toilet door', wall: 'north', fromMm: toilet.fromMm, widthMm: toilet.widthMm, latch: 'to', latchAssumed: true},
+      // The storage cabinet now fills the wall east of this door (owner 2026-10-05), so the latch and the switches go on its west side.
+      {id: 'toilet', name: 'toilet door', wall: 'north', fromMm: toilet.fromMm, widthMm: toilet.widthMm, latch: 'from', latchAssumed: true},
     ],
     chargeSpots: side.spots, acs: [ac], tracks: BEDROOM3_LIGHTING.tracks.runs, fans,
     lightingCircuits: [...trackCircuits(BEDROOM3_LIGHTING), ...fanCircuits(fans), {id: 'wallLight', label: 'existing wall light (picture light)'}],
     anchors: {
       ...side.anchors,
-      toiletDoorLatch: {wall: 'north', alongMm: toilet.fromMm + toilet.widthMm + 100},
+      toiletDoorLatch: {wall: 'north', alongMm: toilet.fromMm - 150},
       'acBeside:split': {wall: 'east', alongMm: ac.b + 150},
       // On the strip of wall above the chest, between the end of the artwork and the end of the chest.
       westChestSouthEnd: {wall: 'west', alongMm: (artEnd + chest.fromNorthMm + chest.widthMm) / 2},

@@ -29,9 +29,10 @@ function builder(room,name){
 
 /** The mirror dressing cabinet (eastCabinet.south since 2026-10-05): drawers below, a mirrored door that opens. */
 export function createBedroom3EastDressing(room){
-  const {c,W,d,p,group,oak,front,dark,box,carcass}=builder(room,'Bedroom 3 southeast dressing cabinet')
-  markItem(group,'Southeast mirror dressing cabinet · 18 inch depth')
-  const s=c.south,z=s.fromNorthMm/1000,w=s.widthMm/1000
+  const {c,W,p,group,oak,front,dark,box,carcass,depthOf}=builder(room,'Bedroom 3 southeast dressing cabinet')
+  markItem(group,`Southeast mirror dressing cabinet · ${Math.round((c.south.depthMm??c.depthMm))} mm deep`)
+  // d: this unit's own depth (258 mm since the owner's change of 2026-10-05), not the run's.
+  const s=c.south,d=depthOf(s),z=s.fromNorthMm/1000,w=s.widthMm/1000
   const bottom=s.mirrorBottomMm/1000,top=s.mirrorTopMm/1000,h=top-bottom
   carcass(s,group)
   // Shelves behind the mirror door, evenly between the drawers and the top.

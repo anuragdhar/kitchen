@@ -75,7 +75,7 @@ test('Bedroom 3 design check against the scan: toilet door, corner cupboard, AC 
   // Owner 2026-10-05: the north unit is now the full-height storage cabinet (the dressing moved to the south end); its own
   // depthMm is the run's 18 in, so the clearance is unchanged.
   const northUnitWest = b3.widthMm - c.north.depthMm
-  assert.equal(Math.round(northUnitWest - (toilet.fromMm + toilet.widthMm)), 201, 'the north full-height storage cabinet clears the scanned toilet door by 201 mm (it was 44 mm into the plan door)')
+  assert.equal(Math.round(northUnitWest - (toilet.fromMm + toilet.widthMm)), 0, 'owner, later 2026-10-05: the north storage cabinet (658 deep) is in line with the scanned toilet door jamb')
   assert.ok(e.northEastCupboard.fromWestMm <= northUnitWest && c.north.fromNorthMm + c.north.widthMm <= e.northEastCupboard.lengthMm, 'the new north unit lies inside the existing cupboard footprint: it replaces it')
   const bayWest = c.ac.centerFromNorthMm - c.ac.bayWidthMm / 2, bayEast = c.ac.centerFromNorthMm + c.ac.bayWidthMm / 2
   assert.ok(e.acUnit.fromNorthMm >= bayWest && e.acUnit.fromNorthMm + e.acUnit.widthMm <= bayEast, 'the existing AC unit sits inside the slatted bay')

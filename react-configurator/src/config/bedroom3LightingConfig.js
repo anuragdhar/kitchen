@@ -45,7 +45,7 @@ export const BEDROOM3_LIGHTING = {
     // sleeper's chest from the foot side (about 19 degrees of tilt, was 24: the beam reaches the book, the lamp stays out of
     // the eyes). Owner 2026-10-05: the dressing moved to the south end, so its down light (12 W at x 3300) moved to B2; the
     // run keeps its length (nothing needs it shortened; the last 370 mm past the reading head carry no head).
-    {id: 'B1', label: 'Bedroom 3 track 1: north side, art and north reading', axis: 'x', atMm: 820, fromMm: 600, toMm: 3350, driverWatts: 60, heads: [
+    {id: 'B1', label: 'Bedroom 3 track 1: north side, art and north reading', axis: 'x', atMm: 820, fromMm: 600, toMm: 3150, driverWatts: 60, heads: [ // ends 155 mm short of the 658 mm deep storage cabinet (was 3350; owner deepened the cabinet 2026-10-05)
       {kind: 'diffuse', atMm: 1300, watts: 15, lumens: 1400, lengthMm: 300},
       {kind: 'spot', atMm: 2300, watts: 7, lumens: 600, aim: 'north'},
       {kind: 'reading', atMm: 2950, watts: 12, lumens: 1000, targetMm: {xMm: 3200, zMm: 1450}}]},

@@ -18,8 +18,8 @@ test('Bedroom 3: the proposed plan passes every rule', () => {
 
 test('Bedroom 3 (dressing swap 2026-10-05): the dressing socket follows the mirror cabinet to the south end', () => {
   const r = passingReport('bedroom3'), s = room.furniture.eastCabinet.south, b = room.southExtension.balcony
-  const socket = pointOf(r, 'B3-S1'), front = room.widthMm - cab.depthMm
-  assert.equal(socket.where, 'south wall, x 3256, 750 high')
+  const socket = pointOf(r, 'B3-S1'), front = room.widthMm - s.depthMm
+  assert.equal(socket.where, 'south wall, x 3455, 750 high')
   assert.equal(socket.alongMm, Math.round(front - 250), '250 mm west of the dressing cabinet front, beside the standing spot')
   assert.ok(socket.alongMm > front - s.standDepthMm && socket.alongMm < front)
   assert.ok(socket.heightMm < b.windowSillMm - 100, 'under the window sill')
@@ -60,8 +60,9 @@ test('Bedroom 3: bedside points above the headboard, AC point hidden in the over
 test('Bedroom 3: toilet board, chest point and utility socket stay clear of doors, cabinets and the artwork', () => {
   const r = passingReport('bedroom3'), toilet = room.doors.find(d => /toilet/.test(d.leadsTo)), chest = room.furniture.westChest
   const board = pointOf(r, 'B3-N2')
-  assert.equal(board.alongMm, toilet.fromMm + toilet.widthMm + 100)
-  assert.ok(board.alongMm < room.widthMm - cab.north.depthMm - 50, 'west of the full-height storage cabinet front')
+  // Owner, later 2026-10-05: the storage cabinet fills the wall east of the toilet door, so the switches are on its west side.
+  assert.equal(board.alongMm, toilet.fromMm - 150)
+  assert.equal(room.widthMm - cab.north.depthMm, toilet.fromMm + toilet.widthMm, 'the cabinet side is in line with the east jamb')
   assert.match(issuesWith('bedroom3', 'B3-N2', {anchor: undefined, alongMm: 2900}), /is in the door to Bedroom 3 toilet/)
   const top = pointOf(r, 'B3-W1')
   assert.equal(top.where, 'west wall, z 2488, 950 high'); assert.ok(top.heightMm > chest.heightMm && top.heightMm < chest.artwork.bottomMm + 50)

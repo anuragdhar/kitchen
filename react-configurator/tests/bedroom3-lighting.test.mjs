@@ -14,14 +14,14 @@ const check = c => checkTrackLighting(room, c, {downTargets: bedroom3DownTargets
 test('Bedroom 3: a north and a south track, each its own circuit, clear of the fan, the east cabinet bridge and the full-height cabinet', () => {
   const result = check(config)
   assert.deepEqual(result.issues, [])
-  assert.deepEqual(result.totals, {watts: 87, lumens: 7600, spots: 3, diffused: 2, reading: 3, heads: 8, lumensPerM2: 515, trackMetres: 5.5})
+  assert.deepEqual(result.totals, {watts: 87, lumens: 7600, spots: 3, diffused: 2, reading: 3, heads: 8, lumensPerM2: 515, trackMetres: 5.3})
   assert.deepEqual(result.runs, {
-    B1: {watts: 34, lumens: 3000, heads: 3, driverWatts: 60, driverLoad: 57, metres: 2.75},
+    B1: {watts: 34, lumens: 3000, heads: 3, driverWatts: 60, driverLoad: 57, metres: 2.55},
     B2: {watts: 53, lumens: 4600, heads: 5, driverWatts: 100, driverLoad: 53, metres: 2.75},
   })
   assert.deepEqual(bedroom3Obstacles(room).map(o => [o.label, o.z1, o.z2]), [['east cabinet bridge', 900, 3576], ['full-height storage cabinet', 150, 900]])
   for (const key of ['B1 to east cabinet bridge', 'B2 to east cabinet bridge', 'B1 to full-height storage cabinet', 'B2 to full-height storage cabinet']) assert.ok(result.clearances[key] >= 100, JSON.stringify(result.clearances))
-  assert.equal(result.clearances['B1 to full-height storage cabinet'], 156)
+  assert.equal(result.clearances['B1 to full-height storage cabinet'], 155)
   assert.deepEqual(BEDROOM3_DIMMER_CIRCUITS.map(([id]) => id), config.tracks.runs.map(run => run.id))
   assert.equal(ROOM_LIGHTING.bedroom3.ownFixtures, true, 'the generic overlay strips are not drawn any more')
 })
@@ -58,12 +58,12 @@ test('the Bedroom 3 mouldings are recorded and both tracks sit on flat slab inbo
   assert.deepEqual([result.clearances['B1 to Ceiling fan'], result.clearances['B2 to Ceiling fan']], [400, 486])
   // Before and after (2026-10-05): B1 was 650 off the north wall and B2 626 off the south wall, both from x 300.
   // Dressing swap (later 2026-10-05): the head at 3300 moved from B1 to B2; the runs themselves did not move.
-  assert.deepEqual([b1.atMm, b1.fromMm, b1.toMm, b1.heads.map(h => h.atMm)], [820, 600, 3350, [1300, 2300, 2950]])
+  assert.deepEqual([b1.atMm, b1.fromMm, b1.toMm, b1.heads.map(h => h.atMm)], [820, 600, 3150, [1300, 2300, 2950]])
   assert.deepEqual([room.lengthMm - b2.atMm, b2.fromMm, b2.toMm, b2.heads.map(h => h.atMm)], [820, 600, 3350, [650, 1135, 1620, 2950, 3300]])
   const bad = patch => { const c = structuredClone(config); patch(c); return check(c).issues.join(' | ') }
   const old = bad(c => { c.tracks.runs[0].atMm = 650; c.tracks.runs[0].fromMm = 300 })
   assert.match(old, /B1 lies across the west border moulding/); assert.match(old, /B1 lies across the north-west corner ring/)
-  assert.match(old, /B1 lies across the north-east corner ring/)
+  assert.match(bad(c => { c.tracks.runs[0].atMm = 650; c.tracks.runs[0].toMm = 3350 }), /B1 lies across the north-east corner ring/)
   assert.match(bad(c => { c.tracks.runs[1].atMm = 3100 }), /B2 lies across the south-west corner ring/)
 })
 
@@ -85,7 +85,7 @@ test('reading heads are aimed at each sleeper\'s chest from the foot side with a
   assert.ok(dressing.atMm > room.widthMm - c.depthMm - s.standDepthMm && dressing.atMm < room.widthMm - c.depthMm, 'over the standing spot, in front of the mirror')
   assert.ok(south.atMm > s.fromNorthMm && south.atMm < s.fromNorthMm + s.widthMm, 'the south run crosses the standing spot')
   const spot = bedroom3DownTargets(room).find(t => /dressing/.test(t.label))
-  assert.deepEqual([spot.x1, spot.x2, spot.z1, spot.z2].map(Math.round), [2856, 3506, 2826, 3576])
+  assert.deepEqual([spot.x1, spot.x2, spot.z1, spot.z2].map(Math.round), [3055, 3705, 2826, 3576])
   const moved = structuredClone(config); moved.tracks.runs[1].heads.pop(); moved.tracks.runs[0].heads.push({kind: 'reading', atMm: 3300, watts: 12, lumens: 1000})
   assert.match(check(moved).issues.join(' | '), /B1: the down-pointing head at 3300 is not over a sofa, bed or work spot/, 'the old place no longer has a dressing spot under it')
   const small = structuredClone(config); small.tracks.runs[1].driverWatts = 60

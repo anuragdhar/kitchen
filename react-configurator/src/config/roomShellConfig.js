@@ -75,12 +75,17 @@ export const EMPTY_ROOM_SHELLS={
         // scan read about 2770, so the carpenter scribes a top filler), a pair of solid leaves up to loftBottomMm and a loft
         // pair above, on the line of the overhead run. depthMm is this unit's own (default: the run's 18 in). 610 (24 in,
         // wardrobe depth) would leave only about 48 mm between its front and the toilet door frame at x 3305.
-        north:{kind:'storage',fromNorthMm:150,widthMm:750,depthMm:457.2,heightMm:2700,doorCount:2,loftBottomMm:2200,shelvesMm:[400,800,1200,1600]},
+        // Owner, later 2026-10-05: "increase the depth of the north-east cabinet so that it matches the wall": 658 mm, the whole
+        // stretch of north wall between the east wall and the toilet door jamb (3963 - 3305), so its side is in line with the
+        // jamb (was 457.2). The carpenter scribes it to the door frame on site; the jamb position is from the phone scan.
+        north:{kind:'storage',fromNorthMm:150,widthMm:750,depthMm:658,heightMm:2700,doorCount:2,loftBottomMm:2200,shelvesMm:[400,800,1200,1600]},
         // The mirror dressing cabinet, moved here from the north end with the same size and mirror band. Two drawers below the
         // mirror door. mirrorHinge: the edge the mirror door hangs on; 'north' keeps the open door beside the bed, away from
         // the balcony window ('south' would stand it 168 mm in front of the window). standDepthMm: the floor in front of the
         // mirror where a person stands (also the target of the dressing down light).
-        south:{kind:'dressing',fromNorthMm:2826,widthMm:750,heightMm:2200,mirrorBottomMm:580,mirrorTopMm:2130,mirrorHinge:'north',drawerCount:2,standDepthMm:650},
+        // Owner, later 2026-10-05: "make this one cabinet about 258 mm deep": it now stops at the east edge of the balcony
+        // window (the window ends 258 mm from the east wall), so it no longer stands in front of the glass (was 457.2).
+        south:{kind:'dressing',fromNorthMm:2826,widthMm:750,depthMm:258,heightMm:2200,mirrorBottomMm:580,mirrorTopMm:2130,mirrorHinge:'north',drawerCount:2,standDepthMm:650},
         // Starts where the full-height north cabinet ends (was from 150, 3426 long); doorCount is shared out between the two
         // closed compartments either side of the AC bay by their length (1 north, 2 south).
         bridge:{fromNorthMm:900,widthMm:2676,bottomMm:2200,heightMm:450,doorCount:3},
