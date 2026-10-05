@@ -16,7 +16,7 @@ re-run the script (or tell the assistant which rate is wrong).
 
 ## Total
 
-**Rs 16,74,500 to Rs 31,73,500** (Rs 16.7 lakh to Rs 31.7 lakh) for the 105 tasks that could be
+**Rs 16,92,000 to Rs 32,00,500** (Rs 16.9 lakh to Rs 32.0 lakh) for the 105 tasks that could be
 estimated, out of 112. 7 tasks are not estimated (listed below), so the true total is higher.
 The total includes the OPTIONAL skirting replacement (Rs 17,000 to Rs 35,000).
 
@@ -29,7 +29,7 @@ The total includes the OPTIONAL skirting replacement (Rs 17,000 to Rs 35,000).
 | 3. Plumbing first fix | 1 | not estimated | not estimated | 1 |
 | 4. Electrical first fix and AC piping (before plaster) | 25 | Rs 1,24,000 | Rs 2,91,500 | 1 |
 | 5. Plaster, making good and flooring | 4 | Rs 52,000 | Rs 97,500 |  |
-| 6. Carpentry and steel fabrication | 20 | Rs 9,85,000 | Rs 16,08,000 | 1 |
+| 6. Carpentry and steel fabrication | 20 | Rs 10,02,500 | Rs 16,35,000 | 1 |
 | 7. Painting and polish | 3 | Rs 95,000 | Rs 3,21,500 |  |
 | 8. Fit-out: lights, switches, AC units, nets, blinds, plumbing fittings | 18 | Rs 2,82,500 | Rs 5,74,500 | 1 |
 | 9. Furnish, snag and handover | 2 | Rs 6,000 | Rs 12,000 | 1 |
@@ -41,7 +41,7 @@ The total includes the OPTIONAL skirting replacement (Rs 17,000 to Rs 35,000).
 | Civil / structure | 11 | Rs 1,08,000 | Rs 2,31,500 |  |
 | Electrical | 38 | Rs 2,61,500 | Rs 5,49,000 | 1 |
 | Plumbing | 3 | Rs 0 | Rs 0 | 2 |
-| Carpentry | 20 | Rs 9,84,500 | Rs 16,07,500 | 1 |
+| Carpentry | 20 | Rs 10,02,000 | Rs 16,34,500 | 1 |
 | Steel fabrication | 5 | Rs 65,000 | Rs 1,12,000 | 1 |
 | False ceiling | 1 | Rs 2,000 | Rs 4,000 |  |
 | Air conditioning | 7 | Rs 48,500 | Rs 1,57,000 |  |
@@ -55,7 +55,7 @@ The total includes the OPTIONAL skirting replacement (Rs 17,000 to Rs 35,000).
 | --- | ---: | ---: | ---: | ---: |
 | Main entry | 12 | Rs 1,23,000 | Rs 2,13,500 | 1 |
 | Drawing Room | 30 | Rs 3,54,000 | Rs 6,60,500 | 1 |
-| Lobby / Dining | 12 | Rs 1,47,000 | Rs 3,19,000 |  |
+| Lobby / Dining | 12 | Rs 1,64,500 | Rs 3,46,000 |  |
 | Bedroom 1 | 14 | Rs 2,48,000 | Rs 4,39,500 |  |
 | Bedroom 3 | 7 | Rs 1,36,500 | Rs 2,38,000 |  |
 | Study | 6 | Rs 34,000 | Rs 73,500 | 1 |
@@ -70,11 +70,11 @@ Each row is one rate and all the quantity priced with it. If the rate is 10 % of
 
 | # | Rate | Quantity | Rate (Rs) | Low | High | Share of the high total |
 | --- | --- | ---: | --- | ---: | ---: | ---: |
-| 1 | Wardrobe or tall cabinet: 18 mm waterproof ply, laminate, soft-close hardware, by front area | 297 sq ft | 1,500-2,300 | Rs 4,46,041 | Rs 6,83,930 | 22 % |
+| 1 | Wardrobe or tall cabinet: 18 mm waterproof ply, laminate, soft-close hardware, by front area | 305 sq ft | 1,500-2,300 | Rs 4,58,175 | Rs 7,02,535 | 22 % |
 | 2 | Kitchen wall cabinets, by front area | 117 sq ft | 1,400-2,100 | Rs 1,63,647 | Rs 2,45,470 | 8 % |
 | 3 | Kitchen base cabinets with drawers and soft-close fittings, by front area | 66.3 sq ft | 1,900-2,900 | Rs 1,25,974 | Rs 1,92,276 | 6 % |
 | 4 | Strip paint from old woodwork, stain and PU polish | 86.9 to 412 sq ft | 250-450 | Rs 21,724 | Rs 1,85,581 | 6 % |
-| 5 | Low unit, console or chest of drawers, by length along the wall | 22 to 26.2 running ft | 3,500-6,000 | Rs 76,859 | Rs 1,57,350 | 5 % |
+| 5 | Low unit, console or chest of drawers, by length along the wall | 23.4 to 27.7 running ft | 3,500-6,000 | Rs 82,027 | Rs 1,66,209 | 5 % |
 
 ## Not estimated, and why
 
@@ -118,9 +118,9 @@ Rupees, 2025-26, Delhi NCR, mid-range quality. "Used for" is the total quantity 
 | Floor and skirting repair at a cut wall, matched to the old floor | sq ft | 250 | 450 | 30 |
 | Take off the old skirting and fix a slim or flush tile skirting | running ft | 90 | 180 | 194 |
 | PVC plank ceiling on a frame, with edge trim | sq ft | 90 | 160 | 23 |
-| Wardrobe or tall cabinet: 18 mm waterproof ply, laminate, soft-close hardware, by front area | sq ft | 1,500 | 2,300 | 297 |
+| Wardrobe or tall cabinet: 18 mm waterproof ply, laminate, soft-close hardware, by front area | sq ft | 1,500 | 2,300 | 305 |
 | Shallow cabinet (under 150 mm deep) or a sliding cover: doors, shelves, laminate, by front area | sq ft | 800 | 1,300 | 67.1 |
-| Low unit, console or chest of drawers, by length along the wall | running ft | 3,500 | 6,000 | 22 to 26.2 |
+| Low unit, console or chest of drawers, by length along the wall | running ft | 3,500 | 6,000 | 23.4 to 27.7 |
 | Loose top or shelf: 25 mm ply, laminate, edged | sq ft | 350 | 600 | 23.6 |
 | Kitchen base cabinets with drawers and soft-close fittings, by front area | sq ft | 1,900 | 2,900 | 66.3 |
 | Kitchen wall cabinets, by front area | sq ft | 1,400 | 2,100 | 117 |
@@ -248,8 +248,8 @@ Rupees, 2025-26, Delhi NCR, mid-range quality. "Used for" is the total quantity 
 | Kitchen store: pull-out storage and its sliding cover | Kitchen | Rs 85,500 | Rs 1,41,000 | low | store unit 1092 x 2600: 30.6 sq ft x Rs 1,500-2,300; sliding cover 1092 x 2635: 31 sq ft x Rs 800-1,300; pull-out racks: 1 set x Rs 15,000-30,000. The refrigerator is not included. |
 | Home Office: sit-stand top, the fixed south section and the rear cabinet | Home Office | Rs 32,000 | Rs 55,500 | low | moving top 1500 x 762: 12.3 sq ft x Rs 350-600; fixed top 743 x 762: 6.1 sq ft x Rs 350-600; cabinet under the fixed section 743: 2.4 running ft x Rs 3,500-6,000; rear cabinet 1500: 4.9 running ft x Rs 3,500-6,000. The sit-stand frame is taken as already owned. The fixed section is cut to the taped room length (A15, A17). |
 | Home Office: north wall cabinet with the water heater and router bays | Home Office | Rs 26,500 | Rs 42,500 | low | upper cabinet 914 x 864: 8.5 sq ft x Rs 1,500-2,300; shallow book section 914 x 1778: 17.5 sq ft x Rs 800-1,300. The heater bay may have to be widened (A16). |
-| Lobby: ironing storage on the east wall | Lobby / Dining | Rs 61,500 | Rs 1,01,000 | low | storage 1450 long: 4.8 running ft x Rs 3,500-6,000; upper storage 1450 x 1670: 26.1 sq ft x Rs 1,500-2,300; ironing board: 1 each x Rs 6,000-12,000. |
-| Pooja alcove: the unit, platform and drawers | Lobby / Dining | Rs 52,000 | Rs 80,500 | low | unit across the 1200 alcove, full height: 34.9 sq ft x Rs 1,500-2,300. No detailed design in the config; stone, brass or carved work is extra. |
+| Lobby: ironing storage on the east wall | Lobby / Dining | Rs 79,000 | Rs 1,28,000 | low | storage 1900 long: 6.2 running ft x Rs 3,500-6,000; upper storage 1900 x 1670: 34.2 sq ft x Rs 1,500-2,300; ironing board: 1 each x Rs 6,000-12,000. |
+| Pooja alcove: the unit, platform and drawers | Lobby / Dining | Rs 52,000 | Rs 80,500 | low | unit across the 1200 alcove, full height: 34.9 sq ft x Rs 1,500-2,300. Allowance includes proposed platform 1200 x 1150, drawer 660 x 700, and inward bi-fold; no separate hardware or platform rate. Detailed fabrication quote, stone, brass or carved work extra. |
 | Study (Bedroom 2): furniture for the kids layout | Study |  |  |  | Not estimated: The kids layout (bed, desk) has no config of its own yet and is not settled (C25); the bookshelf and the south cabinet already exist. |
 | Drawing Room south window: replace the fixed centre section with two outward-opening shutters, and glaze them | Drawing Room | Rs 12,500 | Rs 21,500 | medium | centre pair 899 x 1105: 10.7 sq ft x Rs 1,200-2,000. Sizes from the phone scan. |
 | Bedroom 1 balcony: welded iron frame for the window AC | Bedroom 1 | Rs 2,000 | Rs 4,000 | low | angle frame, about: 22 kg x Rs 110-170. For a casing about 660 x 430 x 700, 50 kg; the real unit is not measured (A23). |

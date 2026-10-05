@@ -411,3 +411,10 @@ is drawn about 443 high (was about 560). No models or textures were downloaded.
   (`ENTRY.outerDoor.mountedAt`, `checkEntryDoorPair` in `src/domain/entryFittings.mjs`). Passage past the open wooden leaf is
   about 508 mm: needs the owner's decision (C55). Switch EN-1, bell EN-2 and conduit EN-7 moved to the corridor south wall
   (proposals). Budget prices the steel door for the 1287 x 2200 opening. Note `docs/changes/2026-10-06-entry-door-pair.md`.
+- 2026-10-06 (owner, later): Pooja door stands ON the platform, which now projects 150 mm into the Lobby (front z 150, rounded
+  nosing; `src/domain/poojaPlatform.mjs`). New default door style `bifoldInWest`: two 485 mm leaves folding into the alcove and
+  parking on its west wall (about 895 clear; nothing parks in the Lobby); the other four styles stay selectable. The east cabinet
+  now runs z 200-2100 (1900 long, one 450 bay added at the north end; ironing bay unchanged). The platform drawer is narrowed to
+  660 wide on the west so it clears the cabinet. Open points: seated position must shift east of the folded stack, socket L-P1 is
+  covered by the stack, L-E2 is proposed inside the new bay, straight passage about 523 mm (C56). The cabinet extension is the
+  supervisor's reading of the dictation. Note `docs/changes/2026-10-06-pooja-platform-inward-west-fold.md`.

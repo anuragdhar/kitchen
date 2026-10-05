@@ -1960,9 +1960,9 @@
       ],
       "status": "todo",
       "needs": "Confirm the design",
-      "estimateLow": 61500,
-      "estimateHigh": 101000,
-      "estimateBasis": "storage 1450 long: 4.8 running ft x Rs 3,500-6,000; upper storage 1450 x 1670: 26.1 sq ft x Rs 1,500-2,300; ironing board: 1 each x Rs 6,000-12,000.",
+      "estimateLow": 79000,
+      "estimateHigh": 128000,
+      "estimateBasis": "storage 1900 long: 6.2 running ft x Rs 3,500-6,000; upper storage 1900 x 1670: 34.2 sq ft x Rs 1,500-2,300; ironing board: 1 each x Rs 6,000-12,000.",
       "estimateConfidence": "low"
     },
     {
@@ -1982,7 +1982,7 @@
       "needs": "A design for the Pooja unit; materials (wood, stone, brass)",
       "estimateLow": 52000,
       "estimateHigh": 80500,
-      "estimateBasis": "unit across the 1200 alcove, full height: 34.9 sq ft x Rs 1,500-2,300. No detailed design in the config; stone, brass or carved work is extra.",
+      "estimateBasis": "unit across the 1200 alcove, full height: 34.9 sq ft x Rs 1,500-2,300. Allowance includes proposed platform 1200 x 1150, drawer 660 x 700, and inward bi-fold; no separate hardware or platform rate. Detailed fabrication quote, stone, brass or carved work extra.",
       "estimateConfidence": "low"
     },
     {
