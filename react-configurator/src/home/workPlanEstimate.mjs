@@ -23,6 +23,7 @@ import {BEDROOM3_LIGHTING} from '../config/bedroom3LightingConfig.js'
 import {STUDY_LIGHTING} from '../config/studyLightingConfig.js'
 import {KITCHEN_LIGHTING} from '../config/kitchenLightingConfig.js'
 import {BEDROOM1_CLOSED_DOOR} from '../config/bedroom1ClosedDoor.js'
+import {BEDROOM1_DESIGN} from '../config/bedroom1LayoutConfig.js'
 import {CABINET_RUNS, WEST_INIT, KITCHEN, KITCHEN_STORE_STORAGE, BACKSPLASH_HEIGHT} from '../config/kitchenConfig.js'
 
 /** One table of every rate used. `unit` is what the quantity is counted in; low/high are INR per unit. */
@@ -171,10 +172,11 @@ export const ESTIMATORS = {
   'ac-plan-home': () => free('A decision; pending the whole-home AC note.'),
   'lighting-plan-drawing': () => free(OWNER_TIME), 'lighting-plan-lobby': () => free(OWNER_TIME), 'lighting-plan-bedroom1': () => free(OWNER_TIME),
   'lighting-plan-bedroom3': () => free(OWNER_TIME), 'lighting-plan-study': () => free(OWNER_TIME), 'lighting-plan-kitchen': () => free(OWNER_TIME),
-  'lighting-track-mouldings': () => free('A decision; pending the track and mouldings note.'),
+  'lighting-track-mouldings': () => free(OWNER_TIME),
+  'lobby-pendant-decide': () => free('A decision; the new feed is priced in its own task.'),
   'elec-other-rooms': () => free('A plan on paper; pending the electrical plans note.'),
   'palette-choose': () => free('A decision; pending the whole-home palette note. Sample pots are small change.'),
-  'bedroom1-design-freeze': () => free('A decision; pending the Bedroom 1 design note.'),
+  'bedroom1-design-freeze': () => free('A decision between two drawn layouts; what layout B adds is priced in its own task.'),
   'drawing-switchboard-decide': () => free('A decision with the electrician; the work is priced in the switchboard task.'),
   'window-screen-trial': () => priced('medium', [item('trial blind', 1, 'outdoorBlind')], 'One ready-made piece for one section.'),
 
@@ -212,6 +214,8 @@ export const ESTIMATORS = {
   'elec-ac-window-point': () => priced('medium', [item('AC circuit', 1, 'circuit')]),
   'elec-track-feed': () => trackFeeds(TRACKS.drawing), 'elec-track-feed-lobby': () => trackFeeds(TRACKS.lobby), 'elec-track-feed-bedroom1': () => trackFeeds(TRACKS.bedroom1),
   'elec-track-feed-bedroom3': () => trackFeeds(TRACKS.bedroom3), 'elec-track-feed-study': () => trackFeeds(TRACKS.study), 'elec-track-feed-kitchen': () => trackFeeds(TRACKS.kitchen),
+  'elec-track-setout': () => free('Part of the electrician\'s first fix for the track feeds; no separate charge expected.'),
+  'elec-lobby-pendant-feed': () => priced('low', [item('new ceiling point', [0, 1], 'pointLight')], 'Nothing if the pendant is dropped or goes on an existing point (C33).'),
   'elec-chase-other-rooms': () => none('The point plans for the other rooms are not in the project yet (pending the electrical plans note).'),
   'ac-piping-other': () => none('Which rooms get new piping is not decided (pending the whole-home AC note).'),
 
@@ -233,7 +237,12 @@ export const ESTIMATORS = {
     item(`west wardrobe ${f.wardrobe.lengthMm} x ${f.wardrobe.heightMm}`, sqft(f.wardrobe.lengthMm, f.wardrobe.heightMm), 'carpTall'),
     item(`north-east recess wardrobe ${f.northEastRecessWardrobe.widthMm} x ${f.northEastRecessWardrobe.heightMm}`, sqft(f.northEastRecessWardrobe.widthMm, f.northEastRecessWardrobe.heightMm), 'carpTall'),
     item(`balcony wardrobe ${p.widthMm} x ${p.heightMm}`, sqft(p.widthMm, p.heightMm), 'carpTall'),
-  ], 'As drawn in the model today; the Bedroom 1 design note may change all of it.') },
+  ], 'The same three wardrobes in layout A and layout B; sliding panels on the balcony wardrobe are inside the rate.') },
+  'carp-bedroom1-layout-b': () => { const b = BEDROOM1_DESIGN.layouts.headSouth; return priced('low', [
+    item(`dressing table ${b.dressingTable.widthMm} long`, [0, rft(b.dressingTable.widthMm)], 'carpLow'),
+    item(`wall mirror ${b.dressingTable.mirror.widthMm} x ${b.dressingTable.mirror.heightMm}`, [0, sqft(b.dressingTable.mirror.widthMm, b.dressingTable.mirror.heightMm)], 'mirror'),
+    item(`bedside table ${b.bedsideTable.widthMm} long`, [0, rft(b.bedsideTable.widthMm)], 'carpLow'),
+  ], 'Nothing if layout A stays (C35). The stool and any acoustic board behind the bed head are not included.') },
   'carp-bedroom3-east': () => priced('low', [
     item(`dressing cabinet ${east.north.widthMm} x ${east.north.heightMm}`, sqft(east.north.widthMm, east.north.heightMm), 'carpTall'),
     item(`overhead run ${east.bridge.widthMm} x ${east.bridge.heightMm}`, sqft(east.bridge.widthMm, east.bridge.heightMm), 'carpTall'),

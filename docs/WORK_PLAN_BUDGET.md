@@ -12,24 +12,24 @@ re-run the script (or tell the assistant which rate is wrong).
   appliances, loose furniture, the society's fee or deposit, and anything in a task listed under "Not estimated".
 - "Low" and "high" are the ends of the usual rate range, not the cheapest and dearest possible. A real quote can fall
   outside the range; replace the range with the quote in the task notes when one arrives.
-- Confidence: 36 of the 87 estimated tasks are marked low (the design is not frozen, or the size is not measured).
+- Confidence: 38 of the 91 estimated tasks are marked low (the design is not frozen, or the size is not measured).
 
 ## Total
 
-**Rs 15,14,500 to Rs 26,29,000** (Rs 15.1 lakh to Rs 26.3 lakh) for the 87 tasks that could be
-estimated, out of 97. 10 tasks are not estimated (listed below), so the true total is higher.
+**Rs 15,14,500 to Rs 26,58,000** (Rs 15.1 lakh to Rs 26.6 lakh) for the 91 tasks that could be
+estimated, out of 101. 10 tasks are not estimated (listed below), so the true total is higher.
 The total includes the OPTIONAL skirting replacement (Rs 17,000 to Rs 35,000).
 
 ### Phase
 
 | Phase | Tasks | Low | High | Not estimated |
 | --- | ---: | ---: | ---: | ---: |
-| 1. Measure, decide and get approvals | 22 | Rs 17,000 | Rs 46,000 | 1 |
+| 1. Measure, decide and get approvals | 23 | Rs 17,000 | Rs 46,000 | 1 |
 | 2. Demolition and civil work | 12 | Rs 97,000 | Rs 1,95,000 | 1 |
 | 3. Plumbing first fix | 1 | not estimated | not estimated | 1 |
-| 4. Electrical first fix and AC piping (before plaster) | 18 | Rs 70,500 | Rs 1,51,500 | 2 |
+| 4. Electrical first fix and AC piping (before plaster) | 20 | Rs 70,500 | Rs 1,53,000 | 2 |
 | 5. Plaster, making good and flooring | 4 | Rs 37,500 | Rs 72,500 |  |
-| 6. Carpentry and steel fabrication | 19 | Rs 9,21,500 | Rs 14,84,500 | 1 |
+| 6. Carpentry and steel fabrication | 20 | Rs 9,21,500 | Rs 15,12,000 | 1 |
 | 7. Painting and polish | 2 | Rs 95,000 | Rs 1,74,500 |  |
 | 8. Fit-out: lights, switches, AC units, nets, blinds, plumbing fittings | 17 | Rs 2,70,000 | Rs 4,93,000 | 3 |
 | 9. Furnish, snag and handover | 2 | Rs 6,000 | Rs 12,000 | 1 |
@@ -39,15 +39,15 @@ The total includes the OPTIONAL skirting replacement (Rs 17,000 to Rs 35,000).
 | Trade | Tasks | Low | High | Not estimated |
 | --- | ---: | ---: | ---: | ---: |
 | Civil / structure | 11 | Rs 93,500 | Rs 2,06,500 |  |
-| Electrical | 30 | Rs 1,98,000 | Rs 4,02,000 | 2 |
+| Electrical | 32 | Rs 1,98,000 | Rs 4,03,500 | 2 |
 | Plumbing | 3 | Rs 0 | Rs 0 | 2 |
-| Carpentry | 19 | Rs 9,21,000 | Rs 14,84,000 | 1 |
+| Carpentry | 20 | Rs 9,21,000 | Rs 15,11,500 | 1 |
 | Steel fabrication | 5 | Rs 50,500 | Rs 88,500 | 1 |
 | False ceiling | 1 | Rs 2,000 | Rs 4,000 |  |
 | Air conditioning | 5 | Rs 46,000 | Rs 82,500 | 2 |
 | Aluminium windows and mesh | 3 | Rs 1,02,000 | Rs 1,73,000 |  |
 | Painting | 2 | Rs 95,000 | Rs 1,74,500 |  |
-| Owner / general | 18 | Rs 6,500 | Rs 14,000 | 2 |
+| Owner / general | 19 | Rs 6,500 | Rs 14,000 | 2 |
 
 ### Room
 
@@ -55,13 +55,13 @@ The total includes the OPTIONAL skirting replacement (Rs 17,000 to Rs 35,000).
 | --- | ---: | ---: | ---: | ---: |
 | Main entry | 12 | Rs 1,02,500 | Rs 1,79,500 | 1 |
 | Drawing Room | 30 | Rs 3,49,500 | Rs 6,45,500 | 1 |
-| Lobby / Dining | 6 | Rs 1,00,500 | Rs 1,73,500 |  |
-| Bedroom 1 | 12 | Rs 2,40,000 | Rs 3,98,500 |  |
+| Lobby / Dining | 8 | Rs 1,00,500 | Rs 1,75,000 |  |
+| Bedroom 1 | 13 | Rs 2,40,000 | Rs 4,26,000 |  |
 | Bedroom 3 | 6 | Rs 1,07,000 | Rs 1,83,500 |  |
 | Study | 4 | Rs 26,500 | Rs 52,500 | 1 |
 | Home Office | 2 | Rs 58,500 | Rs 98,000 |  |
 | Kitchen | 6 | Rs 4,14,000 | Rs 6,66,000 |  |
-| Whole home or several rooms | 19 | Rs 1,16,000 | Rs 2,32,000 | 7 |
+| Whole home or several rooms | 20 | Rs 1,16,000 | Rs 2,32,000 | 7 |
 
 ## The five numbers the total is most sensitive to
 
@@ -73,8 +73,8 @@ Each row is one rate and all the quantity priced with it. If the rate is 10 % of
 | 1 | Wardrobe or tall cabinet: 18 mm waterproof ply, laminate, soft-close hardware, by front area | 253 sq ft | 1,500-2,300 | Rs 3,79,698 | Rs 5,82,203 | 22 % |
 | 2 | Kitchen wall cabinets, by front area | 117 sq ft | 1,400-2,100 | Rs 1,63,647 | Rs 2,45,470 | 9 % |
 | 3 | Kitchen base cabinets with drawers and soft-close fittings, by front area | 66.3 sq ft | 1,900-2,900 | Rs 1,25,974 | Rs 1,92,276 | 7 % |
-| 4 | Slim aluminium sliding doors, 8 mm toughened fluted glass, top-hung track, soft close | 84.5 sq ft | 1,100-1,800 | Rs 92,928 | Rs 1,52,065 | 6 % |
-| 5 | Low unit, console or chest of drawers, by length along the wall | 24.4 running ft | 3,500-6,000 | Rs 85,472 | Rs 1,46,523 | 6 % |
+| 4 | Low unit, console or chest of drawers, by length along the wall | 24.4 to 28.7 running ft | 3,500-6,000 | Rs 85,472 | Rs 1,72,115 | 6 % |
+| 5 | Slim aluminium sliding doors, 8 mm toughened fluted glass, top-hung track, soft close | 84.5 sq ft | 1,100-1,800 | Rs 92,928 | Rs 1,52,065 | 6 % |
 
 ## Not estimated, and why
 
@@ -108,7 +108,7 @@ Rupees, 2025-26, Delhi NCR, mid-range quality. "Used for" is the total quantity 
 | Mild steel, fabricated, primed, painted and fixed | kg | 110 | 170 | 114 |
 | Stainless steel 304 grille door with frame and insect mesh, fabricated and fixed | sq ft | 1,600 | 2,600 | 21.4 |
 | Mortise lock with lever handles, deadbolt and night latch | each | 5,000 | 12,000 | 1 |
-| Light or switch point: conduit, wire, box, modular switch | point | 900 | 1,500 | 10 |
+| Light or switch point: conduit, wire, box, modular switch | point | 900 | 1,500 | 10 to 11 |
 | 6 A socket or charging point with a modular plate (USB module included) | point | 1,200 | 2,000 | 5 to 8 |
 | 16 A power point with a modular plate | point | 1,800 | 3,000 | 5 |
 | Dedicated circuit from the board: 4 sq mm wire, own breaker, AC or power socket | each | 4,500 | 8,000 | 3 |
@@ -123,7 +123,7 @@ Rupees, 2025-26, Delhi NCR, mid-range quality. "Used for" is the total quantity 
 | PVC plank ceiling on a frame, with edge trim | sq ft | 90 | 160 | 23 |
 | Wardrobe or tall cabinet: 18 mm waterproof ply, laminate, soft-close hardware, by front area | sq ft | 1,500 | 2,300 | 253 |
 | Shallow cabinet (under 150 mm deep) or a sliding cover: doors, shelves, laminate, by front area | sq ft | 800 | 1,300 | 59.8 |
-| Low unit, console or chest of drawers, by length along the wall | running ft | 3,500 | 6,000 | 24.4 |
+| Low unit, console or chest of drawers, by length along the wall | running ft | 3,500 | 6,000 | 24.4 to 28.7 |
 | Loose top or shelf: 25 mm ply, laminate, edged | sq ft | 350 | 600 | 23.6 |
 | Kitchen base cabinets with drawers and soft-close fittings, by front area | sq ft | 1,900 | 2,900 | 66.3 |
 | Kitchen wall cabinets, by front area | sq ft | 1,400 | 2,100 | 117 |
@@ -132,7 +132,7 @@ Rupees, 2025-26, Delhi NCR, mid-range quality. "Used for" is the total quantity 
 | Tall pull-out pantry or rack fittings | set | 15,000 | 30,000 | 1 |
 | Fluted wall panelling on battens, finished | sq ft | 450 | 800 | 39.9 |
 | LED strip in an aluminium profile with its driver | m | 350 | 700 | 2.1 |
-| 5 mm mirror, cut and fixed | sq ft | 150 | 280 | 32.4 |
+| 5 mm mirror, cut and fixed | sq ft | 150 | 280 | 32.4 to 39.2 |
 | Concealed hinges and push latch for a hidden door | set | 4,000 | 8,000 | 1 |
 | Pull-out ironing board fitting | each | 6,000 | 12,000 | 1 |
 | Wall-hinged fold-down seat with 120 kg brackets, anchored | each | 4,500 | 9,000 | 1 |
@@ -175,13 +175,14 @@ Rupees, 2025-26, Delhi NCR, mid-range quality. "Used for" is the total quantity 
 | Finalise the entry ceiling: long PVC ceiling planks | Main entry | Rs 0 | Rs 0 | medium | No contractor cost: the owner's own time. |
 | Drawing Room AC: choose the size, the indoor position and where the outdoor unit goes | Drawing Room | Rs 0 | Rs 0 | medium | A decision; the AC itself is priced in the fitting task. |
 | Whole-home AC plan: which room gets which AC, and where each outdoor unit goes | Whole home | Rs 0 | Rs 0 | medium | A decision; pending the whole-home AC note. |
-| Bedroom 1: freeze the design (door position, wardrobes, old doorway) | Bedroom 1 | Rs 0 | Rs 0 | medium | A decision; pending the Bedroom 1 design note. |
+| Bedroom 1: choose layout A (bed along the south wall, as now) or layout B (bed head on the south wall) | Bedroom 1 | Rs 0 | Rs 0 | medium | A decision between two drawn layouts; what layout B adds is priced in its own task. |
 | Whole-home palette: choose wall colours, the wood shade and the metal finish | Whole home | Rs 0 | Rs 0 | medium | A decision; pending the whole-home palette note. Sample pots are small change. |
 | Electrical point plans for the other rooms | Other rooms | Rs 0 | Rs 0 | medium | A plan on paper; pending the electrical plans note. |
 | Drawing Room switchboard behind the TV: decide whether the board or the TV moves | Drawing Room | Rs 0 | Rs 0 | medium | A decision with the electrician; the work is priced in the switchboard task. |
-| Track lights and the ceiling plaster mouldings: agree where the tracks run | Whole home | Rs 0 | Rs 0 | medium | A decision; pending the track and mouldings note. |
+| Ceiling mouldings: tape them in the Drawing Room, Lobby and Bedroom 3; photograph the other ceilings | Whole home | Rs 0 | Rs 0 | medium | No contractor cost: the owner's own time. |
 | Drawing Room: finalise layered lighting with track lights (no false ceiling) | Drawing Room | Rs 0 | Rs 0 | medium | No contractor cost: the owner's own time. |
 | Lobby / Dining: finalise track lighting (no false ceiling) | Lobby / Dining | Rs 0 | Rs 0 | medium | No contractor cost: the owner's own time. |
+| Lobby dining pendant: decide how it is fed and fixed | Lobby / Dining | Rs 0 | Rs 0 | medium | A decision; the new feed is priced in its own task. |
 | Bedroom 1: track lighting (no false ceiling) | Bedroom 1 | Rs 0 | Rs 0 | medium | No contractor cost: the owner's own time. |
 | Bedroom 3: track lighting (no false ceiling) | Bedroom 3 | Rs 0 | Rs 0 | medium | No contractor cost: the owner's own time. |
 | Study (Bedroom 2): track lighting (no false ceiling) | Study | Rs 0 | Rs 0 | medium | No contractor cost: the owner's own time. |
@@ -214,6 +215,8 @@ Rupees, 2025-26, Delhi NCR, mid-range quality. "Used for" is the total quantity 
 | Bedroom 3: power feed points for the track lights | Bedroom 3 | Rs 4,000 | Rs 7,000 | medium | track runs: 2 run x Rs 2,000-3,500. Run and head counts from the lighting config. |
 | Study: power feed points for the track lights | Study | Rs 4,000 | Rs 7,000 | medium | track runs: 2 run x Rs 2,000-3,500. Run and head counts from the lighting config. |
 | Kitchen: power feed point for the ceiling track | Kitchen | Rs 2,000 | Rs 3,500 | medium | track runs: 1 run x Rs 2,000-3,500. Run and head counts from the lighting config. |
+| Set out every track on the ceiling from the mouldings before fixing any feed | Whole home | Rs 0 | Rs 0 | medium | Part of the electrician's first fix for the track feeds; no separate charge expected. |
+| Lobby: new ceiling feed for the dining pendant, once its position is decided | Lobby / Dining | Rs 0 | Rs 1,500 | low | new ceiling point: 0 to 1 point x Rs 900-1,500. Nothing if the pendant is dropped or goes on an existing point (C33). |
 | Drawing Room AC: lay the copper pipes, drain pipe and cable before plaster | Drawing Room | Rs 3,000 | Rs 15,500 | low | extra pipe: 0 to 7 m x Rs 800-1,300; core cut and fixing: 1 each x Rs 3,000-6,000. About 3 m to a bracket on the west wall (inside the kit) or about 10 m to the shoe rack (C15). |
 | Drawing Room AC: dedicated power line and socket | Drawing Room | Rs 4,500 | Rs 8,000 | medium | AC circuit: 1 each x Rs 4,500-8,000. |
 | Bedroom 1 balcony: dedicated power socket for the window AC | Bedroom 1 | Rs 4,500 | Rs 8,000 | medium | AC circuit: 1 each x Rs 4,500-8,000. |
@@ -229,7 +232,8 @@ Rupees, 2025-26, Delhi NCR, mid-range quality. "Used for" is the total quantity 
 | Fold-down seat at the entry for changing shoes | Main entry | Rs 4,500 | Rs 9,000 | medium | seat: 1 each x Rs 4,500-9,000. |
 | Bedroom 1: hang the new door in the moved doorway | Bedroom 1 / Lobby | Rs 18,000 | Rs 32,000 | medium | door: 1 each x Rs 18,000-32,000. |
 | Bedroom 1: medicine cabinet in the closed old doorway | Bedroom 1 | Rs 14,500 | Rs 24,500 | low | shallow cabinet about 826 x 2100: 18.7 sq ft x Rs 800-1,300. Usable depth is only about 50 mm in the model; measure the wall first. |
-| Bedroom 1: wardrobes | Bedroom 1 | Rs 1,59,000 | Rs 2,44,000 | low | west wardrobe 1800 x 2400: 46.5 sq ft x Rs 1,500-2,300; north-east recess wardrobe 850 x 2700: 24.7 sq ft x Rs 1,500-2,300; balcony wardrobe 1200 x 2700: 34.9 sq ft x Rs 1,500-2,300. As drawn in the model today; the Bedroom 1 design note may change all of it. |
+| Bedroom 1: the three wardrobes (balcony wardrobe with sliding doors) | Bedroom 1 | Rs 1,59,000 | Rs 2,44,000 | low | west wardrobe 1800 x 2400: 46.5 sq ft x Rs 1,500-2,300; north-east recess wardrobe 850 x 2700: 24.7 sq ft x Rs 1,500-2,300; balcony wardrobe 1200 x 2700: 34.9 sq ft x Rs 1,500-2,300. The same three wardrobes in layout A and layout B; sliding panels on the balcony wardrobe are inside the rate. |
+| Bedroom 1, only if layout B is chosen: dressing table with wall mirror, and a bedside table | Bedroom 1 | Rs 0 | Rs 27,500 | low | dressing table 900 long: 0 to 3 running ft x Rs 3,500-6,000; wall mirror 700 x 900: 0 to 6.8 sq ft x Rs 150-280; bedside table 400 long: 0 to 1.3 running ft x Rs 3,500-6,000. Nothing if layout A stays (C35). The stool and any acoustic board behind the bed head are not included. |
 | Bedroom 3: cabinets on both sides of the bed, the overhead run and the slatted AC bay | Bedroom 3 | Rs 63,500 | Rs 1,01,000 | low | dressing cabinet 750 x 2200: 17.8 sq ft x Rs 1,500-2,300; overhead run 3426 x 450: 16.6 sq ft x Rs 1,500-2,300; low cabinet 750: 2.5 running ft x Rs 3,500-6,000; mirror: 12.5 sq ft x Rs 150-280; headboard shelf: 5.2 sq ft x Rs 350-600. The slatted AC bay is priced as overhead cabinet front. |
 | Bedroom 3: low chest of drawers on the west wall, with the artwork above | Bedroom 3 | Rs 16,000 | Rs 28,000 | medium | chest 1400 long, six drawers: 4.6 running ft x Rs 3,500-6,000. The artwork is the owner's purchase and is not included. |
 | Kitchen: base and wall cabinets, counter and backsplash | Kitchen | Rs 3,18,000 | Rs 5,01,000 | low | base cabinets, 4746 east + 2098 west, 900 high: 66.3 sq ft x Rs 1,900-2,900; wall cabinets, 4746 east + 3298 west, 1350 high in two tiers: 117 sq ft x Rs 1,400-2,100; counter: 52 sq ft x Rs 400-900; backsplash: 52 sq ft x Rs 150-300. Run lengths from the kitchen config. Sink, hob, chimney, dishwasher and other appliances are NOT included. |

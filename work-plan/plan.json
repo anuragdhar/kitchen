@@ -265,7 +265,7 @@
       "trade": "general",
       "title": "Whole-home AC plan: which room gets which AC, and where each outdoor unit goes",
       "room": "Whole home",
-      "detail": "PENDING NOTE: a design for this is being written on 2026-10-05 (docs/changes/2026-10-05-*.md, section \"For the work plan\"). This task holds its place; the tasks from that note replace or extend it. Known today (docs/changes/2026-10-05-ac-outdoor-units.md): Bedroom 3 and Bedroom 2 (Study) have split ACs whose outdoor units stay where they are (owner: about 6 ft and 5 ft up). The owner's 1.5 ton window AC is to go in the east side of the Bedroom 1 balcony on an iron frame. A split AC outdoor unit for Bedroom 1 outside the kitchen north wall, above the window AC, is a proposal (\"can we place\"), not decided; if the window AC replaces the Bedroom 1 split AC, that outdoor unit is not needed. The Drawing Room AC has its own tasks.",
+      "detail": "PENDING NOTE: a design for this is being written on 2026-10-05 (docs/changes/2026-10-05-*.md, section \"For the work plan\"). This task holds its place; the tasks from that note replace or extend it. Known today (docs/changes/2026-10-05-ac-outdoor-units.md): Bedroom 3 and Bedroom 2 (Study) have split ACs whose outdoor units stay where they are (owner: about 6 ft and 5 ft up). The owner's 1.5 ton window AC is to go in the east side of the Bedroom 1 balcony on an iron frame. A split AC outdoor unit for Bedroom 1 outside the kitchen north wall, above the window AC, is a proposal (\"can we place\"), not decided; if the window AC replaces the Bedroom 1 split AC, that outdoor unit is not needed. The Bedroom 1 design check wants nothing within 600 mm in front of the window AC; in layout A it blows at the bed, in layout B across its foot. The Drawing Room AC has its own tasks.",
       "dependsOn": [
         "site-measure"
       ],
@@ -287,22 +287,25 @@
       "id": "bedroom1-design-freeze",
       "phase": "measure",
       "trade": "general",
-      "title": "Bedroom 1: freeze the design (door position, wardrobes, old doorway)",
+      "title": "Bedroom 1: choose layout A (bed along the south wall, as now) or layout B (bed head on the south wall)",
       "room": "Bedroom 1",
-      "detail": "PENDING NOTE: a design for this is being written on 2026-10-05 (docs/changes/2026-10-05-*.md, section \"For the work plan\"). This task holds its place; the tasks from that note replace or extend it. In the model today: the door moved to the west end of the Lobby wall; the old doorway closed with a fibre-cement sheet and used from the bedroom side as a shallow medicine cabinet (owner 2026-09-29); a wardrobe on the west wall (1,800 x 2,400), one in the north-east recess (850 x 2,700) and one on the balcony side (1,200 x 2,700); track lights; the window AC in the balcony.",
+      "detail": "OWNER DECISION, not taken. The design check of 2026-10-05 found that the present layout (A) cannot be fully fixed without moving the bed: one sleeper is against the wall, the medicine cabinet in the old doorway is behind the bed and cannot be used, and the bed is in the balcony opening and the window AC's air stream. Layout B is RECOMMENDED by the design note and drawn behind a button on the Bedroom 1 page: the same bed turned with its head on the south wall, a walkway on both sides (642 and 679 mm; they depend on the room really being 3,353 wide), a dressing table with mirror on the north wall, one bedside table on the east, the medicine cabinet doors starting 1,250 mm above the floor, and lighting track 2 turned to run east-west over the pillows. Its costs: the open floor in the middle of the room goes, the bed head is against the closed doorway (sound from the Lobby), and the Lobby door opens beside the bed. Layout A is workable for one person, but then the medicine cabinet should go somewhere else. Unchanged in both: the door moved to the west end of the Lobby wall, the three wardrobes, the balcony and the window AC. Already changed in the model for both layouts: the hamper and rug moved out of the door swing, and the balcony wardrobe has sliding panels because the window AC blocks a hinged door.",
       "dependsOn": [
         "site-measure"
       ],
       "status": "todo",
-      "needs": "The Bedroom 1 design note. Tape the Lobby wall (A24) and the ceiling fan (C23)",
+      "needs": "Owner: A or B, and is the bed used by two people (C35). Tape or scan the room first (A27). Which way the new Lobby door and the washroom door open (C36)",
       "openItems": [
+        "C35",
+        "A27",
         "A24",
-        "C23"
+        "C36"
       ],
       "estimateLow": 0,
       "estimateHigh": 0,
-      "estimateBasis": "A decision; pending the Bedroom 1 design note.",
-      "estimateConfidence": "medium"
+      "estimateBasis": "A decision between two drawn layouts; what layout B adds is priced in its own task.",
+      "estimateConfidence": "medium",
+      "source": "docs/changes/2026-10-05-bedroom1-design.md"
     },
     {
       "id": "palette-choose",
@@ -370,19 +373,21 @@
       "id": "lighting-track-mouldings",
       "phase": "measure",
       "trade": "general",
-      "title": "Track lights and the ceiling plaster mouldings: agree where the tracks run",
+      "title": "Ceiling mouldings: tape them in the Drawing Room, Lobby and Bedroom 3; photograph the other ceilings",
       "room": "Whole home",
-      "detail": "PENDING NOTE: a design for this is being written on 2026-10-05 (docs/changes/2026-10-05-*.md, section \"For the work plan\"). This task holds its place; the tasks from that note replace or extend it. The phone scan shows a plaster moulding on the Drawing Room ceiling 330-400 mm in from the walls, where Track 1 (440 mm from the TV wall) and Track 2 (640 mm from the west wall) would be fixed. A track cannot sit across a moulding. The other rooms' ceilings have not been checked for mouldings.",
+      "detail": "The phone scans show plaster mouldings (a raised border with corner rings) on the Drawing Room, Lobby and Bedroom 3 ceilings. A surface track cannot be screwed flat across one. On 2026-10-05 every track in those three rooms was moved or shortened in the model so that it sits on flat slab, at least 40 mm from any moulding: nothing crosses a moulding, so no spacers and no cutting of plaster. The mouldings are drawn on the three room pages and in Whole home 3D. Still to do on site: tape how far the raised line is from each wall, how far the corner rings reach and how far the plaster stands down, so the set-out can be trusted. The Bedroom 1, Study and Kitchen ceilings have not been scanned; photograph or scan them, because if they have the same mouldings their tracks need the same treatment. Taking the plaster work off during the repaint, so the tracks could go back to their first positions, was not assumed.",
       "dependsOn": [],
       "status": "todo",
-      "needs": "The note on moving the tracks off the mouldings; look at each ceiling for mouldings (C18)",
+      "needs": "Tape the mouldings (A25); photograph or scan the Bedroom 1, Study and Kitchen ceilings (A26)",
       "openItems": [
-        "C18"
+        "A25",
+        "A26"
       ],
       "estimateLow": 0,
       "estimateHigh": 0,
-      "estimateBasis": "A decision; pending the track and mouldings note.",
-      "estimateConfidence": "medium"
+      "estimateBasis": "No contractor cost: the owner's own time.",
+      "estimateConfidence": "medium",
+      "source": "docs/changes/2026-10-05-tracks-and-mouldings.md"
     },
     {
       "phase": "measure",
@@ -390,17 +395,18 @@
       "trade": "general",
       "title": "Drawing Room: finalise layered lighting with track lights (no false ceiling)",
       "room": "Drawing Room",
-      "detail": "Owner 2026-10-04, decided: track lights plus the existing chandelier, no false ceiling, no table lamps and no swing-arm wall lights. The room has TWO ceiling fans (one at each end) and the chandelier midway between them. Drawn in the 3D model (Drawing Room, layout C): 48 V magnetic surface track, white, fixed straight to the slab. Track 1, 2.0 m, parallel to the TV wall and 400 mm in front of it: three 7 W spot heads (about 600 lumens each, 24-36 degree beam, anti-glare) aimed at the fluted panel, none at the screen. Track 2, 2.7 m, along the west wall 600 mm off it, over the sofas: two 15 W diffused linear heads (about 1,400 lumens each) between the two fans, and three 12 W READING heads (about 1,000 lumens each, 36 degree beam) pointing straight down at the seats: the two ends of the west sofa and the west end of the south sofa. Reading is done by turning Track 2 up; it is dimmed for TV. Totals: 4.7 m of track, 8 heads, 87 W, about 7,600 lumens, all dimmable. CIRCUITS (owner, later 2026-10-04): the heads on a track cannot be dimmed one by one, only the whole track, so ONE TRACK = ONE CIRCUIT, each with its own 48 V driver and its own wall dimmer: Track 1 on a 60 W driver (21 W of heads), Track 2 on a 100 W driver (66 W of heads), both hidden where they can be reached (the cap of the panel wall). Track 2 keeps its reading and diffused heads together on one dimmer: turn the whole track up to read, down for TV; the chandelier carries the general light. The mix of light on a track is fixed by which heads are clipped on. Colour: warm white 3000 K for the spots; the diffused and reading heads may be the tunable 3-in-1 type, neutral white being better for long reading. Mood light: dim the tracks, and use colour-changing (RGB + warm white) LED strip for the strip on top of the TV panel and the glow under the south sofa. Keep downward heads out from under the fan blades. The fan and chandelier positions in the model are assumed.",
+      "detail": "Owner 2026-10-04, decided: track lights plus the existing chandelier, no false ceiling, no table lamps and no swing-arm wall lights. The room has TWO ceiling fans (one at each end) and the chandelier midway between them. Drawn in the 3D model (Drawing Room, layout C): 48 V magnetic surface track, white, fixed straight to the slab. Track 1, 1.5 m, parallel to the TV wall and 540 mm from it (moved inboard of the ceiling moulding 2026-10-05): three 7 W spot heads (about 600 lumens each, 24-36 degree beam, anti-glare) aimed at the fluted panel, none at the screen. Track 2, 2.45 m (stops short of the corner ring), along the west wall 640 mm off it, over the sofas: two 15 W diffused linear heads (about 1,400 lumens each) between the two fans, and three 12 W READING heads (about 1,000 lumens each, 36 degree beam) pointing straight down at the seats: the two ends of the west sofa and the west end of the south sofa. Reading is done by turning Track 2 up; it is dimmed for TV. Totals: 3.95 m of track, 8 heads, 87 W, about 7,600 lumens, all dimmable. CIRCUITS (owner, later 2026-10-04): the heads on a track cannot be dimmed one by one, only the whole track, so ONE TRACK = ONE CIRCUIT, each with its own 48 V driver and its own wall dimmer: Track 1 on a 60 W driver (21 W of heads), Track 2 on a 100 W driver (66 W of heads), both hidden where they can be reached (the cap of the panel wall). Track 2 keeps its reading and diffused heads together on one dimmer: turn the whole track up to read, down for TV; the chandelier carries the general light. The mix of light on a track is fixed by which heads are clipped on. Colour: warm white 3000 K for the spots; the diffused and reading heads may be the tunable 3-in-1 type, neutral white being better for long reading. Mood light: dim the tracks, and use colour-changing (RGB + warm white) LED strip for the strip on top of the TV panel and the glow under the south sofa. Keep downward heads out from under the fan blades.",
       "dependsOn": [
         "finalise-layouts",
         "lighting-track-mouldings"
       ],
       "status": "todo",
-      "needs": "MEASURE: the fan blade diameter and how far the fans hang (positions are from the phone scan). Buy track, heads and the two drivers from one maker so they fit each other; check the dimmer type matches the driver. The ceiling has a plaster moulding 330-400 mm in from the walls, where both tracks would be fixed (phone scan, C18): see the task on tracks and ceiling mouldings",
+      "needs": "MEASURE: the fan blade diameter and how far the fans hang (positions are from the phone scan), and the ceiling mouldings (A25). Buy track, heads and the two drivers from one maker so they fit each other; check the dimmer type matches the driver",
       "openItems": [
         "C17",
+        "C27",
         "C18",
-        "C27"
+        "A25"
       ],
       "estimateLow": 0,
       "estimateHigh": 0,
@@ -413,20 +419,44 @@
       "trade": "general",
       "title": "Lobby / Dining: finalise track lighting (no false ceiling)",
       "room": "Lobby / Dining",
-      "detail": "Owner 2026-10-04: track lights in the Lobby too, for flexibility. Drawn in the 3D model: the same 48 V magnetic surface track as the Drawing Room, white, fixed to the slab, in two runs that hug the walls so the middle of the ceiling stays free. Track 1, 2.6 m, along the south wall about 500 mm off it, east of the toilet door: two 7 W spots on the wall and two 15 W diffused heads for general light. Track 2, 1.5 m, in front of the ironing storage on the east wall: one 7 W spot on the storage doors and one 12 W down spot over the pulled-out ironing board. The linear pendant over the dining table stays. Totals: 4.1 m of track, 6 heads, 63 W, about 5,600 lumens, warm white 3000 K. Each track is its own circuit with its own 48 V 60 W driver and its own wall dimmer (owner 2026-10-04: the heads on a track dim together); the pendant is a third switch. The old strip lights of the earlier design are removed from the model. Use the same maker as the Drawing Room so heads can be swapped between rooms.",
+      "detail": "Owner 2026-10-04: track lights in the Lobby too, for flexibility. Drawn in the 3D model: the same 48 V magnetic surface track as the Drawing Room, white, fixed to the slab, in two runs that hug the walls so the middle of the ceiling stays free. Track 1, 2.0 m (shortened 2026-10-05 to stop before the corner ring), along the south wall 537 mm off it, east of the toilet door: two 7 W spots on the wall and two 15 W diffused heads for general light. Track 2, 1.5 m, in front of the ironing storage, 893 mm off the east wall: one 7 W spot on the storage doors and one 12 W down spot over the pulled-out ironing board. The pendant over the dining table has NO ceiling point above the table (see the pendant decision task). Totals: 3.5 m of track, 6 heads, 63 W, about 5,600 lumens, warm white 3000 K. Each track is its own circuit with its own 48 V 60 W driver and its own wall dimmer (owner 2026-10-04: the heads on a track dim together); the pendant is a third switch. The old strip lights of the earlier design are removed from the model. Use the same maker as the Drawing Room so heads can be swapped between rooms.",
       "dependsOn": [
         "finalise-layouts",
         "lighting-track-mouldings"
       ],
       "status": "todo",
-      "needs": "Is there a ceiling fan in the Lobby, and where? Confirm the two track positions; where the driver hides",
+      "needs": "The centre medallion is taken as a ceiling fan (\"probable, from the scan\"): confirm, with its blade size (C22). Does the domed light on the small rosette stay (C34)? Tape the mouldings (A25). Where the drivers hide",
       "openItems": [
         "C22",
-        "C27"
+        "C27",
+        "A25",
+        "C34"
       ],
       "estimateLow": 0,
       "estimateHigh": 0,
       "estimateBasis": "No contractor cost: the owner's own time.",
+      "estimateConfidence": "medium"
+    },
+    {
+      "id": "lobby-pendant-decide",
+      "phase": "measure",
+      "trade": "general",
+      "title": "Lobby dining pendant: decide how it is fed and fixed",
+      "room": "Lobby / Dining",
+      "detail": "The pendant is drawn over the dining table, 2,200 mm from the west wall and 620 from the north wall, but there is NO ceiling point there: the two real points are on the room's centre line about 1,600 from the north wall, and the nearer one carries the fan. Its long bar canopy (750 mm as drawn) would also lie across the north moulding, and it hangs beside the fan (the canopy is about 100 mm outside the circle of 1,200 mm blades; a 1,400 mm fan would reach it). Options: (a) a new ceiling point over the table with a small round canopy (up to about 200 mm sits on flat ceiling), fed on the surface or in the plaster, since the slab cannot be chased; (b) move the pendant or the table; (c) a different fitting, or rely on the tracks. A swag from the domed-light point 1,860 mm away is possible but would look poor. Not decided; the table and pendant are still drawn as before.",
+      "dependsOn": [
+        "lighting-track-mouldings"
+      ],
+      "status": "todo",
+      "needs": "Owner decision C33; whether the fan stays at the centre medallion and its blade size (C22)",
+      "source": "docs/changes/2026-10-05-tracks-and-mouldings.md",
+      "openItems": [
+        "C33",
+        "C22"
+      ],
+      "estimateLow": 0,
+      "estimateHigh": 0,
+      "estimateBasis": "A decision; the new feed is priced in its own task.",
       "estimateConfidence": "medium"
     },
     {
@@ -435,16 +465,18 @@
       "trade": "general",
       "title": "Bedroom 1: track lighting (no false ceiling)",
       "room": "Bedroom 1",
-      "detail": "Owner 2026-10-04: the same track lights as the Drawing Room and Lobby. Drawn in the 3D model (config bedroom1LightingConfig.js): two runs of 48 V magnetic surface track on the slab, white, warm white 3000 K, each run its own circuit with its own driver and wall dimmer. Track 1, 2.6 m, 800 mm off the west wall along the wardrobe: three 7 W spots on the wardrobe doors (they light the inside when the doors are open) and two 15 W diffused heads for soft general light; 51 W on a 100 W driver. Track 2, 1.2 m, over the bed 750 mm from the headboard wall: one 12 W reading head straight down over each sleeper's chest (the head is further east, out of the beam) and a 7 W spot washing the headboard wall; 31 W on a 60 W driver. Totals: 3.8 m of track, 8 heads, 82 W, about 7,200 lumens (660 per square metre), all dimmable. The ceiling fan is ASSUMED at the room centre with 1200 mm blades; both tracks keep at least 270 mm from its blades. The generic strip lights of the earlier overlay are removed from the model.",
+      "detail": "Owner 2026-10-04: the same track lights as the Drawing Room and Lobby. Drawn in the 3D model (config bedroom1LightingConfig.js): two runs of 48 V magnetic surface track on the slab, white, warm white 3000 K, each run its own circuit with its own driver and wall dimmer. Track 1, 2.6 m, 800 mm off the west wall along the wardrobe: three 7 W spots on the wardrobe doors (they light the inside when the doors are open) and two 15 W diffused heads for soft general light; 51 W on a 100 W driver. Track 2, 1.2 m, over the bed 750 mm from the headboard wall: one 12 W reading head straight down over each sleeper's chest (the head is further east, out of the beam) and a 7 W spot washing the headboard wall; 31 W on a 60 W driver. Totals: 3.8 m of track, 8 heads, 82 W, about 7,200 lumens (660 per square metre), all dimmable. The ceiling fan is ASSUMED at the room centre with 1200 mm blades; both tracks keep at least 270 mm from its blades. The generic strip lights of the earlier overlay are removed from the model. IF LAYOUT B is chosen (not decided): track 1 stays; track 2 turns to run east-west, 720 mm from the south wall, from 1,300 to 2,520 mm from the west wall, with a reading head over each sleeper and a spot on the headboard wall between them.",
       "dependsOn": [
         "finalise-layouts",
         "lighting-track-mouldings",
         "bedroom1-design-freeze"
       ],
       "status": "todo",
-      "needs": "MEASURE: where the ceiling fan is, its blade size and drop (OPEN_ITEMS C23). Confirm the wardrobe track position (800 off the west wall) and that the bed track may run over the bed",
+      "needs": "MEASURE: where the ceiling fan is, its blade size and drop (OPEN_ITEMS C23). Confirm the wardrobe track position (800 off the west wall) and that the bed track may run over the bed. The ceiling has not been scanned: if it has mouldings like the Drawing Room, the track ends have to move (A26)",
       "openItems": [
-        "C23"
+        "C23",
+        "A26",
+        "C35"
       ],
       "estimateLow": 0,
       "estimateHigh": 0,
@@ -457,16 +489,17 @@
       "trade": "general",
       "title": "Bedroom 3: track lighting (no false ceiling)",
       "room": "Bedroom 3",
-      "detail": "Owner 2026-10-04. Drawn in the 3D model (config bedroom3LightingConfig.js): two runs of 48 V magnetic surface track on the slab, white, warm white 3000 K, each its own circuit with its own 60 W driver and wall dimmer, both 3.05 m long from 300 mm off the west wall to 150 mm short of the east cabinet bridge (which reaches 2650 mm). Track 1, 650 mm off the north wall: a 15 W diffused head, a 7 W spot on the north-wall art, a 12 W reading head aimed at the north sleeper's chest from the foot side (about 24 degrees of tilt, so the lamp is not over the eyes), and a 12 W down light over the dressing spot in front of the mirror cabinet; 46 W. Track 2, 626 mm off the south wall: two 7 W spots on the wardrobe fronts (the cabinet through the south wall), a 15 W diffused head and the south sleeper's 12 W reading head aimed the same way; 41 W. Totals: 6.1 m of track, 8 heads, 87 W, about 7,600 lumens (515 per square metre). The ceiling fan is ASSUMED at the room centre until the phone-scan point is patched in; the tracks pass the checks with the fan anywhere within 400 mm of the centre. The generic strip lights of the earlier overlay are removed from the model.",
+      "detail": "Owner 2026-10-04. Drawn in the 3D model (config bedroom3LightingConfig.js): two runs of 48 V magnetic surface track on the slab, white, warm white 3000 K, each its own circuit with its own 60 W driver and wall dimmer, both 2.75 m long from 600 mm off the west wall (moved inboard of the mouldings and corner rings 2026-10-05) to 150 mm short of the east cabinet bridge (which reaches 2650 mm). Track 1, 820 mm off the north wall: a 15 W diffused head, a 7 W spot on the north-wall art, a 12 W reading head aimed at the north sleeper's chest from the foot side (about 19 degrees of tilt, so the lamp is not over the eyes), and a 12 W down light over the dressing spot in front of the mirror cabinet; 46 W. Track 2, 820 mm off the south wall: two 7 W spots on the wardrobe fronts (the cabinet through the south wall), a 15 W diffused head and the south sleeper's 12 W reading head aimed the same way; 41 W. Totals: 5.5 m of track, 8 heads, 87 W, about 7,600 lumens (515 per square metre). The ceiling fan is at the phone-scan point (2030 from the west wall, 1820 from the north wall); the tracks pass the checks with it anywhere within 150 mm of that point. Blade size and drop are still assumed. The generic strip lights of the earlier overlay are removed from the model.",
       "dependsOn": [
         "finalise-layouts",
         "lighting-track-mouldings"
       ],
       "status": "todo",
-      "needs": "MEASURE: the ceiling fan point from the phone scan (OPEN_ITEMS C24), its blade size and drop. Confirm the aimed reading heads",
+      "needs": "MEASURE: the fan blade size and drop (C24, A19) and the mouldings (A25). Confirm the aimed reading heads",
       "openItems": [
         "C24",
-        "A19"
+        "A19",
+        "A25"
       ],
       "estimateLow": 0,
       "estimateHigh": 0,
@@ -485,9 +518,10 @@
         "lighting-track-mouldings"
       ],
       "status": "todo",
-      "needs": "MEASURE: where the ceiling fan is, its blade size and drop (OPEN_ITEMS C25). Settle the kids layout first: the bed/desk track follows the furniture",
+      "needs": "MEASURE: where the ceiling fan is, its blade size and drop (OPEN_ITEMS C25). Settle the kids layout first: the bed/desk track follows the furniture. The ceiling has not been scanned: if it has mouldings like the Drawing Room, the track ends have to move (A26)",
       "openItems": [
-        "C25"
+        "C25",
+        "A26"
       ],
       "estimateLow": 0,
       "estimateHigh": 0,
@@ -506,9 +540,10 @@
         "lighting-track-mouldings"
       ],
       "status": "todo",
-      "needs": "Confirm 4000 K for the kitchen (the other rooms are 3000 K) and that there is no ceiling fan (OPEN_ITEMS C26). Where the driver hides (top of the wall cabinets)",
+      "needs": "Confirm 4000 K for the kitchen (the other rooms are 3000 K) and that there is no ceiling fan (OPEN_ITEMS C26). Where the driver hides (top of the wall cabinets). The ceiling has not been scanned: if it has mouldings like the Drawing Room, the track ends have to move (A26)",
       "openItems": [
-        "C26"
+        "C26",
+        "A26"
       ],
       "estimateLow": 0,
       "estimateHigh": 0,
@@ -618,10 +653,11 @@
         "bedroom1-design-freeze"
       ],
       "status": "todo",
-      "needs": "Structural approval; the Lobby switchboard moved first (A14); exact position, width and height taped on site (A24). The Bedroom 1 design note may move the door",
+      "needs": "Structural approval; the Lobby switchboard moved first (A14); exact position, width and height taped on site (A24); hinge side and swing (C36): hinged on the west jamb it parks against the west wall and suits both bedroom layouts",
       "openItems": [
         "A24",
-        "E6"
+        "E6",
+        "C36"
       ],
       "estimateLow": 9500,
       "estimateHigh": 19500,
@@ -634,7 +670,7 @@
       "trade": "civil",
       "title": "Bedroom 1: take out the old door and close the old doorway on the Lobby side",
       "room": "Bedroom 1 / Lobby",
-      "detail": "Owner 2026-09-29: once the new doorway is open, remove the old door and frame (about 2,580-3,530 mm from the Lobby's west corner by the phone scan) and close the opening with a 12 mm fibre-cement sheet on a frame, flush with the Lobby face, jointed and ready for paint. The cavity left on the bedroom side becomes the medicine cabinet (carpentry task). The opening is about 0.83 m wide x 2.1 m high, scaled from the plan drawing.",
+      "detail": "Owner 2026-09-29: once the new doorway is open, remove the old door and frame (about 2,580-3,530 mm from the Lobby's west corner by the phone scan) and close the opening with a 12 mm fibre-cement sheet on a frame, flush with the Lobby face, jointed and ready for paint. The cavity left on the bedroom side becomes the medicine cabinet (carpentry task). The opening is about 0.83 m wide x 2.1 m high, scaled from the plan drawing. If layout B is chosen the bed head stands against this infill: add a layer of acoustic board in it.",
       "dependsOn": [
         "lobby-bedroom3-opening"
       ],
@@ -642,7 +678,8 @@
       "needs": "Tape the old doorway and the wall thickness (A24)",
       "source": "docs/CURRENT_STATE.md",
       "openItems": [
-        "A24"
+        "A24",
+        "C35"
       ],
       "estimateLow": 2500,
       "estimateHigh": 5500,
@@ -996,7 +1033,8 @@
       "detail": "Electrician. One feed point at the wall end of each track, brought up inside the wall and across the wall-ceiling corner, so no wire shows on the slab; the track itself carries the power along its length. One track = one circuit: a separate dimmed line for each track back to the switchboard (two dimmers), and the chandelier on its own switch. Fix the two 48 V drivers (60 W for Track 1, 100 W for Track 2) where they can be reached, for example inside the cap of the panel wall; check the dimmer type matches the driver. Take down the old small wall light in the north-west and the wall reading light, and either reuse their wiring as the track feeds or close the points with blank plates.",
       "dependsOn": [
         "lighting-plan-drawing",
-        "electrician-survey"
+        "electrician-survey",
+        "elec-track-setout"
       ],
       "status": "todo",
       "estimateLow": 4000,
@@ -1013,7 +1051,8 @@
       "detail": "Electrician. One feed point at the wall end of each of the two tracks, brought up inside the wall, each track on its own dimmed line (one track = one circuit, two dimmers); the dining pendant on a separate switch. Fix the two 48 V 60 W drivers where they can be reached.",
       "dependsOn": [
         "lighting-plan-lobby",
-        "electrician-survey"
+        "electrician-survey",
+        "elec-track-setout"
       ],
       "status": "todo",
       "estimateLow": 4000,
@@ -1030,7 +1069,8 @@
       "detail": "Electrician. One feed point at the wall end of each track run, brought up inside the wall and across the wall-ceiling corner; one track = one circuit, so each run gets its own dimmed line back to the switchboard (two dimmers). Fix each 48 V driver where it can be reached (above the wardrobe). Check the dimmer type matches the driver.",
       "dependsOn": [
         "lighting-plan-bedroom1",
-        "electrician-survey"
+        "electrician-survey",
+        "elec-track-setout"
       ],
       "status": "todo",
       "estimateLow": 4000,
@@ -1047,7 +1087,8 @@
       "detail": "Electrician. One feed point at the wall end of each track run, brought up inside the wall and across the wall-ceiling corner; one track = one circuit, so each run gets its own dimmed line back to the switchboard (two dimmers). Fix each 48 V driver where it can be reached (in the overhead cabinet run). Check the dimmer type matches the driver.",
       "dependsOn": [
         "lighting-plan-bedroom3",
-        "electrician-survey"
+        "electrician-survey",
+        "elec-track-setout"
       ],
       "status": "todo",
       "estimateLow": 4000,
@@ -1064,7 +1105,8 @@
       "detail": "Electrician. One feed point at the wall end of each track run, brought up inside the wall and across the wall-ceiling corner; one track = one circuit, so each run gets its own dimmed line back to the switchboard (two dimmers). Fix each 48 V driver where it can be reached (on top of the bookshelf). Check the dimmer type matches the driver.",
       "dependsOn": [
         "lighting-plan-study",
-        "electrician-survey"
+        "electrician-survey",
+        "elec-track-setout"
       ],
       "status": "todo",
       "estimateLow": 4000,
@@ -1081,13 +1123,64 @@
       "detail": "Electrician. One feed point at the wall end of each track run, brought up inside the wall and across the wall-ceiling corner; one track = one circuit, so each run gets its own dimmed line back to the switchboard (one dimmer, plus the switch of the under-cabinet strips). Fix each 48 V driver where it can be reached (on top of the wall cabinets). Check the dimmer type matches the driver.",
       "dependsOn": [
         "lighting-plan-kitchen",
-        "electrician-survey"
+        "electrician-survey",
+        "elec-track-setout"
       ],
       "status": "todo",
       "estimateLow": 2000,
       "estimateHigh": 3500,
       "estimateBasis": "track runs: 1 run x Rs 2,000-3,500. Run and head counts from the lighting config.",
       "estimateConfidence": "medium"
+    },
+    {
+      "id": "elec-track-setout",
+      "phase": "electrical-rough",
+      "trade": "electrical",
+      "title": "Set out every track on the ceiling from the mouldings before fixing any feed",
+      "room": "Whole home",
+      "detail": "Electrician, with the owner. Mark each track run on the slab from the positions in docs/LIGHTING.md, measured from the walls AND checked against the real mouldings: every run at least 40 mm clear of a raised line or corner ring, and clear of the fan blades. Where the tape disagrees with the scan, the moulding wins: shift the run and note the new figure. Only then fix the feed points, which sit at the wall end of each run.",
+      "dependsOn": [
+        "lighting-track-mouldings",
+        "lighting-plan-drawing",
+        "lighting-plan-lobby",
+        "lighting-plan-bedroom1",
+        "lighting-plan-bedroom3",
+        "lighting-plan-study",
+        "lighting-plan-kitchen"
+      ],
+      "status": "todo",
+      "needs": "The taped mouldings (A25) and the ceiling photographs (A26)",
+      "source": "docs/changes/2026-10-05-tracks-and-mouldings.md",
+      "openItems": [
+        "A25",
+        "A26"
+      ],
+      "estimateLow": 0,
+      "estimateHigh": 0,
+      "estimateBasis": "Part of the electrician's first fix for the track feeds; no separate charge expected.",
+      "estimateConfidence": "medium"
+    },
+    {
+      "id": "elec-lobby-pendant-feed",
+      "phase": "electrical-rough",
+      "trade": "electrical",
+      "title": "Lobby: new ceiling feed for the dining pendant, once its position is decided",
+      "room": "Lobby / Dining",
+      "detail": "Electrician. If the pendant stays over the table: a new ceiling point there on its own switch, run in the plaster or in a neat surface conduit (the slab cannot be chased), with a hook rated for the fitting, placed on flat ceiling clear of the north moulding. If the owner chooses another answer (C33), this task is marked done without work.",
+      "dependsOn": [
+        "lobby-pendant-decide",
+        "electrician-survey"
+      ],
+      "status": "todo",
+      "needs": "Decision C33",
+      "source": "docs/changes/2026-10-05-tracks-and-mouldings.md",
+      "openItems": [
+        "C33"
+      ],
+      "estimateLow": 0,
+      "estimateHigh": 1500,
+      "estimateBasis": "new ceiling point: 0 to 1 point x Rs 900-1,500. Nothing if the pendant is dropped or goes on an existing point (C33).",
+      "estimateConfidence": "low"
     },
     {
       "phase": "electrical-rough",
@@ -1195,7 +1288,9 @@
         "plumbing-rough",
         "debris",
         "main-gate",
-        "shaft-cover"
+        "shaft-cover",
+        "elec-track-setout",
+        "elec-lobby-pendant-feed"
       ],
       "status": "todo",
       "estimateLow": 11000,
@@ -1387,11 +1482,14 @@
         "flooring"
       ],
       "status": "todo",
-      "needs": "Choose door and frame material, finish and hardware; confirm final size, hinge side and swing",
+      "needs": "Choose door and frame material, finish and hardware; confirm final size, hinge side and swing (C36)",
       "estimateLow": 18000,
       "estimateHigh": 32000,
       "estimateBasis": "door: 1 each x Rs 18,000-32,000.",
-      "estimateConfidence": "medium"
+      "estimateConfidence": "medium",
+      "openItems": [
+        "C36"
+      ]
     },
     {
       "id": "carp-bedroom1-medicine-cabinet",
@@ -1399,7 +1497,7 @@
       "trade": "carpentry",
       "title": "Bedroom 1: medicine cabinet in the closed old doorway",
       "room": "Bedroom 1",
-      "detail": "Owner 2026-09-29. A shallow cabinet in the cavity of the closed doorway, opening into Bedroom 1: two flush doors, five shelves, about 0.83 m wide x 2.1 m high. The usable depth is only about 50 mm in the model, because the wall is drawn 85 mm thick; the real wall looks thicker on the plan, so measure before making it. In the model the bed stands in front of its lower part.",
+      "detail": "Owner 2026-09-29. A shallow cabinet in the cavity of the closed doorway, opening into Bedroom 1: two flush doors, five shelves, about 0.83 m wide x 2.1 m high. The usable depth is only about 50 mm in the model, because the wall is drawn 85 mm thick; the real wall looks thicker on the plan, so measure before making it. In the model the bed stands in front of its lower part. Layout decision (C35): in layout A the bed stands in front of the cabinet and it cannot be used, so it should then go somewhere else; in layout B its doors start 1,250 mm above the floor, above the headboard, with a fixed panel below.",
       "dependsOn": [
         "bedroom1-old-door-close",
         "bedroom1-design-freeze",
@@ -1409,7 +1507,8 @@
       "needs": "Wall thickness (A24); the Bedroom 1 design note",
       "source": "docs/CURRENT_STATE.md",
       "openItems": [
-        "A24"
+        "A24",
+        "C35"
       ],
       "estimateLow": 14500,
       "estimateHigh": 24500,
@@ -1420,18 +1519,46 @@
       "id": "carp-bedroom1",
       "phase": "carpentry",
       "trade": "carpentry",
-      "title": "Bedroom 1: wardrobes",
+      "title": "Bedroom 1: the three wardrobes (balcony wardrobe with sliding doors)",
       "room": "Bedroom 1",
-      "detail": "PENDING NOTE: a design for this is being written on 2026-10-05 (docs/changes/2026-10-05-*.md, section \"For the work plan\"). This task holds its place; the tasks from that note replace or extend it. As drawn in the model today: a three-door wardrobe on the west wall (1,800 x 2,400, 508 deep), a two-door wardrobe in the north-east recess (850 x 2,700, 400 deep) and a two-door wardrobe on the balcony side of the Pooja wall (1,200 x 2,700, 508 deep).",
+      "detail": "The same in layout A and layout B. A three-door wardrobe on the west wall (1,800 x 2,400, 508 deep); a two-door wardrobe in the north-east recess (850 x 2,700, 400 deep); and a wardrobe on the balcony side of the Pooja wall (1,200 x 2,700, 508 deep) with two SLIDING panels, because the window AC stops a hinged door at 41 degrees. Check the depth of the niche in the Pooja wall before fixing the balcony wardrobe's depth and position; its clearance to the window AC (217 mm in the model) depends on the AC's real casing. Suggested, not decided: sliding doors on the west wardrobe too, which would ease the west walkway of layout B (its hinged doors clear the bed by only 42 mm).",
       "dependsOn": [
         "bedroom1-design-freeze",
         "plaster"
       ],
       "status": "todo",
-      "needs": "The Bedroom 1 design note",
+      "needs": "Tape the room, the Pooja wall niche and the window AC (A27, A23). West wardrobe doors hinged or sliding (C37)",
       "estimateLow": 159000,
       "estimateHigh": 244000,
-      "estimateBasis": "west wardrobe 1800 x 2400: 46.5 sq ft x Rs 1,500-2,300; north-east recess wardrobe 850 x 2700: 24.7 sq ft x Rs 1,500-2,300; balcony wardrobe 1200 x 2700: 34.9 sq ft x Rs 1,500-2,300. As drawn in the model today; the Bedroom 1 design note may change all of it.",
+      "estimateBasis": "west wardrobe 1800 x 2400: 46.5 sq ft x Rs 1,500-2,300; north-east recess wardrobe 850 x 2700: 24.7 sq ft x Rs 1,500-2,300; balcony wardrobe 1200 x 2700: 34.9 sq ft x Rs 1,500-2,300. The same three wardrobes in layout A and layout B; sliding panels on the balcony wardrobe are inside the rate.",
+      "estimateConfidence": "low",
+      "source": "docs/changes/2026-10-05-bedroom1-design.md",
+      "openItems": [
+        "A27",
+        "A23",
+        "C37"
+      ]
+    },
+    {
+      "id": "carp-bedroom1-layout-b",
+      "phase": "carpentry",
+      "trade": "carpentry",
+      "title": "Bedroom 1, only if layout B is chosen: dressing table with wall mirror, and a bedside table",
+      "room": "Bedroom 1",
+      "detail": "NOT DECIDED (C35). Layout B adds a dressing table on the north wall between the washroom door and the recess wardrobe (900 wide x 350 deep x 750 high, 1,510 mm from the west wall) with a wall mirror 700 x 900 above it and a stool, and one bedside table east of the bed head (400 x 350 x 550 high). The sizes are the design note's proposals. The side by the Lobby door has no room for a table: a headboard ledge or a small wall shelf would serve that sleeper. If layout A stays, mark this task done without work.",
+      "dependsOn": [
+        "bedroom1-design-freeze",
+        "plaster"
+      ],
+      "status": "todo",
+      "needs": "Owner decision C35",
+      "source": "docs/changes/2026-10-05-bedroom1-design.md",
+      "openItems": [
+        "C35"
+      ],
+      "estimateLow": 0,
+      "estimateHigh": 27500,
+      "estimateBasis": "dressing table 900 long: 0 to 3 running ft x Rs 3,500-6,000; wall mirror 700 x 900: 0 to 6.8 sq ft x Rs 150-280; bedside table 400 long: 0 to 1.3 running ft x Rs 3,500-6,000. Nothing if layout A stays (C35). The stool and any acoustic board behind the bed head are not included.",
       "estimateConfidence": "low"
     },
     {
@@ -1714,7 +1841,8 @@
         "carp-pooja",
         "carp-study",
         "carp-window-centre",
-        "ac-window-frame"
+        "ac-window-frame",
+        "carp-bedroom1-layout-b"
       ],
       "status": "todo",
       "estimateLow": 73500,
@@ -1766,7 +1894,7 @@
       "trade": "electrical",
       "title": "Drawing Room: buy and fit the track lights",
       "room": "Drawing Room",
-      "detail": "Buy the track, heads, drivers and dimmers from ONE maker so they fit each other. Fix the 48 V magnetic surface track to the slab after painting, connect each run to its driver and dimmer, clip in the heads and aim them once the furniture is in place. Two runs (2.0 m and 2.7 m), 8 heads: 3 spots, 2 diffused, 3 reading; a 60 W and a 100 W driver; two dimmers.",
+      "detail": "Buy the track, heads, drivers and dimmers from ONE maker so they fit each other. Fix the 48 V magnetic surface track to the slab after painting, connect each run to its driver and dimmer, clip in the heads and aim them once the furniture is in place. Two runs (1.5 m and 2.45 m), 8 heads: 3 spots, 2 diffused, 3 reading; a 60 W and a 100 W driver; two dimmers.",
       "dependsOn": [
         "paint",
         "elec-track-feed"
@@ -1789,7 +1917,7 @@
       "trade": "electrical",
       "title": "Lobby / Dining: buy and fit the track lights",
       "room": "Lobby / Dining",
-      "detail": "Buy the track, heads, drivers and dimmers from ONE maker so they fit each other. Fix the 48 V magnetic surface track to the slab after painting, connect each run to its driver and dimmer, clip in the heads and aim them once the furniture is in place. Two runs (2.6 m and 1.5 m), 6 heads; two 60 W drivers; two dimmers. The dining pendant stays on its own switch.",
+      "detail": "Buy the track, heads, drivers and dimmers from ONE maker so they fit each other. Fix the 48 V magnetic surface track to the slab after painting, connect each run to its driver and dimmer, clip in the heads and aim them once the furniture is in place. Two runs (2.0 m and 1.5 m), 6 heads; two 60 W drivers; two dimmers. The dining pendant stays on its own switch.",
       "dependsOn": [
         "paint",
         "elec-track-feed-lobby"
@@ -1833,7 +1961,7 @@
       "trade": "electrical",
       "title": "Bedroom 3: buy and fit the track lights",
       "room": "Bedroom 3",
-      "detail": "Buy the track, heads, drivers and dimmers from ONE maker so they fit each other. Fix the 48 V magnetic surface track to the slab after painting, connect each run to its driver and dimmer, clip in the heads and aim them once the furniture is in place. Two runs of 3.05 m, 8 heads; two 60 W drivers; two dimmers.",
+      "detail": "Buy the track, heads, drivers and dimmers from ONE maker so they fit each other. Fix the 48 V magnetic surface track to the slab after painting, connect each run to its driver and dimmer, clip in the heads and aim them once the furniture is in place. Two runs of 2.75 m, 8 heads; two 60 W drivers; two dimmers.",
       "dependsOn": [
         "paint",
         "elec-track-feed-bedroom3"

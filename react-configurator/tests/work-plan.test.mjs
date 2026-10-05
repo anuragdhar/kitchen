@@ -118,7 +118,7 @@ test('the order of work is buildable: approvals, civil, first fix and AC pipes b
 
 test('the catch-up of 2026-10-05 is in the plan, and proposals stay proposals', () => {
   const plan = load(), byId = Object.fromEntries(plan.tasks.map(task => [task.id, task]))
-  assert.equal(plan.tasks.length, 97)
+  assert.equal(plan.tasks.length, 101)
   assert.ok(plan.tasks.every(task => task.status === 'todo'))
   assert.match(byId['main-gate'].detail, /VENTILATED/); assert.match(byId['elec-entry-lights'].title, /four round lights/)
   for (const room of ['bedroom1', 'bedroom3', 'study', 'kitchen', 'lobby']) assert.ok(byId[`elec-track-feed-${room}`] && byId[`lights-track-${room}`], `track tasks for ${room}`)
@@ -129,9 +129,19 @@ test('the catch-up of 2026-10-05 is in the plan, and proposals stay proposals', 
   assert.match(byId['ac-window-frame'].title, /iron frame for the window AC/); assert.equal(byId['ac-window-frame'].trade, 'fabrication')
   assert.match(byId['ac-choose'].detail, /Neither place is decided/); assert.match(byId['shoe-rack-support'].detail, /not decided/)
   assert.match(byId['window-screen-trial'].detail, /ONE ready-made outdoor HDPE roll-up blind/)
-  // Room for the five notes still being written.
+  // Room for the three notes still being written (AC plan, palette, electrical plans).
   const pending = plan.tasks.filter(task => /PENDING/.test(task.detail)).map(task => task.id)
-  for (const id of ['ac-plan-home', 'bedroom1-design-freeze', 'palette-choose', 'lighting-track-mouldings', 'elec-other-rooms']) assert.ok(pending.includes(id), `${id} holds a place for its note`)
+  for (const id of ['ac-plan-home', 'palette-choose', 'elec-other-rooms']) assert.ok(pending.includes(id), `${id} holds a place for its note`)
+  // Folded in: tracks moved off the ceiling mouldings, and the Bedroom 1 design.
+  for (const id of ['lighting-track-mouldings', 'bedroom1-design-freeze', 'carp-bedroom1']) assert.ok(!pending.includes(id), `${id} is no longer a placeholder`)
+  assert.match(byId['lighting-plan-drawing'].detail, /Totals: 3\.95 m of track/); assert.match(byId['lighting-plan-lobby'].detail, /Totals: 3\.5 m of track/); assert.match(byId['lighting-plan-bedroom3'].detail, /Totals: 5\.5 m of track/)
+  for (const room of ['', '-lobby', '-bedroom1', '-bedroom3', '-study', '-kitchen']) assert.ok(byId[`elec-track-feed${room}`].dependsOn.includes('elec-track-setout'), `the ${room || 'drawing'} feed waits for the set-out`)
+  assert.match(byId['lobby-pendant-decide'].detail, /NO ceiling point/); assert.ok(byId['elec-lobby-pendant-feed'].dependsOn.includes('lobby-pendant-decide'))
+  // Layout B is recommended, not chosen: a decision task and a conditional task whose estimate starts at nothing.
+  assert.match(byId['bedroom1-design-freeze'].detail, /^OWNER DECISION, not taken/); assert.ok(byId['bedroom1-design-freeze'].openItems.includes('C35'))
+  assert.match(byId['carp-bedroom1-layout-b'].title, /only if layout B is chosen/); assert.equal(byId['carp-bedroom1-layout-b'].estimateLow, 0); assert.ok(byId['carp-bedroom1-layout-b'].estimateHigh > 0)
+  assert.match(byId['lighting-plan-bedroom1'].detail, /IF LAYOUT B is chosen \(not decided\)/)
+  assert.match(byId['carp-bedroom1'].detail, /SLIDING panels/)
 })
 
 test('every open item a task names exists in OPEN_ITEMS.md and is still open', () => {
@@ -167,7 +177,7 @@ test('"what to do first" is computed from the tasks that name each open item and
 test('estimates: optional fields, validated; a plan without them still loads', () => {
   const old = load(); for (const task of old.tasks) for (const key of ['estimateLow', 'estimateHigh', 'estimateBasis', 'estimateConfidence', 'openItems']) delete task[key]
   assert.equal(old.schemaVersion, 1); validateWorkPlan(old)
-  assert.deepEqual(budgetTotals(old).all, {id: 'all', name: 'Whole plan', tasks: 97, estimated: 0, notEstimated: 97, low: 0, high: 0})
+  assert.deepEqual(budgetTotals(old).all, {id: 'all', name: 'Whole plan', tasks: 101, estimated: 0, notEstimated: 101, low: 0, high: 0})
   const bad = values => { const plan = load(); Object.assign(plan.tasks[0], values); return () => validateWorkPlan(plan) }
   assert.throws(bad({estimateLow: 100, estimateHigh: undefined}), /both a low and a high/)
   assert.throws(bad({estimateLow: 200, estimateHigh: 100}), /above the high/)
@@ -183,7 +193,7 @@ test('estimates: optional fields, validated; a plan without them still loads', (
 test('budget totals add up by phase, trade and room; unestimated tasks are counted, not guessed', () => {
   const plan = load(), totals = budgetTotals(plan), sum = (rows, key) => rows.reduce((total, row) => total + row[key], 0)
   for (const rows of [totals.byPhase, totals.byTrade, totals.byRoom]) for (const key of ['low', 'high', 'tasks', 'estimated', 'notEstimated']) assert.equal(sum(rows, key), totals.all[key], key)
-  assert.equal(totals.all.estimated + totals.all.notEstimated, 97)
+  assert.equal(totals.all.estimated + totals.all.notEstimated, 101)
   assert.equal(totals.notEstimated.length, totals.all.notEstimated)
   for (const row of totals.notEstimated) assert.match(row.reason, /^Not estimated: /, row.id)
   assert.ok(totals.all.low > 500000 && totals.all.high < 6000000 && totals.all.low < totals.all.high, 'a few lakh to a few tens of lakh')

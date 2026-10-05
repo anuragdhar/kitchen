@@ -61,7 +61,7 @@ task before paint; every fitting after paint; and every task leads to the snag l
 to happen in another phase is placed by WHEN it happens: moving the Lobby switchboard is electrical work in the civil phase,
 because the wall cannot be cut until the board is gone.
 
-## What is in it now (97 tasks) and what is not
+## What is in it now (101 tasks) and what is not
 
 Seeded from what the project records. Since 2026-10-05 it also has: the ventilated stainless steel outer door and the four
 round entry lights; one feed, driver and dimmer per track run in six rooms, with a buy-and-fit task per room; the three
@@ -71,11 +71,16 @@ cabinet; Bedroom 3 cabinets and chest; the Home Office desk split and north cabi
 AC on an iron frame in the Bedroom 1 balcony; and the trial of one ready-made outdoor blind on the south window.
 
 Proposals are recorded as proposals, not as decisions: the AC outdoor unit under the shoe rack or on the Drawing Room west
-wall, the Bedroom 1 split AC outdoor unit, and what to do about the switchboard behind the TV.
+wall, the Bedroom 1 split AC outdoor unit, what to do about the switchboard behind the TV, Bedroom 1 layout B (recommended
+by its design note, not chosen: a decision task, plus one task that applies only if B is chosen and is priced from
+nothing), and how the Lobby dining pendant is fed.
 
-Placeholders, marked PENDING in their detail, hold a place for five notes being written on 2026-10-05: the Bedroom 1
-design, the electrical plans for all rooms, the whole-home palette, the whole-home AC plan, and moving the track lights off
-the ceiling mouldings. Still missing altogether: plumbing (no change is listed), the Study furniture, dates and contractors.
+Folded in later on 2026-10-05: the tracks moved off the ceiling mouldings (new lengths 3.95 / 3.5 / 5.5 m in the Drawing
+Room, Lobby and Bedroom 3; a task to tape the mouldings and photograph the unscanned ceilings; a task to set out every
+track on site before any feed is fixed) and the Bedroom 1 design.
+
+Placeholders, marked PENDING in their detail, hold a place for three notes still being written: the electrical plans for
+all rooms, the whole-home palette and the whole-home AC plan. Still missing altogether: plumbing (no change is listed), the Study furniture, dates and contractors.
 
 ## Budget: how it is made and how to correct it
 
