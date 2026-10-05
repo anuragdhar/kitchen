@@ -1,4 +1,6 @@
 import * as THREE from 'three'
+import {createSofa} from '../shared/furniture/Sofa.js'
+import {createRug} from '../shared/furniture/Rug.js'
 
 // Two identical 3-seaters plus the coffee table, rug and styling from the owner's references
 // (cream sofas, terracotta cushions, dark carved wood). Positions come from the room config
@@ -10,31 +12,13 @@ const mm = v => v / 1000
 // Sofas are built facing +x with the back at -x; rotation.y turns them to face another way.
 const FACING = {east: 0, north: Math.PI / 2, south: -Math.PI / 2, west: Math.PI}
 
+// The sofa model lives in rooms/shared/furniture/Sofa.js (soft upholstered forms, 2026-10-06). Same box as before: widthMm
+// deep x lengthMm long, back at 925 mm, and the scatter cushions topping out at 968.8 mm, where the earlier block model's
+// cushions reached, so click-for-dimensions still reports 2250 x 880 x 970. Same colours: cream frame, lighter cream
+// cushions, dark wood legs, terracotta / ochre / sand scatter cushions.
+const SOFA_LOOK = {heightMm: 925, scatterTopMm: 968.8, colours: {frame: '#e6dac6', cushion: '#efe5d3', legs: '#4a2f1e'}}
 function sofa(widthMm, lengthMm) {
-  const group = new THREE.Group(); group.name = 'Three-seater sofa'
-  const D = mm(widthMm), Ln = mm(lengthMm)
-  const cream = new THREE.MeshStandardMaterial({color: '#e6dac6', roughness: .95})
-  const seat = new THREE.MeshStandardMaterial({color: '#efe5d3', roughness: .97})
-  const wood = new THREE.MeshStandardMaterial({color: '#4a2f1e', roughness: .6})
-  const box = (sx, sy, sz, x, y, z, material) => {
-    const m = new THREE.Mesh(new THREE.BoxGeometry(sx, sy, sz), material)
-    m.position.set(x, y, z); m.castShadow = true; m.receiveShadow = true; group.add(m)
-  }
-  box(D, .24, Ln, 0, .35, 0, cream)
-  box(.22, .57, Ln, -D / 2 + .11, .64, 0, cream)
-  for (const z of [-Ln / 2 + .08, Ln / 2 - .08]) box(D, .22, .16, 0, .58, z, cream)
-  const seatLength = (Ln - .32) / 3
-  for (let i = 0; i < 3; i++) box(D - .27, .12, seatLength - .01, .07, .5, -Ln / 2 + .16 + seatLength * (i + .5), seat)
-  for (const x of [-D / 2 + .09, D / 2 - .09]) for (const z of [-Ln / 2 + .12, Ln / 2 - .12]) box(.055, .13, .055, x, .065, z, wood)
-  const decor = new THREE.Group(); decor.name = 'sofa cushions'; decor.userData.archvizExclude = true; group.add(decor)
-  const colours = ['#b5573a', '#c9803f', '#e2c7a0', '#b5573a', '#c9803f', '#e2c7a0']
-  const reach = Ln / 2 - .35
-  colours.forEach((color, i) => {
-    const m = new THREE.Mesh(new THREE.BoxGeometry(.12, .36, i % 3 === 2 ? .4 : .34), new THREE.MeshStandardMaterial({color, roughness: .97}))
-    m.position.set(-D / 2 + .3, .78, (i - 2.5) / 2.5 * reach)
-    m.rotation.z = -.22; m.rotation.y = (i % 2 ? 1 : -1) * .08; m.castShadow = true; decor.add(m)
-  })
-  return group
+  return createSofa({depthMm: widthMm, lengthMm, ...SOFA_LOOK, name: 'Three-seater sofa'})
 }
 
 function framedPanel(widthMm, heightMm) {
@@ -57,11 +41,9 @@ function buildSeating(spec, {wallFaceMm = 0} = {}) {
   const group = new THREE.Group(); group.name = 'Drawing Room seating'
   const wood = new THREE.MeshStandardMaterial({color: '#4a2f1e', roughness: .58})
 
-  const rug = new THREE.Group(); rug.name = 'rug'; rug.userData.archvizExclude = true
-  const border = new THREE.Mesh(new THREE.BoxGeometry(mm(spec.rug.widthMm), .012, mm(spec.rug.lengthMm)), new THREE.MeshStandardMaterial({color: '#8f4f34', roughness: 1}))
-  const inner = new THREE.Mesh(new THREE.BoxGeometry(mm(spec.rug.widthMm) - .16, .014, mm(spec.rug.lengthMm) - .16), new THREE.MeshStandardMaterial({color: '#b98058', roughness: 1}))
-  border.position.set(mm(spec.rug.centerXmm), .006, mm(spec.rug.centerZmm)); inner.position.set(mm(spec.rug.centerXmm), .008, mm(spec.rug.centerZmm))
-  border.receiveShadow = inner.receiveShadow = true; rug.add(border, inner); group.add(rug)
+  // Wool rug with a bound pile edge and a soft pattern in the same two colours (border #8f4f34, field #b98058), 15 mm thick.
+  const rug = createRug({widthMm: spec.rug.widthMm, lengthMm: spec.rug.lengthMm, heightMm: 15, colours: {border: '#8f4f34', field: '#b98058'}, borderMm: 80})
+  rug.position.set(mm(spec.rug.centerXmm), 0, mm(spec.rug.centerZmm)); group.add(rug)
 
   for (const s of spec.sofas) {
     const item = sofa(s.widthMm, s.lengthMm)
