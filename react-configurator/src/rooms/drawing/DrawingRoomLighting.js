@@ -1,6 +1,7 @@
 import * as THREE from 'three'
 import {DRAWING_LIGHTING, DRAWING_CEILING_MOULDINGS} from '../../config/drawingLightingConfig.js'
 import {mouldingShapes} from '../../domain/drawingLighting.mjs'
+import {lampColour} from '../../render/renderQuality.mjs'
 
 // Existing plaster ceiling mouldings (config ceilingMouldings, from the phone scans): the raised border line, a ring in
 // each corner and the round medallions, drawn low on the slab so the tracks can be judged against them. Room frame in
@@ -62,8 +63,11 @@ export function createTrackLights(config, ceiling, {realLights = true, room = nu
   const wallAhead = room ?? {x: 0, z: 0}
   const group = new THREE.Group(); group.name = 'Track lights'
   const white = new THREE.MeshStandardMaterial({color: '#f4f2ee', roughness: .5}), head = new THREE.MeshStandardMaterial({color: '#ecebe7', roughness: .4, metalness: .2})
+  // Light colour from the config's colour temperature (render/renderQuality.mjs lampColour: 3000 K warm white, 4000 K neutral
+  // white; all heads used one fixed warm tint before 2026-10-05, so the 4000 K kitchen looked as warm as the 3000 K rooms).
+  const lamp = lampColour(config.kelvin ?? 3000)
   // One glowing-lens material and one list of real lights per run, so each circuit dims on its own (setLevel).
-  const lensFor = () => { const m = new THREE.MeshStandardMaterial({color: '#fff3dc', emissive: '#ffd9a1', emissiveIntensity: .9, roughness: .9}); m.userData.taskLightGlow = true; return m }
+  const lensFor = () => { const m = new THREE.MeshStandardMaterial({color: '#fff3dc', emissive: lamp, emissiveIntensity: .9, roughness: .9}); m.userData.taskLightGlow = true; return m }
   const circuits = {}
   const s = config.sectionMm / 1000, AIM = {north: [0, -1], south: [0, 1], west: [-1, 0], east: [1, 0]}
   for (const run of config.runs) {
@@ -78,7 +82,7 @@ export function createTrackLights(config, ceiling, {realLights = true, room = nu
         const len = h.lengthMm / 1000
         const body = new THREE.Mesh(new THREE.BoxGeometry(alongX ? len : .03, .03, alongX ? .03 : len), head); body.position.set(x, y - .015, z); part.add(body)
         const glow = new THREE.Mesh(new THREE.BoxGeometry(alongX ? len - .02 : .024, .004, alongX ? .024 : len - .02), circuit.lens); glow.position.set(x, y - .032, z); part.add(glow)
-        if (realLights) { const light = new THREE.PointLight('#ffd9a8', .9, 4.2, 1.6); light.position.set(x, y - .06, z); part.add(light); circuit.lights.push(light) }
+        if (realLights) { const light = new THREE.PointLight(lamp, .9, 4.2, 1.6); light.position.set(x, y - .06, z); part.add(light); circuit.lights.push(light) }
       } else if (h.kind === 'reading') {
         // A stronger spot pointing down at the seat, bed or work spot below, or tilted a little toward targetMm.
         const tx = h.targetMm ? h.targetMm.xMm / 1000 : x, tz = h.targetMm ? h.targetMm.zMm / 1000 : z, th = (h.targetHeightMm ?? 600) / 1000
@@ -90,7 +94,7 @@ export function createTrackLights(config, ceiling, {realLights = true, room = nu
         const dx = tx - x, dz = tz - z, drop = y - .02 - th, tilt = Math.atan2(Math.hypot(dx, dz), drop)
         if (tilt > 1e-4) can.rotateOnAxis(new THREE.Vector3(-dz, 0, dx).normalize(), tilt)
         if (realLights) {
-          const light = new THREE.SpotLight('#ffe2bd', 4.2, 3.6, .5, .6, 1.3); light.position.set(x, y - .14, z)
+          const light = new THREE.SpotLight(lamp, 4.2, 3.6, .5, .6, 1.3); light.position.set(x, y - .14, z)
           light.target.position.set(tx, th, tz); part.add(light, light.target); circuit.lights.push(light)
         }
       } else {
@@ -102,7 +106,7 @@ export function createTrackLights(config, ceiling, {realLights = true, room = nu
         if (realLights) {
           // Aimed at the wall beside the run: `reach` is the distance from the run to that wall.
           const reach = dx < 0 ? x : dx > 0 ? wallAhead.x - x : dz < 0 ? z : wallAhead.z - z
-          const light = new THREE.SpotLight('#ffd6a0', 2.4, 3.4, .42, .7, 1.4); light.position.set(x, y - .1, z)
+          const light = new THREE.SpotLight(lamp, 2.4, 3.4, .42, .7, 1.4); light.position.set(x, y - .1, z)
           light.target.position.set(x + dx * (reach - .02), 1.25, z + dz * (reach - .02)); part.add(light, light.target); circuit.lights.push(light)
         }
       }

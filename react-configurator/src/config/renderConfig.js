@@ -52,13 +52,15 @@ export const RENDER_CONFIG={
       exhaust:{pos:[12,165,420],target:[8,145,238]}
     }
   },
+  // Since 2026-10-05 the kitchen's renderer is built by render/liveView.js like every other live view (one exposure, quality
+  // level and fitted shadows); these values are what it applies, kept here for the planner's diagnostics readout.
   renderer:{
-    pixelRatioMax:2.5,
+    pixelRatioMax:2,
     outputColorSpace:'SRGBColorSpace',
     toneMapping:'ACESFilmicToneMapping',
-    toneMappingExposure:1.08,
+    toneMappingExposure:1,
     shadowMapEnabled:true,
-    shadowMapType:'PCFSoftShadowMap',
+    shadowMapType:'PCFShadowMap',
     roomEnvironmentBlur:0.04
   },
   textures:{

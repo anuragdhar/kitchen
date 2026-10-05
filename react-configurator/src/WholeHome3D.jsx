@@ -12,7 +12,6 @@ import {createSeatedPoojaPerson} from './rooms/pooja/SeatedPoojaPerson.js'
 import {createPoojaPlatform} from './rooms/pooja/PoojaPlatform.js'
 import {createPoojaDoorAndInterior} from './rooms/pooja/PoojaDoorAndInterior.js'
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js'
-import {RoomEnvironment} from 'three/examples/jsm/environments/RoomEnvironment.js'
 import floorPlanImage from '../../Interior/home a 501 floor - unmodified.png'
 import shoeRackWoodTexture from '../../Interior/entry-textures/shoe-rack-wood.png'
 import {EMPTY_ROOM_SHELLS} from './config/roomShellConfig.js'
@@ -54,7 +53,9 @@ import {HOME_ROOM_LAYOUTS,BLENDER_ROOM_VIEWS} from './config/homeRoomViews.js'
 import {daylightPreset} from './render/daylight.mjs'
 import {TRUE_NORTH_OFFSET_DEG,SITE_LATITUDE_DEG} from './config/orientationConfig.js'
 import {wallPiecesAroundStorage} from './domain/wallStorage.mjs'
-import {createDesignerRender} from './render/designerRender.js'
+import {createLiveView} from './render/liveView.js'
+import {DAYLIGHT_RIG} from './render/lightRig.js'
+import RenderQualityControls from './render/RenderQualityControls.jsx'
 import {useDesignerRender} from './render/useDesignerRender.js'
 import {createExistingElectricalPoints} from './rooms/shared/ExistingElectricalPoints.js'
 import {createEntryWallCavity} from './rooms/entry/EntryWallCavity.js'
@@ -135,14 +136,8 @@ function LiveWholeHome3D({onOpenRoom}){
     if(!mount) return
     const scene=new THREE.Scene();scene.background=new THREE.Color('#edf3f7')
     const camera=new THREE.PerspectiveCamera(45,1,.05,150)
-    const renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance'})
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));renderer.outputColorSpace=THREE.SRGBColorSpace
-    renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.06
-    renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap
-    mount.appendChild(renderer.domElement)
-    const designerRender=createDesignerRender(renderer,scene,camera,{enabled:designer.ref.current})
-    const pmrem=new THREE.PMREMGenerator(renderer),environment=pmrem.fromScene(new RoomEnvironment(renderer),.04).texture
-    scene.environment=environment
+    // Renderer, tone mapping, environment, shadows, quality and the Designer render: render/liveView.js.
+    const view=createLiveView({mount,scene,camera,designer:designer.ref.current}),{renderer}=view
     const controls=new OrbitControls(camera,renderer.domElement);controls.enableDamping=true
     controls.maxPolarAngle=Math.PI/2.02;controls.minDistance=8;controls.maxDistance=65
     const model=new THREE.Group();scene.add(model)
@@ -630,12 +625,14 @@ function LiveWholeHome3D({onOpenRoom}){
       if(item.id==='microwave')localBox(kg,15,item.h-60,item.w-90,(item.x||0)-8,cy,cz,darkAppliance)
       if(item.id==='applianceGarage')localBox(kg,15,item.h-70,item.w-50,(item.x||0)-8,cy,cz,darkAppliance)
     }
+    // The sun's shadow map size, camera and bias are fitted to the model by render/liveView.js (it was a fixed 2048 px square
+    // twice the size of the flat).
     const hemi=new THREE.HemisphereLight('#ffffff','#8b9ca8',1.4);scene.add(hemi)
     const sun=new THREE.DirectionalLight('#fff5e5',2);sun.position.set(-5,16,-7);scene.add(sun);scene.add(sun.target)
-    sun.castShadow=true;sun.shadow.mapSize.set(2048,2048)
-    sun.shadow.camera.left=-W-2;sun.shadow.camera.right=W+2
-    sun.shadow.camera.top=L+2;sun.shadow.camera.bottom=-L-2
-    sun.shadow.camera.near=1;sun.shadow.camera.far=90;sun.shadow.bias=-.0015
+    sun.castShadow=true
+    // Light balance of the shared daylight rig (render/lightRig.js): less flat sky fill and environment than before, so the
+    // sun's shadows and the step between lit and shaded walls read. SKY scales the presets' sky strength the same way.
+    const STUDIO=DAYLIGHT_RIG.day,SKY=STUDIO.hemisphere/1.4
     // Interior task/accent lights would mask the pure sun effect (owner
     // feedback 2026-09-28), so daylight hours switch them off entirely and
     // night hands the scene back to them.
@@ -662,17 +659,18 @@ function LiveWholeHome3D({onOpenRoom}){
     let roomLight=1,lastHour=null
     const setDaylight=hour=>{
       lastHour=hour
-      scene.environmentIntensity=roomLight
+      scene.environmentIntensity=STUDIO.environment*roomLight
       if(hour==null){
-        hemi.color.set('#ffffff');hemi.groundColor.set('#8b9ca8');hemi.intensity=1.4*roomLight
-        sun.color.set('#fff5e5');sun.intensity=2;sun.position.set(-5,16,-7);sun.target.position.set(0,0,0)
+        hemi.color.set('#ffffff');hemi.groundColor.set('#8b9ca8');hemi.intensity=STUDIO.hemisphere*roomLight
+        sun.color.set('#fff5e5');sun.intensity=STUDIO.sunIntensity;sun.position.set(-5,16,-7);sun.target.position.set(0,0,0)
         scene.background.set('#edf3f7')
         interiorLights.forEach(({light,base})=>{light.intensity=base*roomLight})
         taskGlowMaterials.forEach(({material,base})=>{material.emissiveIntensity=base*roomLight})
         return null
       }
       const p=daylightPreset(hour,{trueNorthOffsetDeg:TRUE_NORTH_OFFSET_DEG,latitudeDeg:SITE_LATITUDE_DEG})
-      hemi.color.set(p.hemiSky);hemi.groundColor.set(p.hemiGround);hemi.intensity=p.hemiIntensity*roomLight
+      hemi.color.set(p.hemiSky);hemi.groundColor.set(p.hemiGround);hemi.intensity=p.hemiIntensity*SKY*roomLight
+      if(!p.up)scene.environmentIntensity=DAYLIGHT_RIG.evening.environment*roomLight
       sun.color.set(p.sunColor);sun.intensity=p.sunIntensity
       sun.position.set(centerX+p.direction[0]*40,Math.max(p.direction[1],.03)*40,centerZ+p.direction[2]*40)
       sun.target.position.set(centerX,0,centerZ)
@@ -693,7 +691,7 @@ function LiveWholeHome3D({onOpenRoom}){
       camera.lookAt(controls.target);controls.update()
     }
     setCamera('perspective')
-    const resize=()=>{const width=mount.clientWidth,height=mount.clientHeight;renderer.setSize(width,height,false);designerRender.setSize(width,height);camera.aspect=width/height;camera.updateProjectionMatrix()}
+    const resize=()=>{const width=mount.clientWidth,height=mount.clientHeight;view.setSize(width,height);camera.aspect=width/height;camera.updateProjectionMatrix()}
     const observer=new ResizeObserver(resize);observer.observe(mount);resize()
     const raycaster=new THREE.Raycaster(),pointer=new THREE.Vector2()
     let pressedAt=null,markedMesh=null,markedMaterial=null
@@ -823,11 +821,11 @@ function LiveWholeHome3D({onOpenRoom}){
     renderer.domElement.addEventListener('pointerup',onPointerUp)
     const interiorRoomIds=['bedroom3','study','balcony','terrace','kitchen','lobby','drawing','bedroom1','bedroom1-balcony','entry']
     const interiorScene=registerInteriorScene({id:'whole-home',scene,camera,renderer,zones:ROOMS.map((r,index)=>({id:interiorRoomIds[index],min:[X(r.bounds[0]),0,Z(r.bounds[1])],max:[X(r.bounds[2]),HEIGHT,Z(r.bounds[3])]}))})
-    let raf=0;const render=()=>{controls.update();designerRender.render();raf=requestAnimationFrame(render)};render()
-    sceneRef.current={clearItem,setAcRoutes:visible=>{acRoutes.visible=visible},setDesigner:on=>designerRender.setEnabled(on),setCavity:visible=>{cavityGroup.visible=visible},setRoomLight,setTvLabels:visible=>drawingLayouts.setLabels(visible),setDrawingLayout:key=>drawingLayouts.setLayout(key),setDrawingArm:pulled=>drawingLayouts.setArm(pulled),setElectrical:visible=>drawingLayouts?.setElectrical(visible),setExistingElectrical:visible=>{for(const g of [existingDrawing,existingLobby])if(g)g.visible=visible},setDoorSwing:visible=>drawingLayouts.setDoorSwing(visible),setStorageOpen:open=>drawingLayouts.setStorageOpen(open),setDrawingTv:key=>drawingLayouts.setTvSize(key),setMedicineCabinetOpen:value=>doorInfill.userData.setOpen(value),setStorageCoverOpen:value=>storeStorage.userData.setCoverOpen(value),setMirrorOpen:value=>vanity.userData.setMirrorOpen?.(value),setPartitionOpen:value=>partition.userData.setOpen?.(value),setCamera,setWallsVisible:visible=>{walls.visible=visible},setBoardOpen:value=>{ironingStorage.userData.setBoardOpen(value)},setPoojaPersonVisible:visible=>{seatedPerson.visible=visible},setPoojaDoorsOpen:value=>{poojaDoors.userData.setDoorsOpen(value)},clearMark,setDaylight,setMeasure,clearMeasure}
+    let raf=0;const render=()=>{controls.update();view.render();raf=requestAnimationFrame(render)};render()
+    sceneRef.current={clearItem,liveView:view,setAcRoutes:visible=>{acRoutes.visible=visible},setDesigner:on=>view.setDesigner(on),setCavity:visible=>{cavityGroup.visible=visible},setRoomLight,setTvLabels:visible=>drawingLayouts.setLabels(visible),setDrawingLayout:key=>drawingLayouts.setLayout(key),setDrawingArm:pulled=>drawingLayouts.setArm(pulled),setElectrical:visible=>drawingLayouts?.setElectrical(visible),setExistingElectrical:visible=>{for(const g of [existingDrawing,existingLobby])if(g)g.visible=visible},setDoorSwing:visible=>drawingLayouts.setDoorSwing(visible),setStorageOpen:open=>drawingLayouts.setStorageOpen(open),setDrawingTv:key=>drawingLayouts.setTvSize(key),setMedicineCabinetOpen:value=>doorInfill.userData.setOpen(value),setStorageCoverOpen:value=>storeStorage.userData.setCoverOpen(value),setMirrorOpen:value=>vanity.userData.setMirrorOpen?.(value),setPartitionOpen:value=>partition.userData.setOpen?.(value),setCamera,setWallsVisible:visible=>{walls.visible=visible},setBoardOpen:value=>{ironingStorage.userData.setBoardOpen(value)},setPoojaPersonVisible:visible=>{seatedPerson.visible=visible},setPoojaDoorsOpen:value=>{poojaDoors.userData.setDoorsOpen(value)},clearMark,setDaylight,setMeasure,clearMeasure}
     setRoomLight(roomLightRef.current/100)
     setDaylight(sunHourRef.current)
-    return()=>{acRoutes.userData.dispose();interiorScene.dispose();cancelAnimationFrame(raf);existingDrawing?.userData.dispose();existingLobby?.userData.dispose();designerRender.dispose();observer.disconnect();renderer.domElement.removeEventListener('pointerdown',onPointerDown);renderer.domElement.removeEventListener('pointerup',onPointerUp);renderer.domElement.removeEventListener('pointermove',onPointerMove);window.removeEventListener('keydown',onMeasureKey);cancelAnimationFrame(moveFrame);tip.remove();controls.dispose();model.traverse(object=>{object.geometry?.dispose?.();object.material?.dispose?.()});markedWallMaterial.dispose();texture.dispose();environment.dispose();pmrem.dispose();renderer.dispose();renderer.domElement.remove();sceneRef.current=null}
+    return()=>{acRoutes.userData.dispose();interiorScene.dispose();cancelAnimationFrame(raf);existingDrawing?.userData.dispose();existingLobby?.userData.dispose();view.dispose();observer.disconnect();renderer.domElement.removeEventListener('pointerdown',onPointerDown);renderer.domElement.removeEventListener('pointerup',onPointerUp);renderer.domElement.removeEventListener('pointermove',onPointerMove);window.removeEventListener('keydown',onMeasureKey);cancelAnimationFrame(moveFrame);tip.remove();controls.dispose();model.traverse(object=>{object.geometry?.dispose?.();object.material?.dispose?.()});markedWallMaterial.dispose();texture.dispose();renderer.dispose();renderer.domElement.remove();sceneRef.current=null}
   },[])
 
   useEffect(()=>{sceneRef.current?.setCamera(view)},[view])
@@ -883,6 +881,7 @@ function LiveWholeHome3D({onOpenRoom}){
         <button onClick={()=>setPartitionOpen(value=>!value)} style={buttonStyle(partitionOpen)}>{partitionOpen?'Close drawing partition':'Open drawing partition'}</button>
         <button onClick={()=>setPoojaDoorsOpen(value=>!value)} style={buttonStyle(poojaDoorsOpen)}>{poojaDoorsOpen?'Close Pooja doors':'Open Pooja doors'}</button>
         <button {...designer.button(buttonStyle(designer.on))}/>
+        <RenderQualityControls sceneRef={sceneRef} name="whole-home" buttonStyle={buttonStyle}/>
         <button onClick={()=>setShowCavity(value=>!value)} aria-pressed={showCavity} style={buttonStyle(showCavity)} title="The empty 3 ft deep cavity on the Main Entry side of the Drawing Room north wall, and the wall between them">{showCavity?'Hide entry wall cavity':'Show entry wall cavity'}</button>
         <button onClick={()=>setShowAcRoutes(value=>!value)} aria-pressed={showAcRoutes} style={buttonStyle(showAcRoutes)} title="The whole-home AC plan (docs/AC_PLAN.md): refrigerant pipes from each indoor unit to its outdoor unit with the length to order, and the drain pipes to where they discharge. A proposal from typical figures; nothing is measured.">{showAcRoutes?'Hide AC pipe routes':'Show AC pipe routes'}</button>
         <button onClick={()=>setMeasureMode(value=>!value)} aria-pressed={measureMode} style={buttonStyle(measureMode)}>{measureMode?'Stop measuring':'Measure'}</button>

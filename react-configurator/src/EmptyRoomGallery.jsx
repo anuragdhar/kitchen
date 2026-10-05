@@ -1,12 +1,13 @@
 import {registerInteriorScene} from './render/interiorScene.js'
-import {createDesignerRender} from './render/designerRender.js'
+import {createLiveView} from './render/liveView.js'
+import {createDaylightRig} from './render/lightRig.js'
+import RenderQualityControls from './render/RenderQualityControls.jsx'
 import {useDesignerRender} from './render/useDesignerRender.js'
 import {tagSurfaceMaterial} from './render/surfaceRoles.mjs'
 import {createDrawingLobbyPartition} from './rooms/drawing/DrawingLobbyPartition.js'
 import React,{useEffect,useRef,useState} from 'react'
 import * as THREE from 'three'
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js'
-import {RoomEnvironment} from 'three/examples/jsm/environments/RoomEnvironment.js'
 import {EMPTY_ROOM_SHELLS} from './config/roomShellConfig.js'
 import {createSeatedPoojaPerson} from './rooms/pooja/SeatedPoojaPerson.js'
 import {createPoojaPlatform} from './rooms/pooja/PoojaPlatform.js'
@@ -91,13 +92,8 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
     const openWest=room.openSide==='west'
     const scene=new THREE.Scene();scene.background=new THREE.Color('#eef3f6')
     const camera=new THREE.PerspectiveCamera(46,1,.01,100)
-    const renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance'})
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio,2.2));renderer.outputColorSpace=THREE.SRGBColorSpace
-    renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=.95;renderer.shadowMap.enabled=true
-    mount.appendChild(renderer.domElement)
-    const designerRender=createDesignerRender(renderer,scene,camera,{enabled:designer.ref.current})
-    const pmrem=new THREE.PMREMGenerator(renderer),environment=pmrem.fromScene(new RoomEnvironment(renderer),.04).texture
-    scene.environment=environment
+    // Renderer, tone mapping, environment, shadows, quality and the Designer render: render/liveView.js.
+    const view=createLiveView({mount,scene,camera,designer:designer.ref.current}),{renderer}=view
     const controls=new OrbitControls(camera,renderer.domElement);controls.enableDamping=true
     const shell=new THREE.Group();scene.add(shell)
     const wallMaterial=new THREE.MeshStandardMaterial({color:roomKey==='drawing'?'#dfd2c4':'#d6d1c9',roughness:.86})
@@ -344,29 +340,18 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
       const sprite=new THREE.Sprite(new THREE.SpriteMaterial({map:texture,transparent:true,depthTest:false}));sprite.position.set(x,.1,z);sprite.scale.set(.34,.17,1);sprite.renderOrder=1000;shell.add(sprite)
     }
     addMarker('N',W/2,.25);addMarker('S',W/2,L-.25);addMarker('W',.25,L/2);addMarker('E',W-.25,L/2)
-    const hemi=new THREE.HemisphereLight('#ffffff','#718096',1.15);scene.add(hemi)
-    const sun=new THREE.DirectionalLight('#fff4dc',1.65);sun.position.set(-2,6,4);sun.castShadow=true;scene.add(sun)
+    // Sky and sun: the standard rig (render/lightRig.js), same sun direction as before.
+    const rig=createDaylightRig(scene,{sunPosition:[-2,6,4],backgrounds:{day:'#f2f6f9',evening:'#242a33',dark:'#0b0d10'}}),{hemisphere:hemi,sun}=rig
     // Every other light in the scene is warm task/accent mood lighting; in
     // daylight mode those are dimmed instead of removed so fixtures stay lit.
     const moodLights=[];scene.traverse(object=>{if(object.isLight&&object!==hemi&&object!==sun)moodLights.push({light:object,base:object.intensity})})
     let darkRoom=false // Drawing Room dimmer: only the room's own fittings light the room
     const setDaylight=on=>{
-      if(on){
-        hemi.color.set('#e9f2ff');hemi.groundColor.set('#b3a897');hemi.intensity=1.7
-        sun.color.set('#fff9ec');sun.intensity=2.6
-        scene.background.set('#f2f6f9')
-        moodLights.forEach(({light,base})=>{light.intensity=base*.1*(light.userData.dimLevel??1)})
-      }else{
-        // A real dusk mood, so the warm task lighting reads as the room's light.
-        hemi.color.set('#c3d2e8');hemi.groundColor.set('#4e463e');hemi.intensity=.5
-        sun.color.set('#ffd9a8');sun.intensity=.55
-        scene.background.set('#242a33')
-        moodLights.forEach(({light,base})=>{light.intensity=base*1.25*(light.userData.dimLevel??1)})
-      }
-      // Dark room: no sun, sky, environment or generic preview lights, so the dimmer sliders show their own effect.
+      // Day: sky and sun with the room's lamps dimmed; Evening: a real dusk mood, so the warm task lighting reads as the room's
+      // light; Dark room: no sun, sky, environment or generic preview lights, so the dimmer sliders show their own effect.
+      rig.setMode(darkRoom?'dark':on?'day':'evening')
+      moodLights.forEach(({light,base})=>{light.intensity=base*(on&&!darkRoom?.1:1.25)*(light.userData.dimLevel??1)})
       const overlay=scene.getObjectByName('Home Interior proposed lighting');if(overlay)overlay.visible=!darkRoom
-      scene.environmentIntensity=darkRoom?.02:1
-      if(darkRoom){hemi.intensity=.03;sun.intensity=0;scene.background.set('#0b0d10');moodLights.forEach(({light,base})=>{light.intensity=base*1.25*(light.userData.dimLevel??1)})}
     }
     setDaylight(daylightRef.current)
     controls.target.set(W/2,H*.38,L/2)
@@ -401,7 +386,7 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
       camera.lookAt(controls.target);controls.update()
     }
     setCamera(initialView)
-    const resize=()=>{const width=mount.clientWidth,height=mount.clientHeight;renderer.setSize(width,height,false);designerRender.setSize(width,height);camera.aspect=width/height;camera.updateProjectionMatrix();if(roomKey==='bedroom3'&&['eastWall','westWall'].includes(activeCameraKey))setCamera(activeCameraKey)}
+    const resize=()=>{const width=mount.clientWidth,height=mount.clientHeight;view.setSize(width,height);camera.aspect=width/height;camera.updateProjectionMatrix();if(roomKey==='bedroom3'&&['eastWall','westWall'].includes(activeCameraKey))setCamera(activeCameraKey)}
     const observer=new ResizeObserver(resize);observer.observe(mount);resize()
     const raycaster=new THREE.Raycaster(),pointer=new THREE.Vector2()
     let pressedAt=null,markedMesh=null,markedMaterial=null
@@ -438,14 +423,14 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
     renderer.domElement.addEventListener('pointerdown',onPointerDown)
     renderer.domElement.addEventListener('pointerup',onPointerUp)
     const interiorScene=registerInteriorScene({id:roomKey,scene,camera,renderer,zones:[{id:roomKey,min:[0,0,0],max:[W,H,L]}]})
-    let raf=0;const render=()=>{controls.update();designerRender.render();raf=requestAnimationFrame(render)};render()
+    let raf=0;const render=()=>{controls.update();view.render();raf=requestAnimationFrame(render)};render()
     // Renders the six review-sheet views (top plan, overview, four walls from inside) at fixed sizes, then restores the camera.
     const captureReview=()=>{
       const saved={pos:camera.position.clone(),up:camera.up.clone(),target:controls.target.clone(),fov:camera.fov,aspect:camera.aspect,size:renderer.getSize(new THREE.Vector2()),ratio:renderer.getPixelRatio()}
       const views={};let project=null
       const shoot=(name,width,height,place)=>{
-        renderer.setPixelRatio(1);renderer.setSize(width,height,false);designerRender.setSize(width,height);camera.aspect=width/height
-        place();camera.updateProjectionMatrix();camera.lookAt(controls.target);designerRender.render()
+        renderer.setPixelRatio(1);view.setSize(width,height);camera.aspect=width/height
+        place();camera.updateProjectionMatrix();camera.lookAt(controls.target);view.render()
         const canvas=document.createElement('canvas');canvas.width=width;canvas.height=height
         canvas.getContext('2d').drawImage(renderer.domElement,0,0,width,height);views[name]=canvas
         return camera.clone()
@@ -464,15 +449,15 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
         inside('north',W/2,0,78);inside('south',W/2,L,78);inside('east',W,L/2,84);inside('west',0,L/2,84)
       }finally{
         drawingLayouts?.setLabels(tvLabelsRef.current)
-        renderer.setPixelRatio(saved.ratio);renderer.setSize(saved.size.x,saved.size.y,false);designerRender.setSize(saved.size.x,saved.size.y)
+        renderer.setPixelRatio(saved.ratio);view.setSize(saved.size.x,saved.size.y)
         camera.aspect=saved.aspect;camera.fov=saved.fov;camera.position.copy(saved.pos);camera.up.copy(saved.up);controls.target.copy(saved.target)
         camera.updateProjectionMatrix();camera.lookAt(controls.target);controls.update()
       }
       return {views,project}
     }
-    sceneRef.current={clearItem,setDesigner:on=>designerRender.setEnabled(on),captureReview,setTrackLight:(circuit,level)=>{drawingLayouts?.setTrackLight(circuit,level);taskLighting.userData.setTrackLight?.(circuit,level);setDaylight(daylightRef.current)},setDarkRoom:on=>{darkRoom=on;setDaylight(daylightRef.current)},setTvLabels:visible=>drawingLayouts?.setLabels(visible),setDrawingLayout:key=>drawingLayouts?.setLayout(key),setDrawingArm:pulled=>drawingLayouts?.setArm(pulled),setElectrical:visible=>{drawingLayouts?.setElectrical(visible);if(roomElectrical)roomElectrical.visible=visible},setExistingElectrical:visible=>{if(existingPoints)existingPoints.visible=visible},setDoorSwing:visible=>drawingLayouts?.setDoorSwing(visible),setStorageOpen:open=>drawingLayouts?.setStorageOpen(open),setDrawingTv:key=>drawingLayouts?.setTvSize(key),setMirrorOpen:value=>vanity.userData.setMirrorOpen?.(value),setPartitionOpen:value=>partition.userData.setOpen?.(value),setCamera,setSouthVisible:value=>{southWall.visible=value},setFurnitureVisible:value=>{furniture.visible=value},setBoardOpen:value=>{ironingStorage?.userData.setBoardOpen(value)},setPoojaDoorsOpen:value=>{poojaDoors?.userData.setDoorsOpen(value)},clearMark,setDaylight}
+    sceneRef.current={clearItem,liveView:view,setDesigner:on=>view.setDesigner(on),captureReview,setTrackLight:(circuit,level)=>{drawingLayouts?.setTrackLight(circuit,level);taskLighting.userData.setTrackLight?.(circuit,level);setDaylight(daylightRef.current)},setDarkRoom:on=>{darkRoom=on;setDaylight(daylightRef.current)},setTvLabels:visible=>drawingLayouts?.setLabels(visible),setDrawingLayout:key=>drawingLayouts?.setLayout(key),setDrawingArm:pulled=>drawingLayouts?.setArm(pulled),setElectrical:visible=>{drawingLayouts?.setElectrical(visible);if(roomElectrical)roomElectrical.visible=visible},setExistingElectrical:visible=>{if(existingPoints)existingPoints.visible=visible},setDoorSwing:visible=>drawingLayouts?.setDoorSwing(visible),setStorageOpen:open=>drawingLayouts?.setStorageOpen(open),setDrawingTv:key=>drawingLayouts?.setTvSize(key),setMirrorOpen:value=>vanity.userData.setMirrorOpen?.(value),setPartitionOpen:value=>partition.userData.setOpen?.(value),setCamera,setSouthVisible:value=>{southWall.visible=value},setFurnitureVisible:value=>{furniture.visible=value},setBoardOpen:value=>{ironingStorage?.userData.setBoardOpen(value)},setPoojaDoorsOpen:value=>{poojaDoors?.userData.setDoorsOpen(value)},clearMark,setDaylight}
     if(bedroom1Layouts){const dim=sceneRef.current.setTrackLight;Object.assign(sceneRef.current,{setBedroom1Layout:key=>bedroom1Layouts.setLayout(key),setTrackLight:(circuit,level)=>{bedroom1Layouts.setTrackLight(circuit,level);dim(circuit,level)}})}
-    return()=>{interiorScene.dispose();cancelAnimationFrame(raf);existingPoints?.userData.dispose();roomElectrical?.userData.dispose();designerRender.dispose();observer.disconnect();renderer.domElement.removeEventListener('pointerdown',onPointerDown);renderer.domElement.removeEventListener('pointerup',onPointerUp);controls.dispose();labelTextures.forEach(texture=>texture.dispose());shell.traverse(object=>{object.geometry?.dispose?.();if(Array.isArray(object.material))object.material.forEach(material=>material.dispose());else object.material?.dispose?.()});markedWallMaterial.dispose();environment.dispose();pmrem.dispose();renderer.dispose();renderer.domElement.remove();sceneRef.current=null}
+    return()=>{interiorScene.dispose();cancelAnimationFrame(raf);existingPoints?.userData.dispose();roomElectrical?.userData.dispose();view.dispose();observer.disconnect();renderer.domElement.removeEventListener('pointerdown',onPointerDown);renderer.domElement.removeEventListener('pointerup',onPointerUp);controls.dispose();labelTextures.forEach(texture=>texture.dispose());shell.traverse(object=>{object.geometry?.dispose?.();if(Array.isArray(object.material))object.material.forEach(material=>material.dispose());else object.material?.dispose?.()});markedWallMaterial.dispose();rig.dispose();renderer.dispose();renderer.domElement.remove();sceneRef.current=null}
   },[roomKey,initialView])
 
   useEffect(()=>{sceneRef.current?.setCamera(view)},[view,roomKey])
@@ -535,6 +520,7 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
         <button onClick={makeReview} disabled={reviewBusy} style={buttonStyle(false)} title="One image with a dimensioned top plan, an overview and the four walls, plus a text brief, for sharing with an online AI">{reviewBusy?'Building review sheet…':'Review sheet for AI'}</button>
         {roomKey==='drawing'&&<button onClick={()=>setView('tvWall')} aria-pressed={view==='tvWall'} style={buttonStyle(view==='tvWall')}>TV wall view</button>}
         <button {...designer.button(buttonStyle(designer.on))}/>
+        <RenderQualityControls sceneRef={sceneRef} name={roomKey} buttonStyle={buttonStyle}/>
         {roomKey==='drawing'&&<button onClick={()=>setView('northWall')} aria-pressed={view==='northWall'} style={buttonStyle(view==='northWall')}>North wall view</button>}
         {roomKey==='bedroom3'&&<button onClick={()=>{setShowSouthWall(true);setView('southOpenings')}} aria-pressed={view==='southOpenings'} style={buttonStyle(view==='southOpenings')}>Balcony door + window</button>}
         {room.poojaAlcove&&<button onClick={()=>{setView('pooja');setPoojaDoorsOpen(true)}} aria-pressed={view==='pooja'} style={buttonStyle(view==='pooja')}>Pooja view</button>}

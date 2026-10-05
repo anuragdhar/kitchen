@@ -5,11 +5,12 @@ import {createPlannedAcIndoorUnit} from './rooms/shared/RoomAirConditioning.js'
 import React,{useEffect,useRef,useState} from 'react'
 import * as THREE from 'three'
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js'
-import {RoomEnvironment} from 'three/examples/jsm/environments/RoomEnvironment.js'
 import {STUDY_ROOM} from './config/studyRoomConfig.js'
 import {createRug,createPottedPlant,createWallArt,createFloorLamp} from './rooms/shared/RoomDecor.js'
 import {createStudyTerrace} from './rooms/study/StudyTerrace.js'
-import {createDesignerRender} from './render/designerRender.js'
+import {createLiveView} from './render/liveView.js'
+import {createDaylightRig} from './render/lightRig.js'
+import RenderQualityControls from './render/RenderQualityControls.jsx'
 import {useDesignerRender} from './render/useDesignerRender.js'
 import {createRoomTrackLighting} from './rooms/shared/RoomTaskLighting.js'
 import {createRoomElectricalPoints} from './rooms/shared/ElectricalPointMarkers.js'
@@ -39,15 +40,8 @@ export default function StudyRoom3D(){
     const H=mm(STUDY_ROOM.dimensions.heightMm)
     const scene=new THREE.Scene();scene.background=new THREE.Color('#edf2f6')
     const camera=new THREE.PerspectiveCamera(48,1,.01,100)
-    const renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance'})
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio,2.25));renderer.outputColorSpace=THREE.SRGBColorSpace
-    renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=.88
-    renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap
-    mount.appendChild(renderer.domElement)
-    const designerRender=createDesignerRender(renderer,scene,camera,{enabled:designer.ref.current})
-    const pmrem=new THREE.PMREMGenerator(renderer)
-    const environment=pmrem.fromScene(new RoomEnvironment(renderer),.04).texture
-    scene.environment=environment
+    // Renderer, tone mapping, environment, shadows, quality and the Designer render: render/liveView.js.
+    const view=createLiveView({mount,scene,camera,designer:designer.ref.current}),{renderer}=view
     const controls=new OrbitControls(camera,renderer.domElement);controls.enableDamping=true;controls.target.set(W/2,H*.42,L/2)
     const room=new THREE.Group();scene.add(room)
     const directionGroup=new THREE.Group();room.add(directionGroup)
@@ -205,16 +199,15 @@ export default function StudyRoom3D(){
     addLabel('DOUBLE-HEIGHT TERRACE',terraceStart+mm(terrace.widthMm)/2,2.35,L-.18,'#0f766e')
     addLabel('SOUTH CABINET · 54 W × 92 H · +4',cabinetCenterX,2.53,L-.2,'#a16207')
     addLabel('TO BALCONY OFFICE · WEST · 6 FT',.18,2.43,(westOpeningStart+westOpeningEnd)/2,'#7c3aed')
-    const hemi=new THREE.HemisphereLight('#ffffff','#78838a',1.05);scene.add(hemi)
-    const sun=new THREE.DirectionalLight('#fff4dc',1.7);sun.position.set(-2,5,3);sun.castShadow=true;scene.add(sun)
+    // Sky and sun: the standard rig (render/lightRig.js), same sun direction as before.
+    const rig=createDaylightRig(scene,{sunPosition:[-2,5,3],backgrounds:{day:'#edf2f6',dark:'#0b0d10'}})
     const fill=new THREE.PointLight('#dbeafe',1.15,9);fill.position.set(W*.55,H*.72,L*.5);scene.add(fill)
     // Track lights and the (assumed) ceiling fan (config/studyLightingConfig.js); the sliders below the toolbar dim one
     // circuit (run) at a time. Dark room: only those circuits light the room.
     const trackLighting=createRoomTrackLighting(STUDY_LIGHTING,STUDY_ROOM.dimensions,{realLights:true});room.add(trackLighting)
     const electricalPoints=createRoomElectricalPoints('study',{wallFaceMm:60});electricalPoints.visible=false;room.add(electricalPoints)
     const setDarkRoom=on=>{
-      hemi.intensity=on?.03:1.05;sun.intensity=on?0:1.7;fill.intensity=on?0:1.15;scene.environmentIntensity=on?.02:1
-      scene.background.set(on?'#0b0d10':'#edf2f6')
+      rig.setMode(on?'dark':'day');fill.intensity=on?0:1.15
       const overlay=scene.getObjectByName('Home Interior proposed lighting');if(overlay)overlay.visible=!on
     }
     const setCamera=key=>{
@@ -228,13 +221,13 @@ export default function StudyRoom3D(){
       camera.lookAt(controls.target);controls.update()
     }
     setCamera('kids')
-    const resize=()=>{const width=mount.clientWidth,height=mount.clientHeight;renderer.setSize(width,height,false);designerRender.setSize(width,height);camera.aspect=width/height;camera.updateProjectionMatrix()}
+    const resize=()=>{const width=mount.clientWidth,height=mount.clientHeight;view.setSize(width,height);camera.aspect=width/height;camera.updateProjectionMatrix()}
     const observer=new ResizeObserver(resize);observer.observe(mount);resize()
     const interiorScene=registerInteriorScene({id:'study',scene,camera,renderer,zones:[{id:'study',min:[0,0,0],max:[W,H,L]}]})
-    let raf=0;const render=()=>{controls.update();designerRender.render();raf=requestAnimationFrame(render)};render()
+    let raf=0;const render=()=>{controls.update();view.render();raf=requestAnimationFrame(render)};render()
     eastGroup.visible=showEastWall;northGroup.visible=showNorthWall
-    sceneRef.current={setDesigner:on=>designerRender.setEnabled(on),setCamera,setTrackLight:(circuit,level)=>trackLighting.userData.setTrackLight(circuit,level),setDarkRoom,setEastVisible:value=>{eastGroup.visible=value},setNorthVisible:value=>{northGroup.visible=value},setKidsPreview:value=>{kidsGroup.visible=value!=='off';nightBeds.visible=value==='night';daySeats.visible=value==='day'},setLabelsVisible:value=>{labels.forEach(({sprite})=>{sprite.visible=value})},setDirectionsVisible:value=>{directionGroup.visible=value},setElectrical:value=>{electricalPoints.visible=value}}
-    return()=>{electricalPoints.userData.dispose();interiorScene.dispose();cancelAnimationFrame(raf);designerRender.dispose();observer.disconnect();controls.dispose();labels.forEach(({texture})=>texture.dispose());directionTextures.forEach(texture=>texture.dispose());room.traverse(object=>{object.geometry?.dispose?.();if(Array.isArray(object.material))object.material.forEach(m=>m.dispose());else object.material?.dispose?.()});environment.dispose();pmrem.dispose();renderer.dispose();renderer.domElement.remove();sceneRef.current=null}
+    sceneRef.current={liveView:view,setDesigner:on=>view.setDesigner(on),setCamera,setTrackLight:(circuit,level)=>trackLighting.userData.setTrackLight(circuit,level),setDarkRoom,setEastVisible:value=>{eastGroup.visible=value},setNorthVisible:value=>{northGroup.visible=value},setKidsPreview:value=>{kidsGroup.visible=value!=='off';nightBeds.visible=value==='night';daySeats.visible=value==='day'},setLabelsVisible:value=>{labels.forEach(({sprite})=>{sprite.visible=value})},setDirectionsVisible:value=>{directionGroup.visible=value},setElectrical:value=>{electricalPoints.visible=value}}
+    return()=>{electricalPoints.userData.dispose();interiorScene.dispose();cancelAnimationFrame(raf);view.dispose();observer.disconnect();controls.dispose();labels.forEach(({texture})=>texture.dispose());directionTextures.forEach(texture=>texture.dispose());room.traverse(object=>{object.geometry?.dispose?.();if(Array.isArray(object.material))object.material.forEach(m=>m.dispose());else object.material?.dispose?.()});rig.dispose();renderer.dispose();renderer.domElement.remove();sceneRef.current=null}
   },[])
   useEffect(()=>{sceneRef.current?.setCamera(preset)},[preset])
   useEffect(()=>{sceneRef.current?.setEastVisible(showEastWall)},[showEastWall])
@@ -251,6 +244,7 @@ export default function StudyRoom3D(){
         {[['kids','Kids layout'],['overview','Overview'],['top','Top'],['office','Office connection'],['southCabinet','South cabinet'],['mainEntry','Main entry'],['northBookshelf','North bookshelf']].map(([key,label])=><button key={key} onClick={()=>{setPreset(key);if(key==='mainEntry')setShowEastWall(true);if(key==='kids')setShowEastWall(false)}} style={{padding:'7px 10px',borderRadius:9,border:'1px solid #cbd5e1',background:preset===key?'#172033':'#fff',color:preset===key?'#fff':'#172033',fontWeight:800,cursor:'pointer'}}>{label}</button>)}
         {[['night','Bed out'],['day','Day seat'],['off','Hide preview']].map(([key,label])=><button key={key} onClick={()=>setKidsPreview(key)} style={{padding:'7px 10px',borderRadius:9,border:'1px solid #a78bfa',background:kidsPreview===key?'#6d28d9':'#fff',color:kidsPreview===key?'#fff':'#6d28d9',fontWeight:800,cursor:'pointer'}}>{label}</button>)}
         <button {...designer.button({padding:'7px 10px',borderRadius:9,border:'1px solid #cbd5e1',background:designer.on?'#172033':'#fff',color:designer.on?'#fff':'#172033',fontWeight:800,cursor:'pointer'})}/>
+        <RenderQualityControls sceneRef={sceneRef} name="study" buttonStyle={()=>({padding:'7px 10px',borderRadius:9,border:'1px solid #cbd5e1',background:'#fff',color:'#172033',fontWeight:800,cursor:'pointer'})}/>
         <button onClick={()=>setShowEastWall(value=>!value)} style={{padding:'7px 10px',borderRadius:9,border:'1px solid #cbd5e1',background:showEastWall?'#fff':'#fee2e2',color:'#172033',fontWeight:800,cursor:'pointer'}}>{showEastWall?'Hide east wall':'Show east wall'}</button>
         <button onClick={()=>setShowNorthWall(value=>!value)} style={{padding:'7px 10px',borderRadius:9,border:'1px solid #cbd5e1',background:showNorthWall?'#fff':'#fee2e2',color:'#172033',fontWeight:800,cursor:'pointer'}}>{showNorthWall?'Hide north wall':'Show north wall'}</button>
         <button onClick={()=>setShowLabels(value=>!value)} style={{padding:'7px 10px',borderRadius:9,border:'1px solid #cbd5e1',background:showLabels?'#dbeafe':'#fff',color:'#172033',fontWeight:800,cursor:'pointer'}}>{showLabels?'Hide labels':'Show labels'}</button>

@@ -32,7 +32,36 @@ const isOverlay = object => {
   return object.isSprite || object.isLine || object.isLine2 || object.isPoints || !materials.every(solid)
 }
 
+// The ambient occlusion is computed one sample per pixel, but the scene beside it is multisampled. On a silhouette pixel the
+// two disagree (the AO belongs to either the floor or the cabinet), which drew a dotted light seam along every contact line
+// and left the AO's 5x5 noise visible near edges (render-quality pass, 2026-10-05). The blend therefore reads the AO through
+// a 3x3 tent filter: one pixel of softening, no visible blur.
+const tentBlendShader = /* glsl */`
+  uniform float intensity;
+  uniform sampler2D tDiffuse;
+  uniform vec2 texel;
+  varying vec2 vUv;
+  void main() {
+    vec4 ao = texture2D( tDiffuse, vUv ) * 4.0;
+    ao += ( texture2D( tDiffuse, vUv + vec2( texel.x, 0.0 ) ) + texture2D( tDiffuse, vUv - vec2( texel.x, 0.0 ) )
+      + texture2D( tDiffuse, vUv + vec2( 0.0, texel.y ) ) + texture2D( tDiffuse, vUv - vec2( 0.0, texel.y ) ) ) * 2.0;
+    ao += texture2D( tDiffuse, vUv + texel ) + texture2D( tDiffuse, vUv - texel )
+      + texture2D( tDiffuse, vUv + vec2( texel.x, - texel.y ) ) + texture2D( tDiffuse, vUv + vec2( - texel.x, texel.y ) );
+    ao /= 16.0;
+    gl_FragColor = vec4( mix( vec3( 1.0 ), ao.rgb, intensity ), ao.a );
+  }`
+
 class SolidSurfaceGTAOPass extends GTAOPass {
+  constructor(...args) {
+    super(...args)
+    this.blendMaterial.uniforms.texel = {value: new THREE.Vector2(1 / Math.max(1, this.width), 1 / Math.max(1, this.height))}
+    this.blendMaterial.fragmentShader = tentBlendShader
+    this.blendMaterial.needsUpdate = true
+  }
+  setSize(width, height) {
+    super.setSize(width, height)
+    this.blendMaterial.uniforms.texel.value.set(1 / Math.max(1, width), 1 / Math.max(1, height))
+  }
   _overrideVisibility() {
     const cache = this._visibilityCache
     this.scene.traverse(object => {
@@ -46,6 +75,22 @@ class SolidSurfaceGTAOPass extends GTAOPass {
     const autoUpdate = renderer.shadowMap.autoUpdate
     renderer.shadowMap.autoUpdate = false
     try { super.render(renderer, writeBuffer, readBuffer, deltaTime, maskActive) } finally { renderer.shadowMap.autoUpdate = autoUpdate }
+  }
+}
+
+// Tone mapping and sRGB as OutputPass, plus a triangular dither of one 8-bit step: the scene is lit in half-float, and the
+// smooth light falloff across a large plain wall otherwise bands into visible steps on an 8-bit screen.
+class DitheredOutputPass extends OutputPass {
+  constructor() {
+    super()
+    const source = this.material.fragmentShader, end = source.lastIndexOf('}')
+    this.material.fragmentShader = source.slice(0, end) + `
+      vec2 ditherSeed = gl_FragCoord.xy;
+      float ditherA = fract( sin( dot( ditherSeed, vec2( 12.9898, 78.233 ) ) ) * 43758.5453 );
+      float ditherB = fract( sin( dot( ditherSeed + 0.5, vec2( 63.7264, 10.873 ) ) ) * 28001.8384 );
+      gl_FragColor.rgb += ( ditherA + ditherB - 1.0 ) / 255.0;
+    ` + source.slice(end)
+    this.material.needsUpdate = true
   }
 }
 
@@ -82,17 +127,19 @@ export const DESIGNER_LOOK = {
  * Wraps an existing renderer/scene/camera. Call render() instead of renderer.render(scene, camera) and setSize() from the
  * view's resize handler. setEnabled(false) returns to the view's original direct rendering and tone mapping exactly.
  */
-export function createDesignerRender(renderer, scene, camera, {enabled = true, look = DESIGNER_LOOK} = {}) {
+export function createDesignerRender(renderer, scene, camera, {enabled = true, look = DESIGNER_LOOK, quality = null, metresPerUnit = 1} = {}) {
   const original = {toneMapping: renderer.toneMapping, exposure: renderer.toneMappingExposure}
   const size = renderer.getDrawingBufferSize(new THREE.Vector2())
   // The depth texture lets the final pass test overlays against, and repaint the background around, what the main pass drew.
-  const target = new THREE.WebGLRenderTarget(Math.max(1, size.x), Math.max(1, size.y), {type: THREE.HalfFloatType, samples: 4, depthTexture: new THREE.DepthTexture(Math.max(1, size.x), Math.max(1, size.y))})
+  const target = new THREE.WebGLRenderTarget(Math.max(1, size.x), Math.max(1, size.y), {type: THREE.HalfFloatType, samples: quality?.msaa ?? 4, depthTexture: new THREE.DepthTexture(Math.max(1, size.x), Math.max(1, size.y))})
   const composer = new EffectComposer(renderer, target)
   composer.addPass(new RenderPass(scene, camera))
-  const ao = new SolidSurfaceGTAOPass(scene, camera, size.x, size.y, undefined, look.ao, look.denoise)
+  // radius and thickness are distances: in the scene's units (the kitchen planner is in centimetres).
+  const aoParameters = {...look.ao, radius: look.ao.radius / metresPerUnit, thickness: look.ao.thickness / metresPerUnit, ...(quality ? {samples: quality.aoSamples} : {})}
+  const ao = new SolidSurfaceGTAOPass(scene, camera, size.x, size.y, undefined, aoParameters, {...look.denoise, ...(quality ? {samples: quality.denoiseSamples} : {})})
   ao.blendIntensity = look.blendIntensity
   composer.addPass(ao)
-  composer.addPass(new OutputPass())
+  composer.addPass(new DitheredOutputPass())
   const depthCopy = new FullScreenQuad(depthCopyMaterial()), backdrop = new FullScreenQuad(backgroundMaterial())
   let on = false
 
@@ -110,6 +157,11 @@ export function createDesignerRender(renderer, scene, camera, {enabled = true, l
     /** Keep the base exposure the view sets (e.g. a brightness slider) and re-apply the designer gain on top. */
     setExposure: exposure => { original.exposure = exposure; apply(on) },
     setSize: (width, height) => { composer.setPixelRatio(renderer.getPixelRatio()); composer.setSize(width, height) },
+    /** Sample counts of a QUALITY level (render/renderQuality.mjs): multisampling of the buffers and AO/denoise samples. */
+    setQuality: level => {
+      for (const buffer of [composer.renderTarget1, composer.renderTarget2]) if (buffer.samples !== level.msaa) { buffer.samples = level.msaa; buffer.dispose() }
+      ao.updateGtaoMaterial({samples: level.aoSamples}); ao.updatePdMaterial({samples: level.denoiseSamples})
+    },
     render: () => {
       if (!on) { renderer.render(scene, camera); return }
       // Move overlays to their own layer for this frame, render the solid scene with AO, then draw them on top.

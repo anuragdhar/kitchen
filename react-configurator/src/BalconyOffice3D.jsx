@@ -4,10 +4,11 @@ import React,{useEffect,useRef,useState} from 'react'
 import * as THREE from 'three'
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js'
 import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader.js'
-import {RoomEnvironment} from 'three/examples/jsm/environments/RoomEnvironment.js'
 import {BALCONY_OFFICE,BALCONY_DESK_HEIGHT_KEY} from './config/balconyOfficeConfig.js'
 import {balconyDeskLayout,FRAME_BEAM_WIDTH_MM,CLAMP_FROM_WEST_EDGE_MM} from './domain/balconyDesk.mjs'
-import {createDesignerRender} from './render/designerRender.js'
+import {createLiveView} from './render/liveView.js'
+import {DAYLIGHT_RIG} from './render/lightRig.js'
+import RenderQualityControls from './render/RenderQualityControls.jsx'
 import {createRoomElectricalPoints} from './rooms/shared/ElectricalPointMarkers.js'
 import RoomElectricalPanel from './home/RoomElectricalPanel.jsx'
 
@@ -65,19 +66,9 @@ export default function BalconyOffice3D(){
     const scene=new THREE.Scene()
     scene.background=new THREE.Color('#e8eef4')
     const camera=new THREE.PerspectiveCamera(48,1,0.01,100)
-    const renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance',preserveDrawingBuffer:true})
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio,2.5))
-    renderer.shadowMap.enabled=true
-    renderer.shadowMap.type=THREE.PCFSoftShadowMap
-    renderer.outputColorSpace=THREE.SRGBColorSpace
-    renderer.toneMapping=THREE.ACESFilmicToneMapping
-    renderer.toneMappingExposure=1.08
-    mount.appendChild(renderer.domElement)
-    // Designer render (ambient occlusion) is part of this page's existing High quality switch.
-    const designerRender=createDesignerRender(renderer,scene,camera,{enabled:false})
-    const pmrem=new THREE.PMREMGenerator(renderer)
-    const environment=pmrem.fromScene(new RoomEnvironment(renderer),.04).texture
-    scene.environment=environment
+    // Renderer, tone mapping, environment, shadows, resolution and the Designer render: render/liveView.js. The Designer render
+    // (ambient occlusion) is part of this page's existing High quality switch.
+    const view=createLiveView({mount,scene,camera,designer:false,preserveDrawingBuffer:true}),{renderer}=view
 
     const controls=new OrbitControls(camera,renderer.domElement)
     controls.enableDamping=true
@@ -669,18 +660,13 @@ export default function BalconyOffice3D(){
       addBox({w:.012,h:Math.min(lowerH,H-upperH),d:lowerD+.012,x,y:Math.min(lowerH,H-upperH)/2,z:lowerD/2,color:'#6f5134'})
     }
 
-    scene.add(new THREE.HemisphereLight(0xffffff,0x53606c,1.05))
+    // Sky fill and environment at the shared rig's balance (render/lightRig.js); the sun's shadow camera, map size and bias
+    // are fitted to the room by render/liveView.js.
+    scene.add(new THREE.HemisphereLight(0xffffff,0x53606c,DAYLIGHT_RIG.day.hemisphere))
+    scene.environmentIntensity=DAYLIGHT_RIG.day.environment
     const sun=new THREE.DirectionalLight(0xfff4e8,2.45)
     sun.position.set(-3,5,4)
     sun.castShadow=true
-    sun.shadow.mapSize.set(2048,2048)
-    sun.shadow.camera.left=-4
-    sun.shadow.camera.right=4
-    sun.shadow.camera.top=5
-    sun.shadow.camera.bottom=-3
-    sun.shadow.camera.near=.1
-    sun.shadow.camera.far=14
-    sun.shadow.bias=-.00035
     scene.add(sun)
     const southDaylight=new THREE.RectAreaLight(0xc8efff,3.2,W,windowH)
     southDaylight.position.set(W/2,parapet+windowH/2,L-.08)
@@ -712,12 +698,10 @@ export default function BalconyOffice3D(){
     let cabinetOpenTarget=0
     const setCabinetsOpen=open=>{cabinetOpenTarget=open?1:0}
     const setQuality=enabled=>{
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio,enabled?2.5:1.25))
+      // Resolution and shadow map size follow the shared render quality (Quality menu); this switch keeps shadows and AO.
       renderer.shadowMap.enabled=enabled
-      designerRender.setExposure(enabled?1.08:1);designerRender.setEnabled(enabled)
-      sun.shadow.mapSize.set(enabled?2048:1024,enabled?2048:1024)
-      sun.shadow.map?.dispose?.()
-      renderer.setSize(mount.clientWidth,mount.clientHeight,false);designerRender.setSize(mount.clientWidth,mount.clientHeight)
+      view.setDesigner(enabled)
+      view.setSize(mount.clientWidth,mount.clientHeight)
     }
     let selectionHelper=null
     const clearSelection=()=>{
@@ -748,7 +732,7 @@ export default function BalconyOffice3D(){
       controls.update()
     }
     const captureScreenshot=()=>{
-      designerRender.render()
+      view.render()
       return new Promise((resolve,reject)=>renderer.domElement.toBlob(blob=>blob?resolve(blob):reject(new Error('Unable to capture the 3D view.')),'image/png'))
     }
     setCamera(preset)
@@ -756,7 +740,7 @@ export default function BalconyOffice3D(){
     setCabinetsOpen(allCabinetsOpen)
     setQuality(highQuality)
     const interiorScene=registerInteriorScene({id:'balcony',scene,camera,renderer,zones:[{id:'balcony',min:[0,0,0],max:[W,H,L]}]})
-    sceneRef.current={setCamera,setDeskHeight,setCabinetsOpen,setQuality,focusItem,captureScreenshot,clearSelection,setHumanVisible:visible=>{human.visible=visible},setDirectionsVisible:visible=>{directionGroup.visible=visible},setElectricalVisible:visible=>{electricalOverlays.forEach(({marker})=>{marker.visible=visible})},setSouthWallVisible:visible=>{southWallGroup.visible=visible},setWestWallVisible:visible=>{westWallGroup.visible=visible}}
+    sceneRef.current={liveView:view,setCamera,setDeskHeight,setCabinetsOpen,setQuality,focusItem,captureScreenshot,clearSelection,setHumanVisible:visible=>{human.visible=visible},setDirectionsVisible:visible=>{directionGroup.visible=visible},setElectricalVisible:visible=>{electricalOverlays.forEach(({marker})=>{marker.visible=visible})},setSouthWallVisible:visible=>{southWallGroup.visible=visible},setWestWallVisible:visible=>{westWallGroup.visible=visible}}
 
     const raycaster=new THREE.Raycaster()
     const pointer=new THREE.Vector2()
@@ -786,7 +770,7 @@ export default function BalconyOffice3D(){
     const resize=()=>{
       const width=mount.clientWidth
       const height=mount.clientHeight
-      renderer.setSize(width,height,false);designerRender.setSize(width,height)
+      view.setSize(width,height)
       camera.aspect=width/height
       camera.updateProjectionMatrix()
     }
@@ -801,10 +785,10 @@ export default function BalconyOffice3D(){
       liftGroup.rotation.x=THREE.MathUtils.lerp(liftGroup.rotation.x,THREE.MathUtils.degToRad(-58)*cabinetOpenTarget,.12)
       for(const {group,angle} of westDoorGroups)group.rotation.y=THREE.MathUtils.lerp(group.rotation.y,angle*cabinetOpenTarget,.12)
       for(const {mesh,closedZ,openZ} of fixedSliders)mesh.position.z=THREE.MathUtils.lerp(mesh.position.z,THREE.MathUtils.lerp(closedZ,openZ,cabinetOpenTarget),.12)
-      controls.update();designerRender.render()
+      controls.update();view.render()
     }
     animate()
-    return ()=>{interiorScene.dispose();designerRender.dispose()
+    return ()=>{interiorScene.dispose();view.dispose()
       cancelAnimationFrame(frame)
       observer.disconnect()
       controls.dispose()
@@ -818,8 +802,6 @@ export default function BalconyOffice3D(){
       directionTextures.forEach(texture=>texture.dispose())
       electricalOverlays.forEach(({texture})=>texture.dispose())
       glassMaterial.dispose()
-      environment.dispose()
-      pmrem.dispose()
       renderer.dispose()
       renderer.domElement.remove()
       sceneRef.current=null
@@ -1036,6 +1018,7 @@ Architecture and finish: warm pale oak mica cabinetry with subtle grain, matte o
       <div style={{display:'flex',gap:7,alignItems:'center',flexWrap:'wrap'}}>
         {[['overview','Overview'],['north','North cabinet'],['top','Top']].map(([key,label])=><button key={key} onClick={()=>setPreset(key)} style={{padding:'7px 10px',borderRadius:9,border:'1px solid #cfc6dc',background:preset===key?'#231942':'#fff',color:preset===key?'#fff':'#231942',fontWeight:800,cursor:'pointer'}}>{label}</button>)}
         <button onClick={()=>setHighQuality(value=>!value)} title="Toggle GPU-intensive lighting, reflections and shadows" style={{padding:'7px 10px',borderRadius:9,border:'1px solid #cfc6dc',background:highQuality?'#dcfce7':'#fff',color:'#231942',fontWeight:800,cursor:'pointer'}}>{highQuality?'High quality':'Performance'}</button>
+        <RenderQualityControls sceneRef={sceneRef} name="balcony-office" buttonStyle={()=>({padding:'7px 10px',borderRadius:9,border:'1px solid #cfc6dc',background:'#fff',color:'#231942',fontWeight:800,cursor:'pointer'})}/>
         <button onClick={()=>setShowItems(value=>!value)} style={{padding:'7px 10px',borderRadius:9,border:'1px solid #cfc6dc',background:showItems?'#fef3c7':'#fff',color:'#231942',fontWeight:800,cursor:'pointer'}}>Items ({BALCONY_OFFICE.equipment.inventory.length})</button>
         <button onClick={()=>setShowElectrical(value=>!value)} style={{padding:'7px 10px',borderRadius:9,border:'1px solid #cfc6dc',background:showElectrical?'#dbeafe':'#fff',color:'#231942',fontWeight:800,cursor:'pointer'}}>{showElectrical?'Hide electrical points':'Show electrical points'}</button>
         <button onClick={()=>setAllCabinetsOpen(value=>!value)} style={{padding:'7px 10px',borderRadius:9,border:'1px solid #cfc6dc',background:allCabinetsOpen?'#ffedd5':'#fff',color:'#231942',fontWeight:800,cursor:'pointer'}}>{allCabinetsOpen?'Close all cabinets':'Open all cabinets'}</button>

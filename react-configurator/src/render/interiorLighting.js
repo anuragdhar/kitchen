@@ -2,7 +2,16 @@ import * as THREE from 'three';
 import {RectAreaLightUniformsLib} from 'three/examples/jsm/lights/RectAreaLightUniformsLib.js';
 import {lightingStore} from '../home/lightingStore.mjs';
 import {HOME_ROOMS} from '../home/rooms.mjs';
-import {lightingAt,kelvinRgb,ROOM_LIGHTING} from '../home/lighting.mjs';
+import {lightingAt,ROOM_LIGHTING} from '../home/lighting.mjs';
+import {lampLinear} from './renderQuality.mjs';
+// The preview strengths below (power, and the aggregated whole-home sums) were tuned before the live views shared one daylight
+// rig (render/lightRig.js). At those values a room's five rectangle lights put several times the sun's light on every surface
+// in daytime, which washed out the sun's shadows and flattened every room to white (render-quality pass, 2026-10-05). They are
+// now scaled by PREVIEW_GAIN, which keeps the layers' ratios and the day/evening/night differences: proposed fittings add a
+// soft fill by day and become the room's main light at night. Colour: lampLinear (render/renderQuality.mjs) renders the
+// Kelvin of each mode with the same white balance as the rooms' own track lights, so 4500 K day reads neutral and 2700 K
+// night warm (kelvinRgb alone made 4500 K peach).
+export const PREVIEW_GAIN=.25;
 const nativePoint=(zone,f)=>zone.min.map((n,i)=>n+(zone.max[i]-n)*f[i]);
 /** Authored geometry stays intact. This adds a removable proposed fixture overlay. */
 export function bindInteriorLighting(record,onUpdate){
@@ -52,8 +61,8 @@ export function bindInteriorLighting(record,onUpdate){
   // Avoid the hidden environment becoming a second bright daytime light at night.
   scene.environmentIntensity=allOriginal?oldEnv:oldEnv*(.04+.3*daylight);
   if(scene.background?.isColor)scene.background.copy(allOriginal?oldBackground:new THREE.Color().setRGB(.07+.65*daylight,.075+.66*daylight,.09+.68*daylight));
-  for(const {area,room,layer,power,aggregate} of lights){const p=profiles.get(room),rgb=kelvinRgb(p.kelvin);area.color.setRGB(...rgb,THREE.SRGBColorSpace);area.intensity=p.mode==='original'?0:aggregate?(p.levels.ambient*100+p.levels.cove*16+p.levels.task*22+p.levels.accent*6+p.levels.cabinet*12):power*p.levels[layer];}
-  for(const {mesh,material,room,layer} of strips){const p=profiles.get(room);mesh.visible=p.mode!=='original'&&p.levels[layer]>0;material.emissive.setRGB(...kelvinRgb(p.kelvin),THREE.SRGBColorSpace);material.emissiveIntensity=3*p.levels[layer];}
+  for(const {area,room,layer,power,aggregate} of lights){const p=profiles.get(room),rgb=lampLinear(p.kelvin);area.color.setRGB(...rgb);area.intensity=PREVIEW_GAIN*(p.mode==='original'?0:aggregate?(p.levels.ambient*100+p.levels.cove*16+p.levels.task*22+p.levels.accent*6+p.levels.cabinet*12):power*p.levels[layer]);}
+  for(const {mesh,material,room,layer} of strips){const p=profiles.get(room);mesh.visible=p.mode!=='original'&&p.levels[layer]>0;material.emissive.setRGB(...lampLinear(p.kelvin));material.emissiveIntensity=3*p.levels[layer];}
   for(const f of fixtureData){const p=profiles.get(f.room);f.kelvin=p.kelvin;f.level=p.mode==='original'?0:p.levels[f.layer];}
   record.lighting.roomModes=Object.fromEntries([...profiles].map(([id,p])=>[id,p.mode]));record.lighting.revision=lightingStore.getRevision();onUpdate();
  };
