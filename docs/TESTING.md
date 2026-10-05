@@ -11,16 +11,22 @@ npm ci
 npm run check
 ```
 
-`npm test` runs Node's test runner with explicit test-file paths (including on Windows) with no external packages.
-`npm run check` runs that suite and `vite build`. Run these commands locally.
+`npm test` runs Node's test runner on every `tests/*.test.mjs` (Node expands the quoted glob itself, also on Windows)
+plus the Windows launcher test in `../scripts/windows/`, with no external packages. A new test file is picked up without
+editing `package.json`. `npm run check` runs that suite and `vite build`. Run these commands locally.
 `.github/workflows/check.yml` also runs `npm ci` + `npm run check` (only) on
 push/PR; it does not cover `test:browser`, `test:persistence`, `test:materials`,
 `test:lighting`, `test:baked-lighting`, `visual:qa`, or the Python/Blender
 checks below. The Windows render worker still runs the full check list,
 including those, in an isolated local checkout before publishing render
-evidence. The fast gate currently has no repository-wide lint or type-check
-stage; do not claim those checks ran. Add them incrementally rather than
-reformatting all files.
+evidence. The fast gate has no full linter or type-check stage; do not claim
+those checks ran. The one lint-like check is dependency-free:
+`scripts/check-imports.mjs` (`npm run lint` lists the problems;
+`tests/check-imports.test.mjs` makes `npm test` fail on them) reports imported
+names a file never uses and `.jsx` files with JSX that do not import React
+(this project uses the classic JSX transform, so that fails only at run time).
+It does not find undefined identifiers. Add further checks incrementally rather
+than reformatting all files.
 
 `npm test` now also runs `tests/archviz.test.mjs`, `tests/parallel-profiles.test.mjs`,
 and `tests/whole-home-render.test.mjs` (previously only run as a separate
