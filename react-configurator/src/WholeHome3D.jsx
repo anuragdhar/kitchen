@@ -2,6 +2,7 @@ import {registerInteriorScene} from './render/interiorScene.js'
 import {tagSurfaceMaterial} from './render/surfaceRoles.mjs'
 import {createDrawingLobbyPartition} from './rooms/drawing/DrawingLobbyPartition.js'
 import {createStudyFurniture} from './rooms/study/StudyFurniture.js'
+import {createDiningSet} from './rooms/shared/furniture/tables.js'
 import {createLobbyConcealedDoor} from './rooms/lobby/LobbyConcealedDoor.js'
 import {createBedroom1DoorInfill} from './rooms/lobby/Bedroom1DoorInfill.js'
 import {BEDROOM1_CLOSED_DOOR,closedDoorSpanMm} from './config/bedroom1ClosedDoor.js'
@@ -331,14 +332,8 @@ function LiveWholeHome3D({onOpenRoom}){
     roomEdge(lb,lobby.widthMm,lobby.lengthMm,'east',[{start:lobby.wallOpenings.east.fromMm,end:lobby.wallOpenings.east.toMm,top:HEIGHT}])
     const ironingStorage=createLobbyEastIroningStorage(lobby)
     lg.add(ironingStorage)
-    const table=lobby.furniture.diningTable
-    localBox(lg,table.widthMm,55,table.lengthMm,table.centerXmm,table.heightMm,table.centerZmm,paleWood)
-    localBox(lg,90,table.heightMm-50,90,table.centerXmm,table.heightMm/2,table.centerZmm,aluminium)
-    for(const side of [-1,1])for(const row of lobby.furniture.chairRowsZmm){
-      const x=table.centerXmm+side*lobby.furniture.chairOffsetXmm
-      localBox(lg,440,85,430,x,450,row,wood)
-      localBox(lg,70,510,430,x+side*200,690,row,wood)
-    }
+    // Dining table and chairs: the same shared builder as the Lobby room page (rooms/shared/furniture/tables.js).
+    lg.add(createDiningSet(lobby.furniture))
     const pooja=lobby.poojaAlcove
     // Close the recess so the door interior's backing panel and artwork sit against a
     // solid wall instead of leaving a gap to whatever is beyond the alcove.

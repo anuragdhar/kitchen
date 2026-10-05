@@ -1,4 +1,6 @@
 import * as THREE from 'three'
+import {createCoffeeTable, createRoundSideTable} from '../shared/furniture/tables.js'
+import {createTableLamp} from '../shared/furniture/decor.js'
 
 // Two identical 3-seaters plus the coffee table, rug and styling from the owner's references
 // (cream sofas, terracotta cushions, dark carved wood). Positions come from the room config
@@ -55,7 +57,6 @@ function framedPanel(widthMm, heightMm) {
 // spec: {sofas:[{centerXmm,centerZmm,widthMm,lengthMm,faces}], table, rug, sideTable:{xMm,zMm}, panelsZ:[mm]}
 function buildSeating(spec, {wallFaceMm = 0} = {}) {
   const group = new THREE.Group(); group.name = 'Drawing Room seating'
-  const wood = new THREE.MeshStandardMaterial({color: '#4a2f1e', roughness: .58})
 
   const rug = new THREE.Group(); rug.name = 'rug'; rug.userData.archvizExclude = true
   const border = new THREE.Mesh(new THREE.BoxGeometry(mm(spec.rug.widthMm), .012, mm(spec.rug.lengthMm)), new THREE.MeshStandardMaterial({color: '#8f4f34', roughness: 1}))
@@ -68,31 +69,21 @@ function buildSeating(spec, {wallFaceMm = 0} = {}) {
     item.position.set(mm(s.centerXmm), 0, mm(s.centerZmm)); item.rotation.y = FACING[s.faces]; group.add(item)
   }
 
-  const t = spec.table, tableGroup = new THREE.Group(); tableGroup.name = 'Coffee table'; group.add(tableGroup)
-  const top = new THREE.Mesh(new THREE.CylinderGeometry(1, 1, .055, 48), wood)
-  top.scale.set(mm(t.widthMm) / 2, 1, mm(t.lengthMm) / 2); top.position.set(mm(t.centerXmm), .43, mm(t.centerZmm)); top.castShadow = top.receiveShadow = true; tableGroup.add(top)
-  for (const dx of [-.2, .2]) for (const dz of [-.3, .3]) {
-    const leg = new THREE.Mesh(new THREE.BoxGeometry(.04, .4, .04), wood)
-    leg.position.set(mm(t.centerXmm) + dx, .2, mm(t.centerZmm) + dz); leg.castShadow = true; tableGroup.add(leg)
-  }
+  // Coffee table, lamp tables and table lamps: rooms/shared/furniture (tables-and-chairs round, 2026-10-06).
+  group.add(createCoffeeTable(spec.table))
 
   const decor = new THREE.Group(); decor.name = 'seating decor'; decor.userData.archvizExclude = true; group.add(decor)
   const shadeMaterial = new THREE.MeshStandardMaterial({color: '#f3dfbf', emissive: '#ffcf8b', emissiveIntensity: .55, roughness: .9, side: THREE.DoubleSide})
   shadeMaterial.userData.taskLightGlow = true
   // Round lamp tables: spec.sideTable, plus any spec.lampTables ({xMm, zMm, diameterMm, heightMm}). A furnished table (not decor)
   // when it is part of the layout's plan, so it reaches the Blender export.
-  const lampTable = ({xMm, zMm, diameterMm = 380, heightMm = 550}, parent) => {
-    const r = mm(diameterMm) / 2, h = mm(heightMm)
-    const top = new THREE.Mesh(new THREE.CylinderGeometry(r, r, .04, 32), wood); top.position.set(mm(xMm), h, mm(zMm)); top.castShadow = true; parent.add(top)
-    const leg = new THREE.Mesh(new THREE.CylinderGeometry(.03, .04, h - .02, 16), wood); leg.position.set(mm(xMm), (h - .02) / 2, mm(zMm)); leg.castShadow = true; parent.add(leg)
-    const foot = new THREE.Mesh(new THREE.CylinderGeometry(r * .62, r * .66, .025, 32), wood); foot.position.set(mm(xMm), .0125, mm(zMm)); parent.add(foot)
+  const lampTable = (t, parent, name) => {
+    parent.add(createRoundSideTable(t, {name}))
     if (spec.lamps === false) return // tables without table lamps (layout C, owner 2026-10-04)
-    const lampBody = new THREE.Mesh(new THREE.CylinderGeometry(.07, .09, .26, 24), new THREE.MeshStandardMaterial({color: '#3b2a1e', roughness: .5}))
-    lampBody.position.set(mm(xMm), h + .15, mm(zMm)); decor.add(lampBody)
-    const shade = new THREE.Mesh(new THREE.CylinderGeometry(.13, .19, .22, 32, 1, true), shadeMaterial); shade.position.set(mm(xMm), h + .4, mm(zMm)); decor.add(shade)
+    const lamp = createTableLamp(shadeMaterial); lamp.position.set(mm(t.xMm), mm(t.heightMm ?? 550), mm(t.zMm)); decor.add(lamp)
   }
-  lampTable(spec.sideTable, decor)
-  for (const t of spec.lampTables ?? []) { const item = new THREE.Group(); item.name = 'Lamp table'; group.add(item); lampTable(t, item) }
+  lampTable(spec.sideTable, decor, 'Side table')
+  for (const t of spec.lampTables ?? []) lampTable(t, group, 'Lamp table')
 
   for (const z of spec.panelsZ) {
     const panel = framedPanel(600, 900); panel.position.set(mm(wallFaceMm) + .02, 1.5, mm(z)); decor.add(panel)

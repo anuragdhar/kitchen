@@ -2,6 +2,9 @@ import * as THREE from 'three'
 import {tagSurfaceMaterial} from '../../render/surfaceRoles.mjs'
 import {createRug, createPottedPlant, createWallArt, createCushion, createLaundryHamper} from '../shared/RoomDecor.js'
 import {createRoomTrackLighting} from '../shared/RoomTaskLighting.js'
+import {createBalconyTable} from '../shared/furniture/tables.js'
+import {createSideChair, createStool} from '../shared/furniture/chairs.js'
+import {upholsteryMaterial} from '../shared/furniture/hardForms.js'
 import {BEDROOM1_DESIGN, BEDROOM1_LAYOUT_KEYS, bedroom1LightingFor} from '../../config/bedroom1LayoutConfig.js'
 import {BEDROOM1_LIGHTING} from '../../config/bedroom1LightingConfig.js'
 import {BEDROOM1_CLOSED_DOOR} from '../../config/bedroom1ClosedDoor.js'
@@ -69,16 +72,12 @@ function createWestWardrobe(wardrobe, mat) {
 
 function createBalconyFurniture(balcony, mat) {
   const group = new THREE.Group(); group.name = 'Bedroom 1 balcony table and chair'
-  const box = boxInto(group)
   const t = balcony.table, c = balcony.chair
-  const tableX = m((t.x1 + t.x2) / 2), tableZ = m((t.z1 + t.z2) / 2), td = m(t.x2 - t.x1), tw = m(t.z2 - t.z1), th = m(t.heightMm)
-  // The work surface runs north-south beside the east glazing.
-  box(td, .04, tw, tableX, th, tableZ, mat.tabletop)
-  for (const dx of [-td / 2 + .055, td / 2 - .055]) for (const dz of [-tw / 2 + .055, tw / 2 - .055]) box(.03, th - .04, .03, tableX + dx, (th - .04) / 2, tableZ + dz, mat.frame)
-  const chairX = m((c.x1 + c.x2) / 2), chairZ = m((c.z1 + c.z2) / 2), cd = m(c.x2 - c.x1), cw = m(c.z2 - c.z1), backH = m(c.heightMm), seatH = m(c.seatHeightMm)
-  box(cd, .07, cw, chairX, seatH, chairZ, mat.seat)
-  for (const dx of [-cd / 2 + .06, cd / 2 - .06]) for (const dz of [-cw / 2 + .06, cw / 2 - .06]) box(.028, seatH - .04, .028, chairX + dx, (seatH - .04) / 2, chairZ + dz, mat.frame)
-  box(.05, backH - seatH, cw, chairX - cd / 2 + .03, (backH + seatH) / 2, chairZ, mat.seat)
+  // The work surface runs north-south beside the east glazing; the chair faces it (east). Builders: rooms/shared/furniture.
+  group.add(createBalconyTable(t, {top: mat.tabletop, frame: mat.frame}))
+  const chair = createSideChair({depth: m(c.x2 - c.x1), width: m(c.z2 - c.z1), seatH: m(c.seatHeightMm), backTop: m(c.heightMm), name: 'Balcony chair',
+    materials: {fabric: upholsteryMaterial(mat.seat.color), frame: mat.frame}})
+  chair.position.set(m((c.x1 + c.x2) / 2), 0, m((c.z1 + c.z2) / 2)); group.add(chair)
   return group
 }
 
@@ -94,8 +93,8 @@ function createDressingTable(table, mat) {
   box(mw + .04, mh + .04, .02, cx, my, .06, mat.frame)
   box(mw, mh, .006, cx, my, .072, mat.mirror)
   const s = table.stool, sw = m(s.x2 - s.x1), sd = m(s.z2 - s.z1), sh = m(s.heightMm), sx = m((s.x1 + s.x2) / 2), sz = m((s.z1 + s.z2) / 2)
-  box(sw, .08, sd, sx, sh - .04, sz, mat.seat)
-  for (const dx of [-sw / 2 + .04, sw / 2 - .04]) for (const dz of [-sd / 2 + .04, sd / 2 - .04]) box(.03, sh - .08, .03, sx + dx, (sh - .08) / 2, sz + dz, mat.frame)
+  const stool = createStool({width: sw, depth: sd, height: sh, name: 'Dressing stool', materials: {fabric: upholsteryMaterial(mat.seat.color), frame: mat.frame}})
+  stool.position.set(sx, 0, sz); group.add(stool)
   return group
 }
 
@@ -133,7 +132,7 @@ function createLayout(room, key, mat, wallFaceMm) {
   // Decor and the laundry hamper (owner requests 2026-09-28 and 2026-09-29); positions from the layout's `loose` list.
   const {rug, plant, hamper} = plan.loose
   if (rug) { const piece = createRug(m(rug.x2 - rug.x1), m(rug.z2 - rug.z1), '#c7b9a6'); piece.position.set(m((rug.x1 + rug.x2) / 2), 0, m((rug.z1 + rug.z2) / 2)); furniture.add(piece) }
-  if (plant) { const piece = createPottedPlant(m(plant.heightMm)); piece.position.set(m(plant.centerXmm), 0, m(plant.centerZmm)); furniture.add(piece) }
+  if (plant) { const piece = createPottedPlant({heightM: m(plant.heightMm), spreadM: m(plant.x2 - plant.x1)}); piece.position.set(m(plant.centerXmm), 0, m(plant.centerZmm)); furniture.add(piece) }
   if (hamper) { const piece = createLaundryHamper(); piece.position.set(m(hamper.centerXmm), 0, m(hamper.centerZmm)); furniture.add(piece) }
   // Art on the wall behind the bed head.
   const art = createWallArt(.85, .6, '#7e8b99'), bed = plan.bed

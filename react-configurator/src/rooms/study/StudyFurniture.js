@@ -1,5 +1,8 @@
 import {tagSurfaceMaterial} from '../../render/surfaceRoles.mjs'
 import * as THREE from 'three'
+import {createStudyDesk} from '../shared/furniture/tables.js'
+import {createSideChair} from '../shared/furniture/chairs.js'
+import {upholsteryMaterial} from '../shared/furniture/hardForms.js'
 
 export function createStudyFurniture(study){
  const W=study.dimensions.widthMm/1000
@@ -29,12 +32,11 @@ export function createStudyFurniture(study){
     addBed(nightBeds,'east',1.05,.9,rose)
     addBed(daySeats,'east',1.05,.55,rose)
     const deskCenterX=W-.31,deskCenterZ=3.56
-    addBox(.58,.045,.8,deskCenterX,.74,deskCenterZ,deskTop,kidsGroup)
-    addBox(.22,.012,.28,deskCenterX,.773,deskCenterZ,deskAccent,kidsGroup)
-    for(const x of [W-.56,W-.06])for(const z of [deskCenterZ-.34,deskCenterZ+.34])addBox(.035,.71,.035,x,.355,z,metal,kidsGroup)
-    addBox(.39,.06,.38,W-.91,.45,deskCenterZ,chairFabric,kidsGroup)
-    addBox(.39,.42,.055,W-1.09,.68,deskCenterZ,chairFabric,kidsGroup)
-    for(const x of [W-1.06,W-.77])for(const z of [deskCenterZ-.14,deskCenterZ+.14])addBox(.026,.43,.026,x,.215,z,metal,kidsGroup)
+    // Desk and desk chair from rooms/shared/furniture (tables-and-chairs round, 2026-10-06), at the earlier boxes' sizes:
+    // desk 580 x 800, top 762.5 high; chair seat 390 x 380, 480 high, back top 890, facing the desk (east).
+    kidsGroup.add(createStudyDesk({centerX:deskCenterX,centerZ:deskCenterZ,materials:{top:deskTop,accent:deskAccent,metal}}))
+    const deskChair=createSideChair({depth:.39,width:.38,seatH:.48,backTop:.89,name:'Desk chair',materials:{fabric:upholsteryMaterial(chairFabric.color),frame:metal}})
+    deskChair.position.set(W-.91,0,deskCenterZ);kidsGroup.add(deskChair)
 
  daySeats.visible=false
  return {group:kidsGroup,nightBeds,daySeats}
