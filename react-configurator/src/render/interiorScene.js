@@ -6,6 +6,7 @@ import {getMaterial,mapPath} from '../home/materialCatalog.mjs';
 
 import {paletteStore} from '../home/paletteStore.mjs';
 import {paletteSurfaceSpec} from '../home/paletteAppearance.mjs';
+import {currentAnisotropy} from './liveView.js';
 
 // A chosen whole-home palette decides the tagged wood and plaster of the rooms it maps; the built-in "today" palette
 // decides nothing, so the saved Interior studio > Materials setting applies exactly as before.
@@ -58,7 +59,7 @@ export function registerInteriorScene({id,scene,camera,renderer,metresPerUnit=1,
         const texture=await loader.loadAsync(`${import.meta.env.BASE_URL}${mapPath(material,channel)}`);
         texture.colorSpace=channel==='basecolor'?THREE.SRGBColorSpace:THREE.NoColorSpace;
         texture.wrapS=texture.wrapT=THREE.RepeatWrapping;
-        texture.anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy());
+        texture.anisotropy=currentAnisotropy(renderer); // the quality level's (render/renderQuality.mjs), 4 to 16
         if(!alive)texture.dispose();
         return [channel,texture];
       })).then(Object.fromEntries);

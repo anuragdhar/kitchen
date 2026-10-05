@@ -3,7 +3,6 @@ import {tagSurfaceMaterial} from './render/surfaceRoles.mjs'
 import React,{useEffect,useRef,useState} from 'react'
 import * as THREE from 'three'
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js'
-import {RoomEnvironment} from 'three/examples/jsm/environments/RoomEnvironment.js'
 import {ENTRY,ENTRY_WALL_SEGMENTS,entryPocketEastWallSpans} from './config/entryConfig.js'
 import {HOME_ROOM_LAYOUTS} from './config/homeRoomViews.js'
 import {EMPTY_ROOM_SHELLS} from './config/roomShellConfig.js'
@@ -18,7 +17,9 @@ import {createRoomElectricalPoints} from './rooms/shared/ElectricalPointMarkers.
 import RoomElectricalPanel from './home/RoomElectricalPanel.jsx'
 import {checkShoeRackAcBay} from './domain/entryFittings.mjs'
 import shoeRackWoodTexture from '../../Interior/entry-textures/shoe-rack-wood.png'
-import {createDesignerRender} from './render/designerRender.js'
+import {createLiveView} from './render/liveView.js'
+import {createDaylightRig} from './render/lightRig.js'
+import RenderQualityControls from './render/RenderQualityControls.jsx'
 import {useDesignerRender} from './render/useDesignerRender.js'
 
 const acBayCheck=checkShoeRackAcBay(ENTRY),acBayOther=checkShoeRackAcBay(ENTRY,acBayCheck.orientation==='lengthwise'?'across':'lengthwise')
@@ -39,13 +40,8 @@ export default function EntryGallery3D(){
     const width=x(planBounds.x2),length=z(planBounds.y2),height=ENTRY.wallHeightMm/1000
     const scene=new THREE.Scene();scene.background=new THREE.Color('#eef3f6')
     const camera=new THREE.PerspectiveCamera(47,1,.01,100)
-    const renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance'})
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio,2.2));renderer.outputColorSpace=THREE.SRGBColorSpace
-    renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=.84;renderer.shadowMap.enabled=true
-    mount.appendChild(renderer.domElement)
-    const designerRender=createDesignerRender(renderer,scene,camera,{enabled:designer.ref.current})
-    const pmrem=new THREE.PMREMGenerator(renderer),environment=pmrem.fromScene(new RoomEnvironment(renderer),.04).texture
-    scene.environment=environment
+    // Renderer, tone mapping, environment, shadows, quality and the Designer render: render/liveView.js.
+    const view=createLiveView({mount,scene,camera,designer:designer.ref.current}),{renderer}=view
     const controls=new OrbitControls(camera,renderer.domElement);controls.enableDamping=true
     const model=new THREE.Group();scene.add(model)
     const floorMaterial=new THREE.MeshStandardMaterial({color:'#bda890',roughness:.84})
@@ -142,8 +138,8 @@ export default function EntryGallery3D(){
       hook.rotation.z=Math.PI/2;hook.rotation.y=Math.PI/2;hook.position.set(keyStationX+.02,1.44,keyStationZ+dz);model.add(hook)
     }
     addLabel('KEYS',keyStationX+.16,1.62,keyStationZ,.55)
-    scene.add(new THREE.HemisphereLight('#ffffff','#78909c',1))
-    const sun=new THREE.DirectionalLight('#fff3dc',1.3);sun.position.set(-2,7,4);sun.castShadow=true;scene.add(sun)
+    // Sky and sun: the standard rig (render/lightRig.js), same sun direction as before.
+    const rig=createDaylightRig(scene,{sunPosition:[-2,7,4]})
     const setCamera=key=>{
       if(key==='top'){camera.position.set(width/2,10.3,length/2+.01);camera.up.set(0,0,-1);controls.target.set(width/2,0,length/2)}
       else if(key==='acBay'){camera.position.set(rackX-2.2,1.7,length+2.9);camera.up.set(0,1,0);controls.target.set(rackX,.7,length+.4)}
@@ -151,12 +147,12 @@ export default function EntryGallery3D(){
       camera.lookAt(controls.target);controls.update()
     }
     setCamera('overview')
-    const resize=()=>{const viewportWidth=mount.clientWidth,viewportHeight=mount.clientHeight;renderer.setSize(viewportWidth,viewportHeight,false);designerRender.setSize(viewportWidth,viewportHeight);camera.aspect=viewportWidth/viewportHeight;camera.updateProjectionMatrix()}
+    const resize=()=>{const viewportWidth=mount.clientWidth,viewportHeight=mount.clientHeight;view.setSize(viewportWidth,viewportHeight);camera.aspect=viewportWidth/viewportHeight;camera.updateProjectionMatrix()}
     const observer=new ResizeObserver(resize);observer.observe(mount);resize()
     const interiorScene=registerInteriorScene({id:'entry',scene,camera,renderer,zones:[{id:'entry',min:[0,0,0],max:[width,height,length]}]})
-    let raf=0;const render=()=>{controls.update();designerRender.render();raf=requestAnimationFrame(render)};render()
-    sceneRef.current={setCamera,setAcBay,setDesigner:on=>designerRender.setEnabled(on),setElectrical:value=>{electricalPoints.visible=value}}
-    return()=>{electricalPoints.userData.dispose();interiorScene.dispose();cancelAnimationFrame(raf);designerRender.dispose();observer.disconnect();controls.dispose();labelTextures.forEach(texture=>texture.dispose());model.traverse(object=>{object.geometry?.dispose?.();if(Array.isArray(object.material))object.material.forEach(material=>material.dispose());else object.material?.dispose?.()});environment.dispose();pmrem.dispose();renderer.dispose();renderer.domElement.remove();sceneRef.current=null}
+    let raf=0;const render=()=>{controls.update();view.render();raf=requestAnimationFrame(render)};render()
+    sceneRef.current={liveView:view,setCamera,setAcBay,setDesigner:on=>view.setDesigner(on),setElectrical:value=>{electricalPoints.visible=value}}
+    return()=>{electricalPoints.userData.dispose();interiorScene.dispose();cancelAnimationFrame(raf);view.dispose();observer.disconnect();controls.dispose();labelTextures.forEach(texture=>texture.dispose());model.traverse(object=>{object.geometry?.dispose?.();if(Array.isArray(object.material))object.material.forEach(material=>material.dispose());else object.material?.dispose?.()});rig.dispose();renderer.dispose();renderer.domElement.remove();sceneRef.current=null}
   },[])
 
   useEffect(()=>{sceneRef.current?.setCamera(view)},[view])
@@ -166,7 +162,7 @@ export default function EntryGallery3D(){
   return <section style={{background:'#fff',border:'1px solid #dbe3e9',borderRadius:22,overflow:'hidden',boxShadow:'0 16px 42px rgba(23,32,51,.1)'}}>
     <div style={{padding:'14px 16px',display:'flex',gap:12,alignItems:'center',justifyContent:'space-between',flexWrap:'wrap',borderBottom:'1px solid #e2e8f0'}}>
       <div><b style={{fontSize:18,color:'#172033'}}>Northwest entry gallery</b><div style={{fontSize:12,color:'#64748b',marginTop:3}}>Ventilated stainless outer door · corridor with round lights · shaft · arrival door · shoe rack · door to Drawing Room</div></div>
-      <div style={{display:'flex',gap:7}}><button {...designer.button(buttonStyle(designer.on))}/><button onClick={()=>setView('overview')} style={buttonStyle(view==='overview')}>Overview</button><button onClick={()=>setView('top')} style={buttonStyle(view==='top')}>Top</button><button onClick={()=>setShowElectrical(value=>!value)} aria-pressed={showElectrical} style={buttonStyle(showElectrical)} title="Proposed switch, socket, bell and light points for the entry, with the check results below the view (docs/ELECTRICAL_PLAN.md)">{showElectrical?'Hide electrical points':'Show electrical points'}</button><button onClick={()=>{setView(acBay?'overview':'acBay');setAcBay(!acBay)}} style={buttonStyle(acBay)}>{acBay?'Hide':'Show'} AC outdoor unit under the shoe rack</button></div>
+      <div style={{display:'flex',gap:7,flexWrap:'wrap',alignItems:'center'}}><button {...designer.button(buttonStyle(designer.on))}/><RenderQualityControls sceneRef={sceneRef} name="main-entry" buttonStyle={buttonStyle}/><button onClick={()=>setView('overview')} style={buttonStyle(view==='overview')}>Overview</button><button onClick={()=>setView('top')} style={buttonStyle(view==='top')}>Top</button><button onClick={()=>setShowElectrical(value=>!value)} aria-pressed={showElectrical} style={buttonStyle(showElectrical)} title="Proposed switch, socket, bell and light points for the entry, with the check results below the view (docs/ELECTRICAL_PLAN.md)">{showElectrical?'Hide electrical points':'Show electrical points'}</button><button onClick={()=>{setView(acBay?'overview':'acBay');setAcBay(!acBay)}} style={buttonStyle(acBay)}>{acBay?'Hide':'Show'} AC outdoor unit under the shoe rack</button></div>
     </div>
     {acBay&&<div style={{margin:'10px 16px',padding:'10px 12px',borderRadius:10,background:'#fff7ed',border:'1px solid #fed7aa',fontSize:13,color:'#7c2d12'}}>
       <b>Proposal, not decided: the AC outdoor unit in the bottom of the shoe rack.</b> Seen from outside. Drawn {acBayCheck.orientation}: the fan blows out through {acBayCheck.dischargeThrough}. Bay {acBayCheck.bayWidthMm} wide x {acBayCheck.bayHeightMm} high x {acBayCheck.bayDepthMm} deep from the gallery face, {acBayCheck.beyondWallMm} mm beyond the outer wall; {acBayCheck.shoeHeightLeftMm} mm of rack height is left for shoes ({Math.round(acBayCheck.shoeHeightLostFraction*100)}% lost).

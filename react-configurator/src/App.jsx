@@ -15,7 +15,9 @@ import {KITCHEN,KITCHEN_REFRIGERATOR,KITCHEN_STORE_STORAGE,EAST_INIT,WEST_INIT,A
 import { DEFAULT_MATERIALS, VIEW_STYLE, HEIGHT_GUIDES, RENDER_CONFIG } from './config/renderConfig.js'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
-import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js'
+import { createLiveView } from './render/liveView.js'
+import { useDesignerRender } from './render/useDesignerRender.js'
+import RenderQualityControls from './render/RenderQualityControls.jsx'
 import { createPbrMaterial } from './render/materialFactory.js'
 import { buildPlanSvg as buildPlanSvgPure } from './kitchen/export/planSvg.mjs'
 import { buildPlanDxf as buildPlanDxfPure } from './kitchen/export/planDxf.mjs'
@@ -406,6 +408,7 @@ ${westRows}
     const controlsRef=useRef(null)
     const cameraRef=useRef(null)
     const [diagnostics,setDiagnostics]=useState(()=>{try{return JSON.parse(localStorage.getItem('kitchen-diagnostics')||'[]')}catch{return []}})
+    const designer=useDesignerRender(threeViewRef)
     const saveDiagnostics=(list)=>{ localStorage.setItem('kitchen-diagnostics',JSON.stringify(list)); setDiagnostics(list) }
     useEffect(()=>{
       const mount=mountRef.current
@@ -415,13 +418,9 @@ ${westRows}
       scene.fog=new THREE.Fog(RENDER_CONFIG.scene.fog.color,RENDER_CONFIG.scene.fog.near,RENDER_CONFIG.scene.fog.far)
       const camera=new THREE.PerspectiveCamera(RENDER_CONFIG.camera.fov,1,RENDER_CONFIG.camera.near,RENDER_CONFIG.camera.far)
       cameraRef.current=camera
-      const renderer=new THREE.WebGLRenderer({antialias:true,preserveDrawingBuffer:true,alpha:false,powerPreference:'high-performance'})
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,RENDER_CONFIG.renderer.pixelRatioMax))
-      renderer.outputColorSpace=THREE[RENDER_CONFIG.renderer.outputColorSpace]||THREE.SRGBColorSpace
-      renderer.toneMapping=THREE[RENDER_CONFIG.renderer.toneMapping]||THREE.ACESFilmicToneMapping
-      renderer.toneMappingExposure=RENDER_CONFIG.renderer.toneMappingExposure
-      renderer.shadowMap.enabled=RENDER_CONFIG.renderer.shadowMapEnabled
-      renderer.shadowMap.type=THREE[RENDER_CONFIG.renderer.shadowMapType]||THREE.PCFSoftShadowMap
+      // Renderer, tone mapping, environment, shadows, quality and the Designer render: render/liveView.js, as every other live
+      // view (this planner is in centimetres). The canvas is read back by the screenshot buttons, hence preserveDrawingBuffer.
+      const view=createLiveView({scene,camera,designer:designer.ref.current,preserveDrawingBuffer:true,metresPerUnit:.01}),{renderer}=view
       renderer.domElement.style.width='100%'
       renderer.domElement.style.height='auto'
       renderer.domElement.style.display='block'
@@ -437,9 +436,6 @@ ${westRows}
       const measureLabel=document.createElement('div')
       measureLabel.style.cssText='position:absolute;transform:translate(-50%,-50%);background:#fef3c7;color:#92400e;padding:6px 10px;border-radius:10px;font:900 12px Inter,sans-serif;white-space:nowrap;border:2px solid #d97706;box-shadow:0 4px 12px rgba(0,0,0,.12);display:none;pointer-events:none'
       overlay.appendChild(measureLabel)
-      const pmremGenerator=new THREE.PMREMGenerator(renderer)
-      const envTexture=pmremGenerator.fromScene(new RoomEnvironment(),RENDER_CONFIG.renderer.roomEnvironmentBlur).texture
-      scene.environment=envTexture
       const controls=new OrbitControls(camera,renderer.domElement)
       controlsRef.current=controls
       controls.enableDamping=true
@@ -1691,8 +1687,7 @@ ${westRows}
       const resize=()=>{
         const width=mount.clientWidth||1000
         const height=Math.max(620,Math.min(860,Math.round(width*.62)))
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2))
-        renderer.setSize(width,height,false)
+        view.setSize(width,height)
         camera.aspect=width/height
         camera.updateProjectionMatrix()
       }
@@ -1710,10 +1705,11 @@ ${westRows}
         toneMapping:RENDER_CONFIG.renderer.toneMapping,
         outputColorSpace:RENDER_CONFIG.renderer.outputColorSpace,
         shadowMapType:RENDER_CONFIG.renderer.shadowMapType,
-        pixelRatio:renderer.getPixelRatio()
+        pixelRatio:renderer.getPixelRatio(),
+        renderQuality:view.quality
       }
       const interiorScene=registerInteriorScene({id:'kitchen',scene,camera,renderer,metresPerUnit:.01,zones:[{id:'kitchen',min:[-KITCHEN.width/20,0,-KITCHEN.length/20],max:[KITCHEN.width/20,KITCHEN.height/10,KITCHEN.length/20]}]})
-      threeViewRef.current={renderer,scene,camera,controls,updateCutawayVisibility,updateCursor,clickableCabinets,gpuInfo,setDaylight,setTrackLight:roomLights.setLevel,setDarkRoom:roomLights.setDarkRoom}
+      threeViewRef.current={renderer,liveView:view,setDesigner:on=>view.setDesigner(on),scene,camera,controls,updateCutawayVisibility,updateCursor,clickableCabinets,gpuInfo,setDaylight,setTrackLight:roomLights.setLevel,setDarkRoom:roomLights.setDarkRoom}
       setDaylight(kitchenDaylightRef.current)
       updateCutawayVisibility(); updateCursor()
       let frameId=0
@@ -1799,11 +1795,11 @@ ${westRows}
         controls.update()
         updateCutawayVisibility()
         updateMeasureAndDimOverlays()
-        renderer.render(scene,camera)
+        view.render()
         frameId=requestAnimationFrame(animate)
       }
       animate()
-      return ()=>{interiorScene.dispose();cancelAnimationFrame(frameId); observer.disconnect(); controls.dispose(); envTexture.dispose(); pmremGenerator.dispose(); renderer.domElement.removeEventListener('pointermove', onPointerMove); renderer.domElement.removeEventListener('pointerdown', onPointerDown); renderer.domElement.removeEventListener('pointerup', onPointerUp); renderer.domElement.removeEventListener('click', onClick); try{mount.removeChild(overlay)}catch{}; renderer.dispose(); mount.removeChild(renderer.domElement); if(threeViewRef.current?.renderer===renderer)threeViewRef.current=null}
+      return ()=>{interiorScene.dispose();cancelAnimationFrame(frameId); observer.disconnect(); controls.dispose(); view.dispose(); renderer.domElement.removeEventListener('pointermove', onPointerMove); renderer.domElement.removeEventListener('pointerdown', onPointerDown); renderer.domElement.removeEventListener('pointerup', onPointerUp); renderer.domElement.removeEventListener('click', onClick); try{mount.removeChild(overlay)}catch{}; renderer.dispose(); mount.removeChild(renderer.domElement); if(threeViewRef.current?.renderer===renderer)threeViewRef.current=null}
     },[east,west,materials,eastModules,westModules,eastTopUpperDepth,westTopUpperDepth])
     const setPreset=(preset)=>{
       const cam=threeViewRef.current?.camera
@@ -1831,6 +1827,8 @@ ${westRows}
       <button onClick={()=>setPreset('sink')} style={{padding:'6px 10px',background:'#fff',border:'1px solid #0ea5e9',borderRadius:8,fontWeight:800,color:'#0c4a6e'}}>Sink clear</button>
       <button onClick={()=>setPreset('exhaust')} style={{padding:'6px 10px',background:'#fff',border:'1px solid #0ea5e9',borderRadius:8,fontWeight:800,color:'#0c4a6e'}}>Exhaust 12"</button>
       <button onClick={export3DScreenshot} style={{padding:'8px 12px',background:'#111',color:'#fff',border:'none',borderRadius:10,fontWeight:800}}>3D Screenshot</button>
+      <button {...designer.button({padding:'6px 10px',background:designer.on?'#111':'#fff',color:designer.on?'#fff':'#111',border:'1px solid #111',borderRadius:8,fontWeight:700})}/>
+      <RenderQualityControls sceneRef={threeViewRef} name="kitchen" buttonStyle={()=>({padding:'6px 10px',background:'#fff',border:'1px solid #111',borderRadius:8,fontWeight:700})}/>
       <button onClick={()=>{
         const view3d=threeViewRef.current; if(!view3d) return;
         // high-res capture - 2x for crisp text on sink/fan/cabinet insides (#002)
