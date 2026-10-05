@@ -1,5 +1,6 @@
 import * as THREE from 'three'
 import {createDarkLabelSprite} from '../shared/LabelSprite.js'
+import {createSlatStripLeaf} from './DrawingRoomSlatStrip.js'
 
 // The west cabinet of the entry-side pocket behind the north wall (room.wallStorage; docs/ENTRY_WALL_CAVITY.md): a two-leaf
 // door through the wall at its west end, the closet behind it (outer wall to the partition) and shelves against its back.
@@ -7,7 +8,7 @@ import {createDarkLabelSprite} from '../shared/LabelSprite.js'
 // inside the wall and the pocket). `wallFaceMm` is the distance from the nominal wall line to its drawn inside face; the
 // depth is measured from that face. The closet walls are drawn translucent so it reads from the Drawing Room as well; in
 // Whole home 3D the real pocket walls (ENTRY_WALL_SEGMENTS) stand on the same lines.
-export function createDrawingRoomWallStorage(room, {wallFaceMm = 0} = {}) {
+export function createDrawingRoomWallStorage(room, {wallFaceMm = 0, surfaceMm = wallFaceMm} = {}) {
   const s = room.wallStorage, cab = s.cabinet, p = s.panelMm
   const x1 = s.fromWestMm, x2 = x1 + s.widthMm, y0 = s.bottomMm, y1 = y0 + s.heightMm
   const cx1 = cab.fromWestMm, cx2 = cx1 + cab.widthMm, ceiling = room.heightMm
@@ -57,9 +58,23 @@ export function createDrawingRoomWallStorage(room, {wallFaceMm = 0} = {}) {
     else if (wp) for (let x = 0; x <= leaf + 1; x += wp.grooveMm) box(wp.grooveWidthMm, s.heightMm - 4, 2, out * Math.min(Math.max(x, wp.grooveWidthMm / 2), leaf - wp.grooveWidthMm / 2), (y0 + y1) / 2, 30.5, grooveMat, pivot)
     leaves.push({pivot, out})
   }
+  // The slatted leaf of the TV-wall slat strip (room.southLayout.slatStrip, owner idea 2026-10-06), shown instead of the
+  // panelled leaf when that treatment is chosen (setFinish). It opens outward on its own offset pivot (DrawingRoomSlatStrip.js).
+  const slatLeaf = room.southLayout?.slatStrip && s.doorCount === 1 && !inward ? createSlatStripLeaf(room, {wallFaceMm: surfaceMm}) : null
+  if (slatLeaf) { slatLeaf.pivot.visible = false; storage.add(slatLeaf.pivot) }
   const swingDeg = 95
+  let isOpen = false
   const setLeaves = open => {
+    isOpen = open
     for (const {pivot, out} of leaves) pivot.rotation.y = open ? out * (inward ? 1 : -1) * swingDeg * Math.PI / 180 : 0
+    if (slatLeaf) slatLeaf.pivot.rotation.y = open ? -slatLeaf.openDeg * Math.PI / 180 : 0
+  }
+  // 'panel' (default): the leaf in the fluted panelling's finish; 'slatStrip': the slatted leaf.
+  storage.userData.setFinish = key => {
+    const slats = key === 'slatStrip' && !!slatLeaf
+    fronts.visible = !slats
+    if (slatLeaf) slatLeaf.pivot.visible = slats
+    setLeaves(isOpen)
   }
 
   const labels = new THREE.Group(); labels.name = 'west cabinet labels'; storage.add(labels); labels.visible = false

@@ -27,6 +27,7 @@ import {createRoomTaskLighting} from './rooms/shared/RoomTaskLighting.js'
 import {createRug,createPottedPlant,createWallArt,createFloorLamp} from './rooms/shared/RoomDecor.js'
 import {createDiningSet} from './rooms/shared/furniture/tables.js'
 import {createDrawingRoomLayouts,DRAWING_LAYOUTS} from './rooms/drawing/DrawingRoomLayouts.js'
+import {TV_WALL_TREATMENTS,DEFAULT_TV_WALL} from './domain/tvWallSlatStrip.mjs'
 import {createBedroom1Layouts} from './rooms/bedroom1/Bedroom1Layouts.js'
 import {Bedroom1LayoutToggle,Bedroom1LayoutPanel,BEDROOM1_DEFAULT_LAYOUT} from './rooms/bedroom1/Bedroom1LayoutPanel.jsx'
 import RoomLightDimmer from './rooms/shared/RoomLightDimmer.jsx'
@@ -66,7 +67,7 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
   const [tvLabels,setTvLabels]=useState(initialRoomKey==='drawing'),tvLabelsRef=useRef(initialRoomKey==='drawing')
   const [drawingLayout,setDrawingLayout]=useState('southSofas'),drawingLayoutRef=useRef('southSofas')
   const [bedroom1Layout,setBedroom1Layout]=useState(BEDROOM1_DEFAULT_LAYOUT),bedroom1LayoutRef=useRef(BEDROOM1_DEFAULT_LAYOUT) // config/bedroom1LayoutConfig.js
-  const [armOut,setArmOut]=useState(false),[tvSize,setTvSize]=useState('55'),[doorSwing,setDoorSwing]=useState(true),[storageOpen,setStorageOpen]=useState(false),[showElectrical,setShowElectrical]=useState(false)
+  const [armOut,setArmOut]=useState(false),[tvSize,setTvSize]=useState('55'),[doorSwing,setDoorSwing]=useState(true),[storageOpen,setStorageOpen]=useState(false),[tvWall,setTvWall]=useState(DEFAULT_TV_WALL),[showElectrical,setShowElectrical]=useState(false)
   const [showExisting,setShowExisting]=useState(false) // existing switchboards and sockets from the phone scan (existingElectricalConfig.js)
   const [review,setReview]=useState(null),[reviewBusy,setReviewBusy]=useState(false),[reviewNote,setReviewNote]=useState('')
   const [showFurniture,setShowFurniture]=useState(initialView!=='pooja'&&(initialRoomKey==='bedroom1'||initialRoomKey==='bedroom3'||initialRoomKey==='drawing'||initialRoomKey==='lobby'))
@@ -254,7 +255,7 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
     const planBounds=HOME_ROOM_LAYOUTS.find(layout=>layout.key===roomKey)?.bounds
     if(planBounds)shell.add(createAcOutdoorUnitsForRoom(roomKey,room,planBounds))
     const taskLighting=createRoomTaskLighting(room,{realLights:true});shell.add(taskLighting)
-    const drawingLayouts=roomKey==='drawing'?createDrawingRoomLayouts(room,{wallFaceMm:37,initial:drawingLayoutRef.current}):null
+    const drawingLayouts=roomKey==='drawing'?createDrawingRoomLayouts(room,{wallFaceMm:37,surfaceMm:T*1000/2,initial:drawingLayoutRef.current}):null
     if(drawingLayouts){drawingLayouts.setLabels(tvLabelsRef.current);shell.add(drawingLayouts.built)}
     const existingPoints=createExistingElectricalPoints(roomKey,room,{wallFaceMm:37});if(existingPoints){existingPoints.visible=false;shell.add(existingPoints)}
     // Proposed electrical points of the rooms other than the Drawing Room (config/roomElectricalConfig.js); same toggle.
@@ -425,7 +426,7 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
       }
       return {views,project}
     }
-    sceneRef.current={clearItem,liveView:view,setDesigner:on=>view.setDesigner(on),captureReview,setTrackLight:(circuit,level)=>{drawingLayouts?.setTrackLight(circuit,level);taskLighting.userData.setTrackLight?.(circuit,level);setDaylight(daylightRef.current)},setDarkRoom:on=>{darkRoom=on;setDaylight(daylightRef.current)},setTvLabels:visible=>drawingLayouts?.setLabels(visible),setDrawingLayout:key=>drawingLayouts?.setLayout(key),setDrawingArm:pulled=>drawingLayouts?.setArm(pulled),setElectrical:visible=>{drawingLayouts?.setElectrical(visible);if(roomElectrical)roomElectrical.visible=visible},setExistingElectrical:visible=>{if(existingPoints)existingPoints.visible=visible},setDoorSwing:visible=>drawingLayouts?.setDoorSwing(visible),setStorageOpen:open=>drawingLayouts?.setStorageOpen(open),setDrawingTv:key=>drawingLayouts?.setTvSize(key),setMirrorOpen:value=>vanity.userData.setMirrorOpen?.(value),setPartitionOpen:value=>partition.userData.setOpen?.(value),setCamera,setSouthVisible:value=>{southWall.visible=value},setFurnitureVisible:value=>{furniture.visible=value},setBoardOpen:value=>{ironingStorage?.userData.setBoardOpen(value)},setPoojaDoorsOpen:value=>{poojaDoors?.userData.setDoorsOpen(value)},clearMark,setDaylight}
+    sceneRef.current={clearItem,liveView:view,setDesigner:on=>view.setDesigner(on),captureReview,setTrackLight:(circuit,level)=>{drawingLayouts?.setTrackLight(circuit,level);taskLighting.userData.setTrackLight?.(circuit,level);setDaylight(daylightRef.current)},setDarkRoom:on=>{darkRoom=on;setDaylight(daylightRef.current)},setTvLabels:visible=>drawingLayouts?.setLabels(visible),setDrawingLayout:key=>drawingLayouts?.setLayout(key),setDrawingArm:pulled=>drawingLayouts?.setArm(pulled),setElectrical:visible=>{drawingLayouts?.setElectrical(visible);if(roomElectrical)roomElectrical.visible=visible},setExistingElectrical:visible=>{if(existingPoints)existingPoints.visible=visible},setDoorSwing:visible=>drawingLayouts?.setDoorSwing(visible),setStorageOpen:open=>drawingLayouts?.setStorageOpen(open),setDrawingTv:key=>drawingLayouts?.setTvSize(key),setTvWall:key=>drawingLayouts?.setTvWall(key),setMirrorOpen:value=>vanity.userData.setMirrorOpen?.(value),setPartitionOpen:value=>partition.userData.setOpen?.(value),setCamera,setSouthVisible:value=>{southWall.visible=value},setFurnitureVisible:value=>{furniture.visible=value},setBoardOpen:value=>{ironingStorage?.userData.setBoardOpen(value)},setPoojaDoorsOpen:value=>{poojaDoors?.userData.setDoorsOpen(value)},clearMark,setDaylight}
     const standing=createStandingCamera({camera,controls,domElement:renderer.domElement,bounds:{minX:.2,maxX:W+extensionDepth-.2,minZ:.2,maxZ:L+southDepth-.2},onChange:setStand});sceneRef.current.standing=standing
     if(bedroom1Layouts){const dim=sceneRef.current.setTrackLight;Object.assign(sceneRef.current,{setBedroom1Layout:key=>bedroom1Layouts.setLayout(key),setTrackLight:(circuit,level)=>{bedroom1Layouts.setTrackLight(circuit,level);dim(circuit,level)}})}
     return()=>{standing.dispose();interiorScene.dispose();cancelAnimationFrame(raf);existingPoints?.userData.dispose();roomElectrical?.userData.dispose();view.dispose();observer.disconnect();renderer.domElement.removeEventListener('pointerdown',onPointerDown);renderer.domElement.removeEventListener('pointerup',onPointerUp);controls.dispose();labelTextures.forEach(texture=>texture.dispose());shell.traverse(object=>{object.geometry?.dispose?.();if(Array.isArray(object.material))object.material.forEach(material=>material.dispose());else object.material?.dispose?.()});markedWallMaterial.dispose();rig.dispose();renderer.dispose();renderer.domElement.remove();sceneRef.current=null}
@@ -445,19 +446,20 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
   useEffect(()=>{sceneRef.current?.setExistingElectrical?.(showExisting)},[showExisting,roomKey])
   useEffect(()=>{sceneRef.current?.setStorageOpen(storageOpen)},[storageOpen,roomKey])
   useEffect(()=>{sceneRef.current?.setDrawingTv(tvSize)},[tvSize,roomKey])
+  useEffect(()=>{sceneRef.current?.setTvWall?.(tvWall)},[tvWall,roomKey])
   useEffect(()=>{sceneRef.current?.setBoardOpen(showIroningBoard)},[showIroningBoard,roomKey])
   useEffect(()=>{sceneRef.current?.setMirrorOpen(mirrorOpen)},[mirrorOpen,roomKey])
   useEffect(()=>{sceneRef.current?.setPartitionOpen(partitionOpen)},[partitionOpen,roomKey])
   useEffect(()=>{sceneRef.current?.setPoojaDoorsOpen(poojaDoorsOpen)},[poojaDoorsOpen,roomKey])
   useEffect(()=>{daylightRef.current=daylightOn;sceneRef.current?.setDaylight(daylightOn)},[daylightOn,roomKey])
 
-  useEffect(()=>{setReview(previous=>{if(previous)URL.revokeObjectURL(previous.url);return null});setReviewNote('')},[roomKey,drawingLayout,bedroom1Layout])
+  useEffect(()=>{setReview(previous=>{if(previous)URL.revokeObjectURL(previous.url);return null});setReviewNote('')},[roomKey,drawingLayout,bedroom1Layout,tvWall])
   const makeReview=async()=>{
     setReviewBusy(true);setReviewNote('')
     try{
       await new Promise(resolve=>setTimeout(resolve,30))
       const shots=sceneRef.current.captureReview()
-      const brief=buildRoomReview({roomKey,room,layoutKey:roomKey==='drawing'?drawingLayoutRef.current:roomKey==='bedroom1'?bedroom1LayoutRef.current:null,references:referencesFor(roomKey)})
+      const brief=buildRoomReview({roomKey,room,layoutKey:roomKey==='drawing'?drawingLayoutRef.current:roomKey==='bedroom1'?bedroom1LayoutRef.current:null,tvWall,references:referencesFor(roomKey)})
       const blob=await canvasToBlob(composeReviewSheet({review:brief,room,views:shots.views,project:shots.project}))
       setReview(previous=>{if(previous)URL.revokeObjectURL(previous.url);return {url:URL.createObjectURL(blob),blob,text:brief.text,title:brief.title}})
     }catch(error){setReviewNote('Could not build the review sheet: '+error.message)}
@@ -514,6 +516,7 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
           {drawingLayout==='cornerConsole'&&<button onClick={()=>setArmOut(value=>!value)} aria-pressed={armOut} style={buttonStyle(armOut)}>{armOut?'Park TV flat on the wall':'Pull TV out and turn it toward the north sofa'}</button>}
           <button onClick={()=>setTvSize(value=>value==='55'?'65':'55')} style={buttonStyle(tvSize==='65')}>TV size: {tvSize} inch (click for {tvSize==='55'?'65':'55'})</button>
         </>}
+        {roomKey==='drawing'&&drawingLayout==='southSofas'&&<button onClick={()=>setTvWall(value=>value==='panel'?'slatStrip':'panel')} aria-pressed={tvWall!=='panel'} style={buttonStyle(tvWall!=='panel')} title="Layout C TV wall. Full panelling (default): fluted panelling from the west wall to the entry door, up to the door head. Slat strip (owner idea 2026-10-06, not chosen): floor-to-ceiling round timber slats over the hidden door only, the rest of the wall plain (docs/DRAWING_ROOM_TV_WALL.md)">TV wall: {TV_WALL_TREATMENTS.find(t=>t.key===tvWall).label}</button>}
         {roomKey==='drawing'&&<button onClick={()=>setTvLabels(value=>!value)} aria-pressed={tvLabels} style={buttonStyle(tvLabels)}>{tvLabels?'Hide TV wall labels':'Show TV wall labels'}</button>}
         {roomKey==='drawing'&&<button onClick={()=>setShowDrawingRender(value=>!value)} aria-pressed={showDrawingRender} style={buttonStyle(showDrawingRender)}>{showDrawingRender?'Hide Blender preview':'Show Blender preview'}</button>}
         {(roomKey==='drawing'||roomKey==='lobby')&&<button onClick={()=>setPartitionOpen(value=>!value)} style={buttonStyle(partitionOpen)}>{partitionOpen?'Close drawing partition':'Open drawing partition'}</button>}
@@ -528,7 +531,7 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
     <div ref={mountRef} style={{height:'clamp(620px,82vh,1100px)',width:'100%'}}/>
     {showElectrical&&hasRoomElectrical(roomKey)&&<RoomElectricalPanel roomKey={roomKey}/>}
     {roomKey==='bedroom1'&&showFurniture&&<Bedroom1LayoutPanel layout={bedroom1Layout}/>}
-    {showExisting&&hasExistingElectrical(roomKey)&&<ExistingElectricalPanel roomKey={roomKey} room={room} layoutKey={roomKey==='drawing'?drawingLayout:null}/>}
+    {showExisting&&hasExistingElectrical(roomKey)&&<ExistingElectricalPanel roomKey={roomKey} room={room} layoutKey={roomKey==='drawing'?drawingLayout:null} tvWall={tvWall}/>}
     {(review||reviewNote)&&<div style={{padding:16,borderTop:'1px solid #e2e8f0',background:'#f8fafc'}}>
       <div style={{display:'flex',gap:8,flexWrap:'wrap',alignItems:'center',marginBottom:10}}>
         <b>{review?'Review sheet: '+review.title:'Review sheet'}</b>

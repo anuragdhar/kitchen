@@ -232,6 +232,32 @@ export const EMPTY_ROOM_SHELLS={
       // both door edges fall on a groove and the door is just five more slats. A slim cap with a warm light strip closes the
       // top. The door leaf takes this colour, thickness and groove spacing (DrawingRoomWallStorage.js). Colour is a proposal.
       wallPanel:{fromWestMm:40,toMm:2100,bottomMm:0,thicknessMm:18,grooveMm:100,grooveWidthMm:5,color:'#a47a52',grooveColor:'#5b3d27',cap:{heightMm:25,projectionMm:45}},
+      // SECOND TV-wall treatment, an owner IDEA of 2026-10-06, NOT chosen ("this tube-shaped wooden structure ... from the floor to
+      // the ceiling ... on the small entry"; his photo: a narrow floor-to-ceiling band of dark round timber slats beside the TV,
+      // the rest of the wall plain). The full-width wallPanel above stays the default; this is shown only when the TV-wall
+      // switch on the Drawing Room page is set to it (layout C). Every size here is a PROPOSAL (developer, 2026-10-06), checked
+      // by src/domain/tvWallSlatStrip.mjs; docs/changes/2026-10-06-slat-strip.md. Millimetres, room frame; z out from the wall face.
+      //  The band covers the hidden door only: from the west wall corner (fromWestMm) to `fixedSlatsEastOfDoor` slats past the
+      //  door, floor to ceiling. Slats are round-fronted (a shallow circular segment slatWidthMm across, slatDepthMm proud of the
+      //  wall), every slatWidthMm + gapMm = 50 mm. The 500 mm door is then exactly ten slats and each door edge is in the middle
+      //  of a 10 mm gap: no slat is cut and the leaf carries its own ten. What is left at the corner (fromWestMm to the first
+      //  slat) is a dark shadow gap. The wall and the leaf face behind the slats are painted dark (backingColor), as in the photo.
+      //  The leaf (500 x 1800) has slats up to the door head; above it the slats are fixed. The one horizontal joint is hidden in
+      //  a dark reveal (headReveal) that runs across the WHOLE band at the door head, so it reads as a deliberate line, and all
+      //  slats stop bottomGapMm above the floor (a shadow line that also hides the leaf's floor clearance).
+      //  slatDepthMm is limited by the TV console, which stays where it is (18 mm off the wall, where the panelling's face is):
+      //  14 mm slats leave 4 mm (consoleClearMinMm 3). The TV and its bracket also stay where they are.
+      //  The leaf turns on an offset pivot (floor and head) whose axis is at the front face of its slats on the hinge edge, so its
+      //  slats never touch the fixed slat beside the hinge; leafJointsMm are the gaps to the jambs (the lock side wider, so the
+      //  leaf's back corner clears the far jamb).
+      //  restOfWall: the TV wall east of the band in this option. Drawn as the plain room wall; the finish is a proposal.
+      //  color: dark walnut as in the owner's photo (the palette's Wood 3, #4a2f1e). docs/PALETTE.md recommends honey oak
+      //  (#b27d4c) for built-in TV-wall joinery and keeps walnut for loose pieces: the shade is the owner's choice.
+      slatStrip:{status:'owner idea 2026-10-06, not chosen; sizes are a proposal',fromWestMm:40,slatWidthMm:40,slatDepthMm:14,gapMm:10,fixedSlatsEastOfDoor:1,
+        bottomGapMm:10,headReveal:{belowHeadMm:3,heightMm:12},topGapMm:0,
+        color:'#4a2f1e',colorStatus:'proposal: dark walnut as in the photo; honey oak #b27d4c per docs/PALETTE.md is the alternative',backingColor:'#1d1611',
+        pivot:{kind:'offset pivot set, floor and head',axis:'slat front'},leafJointsMm:{hinge:3,lock:5},consoleClearMinMm:3,tvClearMinMm:30,
+        restOfWall:{finish:'plain wall painted like the room',status:'proposal; a stone-look laminate as in the photo is the other choice (not drawn)'}},
       soundbar:{model:'Bose Smart Soundbar 300',widthMm:699,heightMm:58,depthMm:102,frontSetbackMm:60},
       bassModule:{model:'Bose Bass Module 500',widthMm:254,heightMm:254,depthMm:241},
     },

@@ -3,6 +3,7 @@
 // y up. Points: EXISTING_ELECTRICAL in config/existingElectricalConfig.js.
 import {EXISTING_ELECTRICAL} from '../config/existingElectricalConfig.js'
 import {southTvGeometry, consoleGeometry, WALL_FACE_MM} from './drawingRoomLayout.mjs'
+import {DEFAULT_TV_WALL, slatStripGeometry, tvWallTreatment} from './tvWallSlatStrip.mjs'
 
 const SOFA_BACK_MM = 950 // a point lower than this, behind a sofa standing against the wall, cannot be reached
 const NEAR_WALL_MM = 250 // a sofa within this of a wall line counts as standing against it
@@ -80,9 +81,11 @@ function sofaBlockers(room, sofas) {
 
 /**
  * Planned things that stand on or against a wall and would cover a point: [{name, wall, a, b, bottom, top}]. The Drawing
- * Room depends on the layout (default C, 'southSofas'); other rooms list their wall-mounted furniture from config.
+ * Room depends on the layout (default C, 'southSofas') and, in layout C, on the TV-wall treatment (`tvWall`: 'panel', the
+ * default full-width fluted panelling, or 'slatStrip', the owner's 2026-10-06 idea of a slat strip over the hidden door only);
+ * other rooms list their wall-mounted furniture from config.
  */
-export function plannedBlockers(roomKey, room, layoutKey = null) {
+export function plannedBlockers(roomKey, room, layoutKey = null, tvWall = DEFAULT_TV_WALL) {
   const rows = []
   if (roomKey === 'drawing') {
     const layout = layoutKey ?? 'southSofas'
@@ -99,7 +102,8 @@ export function plannedBlockers(roomKey, room, layoutKey = null) {
       const ct = f.cornerTable
       if (ct && ct.centerXmm - ct.diameterMm / 2 < NEAR_WALL_MM) rows.push({name: 'corner lamp table', wall: 'west', a: ct.centerZmm - ct.diameterMm / 2, b: ct.centerZmm + ct.diameterMm / 2, bottom: 0, top: ct.heightMm})
       const wp = s.wallPanel
-      if (wp) rows.push({name: 'fluted wall panelling', wall: 'north', a: wp.fromWestMm, b: wp.toMm, bottom: wp.bottomMm, top: ws.bottomMm + ws.heightMm + (wp.cap?.heightMm ?? 0), panel: true})
+      if (tvWallTreatment(room, tvWall) === 'slatStrip') { const b = slatStripGeometry(room).band; rows.push({name: 'timber slat strip over the hidden door', wall: 'north', a: b.x1, b: b.x2, bottom: 0, top: room.heightMm}) }
+      else if (wp) rows.push({name: 'fluted wall panelling', wall: 'north', a: wp.fromWestMm, b: wp.toMm, bottom: wp.bottomMm, top: ws.bottomMm + ws.heightMm + (wp.cap?.heightMm ?? 0), panel: true})
       for (const key of Object.keys(s.tv.tvs)) { const g = southTvGeometry(room, key); rows.push({name: `${g.tv.diagonalInches}-inch TV`, wall: 'north', a: g.x1, b: g.x2, bottom: g.bottomMm, top: g.topMm}) }
       const g = southTvGeometry(room)
       rows.push({name: 'TV console', wall: 'north', a: g.console.x1, b: g.console.x2, bottom: g.console.bottomMm, top: g.console.topMm})
@@ -177,9 +181,9 @@ export function dispositionResolves(p) {
  * sentence the owner can act on). A clash whose point has a disposition that deals with it is `resolved` and carries the
  * `resolution` line; `open` lists the clashes still without one, and `ok` means there is none of those.
  */
-export function checkExistingElectrical(roomKey, room, {layoutKey = null, config = EXISTING_ELECTRICAL} = {}) {
+export function checkExistingElectrical(roomKey, room, {layoutKey = null, tvWall = DEFAULT_TV_WALL, config = EXISTING_ELECTRICAL} = {}) {
   const points = existingPointsFor(roomKey, config), conflicts = []
-  const openings = plannedOpenings(room), blockers = plannedBlockers(roomKey, room, layoutKey)
+  const openings = plannedOpenings(room), blockers = plannedBlockers(roomKey, room, layoutKey, tvWall)
   for (const p of points) {
     if (p.wall === 'ceiling') continue
     const label = describeExistingPoint(p)
@@ -217,9 +221,9 @@ export function checkExistingElectrical(roomKey, room, {layoutKey = null, config
  * Lines for the review brief: what exists, where it was measured from, what the plan does with each point, and every clash
  * (RESOLVED with its resolution, or CONFLICT while it is open). Empty for a room without a scan.
  */
-export function describeExistingElectrical(roomKey, room, {layoutKey = null, config = EXISTING_ELECTRICAL} = {}) {
+export function describeExistingElectrical(roomKey, room, {layoutKey = null, tvWall = DEFAULT_TV_WALL, config = EXISTING_ELECTRICAL} = {}) {
   if (!hasExistingElectrical(roomKey, config)) return []
-  const entry = config[roomKey], {points, conflicts} = checkExistingElectrical(roomKey, room, {layoutKey, config})
+  const entry = config[roomKey], {points, conflicts} = checkExistingElectrical(roomKey, room, {layoutKey, tvWall, config})
   const source = points[0]?.source ?? 'site scan'
   const lines = [`What is on the walls and ceiling TODAY, from the ${source} (small items about +/- 20 mm). These are records, not the proposed plan.`]
   if (entry.measured?.xOffsetMm) lines.push(`The scan measured x ${entry.measured.x}; ${entry.measured.xOffsetMm} mm has been subtracted so the figures below are from this room's west wall.`)

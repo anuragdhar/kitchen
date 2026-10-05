@@ -8,6 +8,7 @@ import {DRAWING_ELECTRICAL} from '../../config/drawingElectricalConfig.js'
 import {createDrawingLayoutLights} from './DrawingRoomLighting.js'
 import {createDrawingRoomDoorSwing} from './DrawingRoomDoorSwing.js'
 import {createDrawingRoomWallStorage} from './DrawingRoomWallStorage.js'
+import {DEFAULT_TV_WALL, isTvWallTreatment} from '../../domain/tvWallSlatStrip.mjs'
 
 export const DRAWING_LAYOUTS = [
   {key: 'southSofas', label: 'C: sofas south + west, TV on the north wall'},
@@ -23,7 +24,10 @@ export const DRAWING_LAYOUTS = [
  * Add both groups to the scene; setLayout switches which layout is visible.
  * The three corner-sofa layouts share one seating group and one set of ceiling fixtures.
  */
-export function createDrawingRoomLayouts(room, {wallFaceMm = 0, initial = 'southSofas'} = {}) {
+// `surfaceMm`: where the page's drawn wall mesh actually has its face, if that differs from wallFaceMm (the room page draws its
+// walls 100 mm thick, a 50 mm face, but places the furniture from 37 mm). Only finishes laid flat on the wall use it: the
+// slat strip and its paint, so they are not buried in the wall mesh. Default: wallFaceMm.
+export function createDrawingRoomLayouts(room, {wallFaceMm = 0, surfaceMm = wallFaceMm, initial = 'southSofas'} = {}) {
   const built = new THREE.Group(); built.name = 'Drawing Room fixed pieces'
   const furniture = new THREE.Group(); furniture.name = 'Drawing Room furniture'
   const tvNorth = createDrawingRoomTvWall(room, {insetMm: wallFaceMm})
@@ -33,12 +37,12 @@ export function createDrawingRoomLayouts(room, {wallFaceMm = 0, initial = 'south
     cornerProjector: createDrawingRoomCornerTv(room, {wallFaceMm, variant: 'projector'}),
   }
   const CORNER = Object.keys(corner)
-  const south = createDrawingRoomSouthTv(room, {wallFaceMm})
+  const south = createDrawingRoomSouthTv(room, {wallFaceMm, surfaceMm})
   // Electrical points belong to layout C; the inner group is the on/off switch, the outer one follows the layout.
   const electrical = new THREE.Group(); electrical.name = 'Drawing Room electrical plan'
   const electricalPoints = createDrawingRoomElectrical(room, DRAWING_ELECTRICAL, {wallFaceMm}); electricalPoints.visible = false; electrical.add(electricalPoints)
   const doorSwing = createDrawingRoomDoorSwing(room, {wallFaceMm})
-  const wallStorage = createDrawingRoomWallStorage(room, {wallFaceMm}) // part of the building: shown in every layout
+  const wallStorage = createDrawingRoomWallStorage(room, {wallFaceMm, surfaceMm}) // part of the building: shown in every layout
   const southLights = createDrawingLayoutLights(room, 'southSofas')
   const registry = [
     {part: tvNorth, layouts: ['northTv'], into: built},
@@ -54,11 +58,14 @@ export function createDrawingRoomLayouts(room, {wallFaceMm = 0, initial = 'south
   ]
   built.add(doorSwing, wallStorage.storage)
   registry.forEach(({part, into}) => into.add(part))
-  let current = initial
+  let current = initial, tvWall = DEFAULT_TV_WALL
+  // The hidden door's leaf follows the layout C TV-wall treatment only while layout C is shown; elsewhere it keeps the panelled finish.
+  const applyTvWall = () => { south.userData.setTvWall(tvWall); wallStorage.storage.userData.setFinish(current === 'southSofas' ? tvWall : DEFAULT_TV_WALL) }
   const setLayout = key => {
     if (!DRAWING_LAYOUTS.some(layout => layout.key === key)) throw new Error(`Unknown Drawing Room layout: ${key}`)
     current = key
     registry.forEach(({part, layouts}) => { part.visible = layouts.includes(key) })
+    applyTvWall()
   }
   const setLabels = visible => { for (const part of [tvNorth, wallStorage.storage, south, ...Object.values(corner)]) part.userData.setLabels(visible) }
   setLayout(initial)
@@ -73,5 +80,10 @@ export function createDrawingRoomLayouts(room, {wallFaceMm = 0, initial = 'south
     setStorageOpen: open => { wallStorage.storage.userData.setOpen(open); south.userData.setAccess(open) },
     setArm: pulled => corner.cornerConsole.userData.setArm(pulled),
     setTvSize: key => { corner.cornerConsole.userData.setTvSize(key); south.userData.setTvSize(key) },
+    // Layout C TV wall: 'panel' (the full-width fluted panelling, default) or 'slatStrip' (owner idea 2026-10-06).
+    setTvWall: key => {
+      if (!isTvWallTreatment(key)) throw new Error(`Unknown TV wall treatment: ${key}`)
+      tvWall = key; applyTvWall()
+    },
   }
 }
