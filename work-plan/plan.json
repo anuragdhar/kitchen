@@ -1960,9 +1960,9 @@
       ],
       "status": "todo",
       "needs": "Confirm the design",
-      "estimateLow": 22500,
-      "estimateHigh": 41000,
-      "estimateBasis": "storage 1450 long: 4.8 running ft x Rs 3,500-6,000; ironing board: 1 each x Rs 6,000-12,000.",
+      "estimateLow": 61500,
+      "estimateHigh": 101000,
+      "estimateBasis": "storage 1450 long: 4.8 running ft x Rs 3,500-6,000; upper storage 1450 x 1670: 26.1 sq ft x Rs 1,500-2,300; ironing board: 1 each x Rs 6,000-12,000.",
       "estimateConfidence": "low"
     },
     {

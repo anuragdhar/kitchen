@@ -400,3 +400,8 @@ is drawn about 443 high (was about 560). No models or textures were downloaded.
 - 2026-10-06 (owner idea): Drawing Room layout C has a switchable slat strip over the hidden door beside the TV
   (`southLayout.slatStrip`, `src/domain/tvWallSlatStrip.mjs`); full panelling stays the default. Note `docs/changes/2026-10-06-slat-strip.md`.
 - 2026-10-06: Codex CLI (owner's ChatGPT plan) did the louvre, mirror and dining light work in separate worktrees; reviewed, tested and merged here.
+- 2026-10-06 (owner): the Lobby east ironing cabinet goes up to 2670 (30 mm scribe gap under the 2700 ceiling); the 1000 mm lower
+  unit is unchanged (`heightMm` still means the lower unit; `src/domain/lobbyIroningStorage.mjs`). Iron socket L-E1 is now inside
+  the centre upper bay (proposal). Pooja doors have four selectable styles (`poojaAlcove.door`, `src/domain/poojaDoor.mjs`, select on
+  the Lobby page); default by rule is `fixedEastSlideWest` (east half fixed, west leaf slides east, 520 clear) because the full
+  west slider meets a dining chair. Note `docs/changes/2026-10-06-pooja-doors-tall-ironing-storage.md`.
