@@ -1,11 +1,12 @@
 import {tagSurfaceMaterial} from '../../render/surfaceRoles.mjs'
 import * as THREE from 'three'
+import {poojaDoorLeaves} from '../../domain/poojaDoor.mjs'
 
 export function createPoojaDoorAndInterior(pooja,ceilingHeightMm=2700,floorTopMm=0){
   const group=new THREE.Group()
-  group.name='Pooja Ghar right-folding wooden doors and warm interior'
+  group.name='Pooja Ghar door options and warm interior'
   const from=pooja.fromMm/1000,width=pooja.widthMm/1000,depth=pooja.depthMm/1000
-  const center=from+width/2,east=from+width,doorHeight=2.24,leafWidth=(width-.15)/2
+  const d=pooja.door,center=from+width/2,east=from+width,doorHeight=d.heightMm/1000
   const wood=new THREE.MeshStandardMaterial({color:'#4a2e22',roughness:.7})
   tagSurfaceMaterial(wood,'wood','pooja')
   const edgeWood=new THREE.MeshStandardMaterial({color:'#65402c',roughness:.64})
@@ -27,11 +28,11 @@ export function createPoojaDoorAndInterior(pooja,ceilingHeightMm=2700,floorTopMm
   addBox(group,width,.10,.12,center,doorHeight-.05,.035,wood)
   addBox(group,width,ceilingHeightMm/1000-doorHeight,.11,center,(ceilingHeightMm/1000+doorHeight)/2,0,warmWall)
 
-  const makeLeaf=(parent,hinge,direction,offsetZ=0)=>{
+  const makeLeaf=(parent,hinge,direction,offsetZ,leafWidth)=>{
     const leaf=new THREE.Group();leaf.position.set(hinge,0,offsetZ);parent.add(leaf)
     const x=direction*leafWidth/2
     const innerWidth=leafWidth-.12,innerX=x
-    const leafBottom=(floorTopMm+pooja.platformHeightMm)/1000+.02,leafTop=doorHeight-.10
+    const leafBottom=(floorTopMm+pooja.platformHeightMm)/1000+d.bottomGapMm/1000,leafTop=doorHeight-d.headInsetMm/1000
     // Amber upper glass has the rounded shoulders from the reference door.
     const bottom=leafBottom+.95,top=leafTop-.10,half=innerWidth/2
     const outline=new THREE.Shape()
@@ -69,20 +70,36 @@ export function createPoojaDoorAndInterior(pooja,ceilingHeightMm=2700,floorTopMm
     addBox(leaf,.015,.12,.025,innerX+direction*.14,medallionY,.06,brass)
     return leaf
   }
-  // The inner hinge rides with the right leaf. Opposite rotations keep the
-  // free end on the opening line while both leaves park at the east jamb.
-  const right=makeLeaf(group,east-.075,-1,.095)
-  const left=makeLeaf(right,-leafWidth,-1)
-  addBox(group,width-.15,.025,.035,center,doorHeight-.13,.13,brass)
-  const hinge=new THREE.Mesh(new THREE.CylinderGeometry(.012,.012,doorHeight-(floorTopMm+pooja.platformHeightMm)/1000-.18,10),brass)
-  hinge.position.set(-leafWidth,(doorHeight+(floorTopMm+pooja.platformHeightMm)/1000)/2,0)
-  right.add(hinge)
-  group.userData.setDoorsOpen=open=>{
-    const angle=open?Math.PI*.48:0
-    right.rotation.y=angle
-    left.rotation.y=-2*angle
+  // All styles reuse the same leaf detail; pure room-mm kinematics become Three metres here.
+  const assemblies={}
+  for(const style of Object.keys(d.options)){
+    const assembly=new THREE.Group();assembly.name='Pooja doors: '+style;group.add(assembly)
+    const specs=poojaDoorLeaves(pooja,style,false)
+    const meshes=specs.map(l=>{const mesh=makeLeaf(assembly,l.x/1000,l.direction,l.z/1000,l.width/1000);mesh.name=l.id;return mesh})
+    const sliding=style==='slideWest'||style==='fixedEastSlideWest'
+    if(sliding){
+      // PROPOSAL: top-hung rail only. No guide or track crosses the platform drawer front.
+      const railWidth=style==='slideWest'?2*width:width,railX=style==='slideWest'?from:center
+      addBox(assembly,railWidth,d.railHeightMm/1000,d.railDepthMm/1000,railX,doorHeight-d.headInsetMm/1000+d.railHeightMm/2000,(d.faceMm+(style==='fixedEastSlideWest'?d.slidingLaneMm:0))/1000,brass)
+    }else if(style==='bifoldEast'){
+      // Original rail and hinge, unchanged; the hinge moves with the east leaf.
+      const leafWidth=specs[0].width/1000
+      addBox(assembly,width-.15,.025,.035,center,doorHeight-.13,.13,brass)
+      const hinge=new THREE.Mesh(new THREE.CylinderGeometry(.012,.012,doorHeight-(floorTopMm+pooja.platformHeightMm)/1000-.18,10),brass)
+      hinge.position.set(-leafWidth,(doorHeight+(floorTopMm+pooja.platformHeightMm)/1000)/2,0);meshes[0].add(hinge)
+    }
+    assemblies[style]={assembly,meshes}
   }
-  group.userData.setDoorsOpen(true)
+  let activeStyle=d.style,doorsOpen=true
+  const updateDoors=()=>{
+    for(const [style,{assembly,meshes}] of Object.entries(assemblies)){
+      assembly.visible=style===activeStyle
+      poojaDoorLeaves(pooja,style,doorsOpen).forEach((l,i)=>{meshes[i].position.set(l.x/1000,0,l.z/1000);meshes[i].rotation.y=l.angle})
+    }
+  }
+  group.userData.setDoorStyle=style=>{if(assemblies[style]){activeStyle=style;updateDoors()}}
+  group.userData.setDoorsOpen=open=>{doorsOpen=open;updateDoors()}
+  updateDoors()
 
   // A warm interior and shallow east-facing prayer shelf retain the existing sitting space.
   addBox(group,width-.13,1.82,.02,center,1.23,-depth+.055,warmWall)

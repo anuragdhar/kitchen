@@ -1,5 +1,6 @@
 import {tagSurfaceMaterial} from '../../render/surfaceRoles.mjs'
 import * as THREE from 'three'
+import {ironingStorageTopMm} from '../../domain/lobbyIroningStorage.mjs'
 
 // The same room-local group is used by the lobby view and the whole-home view.
 export function createLobbyEastIroningStorage(room){
@@ -42,6 +43,23 @@ export function createLobbyEastIroningStorage(room){
     }
     cursor+=span
     if(i<2)box(depth-.04,height-.12,.018,centerX,height/2,cursor,body)
+  }
+  // Owner 2026-10-06: extend to the ceiling; original lower meshes above remain unchanged.
+  // The proposed open scribe allowance is NOT filled across the existing ceiling corner ring.
+  if(item.upper?.toCeiling){
+    const u=item.upper,top=ironingStorageTopMm(room)/1000,h=top-height,p=u.panelMm/1000,y=(top+height)/2
+    const upper=new THREE.Group();upper.name='Upper ironing storage: three aligned bays';group.add(upper)
+    for(const level of [height+p/2,top-p/2])box(depth,p,length,centerX,level,centerZ,body,upper)
+    for(const z of [from+p/2,from+length-p/2])box(depth,h,p,centerX,y,z,body,upper)
+    box(p,h,length,east-p/2,y,centerZ,body,upper)
+    let at=from
+    bayWidths.forEach((span,i)=>{
+      const z=at+span/2
+      box(u.doorThicknessMm/1000,h-p,span-u.doorGapMm/1000,east-depth+u.doorThicknessMm/2000,y,z,door,upper)
+      box(u.handleThicknessMm/1000,u.handleLengthMm/1000,p,east-depth-u.handleThicknessMm/2000,y,z,metal,upper)
+      at+=span
+      if(i<bayWidths.length-1)box(depth-p,h,p,centerX,y,at,body,upper)
+    })
   }
   const deployed=new THREE.Group()
   deployed.name='Pull-out ironing board deployed'
