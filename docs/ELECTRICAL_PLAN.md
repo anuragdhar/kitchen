@@ -238,7 +238,7 @@ Status: proposed 2026-10-05; no scan of this room: nothing existing is reused. S
 | ST-E3 | Desk point | east wall, z 3400, 950 high | 2 x 6 A sockets + 1 USB-A + USB-C + 1 CAT6 (optional) | laptop, lamp and chargers, 200 mm above the desk top |
 | ST-S1 | Terrace door switch + socket | south wall, x 1839, 1200 high | switch for the terrace light; 1 x 6/16 A socket | between the south cabinet and the terrace door: the terrace light, and a socket for a heater or cooler |
 | ST-W1 | Utility socket | west wall, z 1500, 300 high | 1 x 6/16 A combined socket | vacuum cleaner; on the free west wall between the bookshelf and the Home Office opening |
-| ST-W2 | AC point (unit position assumed) | west wall, z 2350, 2300 high | 1 x 16 A socket (or isolator) on its own circuit | the Study has an AC (its outdoor unit is outside the Home Office west wall) but the indoor unit is not in the model: assumed on the west wall north of the opening; move this point beside the real unit |
+| ST-W2 | AC point (unit position assumed) | west wall, z 2350, 2300 high | 1 x 16 A socket (or isolator) on its own circuit | beside the AC indoor unit of the Study, which the AC plan draws on the west wall just north of the Home Office opening (its real position was never recorded; the outdoor unit is outside the Home Office west wall): move this point beside the real unit |
 | ST-C1 | Ceiling fan | ceiling, x 1620, z 2454 | ceiling fan point with a hook rated for the fan | ceiling fan (position assumed at the room centre, not measured); regulator at ST-E1 |
 | ST-C2 | Track 1 driver feed | ceiling, x 2900, z 850 | switched 230 V point for the 60 W / 48 V track driver (dimmer at ST-E1) | at the east end of the bookshelf run, the end nearest the switchboard |
 | ST-C3 | Track 2 driver feed | ceiling, x 2700, z 1900 | switched 230 V point for the 100 W / 48 V track driver (dimmer at ST-E1, 2-way at the bed) | at the north end of the bed-and-desk run |
@@ -258,7 +258,7 @@ Checked by the app: 9 of 9 rules pass (9 points; 4 openings; 5 pieces of furnitu
 The electrician must verify:
 
 - This room has no scan: where today's switchboard, sockets, fan point and AC indoor unit are.
-- The AC indoor unit is not modelled; ST-W2 is a placeholder on the west wall and no check covers it.
+- The AC indoor unit is drawn where the AC plan assumes it (docs/AC_PLAN.md); ST-W2 follows that assumed position and must move with the real unit.
 - The bed and desk follow the kids layout of rooms/study/StudyFurniture.js (mirrored in studyLightingConfig.js downTargets), which has no furniture config of its own.
 - Which way the entry door and the terrace door hang (latch assumed at the south jamb of the entry door and the west jamb of the terrace door).
 - Whether a terrace light exists and where it is switched today.

@@ -223,9 +223,8 @@ function genericPlanItems(roomKey, room) {
     if (s) add(`Ironing unit ${s.lengthMm}x${s.depthMm}`, W - s.depthMm, s.fromNorthMm, W, s.fromNorthMm + s.lengthMm, 'fixed')
   }
   if (roomKey === 'bedroom3') {
-    const b = f.bed, w = f.westWardrobe
+    const b = f.bed
     if (b) add(`Bed ${b.lengthMm}x${b.widthMm}`, W - b.lengthMm, b.centerFromNorthMm - b.widthMm / 2, W, b.centerFromNorthMm + b.widthMm / 2, 'seat')
-    if (w) add(`Wardrobe run ${w.lengthMm}x${w.depthMm}`, 0, w.fromNorthMm, w.depthMm, w.fromNorthMm + w.lengthMm, 'fixed')
     const chest = f.westChest
     if (chest) add(`West chest ${chest.widthMm}x${chest.depthMm}`, 0, chest.fromNorthMm, chest.depthMm, chest.fromNorthMm+chest.widthMm, 'fixed')
     const c = f.eastCabinet
