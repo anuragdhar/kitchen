@@ -304,3 +304,35 @@ Checks: `checkSouthLayout()` (console clear of the west wall, overlap of the doo
 dragged console, door a whole number of slats) and `checkWallStorage().access`. In the app, "Open hidden west cabinet" drags the
 console out and swings the door open. Not confirmed on site, as before: that the pocket is hollow and that the 9-inch wall may
 be cut.
+
+## Second treatment to compare: a slat strip over the hidden door (owner idea, 2026-10-06; not chosen)
+
+The owner sent a photo of a narrow band of dark round timber slats running floor to ceiling beside a TV on a plain wall, and
+asked whether that could cover the small hidden door instead of panelling the whole wall. It is drawn as a switchable
+alternative; the full-width fluted panelling above stays the default and is unchanged. Owner note with the full comparison:
+[docs/changes/2026-10-06-slat-strip.md](changes/2026-10-06-slat-strip.md).
+
+| Item | Size and position (mm, x from the west wall) |
+| --- | --- |
+| Strip | x 40-645 (605 wide), floor to ceiling; the rest of the TV wall plain (painted: a proposal) |
+| Slats | 12, round-fronted, 40 wide x 14 deep, every 50 (10 mm gaps); 55-95 fixed, 105-595 on the door leaf (ten), 605-645 fixed |
+| Corner | a 15 mm dark shadow gap between the west wall and the first slat |
+| Door edges | x 100 and 600, each in the middle of a 10 mm gap; joints 3 mm (hinge side) and 5 mm (far side) |
+| Door-head joint | in a 12 mm dark reveal, 1,797-1,809 high, across the whole strip; slats above it fixed |
+| Floor | all slats stop 10 mm above it |
+| Behind the slats | wall and leaf face painted dark |
+| Door hardware | offset pivot (floor and head) turning about the front of the slats on the hinge edge: opens to 97 degrees (ordinary hinges: the first slat hits the fixed corner slat at 43) |
+| Colour | dark walnut `#4a2f1e` as in the photo (proposal; the palette recommends honey oak) |
+
+Clearances (checked by `checkSlatStrip()` in `src/domain/tvWallSlatStrip.mjs`, tests in
+`tests/tv-wall-slat-strip.test.mjs`): the console, which does not move, stands 4 mm off the slat fronts; the door sweeps 506 mm
+and clears the console dragged out 600 mm by 112; the 55-inch TV is 155 mm and the 65-inch 45 mm east of the strip; the
+ceiling border and corner ring start 296 and 256 mm out from the slats; Track 1 ends 175 mm east of the strip and runs 486 mm
+out from it; no planned point is behind it (N4 is 85 mm east); the Track 2 feed reaches the ceiling at x 640, inside the strip's
+top corner.
+
+What changes with it: the panelling's batten cavity is gone, so the TV and console cables (N1, N2, N4, the HDMI conduit) must
+be chased into the wall; the old switchboard X-D1 is then behind the TV only (it moves to E1 in either case); there is no cap
+light. In the app: layout C, button "TV wall: full panelling" (Drawing Room page and Whole home 3D); "Open hidden west cabinet"
+opens the slatted door. The existing-electrical list and the review sheet describe whichever treatment is shown. The budget
+prices the full panelling only.
