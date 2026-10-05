@@ -269,69 +269,6 @@ export default function App(){
   }
   const buildPlanDxf=()=>buildPlanDxfPure({KITCHEN,grid,planDimensions,activeEast,activeWest})
   const exportPlanDxf=()=>downloadText('kitchen-2d-plan-coohom-background.dxf',buildPlanDxf(),'application/dxf')
-  const buildCoohomGuide=()=>{
-    const eastRows=activeEast.map(it=>`| East | ${it.id} | ${it.y} | ${it.w} | ${it.d} | ${it.h||880} |`).join('\n')
-    const westRows=activeWest.map(it=>`| West | ${it.id} | ${it.y} | ${it.w} | ${it.d} | ${it.h||400} |`).join('\n')
-    return `# Coohom Native Cabinet Rebuild Guide
-
-Use the exported 2D plan as a background only. Rebuild the room, counters, cabinets, appliances, window, and door with Coohom native objects.
-
-## Import Background
-
-1. Export SVG, PNG, or DXF from the React app.
-2. In Coohom Floorplanner, import it as a plan/background reference.
-3. Set scale using the full room size: ${KITCHEN.width} mm wide x ${KITCHEN.length} mm long.
-4. Confirm North is at the top of the imported plan and South is at the bottom.
-5. Lock the background layer before placing native cabinets.
-
-## Room
-
-- Room width: ${KITCHEN.width} mm.
-- Room length: ${KITCHEN.length} mm.
-- Wall height: ${KITCHEN.height} mm.
-- South opening to Lobby/Dining: ${KITCHEN.door.w} mm wide from the west corner; the remaining ${KITCHEN.southWallReturn.lengthMm} mm is wall.
-- North window: ${KITCHEN.window.w} mm wide, ${KITCHEN.window.h} mm high, sill ${KITCHEN.window.sill} mm.
-- North window below-sill reference: ${KITCHEN.windowBelow?.depth||300} mm deep only under the ${KITCHEN.window.w} mm window. East and West runs may continue to the north wall.
-
-## Native Cabinet Runs
-
-- East wall: create a 600D base counter from South y0 to y${KITCHEN.length}.
-- East wall: create 320D lower upper cabinets and ${eastTopUpperDepth}D top upper cabinets to the ceiling.
-- West wall: keep y0 to y${KITCHEN.westGap.to} completely clear for the door zone from floor to ceiling.
-- West wall: create a ${KITCHEN.westCounterDepth||600}D counter only from y${KITCHEN.westGap.to} to y${KITCHEN.length}.
-- West wall: create 320D lower upper cabinets and ${westTopUpperDepth}D top upper cabinets only after the door clear zone.
-
-## Placement Table
-
-Y is measured in millimeters from the South wall toward the North wall.
-
-| Wall | Item | South Y mm | Width Along Wall mm | Depth mm | Height mm |
-| --- | --- | ---: | ---: | ---: | ---: |
-${eastRows}
-${westRows}
-
-## Materials
-- Cabinet body: ${renderMaterials.cabinetBody}
-- Shutters: ${renderMaterials.shutters}
-- Counter: ${renderMaterials.counter}
-- Backsplash: ${renderMaterials.backsplash}
-- Floor: ${renderMaterials.floor}
-- Wall: ${renderMaterials.wall}
-- Handle style: handleless
-
-## Coohom Rebuild Notes
-
-- Use Coohom native base cabinets, wall cabinets, appliances, sink, hidden chimney insert, and shaft objects.
-- Keep the East gas as a cooktop with the chimney body hidden inside the 320D upper cabinet; only a slim under-cabinet vent slot should remain visible.
-- Keep the East microwave and appliance garage open: microwave above backsplash, food processor inside the counter-height pull-out garage.
-- Keep the West washing machine and dishwasher open, not behind shutters.
-- Keep the West order from South to North: washing machine, sink, dishwasher, 6in slider storage, shaft.
-- Add 4in East backsplash slider storage and 6in West slider storage as separate shallow slider-door units.
-- Keep the West shaft fixed at the north-west end.
-- Hide or delete the imported background after native cabinets are rebuilt.
-`
-  }
-  const exportCoohomGuide=()=>downloadText('coohom-native-rebuild-guide.md',buildCoohomGuide(),'text/markdown')
 
   // BOM
   const buildBOM=()=>buildBOMPure({KITCHEN,eastRunLength,westRunLength,BACKSPLASH_HEIGHT,eastModules,westModules,activeEast,activeWest,isCabinetLikeItem,planLabel})
@@ -1980,8 +1917,6 @@ ${westRows}
       <button onClick={exportPlanSvg} style={{padding:'8px 12px',background:'#fff',color:'#111',border:'2px solid #7b3f21',borderRadius:10,fontWeight:800}}>Export 2D SVG</button>
       <button onClick={exportPlanPng} style={{padding:'8px 12px',background:'#fff',color:'#111',border:'2px solid #7b3f21',borderRadius:10,fontWeight:800}}>Export 2D PNG</button>
       <button onClick={exportPlanDxf} style={{padding:'8px 12px',background:'#fff',color:'#111',border:'2px solid #7b3f21',borderRadius:10,fontWeight:800}}>Export 2D DXF</button>
-      {/* Coohom Guide hidden for now - code preserved, button commented out */}
-      {/* <button onClick={exportCoohomGuide} style={{padding:'8px 12px',background:'#7b3f21',color:'#fff',border:'2px solid #7b3f21',borderRadius:10,fontWeight:800}}>Coohom Guide</button> */}
       <button onClick={exportJSON} style={{padding:'8px 12px',background:'#111',color:'#fff',border:'none',borderRadius:10,fontWeight:800}}>Export JSON</button>
       {/* "Export Project Package" (ZIP of screenshots/PDF/exports) removed
           2026-09-28 on the owner's request - it served an earlier workflow;
