@@ -11,6 +11,19 @@ import {currentAnisotropy} from './liveView.js';
 // A chosen whole-home palette decides the tagged wood and plaster of the rooms it maps; the built-in "today" palette
 // decides nothing, so the saved Interior studio > Materials setting applies exactly as before.
 const specFor=(settings,paletteId,room,role)=>paletteSurfaceSpec(paletteId,room,role)??getMaterial(effectiveMaterials(settings,room)[role],role);
+// Veneer joinery is lacquered: a thin satin coat over the open grain. Only the few authored MeshPhysicalMaterials got the
+// coat before, because the themed copy was a clone of whatever the builder used; most wood was a MeshStandardMaterial and read
+// as raw, matte board. Since 2026-10-05 (render-quality pass) every themed wood surface is a MeshPhysicalMaterial with the
+// same colour, maps and roughness and this coat, so it catches a soft highlight from the room's environment. Plaster stays a
+// clone (matte paint has no coat).
+export const WOOD_LACQUER=Object.freeze({clearcoat:.22,clearcoatRoughness:.38});
+function finishMaterial(original,role){
+  if(role!=='wood'||original.isMeshPhysicalMaterial||!original.isMeshStandardMaterial)return original.clone();
+  const material=new THREE.MeshPhysicalMaterial();
+  THREE.MeshStandardMaterial.prototype.copy.call(material,original);
+  material.defines={STANDARD:'',PHYSICAL:''};
+  return material;
+}
 const scenes=new Map();
 const events=new Set();
 export const subscribeScenes=listener=>{events.add(listener);return()=>events.delete(listener);};
@@ -81,7 +94,7 @@ export function registerInteriorScene({id,scene,camera,renderer,metresPerUnit=1,
           const role=original.userData?.interiorRole;if(!role)return original;
           const spec=specFor(settings,paletteId,original.userData?.interiorRoom||entry.room,role);if(!spec)return original;
           const key=`${original.uuid}:${spec.id}`;if(materialCache.has(key))return materialCache.get(key);
-          const maps=loaded.get(spec.id),material=original.clone();generated.add(material);materialCache.set(key,material);
+          const maps=loaded.get(spec.id),material=finishMaterial(original,role);generated.add(material);materialCache.set(key,material);
           const repeat=(role==='wood'?settings.grainScale:1)/spec.sizeMetres;
           // Texture clones keep transform settings independent between material variants.
           const copy=source=>{const t=source.clone();t.repeat.set(repeat,repeat);t.needsUpdate=true;return t;};
@@ -91,7 +104,7 @@ export function registerInteriorScene({id,scene,camera,renderer,metresPerUnit=1,
           material.roughnessMap=copy(maps.roughness);material.roughness=spec.roughness;
           material.color.set(spec.color||'#ffffff');material.metalness=0;
           material.bumpMap=null;material.displacementMap=null;material.aoMap=null;
-          if('clearcoat' in material){material.clearcoat=role==='wood'?.12:0;material.clearcoatRoughness=.45;}
+          if('clearcoat' in material){material.clearcoat=role==='wood'?WOOD_LACQUER.clearcoat:0;material.clearcoatRoughness=WOOD_LACQUER.clearcoatRoughness;}
           material.needsUpdate=true;
           // Each cloned texture is owned by this material, unlike its cached source.
           material.addEventListener('dispose',()=>{material.map?.dispose();material.normalMap?.dispose();material.roughnessMap?.dispose();});
