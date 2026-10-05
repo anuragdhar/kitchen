@@ -2,13 +2,23 @@
 // or DOM). Millimetres in the kitchen frame of kitchenConfig.js: x west to east, y south to north along the runs.
 // WholeHome3D.jsx draws the boxes; this module only decides which items, base spans and upper runs there are.
 import {KITCHEN, EAST_INIT, WEST_INIT, KITCHEN_AUTOSAVE_KEY, NORTH_HOB_OPTION_Y_MM, EAST_TOP_UPPER_DEPTH, WEST_TOP_UPPER_DEPTH, autoFillModules} from '../config/kitchenConfig.js'
+import {versionedStorageKey} from '../persistence/projectStorage.mjs'
 
 /**
  * The saved kitchen project as plain fields (east, west, eastModules, ...), or {} when nothing readable is saved.
  * `getStorage` returns the Storage (window.localStorage); it is called inside the guard, so blocked storage reads as {}.
+ * The kitchen page autosaves a versioned document under `<key>:schema-1` (persistence/projectStorage.mjs, PROJECT_FORMAT.md)
+ * and never rewrites the legacy key, so that document comes first; a legacy autosave is the fallback. Read-only: this
+ * preview never writes or migrates either key.
  */
 export function readSavedKitchen(getStorage) {
-  try { return JSON.parse(getStorage().getItem(KITCHEN_AUTOSAVE_KEY) || '{}') } catch { return {} }
+  try {
+    const storage = getStorage()
+    const data = JSON.parse(storage.getItem(versionedStorageKey(KITCHEN_AUTOSAVE_KEY)) ?? storage.getItem(KITCHEN_AUTOSAVE_KEY) ?? '{}')
+    if (!data || typeof data !== 'object' || Array.isArray(data)) return {}
+    // A versioned document keeps the module lists under `modules` (projectCodec.mjs encodeProject); a legacy one as eastModules/westModules.
+    return data.modules && typeof data.modules === 'object' ? {...data, eastModules: data.modules.east, westModules: data.modules.west} : data
+  } catch { return {} }
 }
 
 /** Saved (or default) items of both runs; the shaft takes its merged size and a hob left at the old y 1350 moves north. */

@@ -1,6 +1,8 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import {KITCHEN, EAST_INIT, WEST_INIT, KITCHEN_AUTOSAVE_KEY, NORTH_HOB_OPTION_Y_MM, EAST_TOP_UPPER_DEPTH, WEST_TOP_UPPER_DEPTH} from '../src/config/kitchenConfig.js'
+import {createProjectStorage} from '../src/persistence/projectStorage.mjs'
+import {customProject, memoryStorage, options} from './project-fixture.mjs'
 import {readSavedKitchen, wholeHomeKitchenItems, wholeHomeBaseSpans, wholeHomeUpperRuns} from '../src/kitchen/wholeHomeKitchen.mjs'
 
 const storageWith = entries => () => ({getItem: key => (key in entries ? entries[key] : null)})
@@ -43,4 +45,23 @@ test('saved modules, depths and items are used; a hob saved at the old y 1350 mo
   assert.deepEqual(wholeHomeBaseSpans(saved, items).map(s => [s.side, s.start, s.end]), [['east', 4146, 4746], ['east', 3696, 4146], ['west', 3546, 4746]])
   const [east, west] = wholeHomeUpperRuns(saved, items)
   assert.deepEqual([east.upperDepth, west.upperDepth, west.rack, west.lowerSpans], [400, 350, undefined, [[KITCHEN.westGap.to, KITCHEN.length]]])
+})
+
+test('the whole home shows what the kitchen page autosaved (versioned document first, legacy autosave as fallback)', () => {
+  // Save the way the kitchen page does (hooks/useKitchenProject.js): a versioned document under '<key>:schema-1'.
+  const storage = memoryStorage()
+  const project = customProject(); project.eastModules = [{id: 'e1', width: 600, type: 'base', drawers: 0}]
+  const autosave = createProjectStorage(() => storage, KITCHEN_AUTOSAVE_KEY, options)
+  autosave.load(); autosave.save(project)
+  storage.setItem(KITCHEN_AUTOSAVE_KEY, JSON.stringify({eastTopUpperDepth: 999, eastModules: [{width: 100}]})) // an older legacy autosave beside it
+  const saved = readSavedKitchen(() => storage)
+  assert.deepEqual(saved.east, project.east)
+  assert.deepEqual(saved.eastModules, project.eastModules)
+  assert.deepEqual(saved.westModules, project.westModules)
+  assert.equal(saved.eastTopUpperDepth, project.eastTopUpperDepth)
+  // Only the legacy autosave present: read as before.
+  const legacy = memoryStorage({[KITCHEN_AUTOSAVE_KEY]: JSON.stringify({eastTopUpperDepth: 480, eastModules: [{width: 100}]})})
+  assert.deepEqual(readSavedKitchen(() => legacy), {eastTopUpperDepth: 480, eastModules: [{width: 100}]})
+  assert.deepEqual(readSavedKitchen(() => memoryStorage({[KITCHEN_AUTOSAVE_KEY]: 'null'})), {})
+  assert.equal(storage.map.get(KITCHEN_AUTOSAVE_KEY), JSON.stringify({eastTopUpperDepth: 999, eastModules: [{width: 100}]}), 'the legacy key is left untouched')
 })
