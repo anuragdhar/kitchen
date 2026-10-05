@@ -73,7 +73,7 @@ function bodyGeometries(D, L, H) {
 
   // Seat cushions: three across the span, front just inside the outer box, crowned top and front, piped top and bottom edges.
   const seatDepth = halfD - frameBack, seatWidth = span / 3 - .004, seatHeight = P.seatTop - .012 - P.baseTop
-  const seatSpec = {width: seatDepth - .006, height: seatHeight, depth: seatWidth, radius: .035, arc: 2, inner: [2, 1, 2], crown: {py: .012, px: .006, pz: .004, nz: .004}}
+  const seatSpec = {width: seatDepth - .006, height: seatHeight, depth: seatWidth, radius: .035, arc: 2, inner: [3, 1, 3], crown: {py: .012, px: .006, pz: .004, nz: .004}}
   const seatX = frameBack + seatDepth / 2 - .003, seatY = P.baseTop + seatHeight / 2
   const parts = []
   for (let i = 0; i < 3; i++) {
