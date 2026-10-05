@@ -45,7 +45,7 @@ test('Lobby: dining, iron, AC and toilet points follow the furniture and stay cl
   assert.equal(pointOf(r, 'L-E1').where, 'east wall, z 1375, 1250 high')
   assert.match(issuesWith('lobby', 'L-E1', {heightMm: 800}), /hidden behind the ironing storage unit/)
   assert.match(issuesWith('lobby', 'L-E2', {alongMm: 2500}), /is in the open side on the east wall/)
-  assert.match(issuesWith('lobby', 'L-N4', {anchor: undefined, alongMm: 2580}), /hidden behind the split AC indoor unit/)
+  assert.match(issuesWith('lobby', 'L-N4', {anchor: undefined, alongMm: 3133}), /hidden behind the split AC indoor unit/)
   assert.match(issuesWith('lobby', 'L-N4', {anchor: undefined, alongMm: 4300}), /is in the open side on the north wall/)
   assert.match(issuesWith('lobby', 'L-S1', {anchor: undefined, alongMm: 1300}), /is in the door to Toilet/)
   assert.match(issuesWith('lobby', 'L-N3', {kind: 'power'}), /no charging point within 1.5 m of the dining chair/)

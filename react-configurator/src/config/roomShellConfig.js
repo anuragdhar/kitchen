@@ -88,7 +88,12 @@ export const EMPTY_ROOM_SHELLS={
     name:'Lobby / Dining',widthMm:4993,lengthMm:3277,heightMm:2700,color:'#4b93a7',source:'A501 floor plan',openSide:'west',
     hangingBeams:[{wall:'west',fromMm:0,toMm:3277,dropMm:305,widthMm:180}],
     wallOpenings:{east:{fromMm:2177,toMm:3277},north:{fromMm:3793,toMm:4993}},
-    poojaAlcove:{wall:'north',fromMm:3793,widthMm:1200,depthMm:1000,altarVisible:false,templeDepthMm:254,seatedPersonFromWestMm:400,platformHeightMm:190,drawerDepthMm:550},
+    // ceilingLight (owner 2026-10-05: "a light on the ceiling of the Pooja Ghar, the circular one I used earlier in the home
+    // office"): one round surface LED panel in the middle of the alcove ceiling. Size and wattage are the typical figures of the
+    // round panels already used for the Main entry (entryLightingConfig.js: 170 mm across, 35 deep, 8 W, 800 lm); the fitting
+    // in the Home Office was not measured, so copy its make and colour of light from the real one.
+    poojaAlcove:{wall:'north',fromMm:3793,widthMm:1200,depthMm:1000,altarVisible:false,templeDepthMm:254,seatedPersonFromWestMm:400,platformHeightMm:190,drawerDepthMm:550,
+      ceilingLight:{kind:'round surface LED panel, as in the Home Office',diameterMm:170,depthMm:35,watts:8,lumens:800,centred:true,status:'owner 2026-10-05; size typical, not measured'}},
     furniture:{
       diningTable:{centerXmm:2200,centerZmm:620,widthMm:700,lengthMm:1200,heightMm:745},chairRowsZmm:[290,950],chairOffsetXmm:620,
       eastIroningStorage:{fromNorthMm:650,lengthMm:1450,depthMm:400,heightMm:1000,doorCount:3,centerBayWidthMm:600,boardLengthMm:950,boardWidthMm:300},

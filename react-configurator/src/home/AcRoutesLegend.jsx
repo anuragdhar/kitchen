@@ -1,5 +1,5 @@
 import React from 'react'
-import {acRoutesSummary} from '../rooms/shared/AcPipeRoutes.js'
+import {acRoutesSummary, AC_POWER_COLOUR} from '../rooms/shared/AcPipeRoutes.js'
 
 // Key to the "Show AC pipe routes" overlay of Whole home 3D: one chip per room with the lengths from the AC plan checks
 // (config/acPlanConfig.js, domain/acPlan.mjs). Everything shown is a proposal from typical figures.
@@ -9,9 +9,10 @@ export default function AcRoutesLegend() {
     <b>AC plan:</b>
     {rows.map(row => <span key={row.id} style={{display: 'inline-flex', alignItems: 'center', gap: 6}}>
       <span aria-hidden="true" style={{width: 22, height: 6, borderRadius: 3, background: row.colour}}/>
-      {row.name}: {row.type} {row.tons} ton ({row.status}){row.pipeM != null ? `, pipe ${row.pipeM.toFixed(1)} m` : ', no pipes'}, drain {row.drainM.toFixed(1)} m
+      {row.name}: {row.type} {row.tons} ton ({row.status}){row.pipeM != null ? `, pipe ${row.pipeM.toFixed(1)} m` : ', no pipes'}, drain {row.drainM.toFixed(1)} m{row.power?.electricalId ? `, power point ${row.power.electricalId}${row.power.assumed ? ' (assumed)' : ''}` : ''}
     </span>)}
     <span style={{display: 'inline-flex', alignItems: 'center', gap: 6}}><span aria-hidden="true" style={{width: 22, height: 3, background: '#0891b2'}}/>drain to its discharge point (blue disc)</span>
+    <span style={{display: 'inline-flex', alignItems: 'center', gap: 6}}><span aria-hidden="true" style={{width: 12, height: 12, background: AC_POWER_COLOUR, border: '1px solid #111827'}}/>power point: 16 A socket or isolator on its own 20 A circuit</span>
     <span>Kitchen: no AC. Proposal from typical figures, nothing measured: docs/AC_PLAN.md</span>
   </div>
 }

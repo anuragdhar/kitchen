@@ -203,3 +203,31 @@ test('outdoor units: how each is reached for service is recorded', () => {
   assert.equal(pipeRoute(space('study').pipe, AC_PLAN).liftM, 0.7)
   assert.equal(indoorUnitBox(space('kitchen'), AC_PLAN), null)
 })
+
+test('every AC has a defined power point, the same point as in the electrical plans (owner 2026-10-05)', async () => {
+  const {AC_PLAN: plan} = await import('../src/config/acPlanConfig.js')
+  const {resolveWaypoint: resolve} = await import('../src/domain/acPlan.mjs')
+  const {roomElectricalReport} = await import('../src/domain/roomElectricalModels.mjs')
+  const {DRAWING_ELECTRICAL} = await import('../src/config/drawingElectricalConfig.js')
+  const machines = plan.spaces.filter(space => space.power)
+  assert.deepEqual(machines.map(space => [space.id, space.power.electricalId]), [['drawing', 'W1'], ['lobby', 'L-N4'], ['bedroom1', 'B1-B1'], ['study', 'ST-W2'], ['bedroom3', 'B3-E3']])
+  for (const space of machines) {
+    const p = resolve(space.power.at, plan)
+    assert.ok(Number.isFinite(p.planX) && Number.isFinite(p.planY) && space.power.at.heightMm > 0, `${space.id}: the power point has a place`)
+    assert.ok(space.power.place.length > 20, `${space.id}: the place is described`)
+  }
+  // Same wall position and height as the electrical plan's point.
+  const electrical = {lobby: 'lobby', bedroom1: 'bedroom1', study: 'study', bedroom3: 'bedroom3'}
+  for (const [id, key] of Object.entries(electrical)) {
+    const space = plan.spaces.find(s => s.id === id), point = roomElectricalReport(key).points.find(p => p.id === space.power.electricalId)
+    assert.ok(point, `${id}: ${space.power.electricalId} is in the electrical plan`)
+    assert.equal(point.heightMm, space.power.at.heightMm, `${id}: same height`)
+    const along = ['north', 'south'].includes(point.wall) ? space.power.at.xMm : space.power.at.zMm
+    assert.ok(Math.abs(point.alongMm - along) <= 1, `${id}: ${point.alongMm} along the wall in the electrical plan, ${along} in the AC plan`)
+  }
+  const w1 = DRAWING_ELECTRICAL.points.find(p => p.id === 'W1'), drawing = plan.spaces.find(s => s.id === 'drawing')
+  assert.deepEqual([drawing.power.at.zMm, drawing.power.at.heightMm], [w1.alongMm, w1.heightMm])
+  // The Lobby point is beside its unit, on the side away from the Pooja alcove.
+  const lobby = plan.spaces.find(s => s.id === 'lobby')
+  assert.ok(lobby.power.at.xMm < lobby.indoor.centreMm - 500)
+})

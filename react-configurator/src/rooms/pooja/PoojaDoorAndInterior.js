@@ -116,5 +116,16 @@ export function createPoojaDoorAndInterior(pooja,ceilingHeightMm=2700,floorTopMm
   }
   const light=new THREE.PointLight('#ffc77d',1.25,1.7)
   light.position.set(center,2.16,-depth*.62);group.add(light)
+  // Round ceiling light in the middle of the alcove (pooja.ceilingLight, owner 2026-10-05): a surface panel with a real light.
+  const ceilingLight=pooja.ceilingLight
+  if(ceilingLight){
+    const radius=ceilingLight.diameterMm/2000,thick=ceilingLight.depthMm/1000,top=ceilingHeightMm/1000
+    const rim=new THREE.Mesh(new THREE.CylinderGeometry(radius,radius,thick,36),new THREE.MeshStandardMaterial({color:'#f4f2ee',roughness:.5}))
+    rim.position.set(center,top-thick/2,-depth/2);rim.name='Pooja Ghar round ceiling light';group.add(rim)
+    const lensMaterial=new THREE.MeshStandardMaterial({color:'#fff3dc',emissive:'#ffd9a1',emissiveIntensity:1.1,roughness:.9});lensMaterial.userData.taskLightGlow=true
+    const lens=new THREE.Mesh(new THREE.CylinderGeometry(radius*.88,radius*.88,.004,36),lensMaterial)
+    lens.position.set(center,top-thick-.002,-depth/2);group.add(lens)
+    const down=new THREE.PointLight('#ffe2bd',1.1,3.2,1.6);down.position.set(center,top-thick-.05,-depth/2);group.add(down)
+  }
   return group
 }

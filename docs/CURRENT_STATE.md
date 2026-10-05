@@ -330,3 +330,23 @@ Blender exports and stills were not regenerated for any of this.
 - Later 2026-10-05: Bedroom 3 outdoor unit on the wall at 1830 (6 ft), Bedroom 2's at 1524 (5 ft); the owner's 1.5 ton window
   AC in the east side of the Bedroom 1 balcony on an iron frame (`bedroom1.balconyExtension.windowAc`, typical casing
   660 x 430 x 700, on the 1 m parapet, centred 1353 from the north end); Bedroom 1's split outdoor unit raised to 1800 above it.
+
+## 2026-10-05 (later): parallel design round
+
+Six pieces of work, each with a note in `docs/changes/2026-10-05-*.md`:
+- **Tracks and mouldings:** every track run in the Drawing Room, Lobby and Bedroom 3 moved or shortened onto flat slab,
+  40 mm clear of the scanned plaster mouldings (`ceilingMouldings` in the lighting configs); Lobby fan modelled as probable.
+- **Bedroom 1:** layout checks (`src/domain/bedroom1Layout.mjs`), hamper and rug moved, balcony wardrobe sliding; an
+  alternative layout B (bed head on the south wall) behind a toggle, recommended but NOT chosen by the owner.
+- **Work plan:** 101 tasks in buildable order with dependency checks and a rough budget (about Rs 15.1 to 26.6 lakh for 91
+  tasks; planning ranges, not quotes): `docs/WORK_PLAN_BUDGET.md`, `docs/NEXT_STEPS.md`, generator
+  `react-configurator/scripts/work-plan-estimate.mjs`.
+- **AC plan:** `src/config/acPlanConfig.js`, `docs/AC_PLAN.md`; pipe, drain and power point per machine, shown by "Show AC
+  pipe routes" in Whole home 3D. Recommendations not yet confirmed by the owner: no split AC in Bedroom 1 (the window AC
+  covers it), a 1.5 ton unit for the Lobby using the outdoor place marked for Bedroom 1, Drawing Room outdoor unit on the
+  west wall.
+- **Palette:** `src/config/homePaletteConfig.js`, `docs/PALETTE.md`, a Palette page and a preview selector; the default
+  look is unchanged and no palette is chosen.
+- **Electrical plans:** `src/config/roomElectricalConfig.js`, `docs/ELECTRICAL_PLAN.md` for the Lobby, Bedroom 1,
+  Bedroom 3, Study, Home Office and Main entry; the three clashes with existing points have a resolution each.
+- Pooja Ghar: one round surface ceiling light in the middle of the alcove (`lobby.poojaAlcove.ceilingLight`).

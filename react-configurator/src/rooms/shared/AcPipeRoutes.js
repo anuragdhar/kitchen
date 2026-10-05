@@ -1,14 +1,15 @@
 import * as THREE from 'three'
 import {AC_PLAN} from '../../config/acPlanConfig.js'
-import {checkAcPlan} from '../../domain/acPlan.mjs'
+import {checkAcPlan, resolveWaypoint} from '../../domain/acPlan.mjs'
 
 // The pipe routes of the whole-home AC plan (config/acPlanConfig.js) for Whole home 3D, in model metres: plan x (west) and
 // plan y (north) through the caller's X and Z, height up. One colour per room: the thick line is the refrigerant pipe pair
 // with its length to order; the thin blue line is the condensate drain down to its discharge point (blue disc); the ring
-// is the hole through the wall. Drawn over everything (no depth test) so a route inside a wall or cabinet still shows, and
+// is the hole through the wall; the yellow box is the machine's power point (its own 16/20 A circuit). Drawn over everything (no depth test) so a route inside a wall or cabinet still shows, and
 // never picked or measured (userData.noMeasure). Colours are for telling the routes apart only.
 export const AC_ROUTE_COLOURS = {drawing: '#e11d48', lobby: '#f59e0b', bedroom1: '#7c3aed', study: '#2563eb', bedroom3: '#059669'}
 const DRAIN_COLOUR = '#0891b2'
+export const AC_POWER_COLOUR = '#facc15'
 
 function label(text, colour) {
   const canvas = document.createElement('canvas'); canvas.width = 720; canvas.height = 96
@@ -46,13 +47,20 @@ export function createAcPipeRoutes(X, Z) {
     const disc = new THREE.Mesh(new THREE.CylinderGeometry(.11, .11, .02, 20), new THREE.MeshBasicMaterial({color: DRAIN_COLOUR, depthTest: false, transparent: true}))
     disc.position.copy(end).setY(.03); disc.renderOrder = 1400; disc.userData.noMeasure = true; group.add(disc)
     const short = row.name.replace(/ \+.*$/, '').replace(' (Study)', '')
+    const power = space.power?.at ? point(resolveWaypoint(space.power.at, AC_PLAN)) : null, powerText = power ? `, power ${space.power.electricalId}` : ''
+    if (power) {
+      const box = new THREE.Mesh(new THREE.BoxGeometry(.16, .16, .16), new THREE.MeshBasicMaterial({color: AC_POWER_COLOUR, depthTest: false, transparent: true}))
+      box.position.copy(power); box.renderOrder = 1401; box.userData.noMeasure = true; group.add(box)
+      const edge = new THREE.LineSegments(new THREE.EdgesGeometry(box.geometry), new THREE.LineBasicMaterial({color: '#111827', depthTest: false, transparent: true}))
+      edge.position.copy(power); edge.renderOrder = 1402; edge.userData.noMeasure = true; group.add(edge)
+    }
     if (row.pipe) {
       tube(row.pipe.points, .04, colour, 1401)
       const hole = new THREE.Mesh(new THREE.TorusGeometry(.09, .02, 8, 20), new THREE.MeshBasicMaterial({color: '#111827', depthTest: false, transparent: true}))
       hole.position.copy(point(row.pipe.points[0])); hole.rotation.x = Math.PI / 2; hole.renderOrder = 1401; hole.userData.noMeasure = true; group.add(hole)
       const middle = point(row.pipe.points[0]).lerp(point(row.pipe.points[row.pipe.points.length - 1]), .5)
-      add(label(`${short}: pipe ${row.pipe.lengthM.toFixed(1)} m, drain ${row.drain.lengthM.toFixed(1)} m`, colour), middle.setY(2.7), .45)
-    } else add(label(`${short}: ${space.type} AC, drain ${row.drain.lengthM.toFixed(1)} m`, colour), point(row.drain.points[0]).setY(2.7), .45)
+      add(label(`${short}: pipe ${row.pipe.lengthM.toFixed(1)} m, drain ${row.drain.lengthM.toFixed(1)} m${powerText}`, colour), middle.setY(2.7), .45)
+    } else add(label(`${short}: ${space.type} AC, drain ${row.drain.lengthM.toFixed(1)} m${powerText}`, colour), point(row.drain.points[0]).setY(2.7), .45)
   })
   group.userData.dispose = () => { textures.forEach(dispose => dispose()); group.traverse(node => { node.geometry?.dispose(); node.material?.dispose?.() }) }
   return group
@@ -62,5 +70,5 @@ export function createAcPipeRoutes(X, Z) {
 export function acRoutesSummary() {
   const result = checkAcPlan(AC_PLAN)
   return result.rows.filter(row => row.drain).map(row => ({id: row.id, colour: AC_ROUTE_COLOURS[row.id], name: row.name, type: row.type, tons: row.tons, status: row.status,
-    pipeM: row.pipe?.lengthM ?? null, drainM: row.drain.lengthM}))
+    pipeM: row.pipe?.lengthM ?? null, drainM: row.drain.lengthM, power: AC_PLAN.spaces.find(s => s.id === row.id).power ?? null}))
 }

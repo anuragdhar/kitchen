@@ -109,3 +109,10 @@ test('the dining pendant has no ceiling point above it, its bar canopy straddles
   const bigger = structuredClone(LOBBY_LIGHTING); bigger.ceilingFans.bladeDiameterMm = 1400
   assert.equal(pendantCeilingReport(room, bigger, {x: table.centerXmm, z: table.centerZmm}).fans[0].canopyToBladesMm, 1, 'a 1400 mm fan would reach the canopy')
 })
+
+test('the Pooja Ghar has one round ceiling light in the middle of the alcove (owner 2026-10-05)', () => {
+  const light = room.poojaAlcove.ceilingLight
+  assert.deepEqual([light.diameterMm, light.depthMm, light.watts, light.lumens, light.centred], [170, 35, 8, 800, true])
+  assert.match(light.kind, /round surface LED panel/)
+  assert.ok(light.diameterMm < room.poojaAlcove.widthMm / 2 && light.diameterMm < room.poojaAlcove.depthMm / 2, 'it fits the alcove ceiling with room around it')
+})

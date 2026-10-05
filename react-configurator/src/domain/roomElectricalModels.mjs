@@ -14,6 +14,7 @@ import {STUDY_LIGHTING} from '../config/studyLightingConfig.js'
 import {BEDROOM1_CLOSED_DOOR, closedDoorSpanMm} from '../config/bedroom1ClosedDoor.js'
 import {HOME_ROOM_LAYOUTS} from '../config/homeRoomViews.js'
 import {ROOM_ELECTRICAL, ELECTRICAL_LOAD_W} from '../config/roomElectricalConfig.js'
+import {AC_PLAN, AC_INDOOR_UNIT_SIZES} from '../config/acPlanConfig.js'
 import {existingPointsFor, plannedOpenings, plannedBlockers} from './existingElectrical.mjs'
 import {balconyDeskLayout} from './balconyDesk.mjs'
 import {rectWalls, checkRoomElectrical, resolveRoomPoints, describePointPlace} from './roomElectrical.mjs'
@@ -21,7 +22,9 @@ import {rectWalls, checkRoomElectrical, resolveRoomPoints, describePointPlace} f
 // Split AC indoor units as drawn by rooms/shared/RoomAirConditioning.js (concept positions; that file holds them as
 // literals, so they are repeated here once, in mm): the wall, the unit's extent along it and its height range.
 export const AC_INDOOR_UNITS = {
-  lobby: {id: 'split', name: 'split AC indoor unit', wall: 'north', a: 2070, b: 3090, bottom: 2230, top: 2510},
+  // The Lobby unit comes from the whole-home AC plan (config/acPlanConfig.js), which moved it beside the Pooja alcove.
+  lobby: (() => { const s = AC_PLAN.spaces.find(space => space.id === 'lobby'), size = AC_INDOOR_UNIT_SIZES[s.tons]
+    return {id: 'split', name: 'split AC indoor unit', wall: s.indoor.wall, a: s.indoor.centreMm - size.widthMm / 2, b: s.indoor.centreMm + size.widthMm / 2, bottom: s.indoor.bottomMm, top: s.indoor.bottomMm + size.heightMm} })(),
   bedroom1: {id: 'split', name: 'split AC indoor unit', wall: 'west', a: 2030, b: 2930, bottom: 2230, top: 2510},
 }
 const BED_TOP_MM = 600, HEADBOARD_TOP_MM = 1170 // mattress top and headboard top as the room pages draw the beds
@@ -89,7 +92,8 @@ function lobbyModel() {
       diningTableWall: {wall: 'north', alongMm: t.centerXmm},
       diningTableCentre: {wall: 'ceiling', xMm: t.centerXmm, zMm: t.centerZmm},
       ironingStorageMiddle: {wall: 'east', alongMm: iron.fromNorthMm + iron.lengthMm / 2},
-      'acBeside:split': {wall: ac.wall, alongMm: ac.b + 160},
+      // West of the unit: the Pooja alcove opens on its east side. The same place as the AC plan's power point.
+      'acBeside:split': {wall: ac.wall, alongMm: ac.a - 150},
       poojaAlcoveSide: {wall: 'free', xMm: alcove.fromMm + 40, zMm: -alcove.depthMm / 2, place: 'west return of the Pooja alcove'},
     },
     existing,

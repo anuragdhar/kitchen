@@ -148,7 +148,10 @@ const WALL_MM = 250 // an outer wall with plaster, ASSUMED 9 inches (work-plan/O
 //  outdoorUnitId  id in acOutdoorUnitsConfig.js
 //  coreHole  where the pipes pass the wall (a waypoint) and how
 //  pipe      refrigerant route, indoor unit to outdoor unit (waypoints); drain: condensate route to a discharge point
-//  power     the supply it needs; `configPoint` is a point that already exists in an electrical config
+//  power     the supply it needs; `configPoint` is a point that already exists in an electrical config. Owner 2026-10-05:
+//            "we need power points for these ACs also, define them along with the pipe path and the water out": every
+//            machine has `at` (where its socket or isolator goes, in the room frame) and `electricalId` (the same point in
+//            drawingElectricalConfig.js / roomElectricalConfig.js); the AC routes overlay draws it.
 //  occupied / ceiling / tall   what the placement checks look at
 export const AC_SPACES = [
   {
@@ -170,7 +173,8 @@ export const AC_SPACES = [
       at('drawing', -WALL_MM, drawingPipeZmm, 860), at('drawing', -WALL_MM, drawing.lengthMm + WALL_MM, 820),
       at('drawing', drawing.widthMm, drawing.lengthMm + WALL_MM, 770), {discharge: 'lobbyToilet', heightMm: 740}, {discharge: 'lobbyToilet'}],
     drainNote: 'out through the same hole, down the west face, round the south-west corner and along the south face BELOW the window sill to the toilet at the south-east corner; if a rainwater pipe stands nearer on either face, use that instead',
-    power: {configPoint: {config: 'drawingElectricalConfig.js', id: DRAWING_AC_POINT.id, wall: DRAWING_AC_POINT.wall, alongMm: DRAWING_AC_POINT.alongMm, heightMm: DRAWING_AC_POINT.heightMm}, needs: AC_SOCKET},
+    power: {configPoint: {config: 'drawingElectricalConfig.js', id: DRAWING_AC_POINT.id, wall: DRAWING_AC_POINT.wall, alongMm: DRAWING_AC_POINT.alongMm, heightMm: DRAWING_AC_POINT.heightMm}, needs: AC_SOCKET,
+      at: at('drawing', 0, DRAWING_AC_POINT.alongMm, DRAWING_AC_POINT.heightMm), electricalId: DRAWING_AC_POINT.id, place: 'west wall, 660 mm south of the unit centre, beside the unit'},
     occupied: {
       seats: [{label: 'west sofa', ...rectAt(sofas.westSofa.centerXmm, sofas.westSofa.centerZmm, sofas.westSofa.widthMm, sofas.westSofa.lengthMm)},
         {label: 'south sofa', ...rectAt(sofas.southSofa.centerXmm, sofas.southSofa.centerZmm, sofas.southSofa.lengthMm, sofas.southSofa.widthMm)}],
@@ -205,7 +209,8 @@ export const AC_SPACES = [
       at('lobby', lobbyPipeXmm, -lobby.poojaAlcove.depthMm, INDOOR_BOTTOM_MM), at('lobby', lobbyPipeXmm, -lobby.poojaAlcove.depthMm - WALL_MM, INDOOR_BOTTOM_MM - 6),
       at('bedroom1', b1East - 60, b1Balcony.lengthMm - 60, INDOOR_BOTTOM_MM - 20), {discharge: 'bedroom1Balcony', heightMm: INDOOR_BOTTOM_MM - 30}, {discharge: 'bedroom1Balcony'}],
     drainNote: 'in the same casing as the pipes as far as the balcony, then down the balcony corner to its floor drain',
-    power: {newPoint: {wall: 'north', alongMm: lobbyCentreMm - size15.widthMm / 2 - 150, heightMm: 2300, note: 'not in any electrical config yet'}, needs: AC_SOCKET},
+    power: {newPoint: {wall: 'north', alongMm: lobbyCentreMm - size15.widthMm / 2 - 150, heightMm: 2300, note: 'point L-N4 of the Lobby electrical plan'}, needs: AC_SOCKET,
+      at: at('lobby', lobbyCentreMm - size15.widthMm / 2 - 150, 0, 2300), electricalId: 'L-N4', place: 'north wall, 150 mm west of the unit (the Pooja alcove is on its east side)'},
     occupied: {
       seats: dining.chairRowsZmm.flatMap(z => [-1, 1].map(side => ({label: 'dining chair', ...rectAt(dining.diningTable.centerXmm + side * dining.chairOffsetXmm, z, DINING_CHAIR_MM, DINING_CHAIR_MM)}))),
       beds: []},
@@ -226,7 +231,8 @@ export const AC_SPACES = [
     drain: [at('bedroom1', b1East + windowAc.depthMm - windowAc.insideMm - 50, windowAc.centerFromNorthMm, windowAc.bottomMm),
       at('bedroom1', b1East - 60, windowAc.centerFromNorthMm + windowAc.widthMm / 2 + 60, windowAc.bottomMm - 30), {discharge: 'bedroom1Balcony', heightMm: windowAc.bottomMm - 100}, {discharge: 'bedroom1Balcony'}],
     drainNote: 'a tray and tube from the drain nipple at the back of the casing, brought back in beside the casing and down to the balcony floor drain; it must not drip on the floors below',
-    power: {newPoint: {wall: 'balcony, within the 1.5 m lead of the unit', alongMm: null, heightMm: null, note: 'not in any electrical config yet'}, needs: AC_SOCKET},
+    power: {newPoint: {wall: 'balcony east parapet, inside face', alongMm: windowAc.centerFromNorthMm - windowAc.widthMm / 2 - 100, heightMm: 850, note: 'point B1-B1 of the Bedroom 1 electrical plan'}, needs: AC_SOCKET,
+      at: at('bedroom1', b1East - 30, windowAc.centerFromNorthMm - windowAc.widthMm / 2 - 100, 850), electricalId: 'B1-B1', place: 'inside face of the balcony parapet, 100 mm north of the casing and below its underside, within its cord'},
     occupied: {seats: [{label: 'balcony chair', ...rectAt(bedroom1.widthMm + b1Balcony.furniture.chair.centerFromBedroomWallMm, b1Balcony.furniture.chair.centerFromNorthMm, b1Balcony.furniture.chair.depthMm, b1Balcony.furniture.chair.widthMm)}],
       beds: [{label: 'bed', headWall: 'east', x1: b1Bed.x1, x2: b1Bed.x2, z1: b1Bed.z1, z2: b1Bed.z2}]},
     ceiling: {tracks: BEDROOM1_LIGHTING.tracks.runs, fans: BEDROOM1_LIGHTING.ceilingFans.fans, bladeDiameterMm: BEDROOM1_LIGHTING.ceilingFans.bladeDiameterMm},
@@ -257,7 +263,8 @@ export const AC_SPACES = [
     pipeNote: 'south along the wall to the Home Office, along its north wall behind the upper cabinet (rear cable chase), out through the solid band above the west window and down to the outdoor unit',
     drain: [at('study', 0, studyPipeZmm, INDOOR_BOTTOM_MM + 20), at('study', -200, studyPipeZmm, INDOOR_BOTTOM_MM), {discharge: 'lobbyToilet', heightMm: INDOOR_BOTTOM_MM - 30}, {discharge: 'lobbyToilet'}],
     drainNote: 'straight through the wall behind the unit into the toilet and down to its floor trap (the Home Office window band is too low for the drain to leave with the pipes)',
-    power: {existing: true, needs: AC_SOCKET, note: 'the existing point was not recorded; confirm it is on its own breaker'},
+    power: {existing: true, needs: AC_SOCKET, note: 'the existing point was not recorded; confirm it is on its own breaker',
+      at: at('study', 0, 2350, 2300), electricalId: 'ST-W2', assumed: true, place: 'west wall just south of the unit (ASSUMED: neither the unit nor its point is recorded)'},
     occupied: {seats: [{label: 'desk and chair', ...studyTargets.desk}], beds: [{label: 'bed', headWall: 'north', ...studyTargets.bed}]},
     ceiling: {tracks: STUDY_LIGHTING.tracks.runs, fans: STUDY_LIGHTING.ceilingFans.fans, bladeDiameterMm: STUDY_LIGHTING.ceilingFans.bladeDiameterMm},
     tall: [{label: 'bookshelf', x1: shelf.offsetFromWestMm, x2: shelf.offsetFromWestMm + shelf.widthMm, z1: 0, z2: shelf.depthMm, topMm: shelf.heightMm}],
@@ -279,7 +286,8 @@ export const AC_SPACES = [
     drain: [at('bedroom3', bedroom3.widthMm - 60, b3PipeZmm, existingB3.bottomMm + 20), at('bedroom3', bedroom3.widthMm - 60, bedroom3.lengthMm, existingB3.bottomMm),
       at('bedroom3', bedroom3.widthMm - 60, bedroom3.lengthMm + WALL_MM, existingB3.bottomMm - 5), {discharge: 'bedroom3Balcony', heightMm: existingB3.bottomMm - 20}, {discharge: 'bedroom3Balcony'}],
     drainNote: 'ASSUMED: with the pipes to the balcony and down to its floor drain',
-    power: {existing: true, needs: AC_SOCKET, note: 'the existing point was not seen in the scan (the lower walls were covered)'},
+    power: {existing: true, needs: AC_SOCKET, note: 'the existing point was not seen in the scan (the lower walls were covered)',
+      at: at('bedroom3', bedroom3.widthMm, 2613, 2400), electricalId: 'B3-E3', assumed: true, place: 'east wall inside the overhead cabinet, in the bay next to the AC bay (planned position; the existing point was not seen)'},
     occupied: {seats: [], beds: [{label: 'bed', headWall: bedroom3.furniture.bed.headWall, x1: b3Bed.x1, x2: b3Bed.x2, z1: b3Bed.z1, z2: b3Bed.z2}]},
     ceiling: {tracks: BEDROOM3_LIGHTING.tracks.runs, fans: BEDROOM3_LIGHTING.ceilingFans.fans, bladeDiameterMm: BEDROOM3_LIGHTING.ceilingFans.bladeDiameterMm},
     tall: [],
