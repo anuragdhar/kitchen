@@ -360,3 +360,14 @@ Six pieces of work, each with a note in `docs/changes/2026-10-05-*.md`:
 - Bedroom 3, later 2026-10-05 (owner): dressing cabinet depth 457.2 -> 258 (stops at the window edge); north storage
   cabinet depth 457.2 -> 658 (fills the wall to the toilet door jamb at x 3305). Followed: toilet switches B3-N2 to the
   west side of the toilet door (x 2375), track B1 end 3350 -> 3150, dressing socket to x 3455. The overhead run stays 457.2.
+
+## 2026-10-05 (night): cleanup, code quality, render quality
+
+- Cleanup (`docs/changes/2026-10-05-cleanup.md`): five tracked Blender backups, two dead files, the hidden Coohom guide
+  builder and dead branches removed; a list of "unsure" files is left for the owner.
+- Code quality (`docs/changes/2026-10-05-code-quality.md`): `npm test` runs every `tests/*.test.mjs`; an import check runs
+  inside it (`npm run lint`); `"type": "module"`; shared label sprite; pieces extracted from WholeHome3D.jsx and
+  EmptyRoomGallery.jsx. Bug fixed: Whole home 3D now reads the kitchen's current (versioned) save.
+- Render quality (`docs/changes/2026-10-05-render-quality.md`): every live 3D view is built by `src/render/liveView.js`
+  with one exposure, fitted soft sun shadows, a shared daylight rig (`src/render/lightRig.js`), lamp colour from Kelvin,
+  a Quality switch (Auto / Draft / Standard / High) and Save picture. Appearance only; no geometry changed.
