@@ -6,9 +6,11 @@
 //
 // How the room is used (roomShellConfig.js): the bed lies along the south wall with its head at the east wall (x 1524-3353,
 // z 1716-3240; pillows about 350 mm either side of z 2478); the three-door wardrobe is on the west wall (z 0-1800, 2400
-// high); the washroom door is in the north wall (x 766-1416), the lobby door in the south wall (x 100-1000); the AC hangs on
-// the west wall south of the wardrobe. Nothing in the room reaches the ceiling (the north-east recess wardrobe sits in its
-// recess, outside the room), so the runs only have to clear the fan.
+// high); the washroom door is in the north wall (x 766-1416), the lobby door in the south wall (x 100-1000). The room is
+// cooled by the owner's window AC in the balcony's east side (roomShellConfig.js balconyExtension.windowAc); a split unit
+// on the west wall south of the wardrobe is only the AC plan's inactive alternative (acPlanConfig.js splitAlternative) and
+// is not drawn. Nothing in the room reaches the ceiling (the north-east recess wardrobe sits in its recess, outside the
+// room), so the runs only have to clear the fan.
 export const BEDROOM1_LIGHTING = {
   // CEILING FAN: not measured. Assumed at the room centre, 1200 mm blades hanging 300 mm (work-plan/OPEN_ITEMS.md, C23).
   ceilingFans: {status: 'assumed at the room centre; not measured', bladeDiameterMm: 1200, dropMm: 300, chandelierRadiusMm: 0,
@@ -32,7 +34,7 @@ export const BEDROOM1_LIGHTING = {
   ]},
 }
 
-// Sliders on the Bedroom 1 page, one per circuit: [run id, label] (DrawingLightDimmer.jsx).
+// Sliders on the Bedroom 1 page, one per circuit: [run id, label] (rooms/shared/RoomLightDimmer.jsx).
 export const BEDROOM1_DIMMER_CIRCUITS = [['B1', 'Track 1 (wardrobe and general)'], ['B2', 'Track 2 (over the bed: reading)']]
 
 /** Floor rectangle of the bed, the only target the reading heads may shine on. */

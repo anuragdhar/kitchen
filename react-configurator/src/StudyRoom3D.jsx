@@ -16,7 +16,7 @@ import {createRoomTrackLighting} from './rooms/shared/RoomTaskLighting.js'
 import {createRoomElectricalPoints} from './rooms/shared/ElectricalPointMarkers.js'
 import RoomElectricalPanel from './home/RoomElectricalPanel.jsx'
 import {STUDY_LIGHTING,STUDY_DIMMER_CIRCUITS} from './config/studyLightingConfig.js'
-import DrawingLightDimmer from './rooms/drawing/DrawingLightDimmer.jsx'
+import RoomLightDimmer from './rooms/shared/RoomLightDimmer.jsx'
 
 const mm=value=>value/1000
 
@@ -250,7 +250,7 @@ export default function StudyRoom3D(){
         <button onClick={()=>setShowLabels(value=>!value)} style={{padding:'7px 10px',borderRadius:9,border:'1px solid #cbd5e1',background:showLabels?'#dbeafe':'#fff',color:'#172033',fontWeight:800,cursor:'pointer'}}>{showLabels?'Hide labels':'Show labels'}</button>
         <button onClick={()=>setShowDirections(value=>!value)} style={{padding:'7px 10px',borderRadius:9,border:'1px solid #cbd5e1',background:showDirections?'#dbeafe':'#fff',color:'#172033',fontWeight:800,cursor:'pointer'}}>{showDirections?'Hide directions':'Show directions'}</button>
         <button onClick={()=>setShowElectrical(value=>!value)} aria-pressed={showElectrical} style={{padding:'7px 10px',borderRadius:9,border:'1px solid #cbd5e1',background:showElectrical?'#172033':'#fff',color:showElectrical?'#fff':'#172033',fontWeight:800,cursor:'pointer'}} title="Proposed sockets, charging, switch, light and AC points for the Study, with the check results below the view (docs/ELECTRICAL_PLAN.md)">{showElectrical?'Hide electrical points':'Show electrical points'}</button>
-        <DrawingLightDimmer circuits={STUDY_DIMMER_CIRCUITS} onChange={(circuit,level)=>sceneRef.current?.setTrackLight?.(circuit,level)} onDarkRoom={on=>sceneRef.current?.setDarkRoom?.(on)}/>
+        <RoomLightDimmer circuits={STUDY_DIMMER_CIRCUITS} onChange={(circuit,level)=>sceneRef.current?.setTrackLight?.(circuit,level)} onDarkRoom={on=>sceneRef.current?.setDarkRoom?.(on)}/>
       </div>
     </div>
     <div style={{position:'relative'}}><div ref={mountRef} style={{height:'clamp(620px,82vh,1100px)',width:'100%'}}/>{showDirections&&<div aria-label="Study compass directions" style={{position:'absolute',right:12,bottom:12,display:'grid',gridTemplateColumns:'repeat(3,28px)',gridTemplateRows:'repeat(3,24px)',placeItems:'center',padding:'7px 9px',borderRadius:10,background:'rgba(255,255,255,.92)',border:'1px solid rgba(23,32,51,.3)',boxShadow:'0 5px 16px rgba(20,15,35,.16)',color:'#172033',fontSize:10,fontWeight:900}}>{['NW','N','NE','W','•','E','SW','S','SE'].map(direction=><span key={direction}>{direction}</span>)}</div>}</div>

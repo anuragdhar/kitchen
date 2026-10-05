@@ -64,7 +64,7 @@ export const BEDROOM3_LIGHTING = {
   ]},
 }
 
-// Sliders on the Bedroom 3 page, one per circuit: [run id, label] (DrawingLightDimmer.jsx).
+// Sliders on the Bedroom 3 page, one per circuit: [run id, label] (rooms/shared/RoomLightDimmer.jsx).
 export const BEDROOM3_DIMMER_CIRCUITS = [['B1', 'Track 1 (north: art, north reading)'], ['B2', 'Track 2 (south: wardrobe, dressing, south reading)']]
 
 /**

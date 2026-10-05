@@ -35,7 +35,8 @@ import {createDrawingRoomLayouts,DRAWING_LAYOUTS} from './rooms/drawing/DrawingR
 import {createStoreStorage} from './rooms/shared/StoreStorage.js'
 import {BALCONY_OFFICE,BALCONY_DESK_HEIGHT_KEY} from './config/balconyOfficeConfig.js'
 import {balconyDeskLayout} from './domain/balconyDesk.mjs'
-import {KITCHEN,KITCHEN_REFRIGERATOR,EAST_INIT,WEST_INIT,KITCHEN_AUTOSAVE_KEY,NORTH_HOB_OPTION_Y_MM,EAST_TOP_UPPER_DEPTH,WEST_TOP_UPPER_DEPTH,autoFillModules} from './config/kitchenConfig.js'
+import {KITCHEN,KITCHEN_REFRIGERATOR} from './config/kitchenConfig.js'
+import {readSavedKitchen,wholeHomeKitchenItems,wholeHomeBaseSpans,wholeHomeUpperRuns} from './kitchen/wholeHomeKitchen.mjs'
 import {ENTRY,ENTRY_WALL_SEGMENTS,entryPocketEastWallSpans,PLAN_IMAGE} from './config/entryConfig.js'
 import {createEntryArrivalDoor} from './rooms/entry/EntryArrivalDoor.js'
 import {createEntryFoldSeat} from './rooms/entry/EntryFoldSeat.js'
@@ -57,6 +58,7 @@ import {DAYLIGHT_RIG} from './render/lightRig.js'
 import RenderQualityControls from './render/RenderQualityControls.jsx'
 import {useDesignerRender} from './render/useDesignerRender.js'
 import {createExistingElectricalPoints} from './rooms/shared/ExistingElectricalPoints.js'
+import {createEntryWallCavity} from './rooms/entry/EntryWallCavity.js'
 
 // The A501 plan is south-up: image right is west and image down is north.
 const PLAN_WIDTH=PLAN_IMAGE.widthPx,PLAN_HEIGHT=PLAN_IMAGE.heightPx
@@ -67,6 +69,8 @@ const Z=y=>y*Z_METRES_PER_PIXEL
 const W=X(PLAN_WIDTH),L=Z(PLAN_HEIGHT),HEIGHT=2.7
 // Drawn thickness of every plan wall span (m); shared by addSpan and the closed-door cabinet.
 const WALL_THICKNESS_M=.085
+// Inside face of a drawn wall, measured from the wall's plan line (mm): half its thickness. Builders that sit against a wall take it.
+const WALL_FACE_MM=WALL_THICKNESS_M*500
 const PLAN_MARK_KEY='a501-whole-home-plan-mark-v1'
 
 const ROOMS=HOME_ROOM_LAYOUTS
@@ -203,33 +207,8 @@ function LiveWholeHome3D({onOpenRoom}){
     // First (outer) door: ventilated stainless steel (ENTRY.outerDoor); round ceiling lights (config/entryLightingConfig.js).
     model.add(createEntryOuterDoor(X,Z))
     model.add(createEntryCeilingLights(X,Z))
-    // Entry wall cavity (owner mark 2026-09-30): translucent volumes for the empty 3-ft pocket on the Entry side of the Drawing
-    // Room's north wall and for the 9-inch wall between them. Never hit by the measure tool (userData.noMeasure). Sizes come
-    // from ENTRY.wallCavity.
-    const cavityGroup=new THREE.Group();cavityGroup.name='Entry wall cavity';model.add(cavityGroup)
-    {
-      const c=ENTRY.wallCavity,wall={planX1:c.planX1,planX2:c.planX2,planY1:c.wallPlanY1,planY2:c.wallPlanY2}
-      const ghost=(box,heightMm,color,opacity)=>{
-        const w=X(box.planX2-box.planX1),d=Z(box.planY2-box.planY1),h=heightMm/1000
-        const mesh=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),new THREE.MeshBasicMaterial({color,transparent:true,opacity,depthWrite:false}))
-        mesh.position.set(X((box.planX1+box.planX2)/2),h/2,Z((box.planY1+box.planY2)/2));mesh.renderOrder=5;mesh.userData.noMeasure=true
-        const edges=new THREE.LineSegments(new THREE.EdgesGeometry(mesh.geometry),new THREE.LineBasicMaterial({color}));edges.position.copy(mesh.position);edges.userData.noMeasure=true
-        cavityGroup.add(mesh,edges)
-      }
-      const cavityLabel=(text,x,y,z)=>{
-        const canvas=document.createElement('canvas');canvas.width=640;canvas.height=96
-        const g=canvas.getContext('2d');g.fillStyle='rgba(15,23,42,.88)';g.beginPath();g.roundRect(4,4,632,88,18);g.fill()
-        g.fillStyle='#fff';g.font='bold 38px sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillText(text,320,50)
-        const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.SRGBColorSpace
-        const sprite=new THREE.Sprite(new THREE.SpriteMaterial({map:texture,depthTest:false,transparent:true}))
-        sprite.scale.set(1.5,.225,1);sprite.position.set(x,y,z);sprite.renderOrder=10;cavityGroup.add(sprite)
-      }
-      ghost(c,c.heightMm,'#0d9488',.34)
-      ghost(wall,c.heightMm,'#f59e0b',.15)
-      const depthMm=Math.round(Z(c.planY2-c.planY1)*1000/5)*5,wallMm=Math.round(Z(wall.planY2-wall.planY1)*1000/5)*5
-      cavityLabel(`Empty cavity ~${depthMm} mm deep`,X((c.planX1+c.planX2)/2),c.heightMm/1000+.25,Z((c.planY1+c.planY2)/2)+.4)
-      cavityLabel(`Drawing Room wall ~${wallMm} mm`,X((wall.planX1+wall.planX2)/2),c.heightMm/1000+.25,Z(wall.planY1)-.25)
-    }
+    // Entry wall cavity (owner mark 2026-09-30): translucent volumes and depth labels, shown by 'Show entry wall cavity'.
+    const cavityGroup=createEntryWallCavity(X,Z);model.add(cavityGroup)
     const entryOpening=ENTRY.outerEntryOpening
     addSpan([entryOpening.wallPlanX,entryOpening.fromPlanY,entryOpening.wallPlanX,entryOpening.toPlanY],entryOpening.heightMm/1000,HEIGHT)
     for(const [x1,y1,x2,y2,bottom,top] of GLASS){
@@ -316,11 +295,11 @@ function LiveWholeHome3D({onOpenRoom}){
     const drawing=EMPTY_ROOM_SHELLS.drawing,db=boundsFor('Drawing Room')
     const dg=roomGroup(db,drawing.widthMm,drawing.lengthMm)
     dg.add(createRoomAirConditioning(drawing))
-    const drawingLayouts=createDrawingRoomLayouts(drawing,{wallFaceMm:WALL_THICKNESS_M*500,initial:drawingLayoutRef.current});dg.add(drawingLayouts.built,drawingLayouts.furniture)
+    const drawingLayouts=createDrawingRoomLayouts(drawing,{wallFaceMm:WALL_FACE_MM,initial:drawingLayoutRef.current});dg.add(drawingLayouts.built,drawingLayouts.furniture)
     drawingLayouts.setLabels(tvLabelsRef.current)
     const partition=createDrawingLobbyPartition(drawing,'drawing');dg.add(partition)
     partition.userData.setOpen(partitionOpen)
-    const existingDrawing=createExistingElectricalPoints('drawing',drawing,{wallFaceMm:WALL_THICKNESS_M*500});if(existingDrawing){existingDrawing.visible=false;dg.add(existingDrawing)}
+    const existingDrawing=createExistingElectricalPoints('drawing',drawing,{wallFaceMm:WALL_FACE_MM});if(existingDrawing){existingDrawing.visible=false;dg.add(existingDrawing)}
     const dw=drawing.windows[0],dd=drawing.doors[0],open=drawing.wallOpenings.east
     roomEdge(db,drawing.widthMm,drawing.lengthMm,'south',[{start:dw.fromMm,end:dw.fromMm+dw.widthMm,bottom:dw.bottomMm/1000,top:dw.topMm/1000,glass:true}])
     // Window design (bays, transom, shutters, nets, outside screen) from the same shared builder as the room page, in room metres.
@@ -338,7 +317,7 @@ function LiveWholeHome3D({onOpenRoom}){
     lg.add(createRoomAirConditioning(lobby))
     lg.add(createRoomTaskLighting(lobby))
     lg.add(createLobbyConcealedDoor(lobby))
-    const existingLobby=createExistingElectricalPoints('lobby',lobby,{wallFaceMm:WALL_THICKNESS_M*500});if(existingLobby){existingLobby.visible=false;lg.add(existingLobby)}
+    const existingLobby=createExistingElectricalPoints('lobby',lobby,{wallFaceMm:WALL_FACE_MM});if(existingLobby){existingLobby.visible=false;lg.add(existingLobby)}
     const toilet=lobby.doors.find(door=>door.wall==='south'),bedDoor=lobby.doors.find(door=>door.wall==='north')
     roomEdge(lb,lobby.widthMm,lobby.lengthMm,'south',[{start:toilet.fromMm,end:toilet.fromMm+toilet.widthMm,top:toilet.heightMm/1000}])
     // The old plan door on this wall is closed (owner, 2026-09-29): sheet on the lobby face, medicine cabinet behind it.
@@ -595,49 +574,20 @@ function LiveWholeHome3D({onOpenRoom}){
       addBox(.022,(fridge.heightMm-26)/1000,(fridge.widthMm/2-10)/1000,fridgeFrontX+.011,fridge.heightMm/2000,fridgeZ+side*fridge.widthMm/4000,fridgeFace,model)
       addBox(.024,.93,.03,fridgeFrontX+.036,.895,fridgeZ+side*.067,fridgeTrim,model)
     }
-    let savedKitchen={}
-    try{savedKitchen=JSON.parse(localStorage.getItem(KITCHEN_AUTOSAVE_KEY)||'{}')}catch{}
-    const kitchenItems=[...(Array.isArray(savedKitchen.east)?savedKitchen.east:EAST_INIT),...(Array.isArray(savedKitchen.west)?savedKitchen.west:WEST_INIT)].map(item=>item.id==='shaft'?{...item,y:KITCHEN.shaft.y,w:KITCHEN.shaft.l,d:KITCHEN.shaft.w}:item.id==='gas'&&item.y===1350?{...item,y:NORTH_HOB_OPTION_Y_MM}:item)
+    // Which items, base spans and upper runs: the saved kitchen project or its defaults (kitchen/wholeHomeKitchen.mjs).
+    const savedKitchen=readSavedKitchen(()=>localStorage)
+    const kitchenItems=wholeHomeKitchenItems(savedKitchen)
     const kitchenCabinet=new THREE.MeshStandardMaterial({color:savedKitchen.materials?.cabinetBody||'#efe9df',roughness:.72})
     tagSurfaceMaterial(kitchenCabinet,'wood')
     const counterMaterial=new THREE.MeshStandardMaterial({color:savedKitchen.materials?.counter||'#ddd8cf',roughness:.4})
     const darkAppliance=new THREE.MeshStandardMaterial({color:'#22282c',roughness:.28,metalness:.5})
     const steelAppliance=new THREE.MeshStandardMaterial({color:'#afb5b8',roughness:.32,metalness:.65})
-    const westWetSlots=kitchenItems.filter(item=>!item.hidden&&['washing','dishwasher','sink'].includes(item.id)).sort((a,b)=>a.y-b.y)
-    for(const [side,modules] of [
-      ['east',Array.isArray(savedKitchen.eastModules)?savedKitchen.eastModules:autoFillModules(KITCHEN.length)],
-      ['west',Array.isArray(savedKitchen.westModules)?savedKitchen.westModules:autoFillModules(KITCHEN.length-KITCHEN.westGap.to)],
-    ]){
-      let cursor=KITCHEN.length
-      for(const module of modules){
-        const width=Number(module.width)||0
-        if(width<=0)continue
-        const from=cursor-width, to=cursor
-        const spans=side==='west'?(()=>{
-          const result=[]
-          let start=from
-          for(const item of westWetSlots){
-            const cutStart=Math.max(from,item.y),cutEnd=Math.min(to,item.y+item.w)
-            if(cutEnd<=cutStart)continue
-            if(cutStart>start)result.push([start,cutStart])
-            start=Math.max(start,cutEnd)
-          }
-          if(start<to)result.push([start,to])
-          return result
-        })():[[from,to]]
-        for(const [start,end] of spans){
-          localBox(kg,600,820,end-start,side==='east'?KITCHEN.width-300:300,460,KITCHEN.length-(start+end)/2,kitchenCabinet)
-          localBox(kg,600,30,end-start,side==='east'?KITCHEN.width-300:300,885,KITCHEN.length-(start+end)/2,counterMaterial)
-        }
-        cursor-=width
-      }
+    for(const {side,start,end} of wholeHomeBaseSpans(savedKitchen,kitchenItems)){
+      localBox(kg,600,820,end-start,side==='east'?KITCHEN.width-300:300,460,KITCHEN.length-(start+end)/2,kitchenCabinet)
+      localBox(kg,600,30,end-start,side==='east'?KITCHEN.width-300:300,885,KITCHEN.length-(start+end)/2,counterMaterial)
     }
     // Match the upper runs in the detailed kitchen, including the dish-rack opening.
-    for(const side of ['east','west']){
-      const start=side==='east'?0:KITCHEN.westGap.to,end=KITCHEN.length
-      const upperDepth=Number(savedKitchen[side+'TopUpperDepth'])||(side==='east'?EAST_TOP_UPPER_DEPTH:WEST_TOP_UPPER_DEPTH)
-      const rack=side==='west'?kitchenItems.find(i=>i.id==='sinkUpperDishRack'&&!i.hidden):null
-      const lowerSpans=rack?[[start,Math.max(start,rack.y)],[Math.min(end,rack.y+rack.w),end]]:[[start,end]]
+    for(const {side,start,end,upperDepth,rack,lowerSpans} of wholeHomeUpperRuns(savedKitchen,kitchenItems)){
       for(const [a,b] of lowerSpans)if(b>a)localBox(kg,320,500,b-a,side==='east'?KITCHEN.width-160:160,1600,KITCHEN.length-(a+b)/2,kitchenCabinet)
       localBox(kg,upperDepth,850,end-start,side==='east'?KITCHEN.width-upperDepth/2:upperDepth/2,2275,KITCHEN.length-(start+end)/2,kitchenCabinet)
       for(let y=start;y<end;y+=600){

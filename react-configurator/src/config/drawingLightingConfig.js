@@ -89,7 +89,7 @@ export const DRAWING_LIGHTING = {
 }
 
 // Sliders on the Drawing Room page (layout C), one per circuit: [circuit id, label]. 'chandelier' is the existing chandelier;
-// the others are the run ids above (DrawingLightDimmer.jsx).
+// the others are the run ids above (rooms/shared/RoomLightDimmer.jsx).
 export const DRAWING_DIMMER_CIRCUITS = [
   ['chandelier', 'Chandelier'], ['T1', 'Track 1 (TV wall spots)'], ['T2', 'Track 2 (west wall: general and reading)'],
 ]

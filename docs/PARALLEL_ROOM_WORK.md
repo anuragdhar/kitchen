@@ -53,7 +53,7 @@ reports them and never deletes them. Reconcile them manually before retrying.
 
 Open a separate editor/agent window in each printed directory. Merely opening
 multiple windows on one checkout is not isolation. For cloud chats, use the same
-branch and ownership rule; room prompts are under `docs/room-prompts/`.
+branch and ownership rule; the original room prompts are archived under `docs/archive/room-prompts/`.
 The helper does not fetch automatically: fetch first to avoid a stale base.
 Do not run it with Administrator privileges or bypass Windows execution policy.
 

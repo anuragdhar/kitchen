@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import {createDarkLabelSprite} from '../shared/LabelSprite.js'
 import {southTvGeometry} from '../../domain/drawingRoomLayout.mjs'
 
 // Layout C built-ins (room.southLayout): the TV flat on the north wall between the west cabinet door and the entry door, and a
@@ -24,13 +25,8 @@ export function createDrawingRoomSouthTv(room, {wallFaceMm = 0} = {}) {
   const labelsIn = parent => {
     const labels = new THREE.Group(); labels.name = 'layout C labels'; labels.visible = false; parent.add(labels); labelGroups.push(labels)
     return (text, xMm, yMm, zMm) => {
-      const canvas = document.createElement('canvas'); canvas.width = 512; canvas.height = 96
-      const g = canvas.getContext('2d')
-      g.fillStyle = 'rgba(20,24,28,.86)'; g.beginPath(); g.roundRect(4, 4, 504, 88, 18); g.fill()
-      g.fillStyle = '#fff'; g.font = 'bold 38px sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(text, 256, 50)
-      const texture = new THREE.CanvasTexture(canvas); texture.colorSpace = THREE.SRGBColorSpace
-      const sprite = new THREE.Sprite(new THREE.SpriteMaterial({map: texture, depthTest: false, transparent: true}))
-      sprite.scale.set(.62, .116, 1); sprite.position.set(xMm / 1000, yMm / 1000, zMm / 1000); sprite.renderOrder = 10
+      const sprite = createDarkLabelSprite(text)
+      sprite.scale.set(.62, .116, 1); sprite.position.set(xMm / 1000, yMm / 1000, zMm / 1000)
       labels.add(sprite)
     }
   }

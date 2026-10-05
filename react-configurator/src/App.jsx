@@ -9,9 +9,9 @@ import {EAST_BASE_DEPTH} from './config/kitchenConfig.js'
 import {storeStorageParts} from './rooms/shared/StoreStorage.js'
 import {createKitchenRoomLights} from './rooms/kitchen/KitchenTrackLights.js'
 import {KITCHEN_DIMMER_CIRCUITS} from './config/kitchenLightingConfig.js'
-import DrawingLightDimmer from './rooms/drawing/DrawingLightDimmer.jsx'
+import RoomLightDimmer from './rooms/shared/RoomLightDimmer.jsx'
 import React,{useState,useEffect,useRef,useMemo} from 'react'
-import {KITCHEN,KITCHEN_REFRIGERATOR,KITCHEN_STORE_STORAGE,EAST_INIT,WEST_INIT,AIRY_WEST_INIT,EAST_TOP_UPPER_DEPTH,WEST_TOP_UPPER_DEPTH,KITCHEN_AUTOSAVE_KEY,NORTH_HOB_OPTION_Y_MM, LAYOUT_MODEL, MODULE_WIDTHS, MODULE_DEFS, PLINTH_HEIGHT, COUNTER_THICKNESS, BACKSPLASH_HEIGHT, autoFillModules} from './config/kitchenConfig.js'
+import {KITCHEN,KITCHEN_REFRIGERATOR,KITCHEN_STORE_STORAGE,EAST_INIT,WEST_INIT,AIRY_WEST_INIT,EAST_TOP_UPPER_DEPTH,WEST_TOP_UPPER_DEPTH,KITCHEN_AUTOSAVE_KEY,NORTH_HOB_OPTION_Y_MM, LAYOUT_MODEL, MODULE_WIDTHS, PLINTH_HEIGHT, COUNTER_THICKNESS, BACKSPLASH_HEIGHT, autoFillModules} from './config/kitchenConfig.js'
 import { DEFAULT_MATERIALS, VIEW_STYLE, HEIGHT_GUIDES, RENDER_CONFIG } from './config/renderConfig.js'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
@@ -271,69 +271,6 @@ export default function App(){
   }
   const buildPlanDxf=()=>buildPlanDxfPure({KITCHEN,grid,planDimensions,activeEast,activeWest})
   const exportPlanDxf=()=>downloadText('kitchen-2d-plan-coohom-background.dxf',buildPlanDxf(),'application/dxf')
-  const buildCoohomGuide=()=>{
-    const eastRows=activeEast.map(it=>`| East | ${it.id} | ${it.y} | ${it.w} | ${it.d} | ${it.h||880} |`).join('\n')
-    const westRows=activeWest.map(it=>`| West | ${it.id} | ${it.y} | ${it.w} | ${it.d} | ${it.h||400} |`).join('\n')
-    return `# Coohom Native Cabinet Rebuild Guide
-
-Use the exported 2D plan as a background only. Rebuild the room, counters, cabinets, appliances, window, and door with Coohom native objects.
-
-## Import Background
-
-1. Export SVG, PNG, or DXF from the React app.
-2. In Coohom Floorplanner, import it as a plan/background reference.
-3. Set scale using the full room size: ${KITCHEN.width} mm wide x ${KITCHEN.length} mm long.
-4. Confirm North is at the top of the imported plan and South is at the bottom.
-5. Lock the background layer before placing native cabinets.
-
-## Room
-
-- Room width: ${KITCHEN.width} mm.
-- Room length: ${KITCHEN.length} mm.
-- Wall height: ${KITCHEN.height} mm.
-- South opening to Lobby/Dining: ${KITCHEN.door.w} mm wide from the west corner; the remaining ${KITCHEN.southWallReturn.lengthMm} mm is wall.
-- North window: ${KITCHEN.window.w} mm wide, ${KITCHEN.window.h} mm high, sill ${KITCHEN.window.sill} mm.
-- North window below-sill reference: ${KITCHEN.windowBelow?.depth||300} mm deep only under the ${KITCHEN.window.w} mm window. East and West runs may continue to the north wall.
-
-## Native Cabinet Runs
-
-- East wall: create a 600D base counter from South y0 to y${KITCHEN.length}.
-- East wall: create 320D lower upper cabinets and ${eastTopUpperDepth}D top upper cabinets to the ceiling.
-- West wall: keep y0 to y${KITCHEN.westGap.to} completely clear for the door zone from floor to ceiling.
-- West wall: create a ${KITCHEN.westCounterDepth||600}D counter only from y${KITCHEN.westGap.to} to y${KITCHEN.length}.
-- West wall: create 320D lower upper cabinets and ${westTopUpperDepth}D top upper cabinets only after the door clear zone.
-
-## Placement Table
-
-Y is measured in millimeters from the South wall toward the North wall.
-
-| Wall | Item | South Y mm | Width Along Wall mm | Depth mm | Height mm |
-| --- | --- | ---: | ---: | ---: | ---: |
-${eastRows}
-${westRows}
-
-## Materials
-- Cabinet body: ${renderMaterials.cabinetBody}
-- Shutters: ${renderMaterials.shutters}
-- Counter: ${renderMaterials.counter}
-- Backsplash: ${renderMaterials.backsplash}
-- Floor: ${renderMaterials.floor}
-- Wall: ${renderMaterials.wall}
-- Handle style: handleless
-
-## Coohom Rebuild Notes
-
-- Use Coohom native base cabinets, wall cabinets, appliances, sink, hidden chimney insert, and shaft objects.
-- Keep the East gas as a cooktop with the chimney body hidden inside the 320D upper cabinet; only a slim under-cabinet vent slot should remain visible.
-- Keep the East microwave and appliance garage open: microwave above backsplash, food processor inside the counter-height pull-out garage.
-- Keep the West washing machine and dishwasher open, not behind shutters.
-- Keep the West order from South to North: washing machine, sink, dishwasher, 6in slider storage, shaft.
-- Add 4in East backsplash slider storage and 6in West slider storage as separate shallow slider-door units.
-- Keep the West shaft fixed at the north-west end.
-- Hide or delete the imported background after native cabinets are rebuilt.
-`
-  }
-  const exportCoohomGuide=()=>downloadText('coohom-native-rebuild-guide.md',buildCoohomGuide(),'text/markdown')
 
   // BOM
   const buildBOM=()=>buildBOMPure({KITCHEN,eastRunLength,westRunLength,BACKSPLASH_HEIGHT,eastModules,westModules,activeEast,activeWest,isCabinetLikeItem,planLabel})
@@ -409,7 +346,6 @@ ${westRows}
     const cameraRef=useRef(null)
     const [diagnostics,setDiagnostics]=useState(()=>{try{return JSON.parse(localStorage.getItem('kitchen-diagnostics')||'[]')}catch{return []}})
     const designer=useDesignerRender(threeViewRef)
-    const saveDiagnostics=(list)=>{ localStorage.setItem('kitchen-diagnostics',JSON.stringify(list)); setDiagnostics(list) }
     useEffect(()=>{
       const mount=mountRef.current
       if(!mount)return
@@ -804,36 +740,6 @@ ${westRows}
         mesh.receiveShadow=true
         scene.add(mesh)
         return mesh
-      }
-      const addPotteryWallPlanter=(name,x,y,z,scale,palette)=>{
-        const potMat=makeMat(palette.body,1,{roughness:.5,metalness:.02})
-        const whiteMat=makeMat('#f7f3e7',1,{roughness:.55,metalness:.01})
-        const blueMat=makeMat(palette.blue||'#123c78',1,{roughness:.48,metalness:.02})
-        const soilMat=makeMat('#352317',1,{roughness:.9})
-        const flowerMat=makeMat(palette.flower,1,{roughness:.72,metalness:0})
-        const fillerMat=makeMat(palette.filler||'#e6ead8',1,{roughness:.8,metalness:0})
-        const stemMat=makeMat('#6f7646',1,{roughness:.78,metalness:0})
-        const r=72*scale
-        const h=118*scale
-        addBox(`${name} wall bracket`,KITCHEN.shaft.w+20,y-r*.56,z+18*scale,74*scale,18*scale,32*scale,surface.dark)
-        addCylinder(`${name} blue pottery planter bowl`,x,y,z,r,r*.78,h,potMat,1,36)
-        addCylinder(`${name} dark blue rim`,x,y,z+h-12*scale,r*1.04,r*1.04,12*scale,blueMat,1,36)
-        addCylinder(`${name} white upper band`,x,y,z+h-32*scale,r*.98,r*.98,12*scale,whiteMat,1,36)
-        addCylinder(`${name} blue lower band`,x,y,z+22*scale,r*.88,r*.82,12*scale,blueMat,1,36)
-        addCylinder(`${name} soil`,x,y,z+h-8*scale,r*.84,r*.84,10*scale,soilMat,1,32)
-        ;[-.55,0,.55].forEach((off,i)=>{
-          addBox(`${name} white pottery motif ${i+1}`,x-r*.64,y+off*r*.82,z+h*.43,8*scale,20*scale,26*scale,whiteMat)
-          addSphere(`${name} blue pottery dot ${i+1}`,x-r*.7,y+off*r*.82,z+h*.62,8*scale,blueMat,1,[1,.45,1])
-        })
-        ;[-.45,-.15,.18,.48].forEach((off,i)=>{
-          const stemY=y+off*r*.95
-          const stemZ=z+h+8*scale+i*8*scale
-          addCylinder(`${name} flower stem ${i+1}`,x-8*scale,stemY,stemZ,3*scale,3*scale,(108+i*12)*scale,stemMat,1,8)
-          addSphere(`${name} flower cluster ${i+1}`,x-18*scale,stemY,stemZ+(118+i*12)*scale,18*scale, i%2===0?flowerMat:fillerMat,1,[1.15,.8,1])
-        })
-        ;[-.62,-.28,.05,.38,.66].forEach((off,i)=>{
-          addSphere(`${name} tiny filler bloom ${i+1}`,x-22*scale,y+off*r,z+h+92*scale+(i%2)*32*scale,8*scale,fillerMat,1,[1,.9,1])
-        })
       }
       // floor, walls and ceiling envelope
       addBox('floor',0,0,-30,KITCHEN.width,KITCHEN.length,30,surface.floor)
@@ -1978,8 +1884,6 @@ ${westRows}
       <button onClick={exportPlanSvg} style={{padding:'8px 12px',background:'#fff',color:'#111',border:'2px solid #7b3f21',borderRadius:10,fontWeight:800}}>Export 2D SVG</button>
       <button onClick={exportPlanPng} style={{padding:'8px 12px',background:'#fff',color:'#111',border:'2px solid #7b3f21',borderRadius:10,fontWeight:800}}>Export 2D PNG</button>
       <button onClick={exportPlanDxf} style={{padding:'8px 12px',background:'#fff',color:'#111',border:'2px solid #7b3f21',borderRadius:10,fontWeight:800}}>Export 2D DXF</button>
-      {/* Coohom Guide hidden for now - code preserved, button commented out */}
-      {/* <button onClick={exportCoohomGuide} style={{padding:'8px 12px',background:'#7b3f21',color:'#fff',border:'2px solid #7b3f21',borderRadius:10,fontWeight:800}}>Coohom Guide</button> */}
       <button onClick={exportJSON} style={{padding:'8px 12px',background:'#111',color:'#fff',border:'none',borderRadius:10,fontWeight:800}}>Export JSON</button>
       {/* "Export Project Package" (ZIP of screenshots/PDF/exports) removed
           2026-09-28 on the owner's request - it served an earlier workflow;
@@ -2036,7 +1940,7 @@ ${westRows}
         <button onClick={()=>{setInteractionMode('measure'); setMeasureMode(true); setMeasurePoints([])}} style={{padding:'6px 10px',background:interactionMode==='measure'?'#d97706':'#fff',color:interactionMode==='measure'?'#fff':'#d97706',border:'1px solid #d97706',borderRadius:8,fontWeight:800}}>Measure</button>
         <button onClick={()=>{setSelectedId(null); setMeasurePoints([])}} style={{padding:'6px 10px',background:'#fff',border:'1px solid #111',borderRadius:8,fontWeight:700}}>Clear</button>
       </div>
-    </div><DrawingLightDimmer circuits={KITCHEN_DIMMER_CIRCUITS} onChange={(circuit,level)=>threeViewRef.current?.setTrackLight?.(circuit,level)} onDarkRoom={on=>threeViewRef.current?.setDarkRoom?.(on)}/><ThreeDRender/></div>}
+    </div><RoomLightDimmer circuits={KITCHEN_DIMMER_CIRCUITS} onChange={(circuit,level)=>threeViewRef.current?.setTrackLight?.(circuit,level)} onDarkRoom={on=>threeViewRef.current?.setDarkRoom?.(on)}/><ThreeDRender/></div>}
     {view==='top'&&(<div ref={activeViewRef} style={{background:'#fff',borderRadius:14,padding:14,scrollMarginTop:12}}>
       <svg width="900" height={planSvgHeight} viewBox={viewBoxTop} preserveAspectRatio="xMidYMid meet" onClick={(e)=>{if(interactionMode!=='measure') return; const rect=e.currentTarget.getBoundingClientRect(); const vbW=KITCHEN.width+pad*2, vbH=KITCHEN.length+pad*2; const sx=(e.clientX-rect.left)/rect.width*vbW - pad; const sy=(e.clientY-rect.top)/rect.height*vbH - pad; const ky=KITCHEN.length - sy; if(sx<-pad||sx>KITCHEN.width+pad||ky<-pad||ky>KITCHEN.length+pad) return; setMeasurePoints(prev=> prev.length>=2 ? [{x:sx,y:ky}] : [...prev,{x:sx,y:ky}])}} style={{background:'#FFFEFB',border:'1px solid #e5e0d5',borderRadius:10,width:'100%',maxWidth:900,height:'auto',display:'block',margin:'0 auto',cursor:interactionMode==='measure'?'crosshair':interactionMode==='dimension'?'pointer':interactionMode==='transparent'?'cell':interactionMode==='cabinet'?'pointer':'default'}}>
         <rect x={-pad} y={-pad} width={KITCHEN.width+pad*2} height={KITCHEN.length+pad*2} fill="#f6f2ec"/>

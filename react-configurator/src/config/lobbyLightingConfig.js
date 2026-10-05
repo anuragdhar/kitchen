@@ -73,7 +73,7 @@ export const LOBBY_LIGHTING = {
 }
 
 // Sliders shown on the Lobby page, one per circuit: [circuit id, label]. 'chandelier' is the dining pendant; the others are
-// the run ids above (DrawingLightDimmer.jsx).
+// the run ids above (rooms/shared/RoomLightDimmer.jsx).
 export const LOBBY_DIMMER_CIRCUITS = [
   ['chandelier', 'Dining pendant'], ['L1', 'Lobby track 1 (south wall)'], ['L2', 'Lobby track 2 (ironing storage)'],
 ]

@@ -37,5 +37,5 @@ export const STUDY_LIGHTING = {
   ]},
 }
 
-// Sliders on the Study page, one per circuit: [run id, label] (DrawingLightDimmer.jsx).
+// Sliders on the Study page, one per circuit: [run id, label] (rooms/shared/RoomLightDimmer.jsx).
 export const STUDY_DIMMER_CIRCUITS = [['S1', 'Track 1 (bookshelf and general)'], ['S2', 'Track 2 (bed reading and desk)']]

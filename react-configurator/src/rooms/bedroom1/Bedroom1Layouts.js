@@ -7,8 +7,6 @@ import {BEDROOM1_LIGHTING} from '../../config/bedroom1LightingConfig.js'
 import {BEDROOM1_CLOSED_DOOR} from '../../config/bedroom1ClosedDoor.js'
 import {bedroom1Plan} from '../../domain/bedroom1Layout.mjs'
 
-export const BEDROOM1_LAYOUTS = BEDROOM1_LAYOUT_KEYS.map(key => ({key, label: BEDROOM1_DESIGN.layouts[key].label}))
-
 // Bedroom 1 furniture for every layout of config/bedroom1LayoutConfig.js, built once and shown one layout at a time.
 // Room frame in metres: x east from the west wall, z south from the north wall, y up; the balcony continues east of the
 // room. Every position and size comes from bedroom1Plan() (src/domain/bedroom1Layout.mjs), the same rectangles the checks

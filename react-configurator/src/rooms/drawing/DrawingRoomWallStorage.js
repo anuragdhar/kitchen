@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import {createDarkLabelSprite} from '../shared/LabelSprite.js'
 
 // The west cabinet of the entry-side pocket behind the north wall (room.wallStorage; docs/ENTRY_WALL_CAVITY.md): a two-leaf
 // door through the wall at its west end, the closet behind it (outer wall to the partition) and shelves against its back.
@@ -63,14 +64,8 @@ export function createDrawingRoomWallStorage(room, {wallFaceMm = 0} = {}) {
 
   const labels = new THREE.Group(); labels.name = 'west cabinet labels'; storage.add(labels); labels.visible = false
   {
-    const canvas = document.createElement('canvas'); canvas.width = 640; canvas.height = 96
-    const g = canvas.getContext('2d')
-    g.fillStyle = 'rgba(20,24,28,.86)'; g.beginPath(); g.roundRect(4, 4, 632, 88, 18); g.fill()
-    g.fillStyle = '#fff'; g.font = 'bold 34px sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'
-    g.fillText(`Pocket west cabinet, ${(s.depthMm / 1000).toFixed(1)} m deep`, 320, 50)
-    const texture = new THREE.CanvasTexture(canvas); texture.colorSpace = THREE.SRGBColorSpace
-    const sprite = new THREE.Sprite(new THREE.SpriteMaterial({map: texture, depthTest: false, transparent: true}))
-    sprite.scale.set(.78, .117, 1); sprite.position.set((x1 + x2) / 2000, (y1 + 250) / 1000, (zf + 380) / 1000); sprite.renderOrder = 10
+    const sprite = createDarkLabelSprite(`Pocket west cabinet, ${(s.depthMm / 1000).toFixed(1)} m deep`, {widthPx: 640, fontPx: 34})
+    sprite.scale.set(.78, .117, 1); sprite.position.set((x1 + x2) / 2000, (y1 + 250) / 1000, (zf + 380) / 1000)
     labels.add(sprite)
   }
   storage.userData.setLabels = visible => { labels.visible = visible }

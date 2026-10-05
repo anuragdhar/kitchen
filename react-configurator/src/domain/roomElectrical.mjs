@@ -41,8 +41,6 @@ export function rectWalls(widthMm, lengthMm) {
   }
 }
 
-const isWallPoint = p => p.wall && !['ceiling', 'free', 'cabinet'].includes(p.wall)
-
 /** The connected load of a point for the estimate (W): its own loadW, else what it feeds, else the default of its kind. */
 function loadOf(model, p) {
   if (p.noLoad) return 0

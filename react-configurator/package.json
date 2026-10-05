@@ -1,6 +1,7 @@
 {
   "name": "home-interior",
   "version": "1.0.0",
+  "type": "module",
   "engines": {
     "node": "22.x"
   },
@@ -10,14 +11,15 @@
     "visual:qa": "node scripts/visual-qa.cjs",
     "inspect": "node scripts/headless-query.cjs",
     "test:bolt": "node scripts/validate-3d-bolt.mjs",
-    "test": "node --test tests/current-layout.test.mjs tests/layout-checks.test.mjs tests/browser-helpers.test.mjs tests/kitchen-validation.test.mjs tests/current-validation.test.mjs tests/kitchen-navigation.test.mjs tests/project-codec.test.mjs tests/project-storage.test.mjs tests/current-project.test.mjs tests/interior-inspiration.test.mjs tests/inspiration-photos.test.mjs tests/interior-materials.test.mjs tests/interior-lighting.test.mjs tests/render-quality.test.mjs tests/local-update.test.mjs tests/local-update-plugin.test.mjs tests/blender-room-views.test.mjs tests/archviz.test.mjs tests/parallel-profiles.test.mjs tests/whole-home-render.test.mjs tests/kitchen-export.test.mjs tests/kitchen-bom.test.mjs tests/daylight.test.mjs tests/bedroom1-closed-door.test.mjs tests/bedroom3-east-cabinet.test.mjs tests/inspiration-sync.test.mjs tests/drawing-room-layout.test.mjs tests/room-review.test.mjs tests/entry-cavity.test.mjs tests/wall-storage.test.mjs tests/drawing-room-console.test.mjs tests/drawing-room-south.test.mjs tests/drawing-electrical.test.mjs tests/existing-electrical.test.mjs tests/room-electrical.test.mjs tests/lobby-electrical.test.mjs tests/bedroom1-electrical.test.mjs tests/bedroom3-electrical.test.mjs tests/study-electrical.test.mjs tests/office-electrical.test.mjs tests/entry-electrical.test.mjs tests/drawing-lighting.test.mjs tests/lobby-lighting.test.mjs tests/work-plan.test.mjs tests/kitchen-services.test.mjs tests/entry-fittings.test.mjs tests/bedroom1-lighting.test.mjs tests/bedroom3-lighting.test.mjs tests/study-lighting.test.mjs tests/kitchen-lighting.test.mjs tests/balcony-desk.test.mjs tests/window-design.test.mjs tests/ac-outdoor-units.test.mjs tests/bedroom1-layout.test.mjs tests/ac-plan.test.mjs tests/home-palette.test.mjs ../scripts/windows/launchers.test.mjs",
+    "test": "node --test \"tests/*.test.mjs\" ../scripts/windows/launchers.test.mjs",
     "test:inspiration": "node --test tests/interior-inspiration.test.mjs tests/inspiration-photos.test.mjs",
     "check": "npm test && npm run build",
     "test:browser": "node scripts/correctness-browser.cjs",
     "test:persistence": "node scripts/persistence-browser.cjs",
     "test:materials": "node scripts/material-scene-browser.cjs",
     "test:lighting": "node scripts/lighting-browser.cjs",
-    "test:baked-lighting": "node scripts/baked-lighting-browser.cjs"
+    "test:baked-lighting": "node scripts/baked-lighting-browser.cjs",
+    "lint": "node scripts/check-imports.mjs"
   },
   "dependencies": {
     "dxf-viewer": "^1.0.48",

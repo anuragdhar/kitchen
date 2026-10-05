@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import {createDarkLabelSprite} from '../shared/LabelSprite.js'
 import {cornerTvFrontX, armPose, consoleGeometry, projectorPlacement} from '../../domain/drawingRoomLayout.mjs'
 
 // Layout B built-ins on the east wall and the small router cabinet on the north wall. Three variants:
@@ -29,13 +30,8 @@ export function createDrawingRoomCornerTv(room, {wallFaceMm = 0, variant = 'wall
 
   const labels = new THREE.Group(); labels.name = 'corner layout labels'; group.add(labels)
   const label = (text, xMm, yMm, zMm) => {
-    const canvas = document.createElement('canvas'); canvas.width = 512; canvas.height = 96
-    const g = canvas.getContext('2d')
-    g.fillStyle = 'rgba(20,24,28,.86)'; g.beginPath(); g.roundRect(4, 4, 504, 88, 18); g.fill()
-    g.fillStyle = '#fff'; g.font = 'bold 38px sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(text, 256, 50)
-    const texture = new THREE.CanvasTexture(canvas); texture.colorSpace = THREE.SRGBColorSpace
-    const sprite = new THREE.Sprite(new THREE.SpriteMaterial({map: texture, depthTest: false, transparent: true}))
-    sprite.scale.set(.62, .116, 1); sprite.position.set(xMm / 1000, yMm / 1000, zMm / 1000); sprite.renderOrder = 10
+    const sprite = createDarkLabelSprite(text)
+    sprite.scale.set(.62, .116, 1); sprite.position.set(xMm / 1000, yMm / 1000, zMm / 1000)
     labels.add(sprite)
   }
 

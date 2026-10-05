@@ -7,7 +7,10 @@ export function createDrawingLobbyPartition(room,key){
   const x=key==='drawing'?room.widthMm/1000:0
   const start=key==='drawing'?room.wallOpenings.east.fromMm/1000:0
   const end=room.lengthMm/1000,span=end-start
-  const height=(room.heightMm-305)/1000,panels=[]
+  // The partition hangs under the beam over the opening (roomShellConfig.js hangingBeams): the Drawing Room's east beam,
+  // the Lobby's west one.
+  const beam=room.hangingBeams.find(b=>b.wall===(key==='drawing'?'east':'west'))
+  const height=(room.heightMm-beam.dropMm)/1000,panels=[]
   const finish=new THREE.MeshStandardMaterial({color:'#c8b49a',roughness:.72})
   tagSurfaceMaterial(finish,'wood','drawing')
   const metal=new THREE.MeshStandardMaterial({color:'#635d54',metalness:.45,roughness:.4})

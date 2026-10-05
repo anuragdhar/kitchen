@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {MAX_PHOTOS,validatePhotos,validateInspiration,parseInspiration,mergeInspiration} from '../src/home/inspiration.mjs';
+import {MAX_PHOTOS,validatePhotos,parseInspiration,mergeInspiration} from '../src/home/inspiration.mjs';
 const item=(overrides={})=>({id:'pin',room:'drawing',title:'Original idea',url:'https://in.pinterest.com/pin/123/',tags:[],notes:'Keep this',status:'selected',...overrides});
 const photo=(id='one',overrides={})=>({id,src:`asset:${id}`,caption:id,kind:'image',...overrides});
 const library=items=>({schemaVersion:1,items});
