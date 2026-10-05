@@ -45,6 +45,12 @@ Use Node 22 and npm with the committed package-lock.json.
 - `npm run test:browser`: plan/API/export regressions with a managed local server.
 - `npm run test:persistence`: real file controls, reloads and recovery; Chromium required.
 - `npm run visual:qa`: screenshot smoke checks, NOT approved visual regression tests.
+- `node scripts/room-shots.cjs --room "<name>" --views "Overview,Top" --out test-results/shots`: quick 3D pictures of a
+  room page (`--whole` for Whole home 3D); needs the dev server. Look at the images; they are not baselines.
+- `node scripts/work-plan-estimate.mjs` and `node scripts/electrical-doc-sync.mjs` (each also with `--check`): regenerate
+  the budget figures and the config-derived rows of docs/ELECTRICAL_PLAN.md after changing cabinet sizes, track runs
+  or electrical points. Tests fail when they drift.
+On this Windows machine exactly seven tests named `Windows: ...` fail (launcher fixtures); anything else is a real failure.
 The historical `npm run test:bolt` still targets an older design and is deliberately
 not the default test suite. Do not delete its evidence or restore its old geometry.
 
@@ -53,3 +59,14 @@ Report changed files, exact checks/results, and anything not verified. For layou
 changes include before/after dimensions and updated fixtures with the user's reason.
 For UI changes inspect affected views; a build alone does not verify appearance.
 Never call a skipped, unavailable, or historical-failing check a pass.
+
+## Working conventions
+- README.md has the map of where each subject lives (config, pure checks, builder, test, doc) and the frames.
+- Every config number is from the plan, from a phone scan, an owner decision (dated comment), or a proposal/assumption.
+  Keep proposals marked as proposals. Some positions are PLANNED after civil work, not existing: do not overwrite them
+  with scan measurements. Scanned room boxes and ceiling heights are recorded, not applied.
+- For each piece of work write a dated note for the owner in `docs/changes/` (before/after, defaults chosen without
+  asking, not verified), add a short entry at the end of `docs/CURRENT_STATE.md`, and put new questions for the owner in
+  `work-plan/OPEN_ITEMS.md`.
+- Parallel work: one git worktree, dev-server port and scratch folder per agent; no two agents in the same working
+  tree; one owner per round for `work-plan/plan.json` and `OPEN_ITEMS.md`. Details in README.md.

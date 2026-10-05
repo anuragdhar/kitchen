@@ -11,7 +11,13 @@ Paths below are relative to `react-configurator/` unless otherwise stated.
 | Atomic project state and autosave status | src/hooks/useKitchenProject.js |
 | Versioned project codecs and recovery storage | src/persistence/projectCodec.mjs; projectStorage.mjs |
 | Runtime validation and nominal plan measurements | src/domain/kitchenValidation.mjs |
-| Other room defaults | src/config/ |
+| Other room defaults | src/config/ (the README at the repository root has a subject-by-subject table: config, pure checks, builder, doc) |
+| Room pages for Drawing Room, Lobby / Dining, Bedroom 1, Bedroom 3 | src/EmptyRoomGallery.jsx; builders under src/rooms/ |
+| Track lighting, fans and ceiling mouldings | src/config/*LightingConfig.js; src/domain/drawingLighting.mjs; src/rooms/drawing/DrawingRoomLighting.js; src/rooms/shared/RoomTaskLighting.js; repository docs/LIGHTING.md |
+| Proposed and existing electrical points | src/config/roomElectricalConfig.js; drawingElectricalConfig.js; existingElectricalConfig.js; src/domain/roomElectrical*.mjs; existingElectrical.mjs; repository docs/ELECTRICAL_PLAN.md |
+| Bedroom 1 layouts and checks | src/config/bedroom1LayoutConfig.js; src/domain/bedroom1Layout.mjs; src/rooms/bedroom1/ |
+| Work plan, order of work and budget | repository work-plan/plan.json; src/home/workPlan.mjs; src/home/workPlanEstimate.mjs; scripts/work-plan-estimate.mjs; src/WorkPlan.jsx |
+| Phone-scan measuring | repository scripts/scan_measure.py; repository docs/SITE_SCAN_2026-10-04.md |
 | Whole-home palette (colours, per-room mapping, checks, page) | src/config/homePaletteConfig.js; src/home/palette.mjs; src/home/paletteAppearance.mjs; src/home/paletteStore.mjs; src/PaletteView.jsx; docs/PALETTE.md |
 | Material settings / creation | src/config/renderConfig.js; src/render/materialFactory.js |
 | Balcony / study / whole-home rendering | src/BalconyOffice3D.jsx; src/StudyRoom3D.jsx; src/WholeHome3D.jsx |
