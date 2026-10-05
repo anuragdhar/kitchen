@@ -405,3 +405,9 @@ is drawn about 443 high (was about 560). No models or textures were downloaded.
   the centre upper bay (proposal). Pooja doors have four selectable styles (`poojaAlcove.door`, `src/domain/poojaDoor.mjs`, select on
   the Lobby page); default by rule is `fixedEastSlideWest` (east half fixed, west leaf slides east, 520 clear) because the full
   west slider meets a dining chair. Note `docs/changes/2026-10-06-pooja-doors-tall-ironing-storage.md`.
+- 2026-10-06 (owner): the landing opening (north-west of the Main entry) has NO door; a door is not allowed there. The
+  ventilated stainless door moved to the arrival (wooden door) opening as a PROPOSED pair: steel on the corridor face opening
+  west to 85 deg, the wooden door kept but reversed to open east into the gallery, stop 60 deg, both leaves 1127 wide
+  (`ENTRY.outerDoor.mountedAt`, `checkEntryDoorPair` in `src/domain/entryFittings.mjs`). Passage past the open wooden leaf is
+  about 508 mm: needs the owner's decision (C55). Switch EN-1, bell EN-2 and conduit EN-7 moved to the corridor south wall
+  (proposals). Budget prices the steel door for the 1287 x 2200 opening. Note `docs/changes/2026-10-06-entry-door-pair.md`.

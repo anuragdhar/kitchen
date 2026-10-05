@@ -224,7 +224,8 @@ test('estimates are quantity x rate from the configs, and the stored figures mat
   // Quantities come from the configs, not from the plan text.
   assert.deepEqual(QUANTITIES.tracks.drawing, {runs: 2, metres: 3.95, spot: 3, diffuse: 2, reading: 3, driver60: 1, driver100: 1})
   assert.equal(Object.values(QUANTITIES.tracks).reduce((total, track) => total + track.runs, 0), 11)
-  assert.deepEqual([QUANTITIES.outerDoor.widthMm, QUANTITIES.outerDoor.heightMm], [905, 2200])
+  // Owner 2026-10-06: no door in the landing opening (905 wide); the steel door is priced for the arrival opening.
+  assert.deepEqual([QUANTITIES.outerDoor.widthMm, QUANTITIES.outerDoor.heightMm], [1287, 2200])
   assert.deepEqual(QUANTITIES.kitchen, {eastRunMm: 4746, westRunMm: 3298, openAppliancesMm: 1200})
   assert.deepEqual(QUANTITIES.windowBays.map(Math.round), [934, 899, 867])
   assert.deepEqual(Object.fromEntries(Object.entries(QUANTITIES.roomPoints).map(([room, points]) => [room, points.all])), {lobby: 12, bedroom1: 11, bedroom3: 12, study: 9, office: 9, entry: 11})

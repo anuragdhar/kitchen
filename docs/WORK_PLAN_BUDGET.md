@@ -16,7 +16,7 @@ re-run the script (or tell the assistant which rate is wrong).
 
 ## Total
 
-**Rs 16,60,000 to Rs 31,50,000** (Rs 16.6 lakh to Rs 31.5 lakh) for the 105 tasks that could be
+**Rs 16,74,500 to Rs 31,73,500** (Rs 16.7 lakh to Rs 31.7 lakh) for the 105 tasks that could be
 estimated, out of 112. 7 tasks are not estimated (listed below), so the true total is higher.
 The total includes the OPTIONAL skirting replacement (Rs 17,000 to Rs 35,000).
 
@@ -25,7 +25,7 @@ The total includes the OPTIONAL skirting replacement (Rs 17,000 to Rs 35,000).
 | Phase | Tasks | Low | High | Not estimated |
 | --- | ---: | ---: | ---: | ---: |
 | 1. Measure, decide and get approvals | 27 | Rs 18,500 | Rs 50,000 | 1 |
-| 2. Demolition and civil work | 12 | Rs 97,000 | Rs 1,95,000 | 1 |
+| 2. Demolition and civil work | 12 | Rs 1,11,500 | Rs 2,18,500 | 1 |
 | 3. Plumbing first fix | 1 | not estimated | not estimated | 1 |
 | 4. Electrical first fix and AC piping (before plaster) | 25 | Rs 1,24,000 | Rs 2,91,500 | 1 |
 | 5. Plaster, making good and flooring | 4 | Rs 52,000 | Rs 97,500 |  |
@@ -42,7 +42,7 @@ The total includes the OPTIONAL skirting replacement (Rs 17,000 to Rs 35,000).
 | Electrical | 38 | Rs 2,61,500 | Rs 5,49,000 | 1 |
 | Plumbing | 3 | Rs 0 | Rs 0 | 2 |
 | Carpentry | 20 | Rs 9,84,500 | Rs 16,07,500 | 1 |
-| Steel fabrication | 5 | Rs 50,500 | Rs 88,500 | 1 |
+| Steel fabrication | 5 | Rs 65,000 | Rs 1,12,000 | 1 |
 | False ceiling | 1 | Rs 2,000 | Rs 4,000 |  |
 | Air conditioning | 7 | Rs 48,500 | Rs 1,57,000 |  |
 | Aluminium windows and mesh | 3 | Rs 1,02,000 | Rs 1,73,000 |  |
@@ -53,7 +53,7 @@ The total includes the OPTIONAL skirting replacement (Rs 17,000 to Rs 35,000).
 
 | Room | Tasks | Low | High | Not estimated |
 | --- | ---: | ---: | ---: | ---: |
-| Main entry | 12 | Rs 1,08,500 | Rs 1,90,000 | 1 |
+| Main entry | 12 | Rs 1,23,000 | Rs 2,13,500 | 1 |
 | Drawing Room | 30 | Rs 3,54,000 | Rs 6,60,500 | 1 |
 | Lobby / Dining | 12 | Rs 1,47,000 | Rs 3,19,000 |  |
 | Bedroom 1 | 14 | Rs 2,48,000 | Rs 4,39,500 |  |
@@ -103,7 +103,7 @@ Rupees, 2025-26, Delhi NCR, mid-range quality. "Used for" is the total quantity 
 | Half-brick partition, plastered on both faces | sq ft | 190 | 300 | 32.1 |
 | Close a doorway: frame and 12 mm fibre-cement sheet, jointed and ready for paint | sq ft | 160 | 280 | 18.7 |
 | Mild steel, fabricated, primed, painted and fixed | kg | 110 | 170 | 114 |
-| Stainless steel 304 grille door with frame and insect mesh, fabricated and fixed | sq ft | 1,600 | 2,600 | 21.4 |
+| Stainless steel 304 grille door with frame and insect mesh, fabricated and fixed | sq ft | 1,600 | 2,600 | 30.5 |
 | Mortise lock with lever handles, deadbolt and night latch | each | 5,000 | 12,000 | 1 |
 | Light or switch point: conduit, wire, box, modular switch | point | 900 | 1,500 | 28 to 29 |
 | 6 A socket or charging point with a modular plate (USB module included) | point | 1,200 | 2,000 | 18 to 21 |
@@ -199,7 +199,7 @@ Rupees, 2025-26, Delhi NCR, mid-range quality. "Used for" is the total quantity 
 | Cut the cabinet door opening in the Drawing Room north wall | Drawing Room | Rs 8,500 | Rs 17,500 | low | opening 500 x 1800: 9.7 sq ft x Rs 120-220; lintel: 1 each x Rs 5,000-10,000; reveals: 1 each x Rs 2,500-5,000. In a 9-inch wall; the engineer may ask for more support. |
 | West cabinet: steel floor over the open shaft | Drawing Room | Rs 6,500 | Rs 11,000 | low | steel floor, about: 62 kg x Rs 110-170. Angles, hollow section and 5 mm plate over about 650 x 1105; the engineer's design decides the real weight. A cast slab is the alternative. |
 | Build the partition that splits the entry pocket into two cabinets | Main entry | Rs 6,000 | Rs 10,000 | low | partition: 32.1 sq ft x Rs 190-300. Length taken as the pocket depth; not measured. |
-| Replace the iron main entry door (the first, outer door) with a stainless steel one | Main entry | Rs 39,000 | Rs 68,000 | low | door for the 905 x 2200 opening: 21.4 sq ft x Rs 1,600-2,600; lock: 1 each x Rs 5,000-12,000. Opening from the plan, not measured (A7). |
+| Replace the iron main entry door (the first, outer door) with a stainless steel one | Main entry | Rs 53,500 | Rs 91,500 | low | door for the 1287 x 2200 opening: 30.5 sq ft x Rs 1,600-2,600; lock: 1 each x Rs 5,000-12,000. Opening from the plan, not measured (A7). |
 | Replace the plain iron shaft cover at the entry with a better-looking one | Main entry |  |  |  | Not estimated: The cover is not measured and has no size in the model (A7); the type is not chosen (C8). |
 | Bedroom 3: take out the existing corner cupboard | Bedroom 3 | Rs 1,500 | Rs 3,500 | low | half a load of debris: 0.5 load x Rs 3,500-6,500. Labour to dismantle is small if it is a wooden cupboard; more if masonry. |
 | Remove debris and make good the cut edges | Whole home | Rs 7,000 | Rs 26,000 | low | loads: 2 to 4 load x Rs 3,500-6,500. Three openings, one closed doorway and the old window. |
