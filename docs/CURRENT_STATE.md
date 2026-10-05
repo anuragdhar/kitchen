@@ -386,3 +386,5 @@ north-south, as config and Whole home 3D have it); lamp tables drawn 570 high ar
 is drawn about 443 high (was about 560). No models or textures were downloaded.
 - 2026-10-06: "Stand here" first-person camera on the shared room page and Whole home 3D (`src/render/standingCamera.js`,
   `standingCameraMath.mjs`, `StandingCameraControls.jsx`); note `docs/changes/2026-10-06-standing-camera.md`.
+- 2026-10-06 (owner): the Lobby toilet door is an ordinary visible door again. The continuous panel wall on the Lobby south
+  wall that hid it (`LobbyConcealedDoor.js`) is removed; the door opening (1060 + 605 x 2100) is unchanged.

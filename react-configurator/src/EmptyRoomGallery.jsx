@@ -35,7 +35,6 @@ import {buildRoomReview} from './domain/roomReview.mjs'
 import {composeReviewSheet,canvasToBlob} from './render/reviewSheet.js'
 import {parseInspiration,validateInspiration} from './home/inspiration.mjs'
 import inspirationSeed from '../../inspiration/library.json'
-import {createLobbyConcealedDoor} from './rooms/lobby/LobbyConcealedDoor.js'
 import {createBedroom3DressingTable} from './rooms/bedroom3/Bedroom3DressingTable.js'
 import {createWindowDetail} from './rooms/shared/WindowDetail.js'
 import {roomWallOpenings} from './domain/roomOpenings.mjs'
@@ -135,7 +134,6 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
     const addOpeningDetail=(side,opening)=>{
       if(side!=='north'&&side!=='south') return
       if(roomKey==='bedroom3'&&side==='north'&&opening.kind==='door')return
-      if(roomKey==='lobby'&&side==='south'&&opening.kind==='door')return
       if(roomKey==='drawing'&&side==='north'&&opening.kind==='door'&&opening.from<1)return
       const parent=wallParent(side),z=side==='north'?0:L,width=opening.to-opening.from,center=(opening.from+opening.to)/2
       if(opening.kind==='door'){
@@ -264,7 +262,6 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
     const vanity=createBedroom3DressingTable(room);vanity.userData.setMirrorOpen?.(mirrorOpen)
     const partition=createDrawingLobbyPartition(room,roomKey);shell.add(partition)
     partition.userData.setOpen?.(partitionOpen)
-    if(roomKey==='lobby')wallParent('south').add(createLobbyConcealedDoor(room))
     let ironingStorage=null
     let bedroom1Layouts=null
     if(roomKey==='bedroom3'){

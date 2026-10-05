@@ -3,7 +3,6 @@ import {tagSurfaceMaterial} from './render/surfaceRoles.mjs'
 import {createDrawingLobbyPartition} from './rooms/drawing/DrawingLobbyPartition.js'
 import {createStudyFurniture} from './rooms/study/StudyFurniture.js'
 import {createDiningSet} from './rooms/shared/furniture/tables.js'
-import {createLobbyConcealedDoor} from './rooms/lobby/LobbyConcealedDoor.js'
 import {createBedroom1DoorInfill} from './rooms/lobby/Bedroom1DoorInfill.js'
 import {BEDROOM1_CLOSED_DOOR,closedDoorSpanMm} from './config/bedroom1ClosedDoor.js'
 import {createBedroom3DressingTable} from './rooms/bedroom3/Bedroom3DressingTable.js'
@@ -323,9 +322,10 @@ function LiveWholeHome3D({onOpenRoom}){
     const lg=roomGroup(lb,lobby.widthMm,lobby.lengthMm)
     lg.add(createRoomAirConditioning(lobby))
     lg.add(createRoomTaskLighting(lobby))
-    lg.add(createLobbyConcealedDoor(lobby))
     const existingLobby=createExistingElectricalPoints('lobby',lobby,{wallFaceMm:WALL_FACE_MM});if(existingLobby){existingLobby.visible=false;lg.add(existingLobby)}
     const toilet=lobby.doors.find(door=>door.wall==='south'),bedDoor=lobby.doors.find(door=>door.wall==='north')
+    // The toilet door is an ordinary visible door again (owner 2026-10-06; the panel wall that hid it is dropped).
+    localBox(lg,toilet.widthMm-90,toilet.heightMm-80,35,toilet.fromMm+toilet.widthMm/2,(toilet.heightMm-80)/2,lobby.lengthMm,wood)
     roomEdge(lb,lobby.widthMm,lobby.lengthMm,'south',[{start:toilet.fromMm,end:toilet.fromMm+toilet.widthMm,top:toilet.heightMm/1000}])
     // The old plan door on this wall is closed (owner, 2026-09-29): sheet on the lobby face, medicine cabinet behind it.
     const closedDoor=BEDROOM1_CLOSED_DOOR,closedSpan=closedDoorSpanMm(closedDoor,lb,lobby.widthMm)

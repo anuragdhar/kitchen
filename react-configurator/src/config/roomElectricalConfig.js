@@ -77,7 +77,7 @@ export const ROOM_ELECTRICAL = {
       {id: 'L-E2', name: 'Utility socket', kind: 'power', wall: 'east', alongMm: 350, heightMm: 300, loadW: W.socket16A,
         outlets: '1 x 6/16 A combined socket', use: 'vacuum cleaner, festival lights, a room heater; in the corner between the Pooja opening and the ironing storage'},
       {id: 'L-S1', name: 'Toilet switches', kind: 'lighting', wall: 'south', anchor: 'toiletDoorLatch', heightMm: 1200, switchboard: true, forDoor: 'toilet', loadW: 60,
-        outlets: 'switches for the toilet light and exhaust fan', use: 'outside the toilet door, on its latch side (the hinge side of the concealed door is not decided: mirror this if it hangs the other way)'},
+        outlets: 'switches for the toilet light and exhaust fan', use: 'outside the toilet door, on its latch side (the hinge side of the door is not recorded: mirror this if it hangs the other way)'},
       {id: 'L-S2', name: 'Track 1 driver feed', kind: 'lighting', existing: 'X-L3', driverFor: 'L1',
         outlets: 'switched 230 V point for the 60 W / 48 V track driver (dimmer at L-N1)', use: 'reuses the existing tube-light point on the south wall, 540 mm from the run; the tube light comes off'},
       {id: 'L-C1', name: 'Dining pendant', kind: 'lighting', anchor: 'diningTableCentre', light: 'chandelier', loadW: 30,
@@ -96,7 +96,7 @@ export const ROOM_ELECTRICAL = {
     ],
     verify: [
       'Where the feed of the existing switchboard X-L1 comes from (ceiling or floor) before the Bedroom 1 door opening is cut; the junction box L-N2 assumes it drops from above.',
-      'Which way the Bedroom 1 door and the concealed toilet door hang: L-N1 and L-S1 assume the latch on the east jamb.',
+      'Which way the Bedroom 1 door and the toilet door hang: L-N1 and L-S1 assume the latch on the east jamb.',
       'Whether the centre ceiling point X-L4 is a fan point with a hook rated for a fan.',
       'Whether the toilet already has its switches outside the door (not visible in the scan).',
       'Two-way switching for the lobby lights from the kitchen side (east opening) is not planned: owner to decide.',

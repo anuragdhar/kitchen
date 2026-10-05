@@ -119,7 +119,7 @@ Status: proposed 2026-10-05; nothing verified on site. Shown on: Lobby / Dining 
 | L-N4 | AC point | north wall, x 2473, 2300 high | 1 x 16 A socket (or isolator) on its own circuit | the split AC indoor unit on the north wall; beside the unit, not behind it |
 | L-E1 | Iron point | east wall, z 1375, 1250 high | 1 x 16 A socket with a switch and an indicator lamp | the iron, above the ironing storage unit (1000 high) where the board pulls out |
 | L-E2 | Utility socket | east wall, z 350, 300 high | 1 x 6/16 A combined socket | vacuum cleaner, festival lights, a room heater; in the corner between the Pooja opening and the ironing storage |
-| L-S1 | Toilet switches | south wall, x 1815, 1200 high | switches for the toilet light and exhaust fan | outside the toilet door, on its latch side (the hinge side of the concealed door is not decided: mirror this if it hangs the other way) |
+| L-S1 | Toilet switches | south wall, x 1815, 1200 high | switches for the toilet light and exhaust fan | outside the toilet door, on its latch side (the hinge side of the door is not recorded: mirror this if it hangs the other way) |
 | L-S2 | Track 1 driver feed | south wall, x 2735, 2260 high | switched 230 V point for the 60 W / 48 V track driver (dimmer at L-N1) | reuses the existing tube-light point on the south wall, 540 mm from the run; the tube light comes off |
 | L-C1 | Dining pendant | ceiling, x 2200, z 620 | ceiling light point with a hook | the linear pendant over the dining table, dimmed at L-N1 |
 | L-C2 | Ceiling fan | ceiling, x 2605, z 1600 | ceiling fan point with a hook rated for the fan | the existing centre ceiling point (medallion); regulator at L-N1 |
@@ -139,7 +139,7 @@ Checked by the app: 9 of 9 rules pass (12 points; 5 openings; 1 piece of furnitu
 The electrician must verify:
 
 - Where the feed of the existing switchboard X-L1 comes from (ceiling or floor) before the Bedroom 1 door opening is cut; the junction box L-N2 assumes it drops from above.
-- Which way the Bedroom 1 door and the concealed toilet door hang: L-N1 and L-S1 assume the latch on the east jamb.
+- Which way the Bedroom 1 door and the toilet door hang: L-N1 and L-S1 assume the latch on the east jamb.
 - Whether the centre ceiling point X-L4 is a fan point with a hook rated for a fan.
 - Whether the toilet already has its switches outside the door (not visible in the scan).
 - Two-way switching for the lobby lights from the kitchen side (east opening) is not planned: owner to decide.
