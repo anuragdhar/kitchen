@@ -36,7 +36,8 @@ import {createDrawingRoomLayouts,DRAWING_LAYOUTS} from './rooms/drawing/DrawingR
 import {createStoreStorage} from './rooms/shared/StoreStorage.js'
 import {BALCONY_OFFICE,BALCONY_DESK_HEIGHT_KEY} from './config/balconyOfficeConfig.js'
 import {balconyDeskLayout} from './domain/balconyDesk.mjs'
-import {KITCHEN,KITCHEN_REFRIGERATOR,EAST_INIT,WEST_INIT,KITCHEN_AUTOSAVE_KEY,NORTH_HOB_OPTION_Y_MM,EAST_TOP_UPPER_DEPTH,WEST_TOP_UPPER_DEPTH,autoFillModules} from './config/kitchenConfig.js'
+import {KITCHEN,KITCHEN_REFRIGERATOR} from './config/kitchenConfig.js'
+import {readSavedKitchen,wholeHomeKitchenItems,wholeHomeBaseSpans,wholeHomeUpperRuns} from './kitchen/wholeHomeKitchen.mjs'
 import {ENTRY,ENTRY_WALL_SEGMENTS,entryPocketEastWallSpans,PLAN_IMAGE} from './config/entryConfig.js'
 import {createEntryArrivalDoor} from './rooms/entry/EntryArrivalDoor.js'
 import {createEntryFoldSeat} from './rooms/entry/EntryFoldSeat.js'
@@ -576,49 +577,20 @@ function LiveWholeHome3D({onOpenRoom}){
       addBox(.022,(fridge.heightMm-26)/1000,(fridge.widthMm/2-10)/1000,fridgeFrontX+.011,fridge.heightMm/2000,fridgeZ+side*fridge.widthMm/4000,fridgeFace,model)
       addBox(.024,.93,.03,fridgeFrontX+.036,.895,fridgeZ+side*.067,fridgeTrim,model)
     }
-    let savedKitchen={}
-    try{savedKitchen=JSON.parse(localStorage.getItem(KITCHEN_AUTOSAVE_KEY)||'{}')}catch{}
-    const kitchenItems=[...(Array.isArray(savedKitchen.east)?savedKitchen.east:EAST_INIT),...(Array.isArray(savedKitchen.west)?savedKitchen.west:WEST_INIT)].map(item=>item.id==='shaft'?{...item,y:KITCHEN.shaft.y,w:KITCHEN.shaft.l,d:KITCHEN.shaft.w}:item.id==='gas'&&item.y===1350?{...item,y:NORTH_HOB_OPTION_Y_MM}:item)
+    // Which items, base spans and upper runs: the saved kitchen project or its defaults (kitchen/wholeHomeKitchen.mjs).
+    const savedKitchen=readSavedKitchen(()=>localStorage)
+    const kitchenItems=wholeHomeKitchenItems(savedKitchen)
     const kitchenCabinet=new THREE.MeshStandardMaterial({color:savedKitchen.materials?.cabinetBody||'#efe9df',roughness:.72})
     tagSurfaceMaterial(kitchenCabinet,'wood')
     const counterMaterial=new THREE.MeshStandardMaterial({color:savedKitchen.materials?.counter||'#ddd8cf',roughness:.4})
     const darkAppliance=new THREE.MeshStandardMaterial({color:'#22282c',roughness:.28,metalness:.5})
     const steelAppliance=new THREE.MeshStandardMaterial({color:'#afb5b8',roughness:.32,metalness:.65})
-    const westWetSlots=kitchenItems.filter(item=>!item.hidden&&['washing','dishwasher','sink'].includes(item.id)).sort((a,b)=>a.y-b.y)
-    for(const [side,modules] of [
-      ['east',Array.isArray(savedKitchen.eastModules)?savedKitchen.eastModules:autoFillModules(KITCHEN.length)],
-      ['west',Array.isArray(savedKitchen.westModules)?savedKitchen.westModules:autoFillModules(KITCHEN.length-KITCHEN.westGap.to)],
-    ]){
-      let cursor=KITCHEN.length
-      for(const module of modules){
-        const width=Number(module.width)||0
-        if(width<=0)continue
-        const from=cursor-width, to=cursor
-        const spans=side==='west'?(()=>{
-          const result=[]
-          let start=from
-          for(const item of westWetSlots){
-            const cutStart=Math.max(from,item.y),cutEnd=Math.min(to,item.y+item.w)
-            if(cutEnd<=cutStart)continue
-            if(cutStart>start)result.push([start,cutStart])
-            start=Math.max(start,cutEnd)
-          }
-          if(start<to)result.push([start,to])
-          return result
-        })():[[from,to]]
-        for(const [start,end] of spans){
-          localBox(kg,600,820,end-start,side==='east'?KITCHEN.width-300:300,460,KITCHEN.length-(start+end)/2,kitchenCabinet)
-          localBox(kg,600,30,end-start,side==='east'?KITCHEN.width-300:300,885,KITCHEN.length-(start+end)/2,counterMaterial)
-        }
-        cursor-=width
-      }
+    for(const {side,start,end} of wholeHomeBaseSpans(savedKitchen,kitchenItems)){
+      localBox(kg,600,820,end-start,side==='east'?KITCHEN.width-300:300,460,KITCHEN.length-(start+end)/2,kitchenCabinet)
+      localBox(kg,600,30,end-start,side==='east'?KITCHEN.width-300:300,885,KITCHEN.length-(start+end)/2,counterMaterial)
     }
     // Match the upper runs in the detailed kitchen, including the dish-rack opening.
-    for(const side of ['east','west']){
-      const start=side==='east'?0:KITCHEN.westGap.to,end=KITCHEN.length
-      const upperDepth=Number(savedKitchen[side+'TopUpperDepth'])||(side==='east'?EAST_TOP_UPPER_DEPTH:WEST_TOP_UPPER_DEPTH)
-      const rack=side==='west'?kitchenItems.find(i=>i.id==='sinkUpperDishRack'&&!i.hidden):null
-      const lowerSpans=rack?[[start,Math.max(start,rack.y)],[Math.min(end,rack.y+rack.w),end]]:[[start,end]]
+    for(const {side,start,end,upperDepth,rack,lowerSpans} of wholeHomeUpperRuns(savedKitchen,kitchenItems)){
       for(const [a,b] of lowerSpans)if(b>a)localBox(kg,320,500,b-a,side==='east'?KITCHEN.width-160:160,1600,KITCHEN.length-(a+b)/2,kitchenCabinet)
       localBox(kg,upperDepth,850,end-start,side==='east'?KITCHEN.width-upperDepth/2:upperDepth/2,2275,KITCHEN.length-(start+end)/2,kitchenCabinet)
       for(let y=start;y<end;y+=600){
