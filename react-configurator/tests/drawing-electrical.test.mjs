@@ -3,6 +3,8 @@ import assert from 'node:assert/strict'
 import {checkElectricalPlan, electricalPointPosition} from '../src/domain/drawingElectrical.mjs'
 import {DRAWING_ELECTRICAL} from '../src/config/drawingElectricalConfig.js'
 import {EMPTY_ROOM_SHELLS} from '../src/config/roomShellConfig.js'
+import {AC_PLAN} from '../src/config/acPlanConfig.js'
+import {indoorUnitBox} from '../src/domain/acPlan.mjs'
 
 const room = EMPTY_ROOM_SHELLS.drawing
 const withPoint = (id, patch) => ({...DRAWING_ELECTRICAL, points: DRAWING_ELECTRICAL.points.map(p => p.id === id ? {...p, ...patch} : p)})
@@ -35,6 +37,15 @@ test('the checks catch points in openings, behind furniture or out of reach', ()
   assert.match(issues('E4', {alongMm: 2500}), /lobby opening/)
   assert.match(issues('W1', {alongMm: 2400}), /behind the AC/)
   assert.match(issues('E1', {heightMm: 1600}), /switch height/)
+})
+
+test('the AC the checks keep clear of is the indoor unit the AC plan places and the room pages draw', () => {
+  const box = indoorUnitBox(AC_PLAN.spaces.find(s => s.id === 'drawing'), AC_PLAN)
+  const issues = patch => checkElectricalPlan(room, withPoint('W1', patch)).issues.join(' | ')
+  assert.match(issues({alongMm: box.z1 + 10, heightMm: box.bottomMm - 90}), /behind the AC/)
+  assert.doesNotMatch(issues({alongMm: box.z1 - 10, heightMm: box.bottomMm}), /behind the AC/)
+  assert.doesNotMatch(issues({alongMm: box.z2 + 10, heightMm: box.bottomMm}), /behind the AC/)
+  assert.match(issues({alongMm: box.z2 + 1010, heightMm: 2300}), /more than 1 m from the AC unit/)
 })
 
 test('point positions land on the right wall', () => {
