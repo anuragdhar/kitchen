@@ -47,18 +47,22 @@ export const ENTRY = {
     },
   },
   shaft: {planX1: 575, planY1: 775, planX2: 688, planY2: 810},
-  arrivalDoor: {wallPlanX:575,fromPlanY:810,toPlanY:874,heightMm:2200,openAngleDegrees:80,hinge:'north',opens:'west-outside'},
+  // PROPOSAL 2026-10-06: retain the north hinge, reverse the wooden leaf into the gallery; a 60-degree stop avoids its
+  // east wall. Existing 45 mm frame / leaf thickness and 70 mm head allowance were in EntryArrivalDoor.js.
+  // The 35 mm leaf-to-jamb allowance and face offsets are proposed hardware space, NOT surveyed joinery.
+  arrivalDoor: {wallPlanX:575,fromPlanY:810,toPlanY:874,heightMm:2200,openAngleDegrees:60,maxOpenAngleDegrees:60,hinge:'north',opens:'east-inside',
+    faceOffsetMm:-60,frameMm:45,leafJambGapMm:35,leafThicknessMm:45,headAllowanceMm:70},
   outerEntryOpening: {wallPlanX: 688, fromPlanY: 822, toPlanY: 867, heightMm: 2200},
-  // The FIRST (outer) door of the home, in outerEntryOpening: the door from the landing into the 7 ft entry corridor. Owner
-  // 2026-10-03/04: it is iron today and becomes stainless steel; owner 2026-10-04 (later): VENTILATED (a grille, so air passes)
-  // and lockable. Decided and not to be changed: the wooden doors behind it stay (arrivalDoor at the end of the corridor and
-  // the Drawing Room door at innerOpening, which keeps the air-conditioned area small), and no second wooden door is added at
-  // this opening. Until now the model drew only the opening, no leaf. Sizes are millimetres; the leaf fills the opening drawn
-  // on the plan (about 905 x 2200), nothing is measured on site (work-plan/OPEN_ITEMS.md A7). Panels are listed from the
+  // Owner 2026-10-06: "Where this steel door is, it's just an opening; we are not allowed to put a door there. So let's move
+  // this door inside, where the current wooden door is." outerEntryOpening stays completely door-free.
+  // PROPOSAL 2026-10-06: safety door + retained wooden main door at arrivalDoor, steel on the corridor face, opening west.
+  // Face offset 100, jamb allowance 35 and opening stop 85 degrees are proposals for clearance, not surveyed hardware.
+  // Keep the outerDoor key and the 2026-10-04 stainless material, finish, ventilation and lock. Panels are listed from the
   // bottom of the leaf upward and must meet each other exactly: `sheet` is solid 1.2 mm plate, `grille` is vertical square bars
   // at `pitchMm` with a fine insect mesh behind them (`meshOpenFraction` of the mesh is open). The hinge side is a working
   // choice, the same hand as the arrival door; `hingeKnown` is false until the fabricator and the owner settle it.
   outerDoor: {
+    mountedAt: 'arrivalDoor', faceOffsetMm: 100, leafJambGapMm: 35, maxOpenAngleDegrees: 85,
     material: 'stainless steel, grade 304 (316 if the site is near the coast)', finish: 'brushed (hairline)',
     frameMm: 45, leafThicknessMm: 40, floorGapMm: 10, sheetMm: 1.2,
     hinge: 'north', opens: 'west-outside', hingeKnown: false, openAngleDegrees: 0,
@@ -70,8 +74,21 @@ export const ENTRY = {
       {kind: 'sheet', fromMm: 2000, toMm: 2145, note: 'top rail'},
     ],
     lock: {type: 'mortise lock with a lever handle, a deadbolt and a night latch, keyed from both sides', heightMm: 1000},
-    status: 'ventilated stainless steel door decided by the owner 2026-10-04; bar pattern, finish, lock and hinge side are proposals; opening not measured',
+    status: 'owner 2026-10-06: landing opening must have no door; steel moved to arrivalDoor; paired leaves, offsets, stops, bar pattern, finish, lock and hinge side are proposals; opening not measured',
   },
+  // ASSUMPTIONS 2026-10-06 for the pure swing check: existing builders use 85 mm walls, rack front -5 and pulls to -53.
+  // Hardware envelopes include existing handles; 10 mm obstacle margin and 0.5-degree sampling are proposed checks,
+  // with an extra arc-chord error margin. The 700 mm passage warning is a planning assumption, not a code requirement.
+  doorPair: {wallThicknessMm:85,obstacleMarginMm:10,sampleDegrees:0.5,preferredPassageMm:700,
+    rackFrontOffsetMm:5,rackPullProjectionMm:53,woodHandleReachMm:64,steelHandleReachMm:56,
+    woodHandleFromTipMm:140,woodHandleWidthMm:25,steelHandleFromTipMm:112.5,steelHandleWidthMm:135,
+    electricalFaceMm:45,electricalHalfWidthMm:50,electricalDepthMm:20,corridorSwitchAlongMm:350,bellAlongMm:550,gallerySwitchFromDoorMm:150,
+    northWallFromPlanX:570,keyStationHalfWidthMm:110,keyStationHalfDepthMm:55}, // ASSUMPTION: existing wall start and conservative tray/hooks envelope.
+  // ASSUMPTION 2026-10-06: extracted unchanged from EntryFoldSeat.js (2026-09-29 owner's fold-seat request).
+  foldSeat: {wallPlanX:515,centrePlanY:810,heightMm:460,depthMm:340,widthMm:360},
+  // PROPOSAL 2026-10-06: move the existing tray/hooks out of the shared doorway onto the solid gallery-side shaft wall.
+  // Existing tray/hook heights and sizes stay; position moves from x575 +45 mm, y830 to x575 -65 mm, y795.
+  keyStation: {wallPlanX:575,planY:795,faceOffsetMm:-65},
   innerOpening: {wallPlanY: 715, fromPlanX: 515, toPlanX: 570, heightMm: 2100},
   // Owner mark 2026-09-30 (plan x 573-643, y 726-772), confirmed by the owner's screenshot of the dark pocket in the 3D
   // model: on the A501 plan there is a closed rectangle (plan x 577-680, y 726-772, about 925 mm = 3 ft deep and 2 m wide)

@@ -13,11 +13,11 @@ export const ENTRY_LIGHTING = {
   kelvin: 4000, colour: 'single-colour neutral white 4000 K (owner to confirm; warm white 3000 K is the alternative)',
   fittingType: 'round LED panel, Orient Electric type, single colour',
   switching: [
-    {id: 'S1', lights: ['E1', 'E2'], where: 'beside the outer door, inside the corridor', note: 'owner: one switch at the door for the corridor lights'},
+    {id: 'S1', lights: ['E1', 'E2'], where: 'corridor south wall beside the paired arrival doors', note: 'PROPOSAL 2026-10-06: relocated with the steel leaf; owner: one switch at the door for the corridor lights'},
     {id: 'S2', lights: ['E3', 'E4'], where: 'beside the Drawing Room door, inside the gallery', note: 'proposal: the gallery pair on its own switch; a two-way switch at the arrival door is an option'},
   ],
   fittings: [
-    // Section 1, the corridor from the outer door to the arrival door (plan x 575-688, y 810-874): two panels recessed in the
+    // Section 1, the unlocked corridor from the landing opening to the arrival doors (plan x 575-688, y 810-874): two panels recessed in the
     // PVC plank ceiling, on the corridor's centre line, about 540 mm in from each end wall and 1.1 m apart.
     {id: 'E1', section: 'corridor', kind: 'recessed', planX: 660, planY: 842, watts: 8, lumens: 800, diameterMm: 120, cutOutMm: 105},
     {id: 'E2', section: 'corridor', kind: 'recessed', planX: 603, planY: 842, watts: 8, lumens: 800, diameterMm: 120, cutOutMm: 105},

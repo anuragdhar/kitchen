@@ -281,21 +281,21 @@ function entryModel() {
     galleryEast: {x: 0, z: 0, dx: 0, dz: 1, nx: 1, nz: 0, lengthMm: Z(b.y2), label: 'gallery east wall (plan x 515), from the Drawing Room wall', axis: 'z'},
     shaftFace: {x: X(door), z: Z(shaft.planY1), dx: 0, dz: 1, nx: -1, nz: 0, lengthMm: Z(shaft.planY2) - Z(shaft.planY1), label: 'shaft wall facing the gallery', axis: 'z'},
     corridorSouth: {x: X(door), z: Z(shaft.planY2), dx: 1, dz: 0, nx: 0, nz: 1, lengthMm: X(b.x2) - X(door), label: 'corridor south wall (the shaft side)', axis: 'x'},
-    outerWall: {x: X(b.x2), z: Z(shaft.planY2), dx: 0, dz: 1, nx: -1, nz: 0, lengthMm: Z(b.y2) - Z(shaft.planY2), label: 'outer wall with the steel door', axis: 'z'},
+    outerWall: {x: X(b.x2), z: Z(shaft.planY2), dx: 0, dz: 1, nx: -1, nz: 0, lengthMm: Z(b.y2) - Z(shaft.planY2), label: 'outer wall with the plain landing opening', axis: 'z'},
     galleryNorth: {x: 0, z: Z(b.y2), dx: 1, dz: 0, nx: 0, nz: -1, lengthMm: X(door), label: 'gallery north wall (the shoe rack)', axis: 'x'},
   }
   const outerA = Z(outer.fromPlanY) - walls.outerWall.z, outerB = Z(outer.toPlanY) - walls.outerWall.z
   const seatZ = Z(shaft.planY1 + 35) // EntryFoldSeat.js
   return {
     key: 'entry', name: 'Main entry', widthMm: X(b.x2), lengthMm: Z(b.y2), heightMm: ENTRY.wallHeightMm, walls,
-    openings: [{name: 'outer door', wall: 'outerWall', a: outerA, b: outerB, bottom: 0, top: outer.heightMm}],
+    openings: [{name: 'plain landing opening (no door)', wall: 'outerWall', a: outerA, b: outerB, bottom: 0, top: outer.heightMm}],
     blockers: [
       {name: 'fold-down shoe seat', wall: 'galleryEast', a: seatZ - 180, b: seatZ + 180, bottom: 0, top: 650},
       {name: 'shoe rack', wall: 'galleryNorth', a: X(rack.planX1), b: X(rack.planX2), bottom: 0, top: rack.heightMm},
     ],
     doors: [
       // Hinges 'north' in entryConfig.js (the higher plan y): the latch is at the lower plan y end of each opening.
-      {id: 'outer', name: 'outer steel door', latchAt: {x: X(outer.wallPlanX), z: Z(outer.fromPlanY)}, latchAssumed: !ENTRY.outerDoor.hingeKnown},
+      {id: 'outer', name: 'steel safety door at arrival opening', latchAt: {x: X(door)+ENTRY.outerDoor.faceOffsetMm, z: Z(ENTRY.arrivalDoor.fromPlanY)}, latchAssumed: !ENTRY.outerDoor.hingeKnown},
       {id: 'arrival', name: 'arrival door', latchAt: {x: X(door), z: Z(ENTRY.arrivalDoor.fromPlanY)}},
       // The Drawing Room door is hinged on its east jamb (roomShellConfig.js), so its latch is at the plan x 570 end, where the
       // only surface is the east cabinet's doors: the switch may stand on the hinge-side wall, further from the latch.
@@ -305,9 +305,10 @@ function entryModel() {
     fittings: Object.fromEntries(ENTRY_LIGHTING.fittings.map(f => [f.id, {x: X(f.planX), z: Z(f.planY), watts: f.watts}])),
     lightingCircuits: ENTRY_LIGHTING.switching.map(g => ({id: g.id, label: `${g.lights.join(' + ')} (${g.where})`})),
     anchors: {
-      outerDoorInside: {wall: 'corridorSouth', alongMm: walls.corridorSouth.lengthMm - 250},
-      outerDoorLatchStrip: {wall: 'outerWall', alongMm: outerA / 2},
-      arrivalDoorLatch: {wall: 'shaftFace', alongMm: walls.shaftFace.lengthMm - 150},
+      // PROPOSAL 2026-10-06: retained anchor IDs now follow the paired arrival doors, on the solid south latch-side walls.
+      outerDoorInside: {wall: 'corridorSouth', alongMm: ENTRY.doorPair.corridorSwitchAlongMm},
+      outerDoorLatchStrip: {wall: 'corridorSouth', alongMm: ENTRY.doorPair.bellAlongMm},
+      arrivalDoorLatch: {wall: 'shaftFace', alongMm: walls.shaftFace.lengthMm - ENTRY.doorPair.gallerySwitchFromDoorMm},
       shoeRackMiddle: {wall: 'galleryNorth', alongMm: (X(rack.planX1) + X(rack.planX2)) / 2},
     },
     existing: {},

@@ -21,7 +21,7 @@ export function entrySections(entry) {
   const b = entry.planBounds, s = entry.shaft, c = entry.wallCavity, doorX = entry.arrivalDoor.wallPlanX
   const rect = (x1, y1, x2, y2) => ({x1, y1, x2, y2, widthMm: Math.round(mmX(entry, x2 - x1)), lengthMm: Math.round(mmZ(entry, y2 - y1))})
   return [
-    {id: 'corridor', order: 1, label: 'Corridor from the outer door to the arrival door', walkable: true, ceiling: 'PVC planks (false ceiling)', ...rect(doorX, s.planY2, b.x2, b.y2)},
+    {id: 'corridor', order: 1, label: 'Unlocked corridor from the landing opening to the paired arrival doors', walkable: true, ceiling: 'PVC planks (false ceiling)', ...rect(doorX, s.planY2, b.x2, b.y2)},
     {id: 'shaft', order: 2, label: 'Services shaft on the right of the corridor', walkable: false, ...rect(s.planX1, s.planY1, s.planX2, s.planY2)},
     {id: 'pocket', order: 3, label: 'Pocket behind the Drawing Room wall: east cabinet and west cabinet', walkable: false, ...rect(c.planX1, c.wallPlanY2, b.x2, s.planY1)},
     {id: 'gallery', order: 4, label: 'Inner gallery from the arrival door past the shoe rack to the Drawing Room door', walkable: true, ceiling: 'plaster slab', ...rect(b.x1, b.y1, doorX, b.y2)},
@@ -65,9 +65,9 @@ export function checkEntryLighting(entry, lighting) {
 
 /** Sizes of the outer door from the opening drawn on the plan and ENTRY.outerDoor: leaf, panels and the free air through it. */
 export function entryOuterDoorGeometry(entry) {
-  const o = entry.outerEntryOpening, d = entry.outerDoor
+  const d = entry.outerDoor, o = entry[d.mountedAt]
   const openingWidthMm = Math.round(mmZ(entry, o.toPlanY - o.fromPlanY)), openingHeightMm = o.heightMm
-  const leafWidthMm = openingWidthMm - 2 * d.frameMm, leafHeightMm = openingHeightMm - d.frameMm - d.floorGapMm
+  const leafWidthMm = openingWidthMm - 2 * (d.frameMm + d.leafJambGapMm), leafHeightMm = openingHeightMm - d.frameMm - d.floorGapMm
   const leafAreaM2 = leafWidthMm * leafHeightMm / 1e6
   const panels = d.panels.map(p => {
     const heightMm = p.toMm - p.fromMm, areaM2 = leafWidthMm * heightMm / 1e6
@@ -82,7 +82,8 @@ export function entryOuterDoorGeometry(entry) {
 export function checkEntryOuterDoor(entry) {
   const d = entry.outerDoor, g = entryOuterDoorGeometry(entry), issues = [], need = (ok, message) => { if (!ok) issues.push(message) }
   need(/stainless/i.test(d.material), 'the outer door is not stainless steel')
-  need(g.leafWidthMm >= 750 && g.leafWidthMm <= 1000, `leaf ${g.leafWidthMm} mm wide: not a single door leaf`)
+  need(d.mountedAt === 'arrivalDoor', 'steel door must be mounted at arrivalDoor; the landing opening must stay plain')
+  need(g.leafWidthMm > 0 && g.leafWidthMm < g.openingWidthMm, `leaf ${g.leafWidthMm} mm wide: does not fit the arrival opening`)
   need(g.leafHeightMm >= 1950, `leaf only ${g.leafHeightMm} mm high`)
   let cursor = 0
   for (const p of d.panels) {
@@ -98,12 +99,104 @@ export function checkEntryOuterDoor(entry) {
   const lockPanel = d.panels.find(p => d.lock.heightMm >= p.fromMm && d.lock.heightMm <= p.toMm)
   need(lockPanel?.kind === 'sheet', 'the lock is not on a solid rail')
   need(d.lock.heightMm >= LOCK_HEIGHT_MM[0] && d.lock.heightMm <= LOCK_HEIGHT_MM[1], `lock at ${d.lock.heightMm} mm, outside ${LOCK_HEIGHT_MM.join('-')}`)
-  need(/outside$/.test(d.opens), 'a safety door opens outward, so it cannot be pushed in and does not take corridor space')
+  need(d.opens === 'west-outside', 'the proposed safety door opens outward into the corridor')
   need(['north', 'south'].includes(d.hinge), 'hinge must be on the north or south jamb of this west-wall opening')
   return {ok: issues.length === 0, issues, ...g}
 }
 
 export const GRILLE_OPEN_FRACTION_MIN = 0.7 // a condenser grille must be mostly air, or the fan pushes against it
+
+/** Shared leaf transforms, in mm in the south-up plan frame (+x west, +z north), relative to the arrival wall/south jamb.
+ * Builders translate by their own plan converters, then divide these lengths by 1000. No room/pixel offsets are guessed.
+ */
+export function entryDoorLeaf(entry, key) {
+  const d = entry[key], o = key === 'outerDoor' ? entry[d.mountedAt] : d
+  const openingWidthMm = Math.round(mmZ(entry, o.toPlanY - o.fromPlanY)), jambMm = d.frameMm + d.leafJambGapMm
+  const sign = d.hinge === 'north' ? -1 : 1, outward = d.opens === 'west-outside' ? 1 : -1
+  return {key, opening: o, widthMm: openingWidthMm - 2 * jambMm, heightMm: key === 'outerDoor' ? entryOuterDoorGeometry(entry).leafHeightMm : d.heightMm - d.headAllowanceMm,
+    hingeX: d.faceOffsetMm, hingeZ: d.hinge === 'north' ? openingWidthMm - jambMm : jambMm, sign,
+    rotationSign: sign * outward, thicknessMm: d.leafThicknessMm, maxDegrees: d.maxOpenAngleDegrees}
+}
+
+// SAT separation of convex rectangles: positive is a conservative lower bound on their true distance; negative overlaps.
+function polygonGap(a, b) {
+  let gap = -Infinity
+  for (const p of [a, b]) for (let i = 0; i < p.length; i++) {
+    const q = p[(i + 1) % p.length], dx = q.x - p[i].x, dz = q.z - p[i].z, length = Math.hypot(dx, dz)
+    const project = r => r.map(v => (v.x * -dz + v.z * dx) / length), aa = project(a), bb = project(b)
+    gap = Math.max(gap, Math.min(...bb) - Math.max(...aa), Math.min(...aa) - Math.max(...bb))
+  }
+  return gap
+}
+const rectangle = (x1, z1, x2, z2) => [{x:x1,z:z1},{x:x2,z:z1},{x:x2,z:z2},{x:x1,z:z2}]
+
+export function entryDoorLeafPolygons(entry, key, degrees) {
+  const leaf = entryDoorLeaf(entry, key), p = entry.doorPair, wood = key === 'arrivalDoor'
+  const reach = wood ? p.woodHandleReachMm : p.steelHandleReachMm
+  const tip = wood ? p.woodHandleFromTipMm : p.steelHandleFromTipMm, width = wood ? p.woodHandleWidthMm : p.steelHandleWidthMm
+  const angle = leaf.rotationSign * degrees * Math.PI / 180, c = Math.cos(angle), s = Math.sin(angle)
+  return [rectangle(-leaf.thicknessMm / 2, 0, leaf.thicknessMm / 2, leaf.widthMm),
+    rectangle(-reach, leaf.widthMm - tip - width / 2, reach, leaf.widthMm - tip + width / 2)]
+    .map(poly => poly.map(v => ({x:leaf.hingeX + v.x * c + leaf.sign * v.z * s, z:leaf.hingeZ - v.x * s + leaf.sign * v.z * c})))
+}
+
+/** Static obstacles include deployed seat, closed rack/AC service fronts and cabinet; open storage leaves are not modelled.
+ * Electrical point boxes use the same config anchors as roomElectricalModels. Height-independent projections are conservative.
+ */
+export function entryDoorObstacles(entry) {
+  const o = entry.arrivalDoor, b = entry.planBounds, p = entry.doorPair, rack = entry.shoeRack, seat = entry.foldSeat, c = entry.wallCavity.eastCabinet
+  const X = px => mmX(entry, px - o.wallPlanX), Z = py => mmZ(entry, py - o.fromPlanY), half = p.wallThicknessMm / 2
+  const rect = (name, x1, z1, x2, z2) => ({name, polygon:rectangle(x1,z1,x2,z2)})
+  const north = Z(b.y2), west = X(b.x2), east = X(b.x1), rackX = X((rack.planX1 + rack.planX2) / 2)
+  const point = (name, x, z, onHorizontalWall) => rect(name,
+    x - (onHorizontalWall ? p.electricalHalfWidthMm : p.electricalDepthMm), z - (onHorizontalWall ? p.electricalDepthMm : p.electricalHalfWidthMm),
+    x + (onHorizontalWall ? p.electricalHalfWidthMm : p.electricalDepthMm), z + (onHorizontalWall ? p.electricalDepthMm : p.electricalHalfWidthMm))
+  return [rect('corridor north wall', X(p.northWallFromPlanX), north-half, west, north+half),
+    rect('corridor south / shaft wall', 0, -half, west, half), rect('landing wall (conservative full plane)', west-half, 0, west+half, north),
+    rect('shaft gallery face', -half, Z(entry.shaft.planY1), half, 0),
+    rect('gallery east wall', east-half, Z(b.y1), east+half, north),
+    rect('shoe rack and pulls', rackX-rack.widthMm/2, north-p.rackPullProjectionMm, rackX+rack.widthMm/2, north+rack.projectionMm-p.rackFrontOffsetMm),
+    rect('AC bay and closed service door', rackX-rack.widthMm/2, north-p.rackPullProjectionMm, rackX+rack.widthMm/2, north+shoeRackAcBayGeometry(entry).bayDepthMm),
+    rect('deployed fold seat', X(seat.wallPlanX), Z(seat.centrePlanY)-seat.widthMm/2, X(seat.wallPlanX)+seat.depthMm, Z(seat.centrePlanY)+seat.widthMm/2),
+    rect('east cabinet (closed)', X(c.planX1)-c.panelMm, Z(c.planY1), X(c.planX2), Z(c.planY2)),
+    rect('key tray and hooks', X(entry.keyStation.wallPlanX)+entry.keyStation.faceOffsetMm-p.keyStationHalfDepthMm, Z(entry.keyStation.planY)-p.keyStationHalfWidthMm,
+      X(entry.keyStation.wallPlanX)+entry.keyStation.faceOffsetMm+p.keyStationHalfDepthMm, Z(entry.keyStation.planY)+p.keyStationHalfWidthMm),
+    point('EN-1 corridor switch', p.corridorSwitchAlongMm, p.electricalFaceMm, true),
+    point('EN-2 bell / EN-7 conduit', p.bellAlongMm, p.electricalFaceMm, true),
+    point('EN-3 gallery switch', -p.electricalFaceMm, -p.gallerySwitchFromDoorMm, false)]
+}
+
+/** Complete arcs, not just open endpoints. A sampling-error allowance bounds every intermediate angle by the furthest
+ * hardware radius times half the sample step in radians. Opposite half-plane envelopes prove independent leaf operation.
+ * This is a geometric fit check, NOT approval of the narrow passage, hardware, installation or accessible egress.
+ */
+export function checkEntryDoorPair(entry) {
+  const issues = [], warnings = [], p = entry.doorPair, obstacles = entryDoorObstacles(entry), leaves = {}
+  const need = (ok, message) => { if (!ok) issues.push(message) }
+  need(entry.outerDoor.mountedAt === 'arrivalDoor', 'steel door must share the arrival opening')
+  need(entry.outerDoor.opens === 'west-outside' && entry.arrivalDoor.opens === 'east-inside', 'paired leaves must open away from each other')
+  for (const key of ['outerDoor', 'arrivalDoor']) {
+    const d = entry[key], leaf = entryDoorLeaf(entry, key), steps = Math.ceil(leaf.maxDegrees / p.sampleDegrees)
+    need(['north','south'].includes(d.hinge), `${key}: unknown hinge side`)
+    need(leaf.maxDegrees > 0 && leaf.maxDegrees <= 90 && d.openAngleDegrees >= 0 && d.openAngleDegrees <= leaf.maxDegrees, `${key}: display angle / stop outside the checked arc`)
+    const errorMm = Math.hypot(leaf.widthMm, Math.max(p.woodHandleReachMm,p.steelHandleReachMm)) * p.sampleDegrees * Math.PI / 360
+    const clearances = obstacles.map(o => ({name:o.name, clearanceMm:Infinity}))
+    for (let i = 0; i <= steps; i++) {
+      const polygons = entryDoorLeafPolygons(entry,key,leaf.maxDegrees*i/steps)
+      obstacles.forEach((o,j) => { clearances[j].clearanceMm = Math.min(clearances[j].clearanceMm, ...polygons.map(poly => polygonGap(poly,o.polygon)-errorMm)) })
+    }
+    for (const c of clearances) { need(c.clearanceMm >= p.obstacleMarginMm, `${key}: arc too close to ${c.name} (${Math.floor(c.clearanceMm)} mm)`); c.clearanceMm = Math.floor(c.clearanceMm) }
+    leaves[key] = {...leaf, clearances}
+  }
+  const leafSeparationMm = entry.outerDoor.faceOffsetMm - entry.arrivalDoor.faceOffsetMm - p.woodHandleReachMm - p.steelHandleReachMm
+  need(leafSeparationMm >= p.obstacleMarginMm, `closed and independently moving leaves lack face clearance (${leafSeparationMm} mm)`)
+  // Remaining south-end throat with both leaves at their stops; conservative projection includes the entire wood handle envelope.
+  const a = entry.arrivalDoor.maxOpenAngleDegrees * Math.PI / 180, wood = leaves.arrivalDoor
+  const passageMm = Math.floor(wood.widthMm * (1 - Math.cos(a)) - p.woodHandleReachMm * Math.sin(a))
+  if (passageMm < p.preferredPassageMm) warnings.push(`only about ${passageMm} mm conservative passage at the wooden stop; owner/fabricator must review access before adopting the pair`)
+  warnings.push('wide single steel leaf and wooden leaf resizing need fabricator review; storage doors closed, no person or carrying-space check')
+  return {ok:issues.length===0, issues, warnings, leaves, leafSeparationMm, passageMm}
+}
 
 /**
  * The owner's proposal (2026-10-05) to stand the AC outdoor unit in the bottom of the shoe rack (ENTRY.shoeRack.acBay), as

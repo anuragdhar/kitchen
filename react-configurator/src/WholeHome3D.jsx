@@ -131,6 +131,7 @@ function LiveWholeHome3D({onOpenRoom}){
   const roomLightRef=useRef(100)
   const [measureMode,setMeasureMode]=useState(false)
   const [showCavity,setShowCavity]=useState(false)
+  const [entryDoorsOpen,setEntryDoorsOpen]=useState(false)
   const [showAcRoutes,setShowAcRoutes]=useState(false) // pipe and drain routes of the whole-home AC plan (config/acPlanConfig.js)
   const [measureResult,setMeasureResult]=useState(null)
   const [planMark,setPlanMark]=useState(()=>{try{return JSON.parse(localStorage.getItem(PLAN_MARK_KEY)||'{}')}catch{return {}}})
@@ -207,11 +208,13 @@ function LiveWholeHome3D({onOpenRoom}){
     })
     // The pocket's east wall (plan-left): the east cabinet is open onto the Entry gallery (ENTRY.wallCavity.eastOpening).
     for(const [segment,bottom,top] of entryPocketEastWallSpans(HEIGHT)){const mesh=addSpan(segment,bottom,top);if(mesh)mesh.userData={planWall:segment}}
-    model.add(createEntryArrivalDoor(X,Z))
+    const entryWoodenDoor=createEntryArrivalDoor(X,Z);model.add(entryWoodenDoor)
     model.add(createEntryFoldSeat(X,Z))
     model.add(createEntryEastCabinet(X,Z))
-    // First (outer) door: ventilated stainless steel (ENTRY.outerDoor); round ceiling lights (config/entryLightingConfig.js).
-    model.add(createEntryOuterDoor(X,Z))
+    // Owner 2026-10-06: landing stays plain; proposed steel/wood pair shares the arrival opening.
+    const entrySteelDoor=createEntryOuterDoor(X,Z);model.add(entrySteelDoor)
+    const setEntryDoorsOpen=open=>{entrySteelDoor.userData.setOpen(open?ENTRY.outerDoor.maxOpenAngleDegrees:0);entryWoodenDoor.userData.setOpen(open?ENTRY.arrivalDoor.maxOpenAngleDegrees:0)}
+    setEntryDoorsOpen(false)
     model.add(createEntryCeilingLights(X,Z))
     // Entry wall cavity (owner mark 2026-09-30): translucent volumes and depth labels, shown by 'Show entry wall cavity'.
     const cavityGroup=createEntryWallCavity(X,Z);model.add(cavityGroup)
@@ -806,7 +809,7 @@ function LiveWholeHome3D({onOpenRoom}){
     const interiorRoomIds=['bedroom3','study','balcony','terrace','kitchen','lobby','drawing','bedroom1','bedroom1-balcony','entry']
     const interiorScene=registerInteriorScene({id:'whole-home',scene,camera,renderer,zones:ROOMS.map((r,index)=>({id:interiorRoomIds[index],min:[X(r.bounds[0]),0,Z(r.bounds[1])],max:[X(r.bounds[2]),HEIGHT,Z(r.bounds[3])]}))})
     let raf=0;const render=()=>{controls.update();view.render();raf=requestAnimationFrame(render)};render()
-    sceneRef.current={clearItem,liveView:view,setAcRoutes:visible=>{acRoutes.visible=visible},setDesigner:on=>view.setDesigner(on),setCavity:visible=>{cavityGroup.visible=visible},setRoomLight,setTvLabels:visible=>drawingLayouts.setLabels(visible),setDrawingLayout:key=>drawingLayouts.setLayout(key),setDrawingArm:pulled=>drawingLayouts.setArm(pulled),setElectrical:visible=>drawingLayouts?.setElectrical(visible),setExistingElectrical:visible=>{for(const g of [existingDrawing,existingLobby])if(g)g.visible=visible},setDoorSwing:visible=>drawingLayouts.setDoorSwing(visible),setStorageOpen:open=>drawingLayouts.setStorageOpen(open),setDrawingTv:key=>drawingLayouts.setTvSize(key),setMedicineCabinetOpen:value=>doorInfill.userData.setOpen(value),setStorageCoverOpen:value=>storeStorage.userData.setCoverOpen(value),setMirrorOpen:value=>vanity.userData.setMirrorOpen?.(value),setPartitionOpen:value=>partition.userData.setOpen?.(value),setCamera,setWallsVisible:visible=>{walls.visible=visible},setBoardOpen:value=>{ironingStorage.userData.setBoardOpen(value)},setPoojaPersonVisible:visible=>{seatedPerson.visible=visible},setPoojaDoorsOpen:value=>{poojaDoors.userData.setDoorsOpen(value)},clearMark,setDaylight,setMeasure,clearMeasure}
+    sceneRef.current={clearItem,liveView:view,setEntryDoorsOpen,setAcRoutes:visible=>{acRoutes.visible=visible},setDesigner:on=>view.setDesigner(on),setCavity:visible=>{cavityGroup.visible=visible},setRoomLight,setTvLabels:visible=>drawingLayouts.setLabels(visible),setDrawingLayout:key=>drawingLayouts.setLayout(key),setDrawingArm:pulled=>drawingLayouts.setArm(pulled),setElectrical:visible=>drawingLayouts?.setElectrical(visible),setExistingElectrical:visible=>{for(const g of [existingDrawing,existingLobby])if(g)g.visible=visible},setDoorSwing:visible=>drawingLayouts.setDoorSwing(visible),setStorageOpen:open=>drawingLayouts.setStorageOpen(open),setDrawingTv:key=>drawingLayouts.setTvSize(key),setMedicineCabinetOpen:value=>doorInfill.userData.setOpen(value),setStorageCoverOpen:value=>storeStorage.userData.setCoverOpen(value),setMirrorOpen:value=>vanity.userData.setMirrorOpen?.(value),setPartitionOpen:value=>partition.userData.setOpen?.(value),setCamera,setWallsVisible:visible=>{walls.visible=visible},setBoardOpen:value=>{ironingStorage.userData.setBoardOpen(value)},setPoojaPersonVisible:visible=>{seatedPerson.visible=visible},setPoojaDoorsOpen:value=>{poojaDoors.userData.setDoorsOpen(value)},clearMark,setDaylight,setMeasure,clearMeasure}
     const standing=createStandingCamera({camera,controls,domElement:renderer.domElement,bounds:{minX:.2,maxX:W-.2,minZ:.2,maxZ:L-.2},onChange:setStand});sceneRef.current.standing=standing
     setRoomLight(roomLightRef.current/100)
     setDaylight(sunHourRef.current)
@@ -836,6 +839,7 @@ function LiveWholeHome3D({onOpenRoom}){
   useEffect(()=>{roomLightRef.current=roomLightPercent;sceneRef.current?.setRoomLight(roomLightPercent/100)},[roomLightPercent])
   useEffect(()=>{sceneRef.current?.setMeasure(measureMode)},[measureMode])
   useEffect(()=>{sceneRef.current?.setCavity(showCavity)},[showCavity])
+  useEffect(()=>{sceneRef.current?.setEntryDoorsOpen(entryDoorsOpen)},[entryDoorsOpen])
   useEffect(()=>{sceneRef.current?.setAcRoutes(showAcRoutes)},[showAcRoutes])
 
   return <section style={{background:'#fff',border:'1px solid #dbe3e9',borderRadius:22,overflow:'hidden',boxShadow:'0 16px 42px rgba(23,32,51,.1)'}}>
@@ -869,6 +873,7 @@ function LiveWholeHome3D({onOpenRoom}){
         <button {...designer.button(buttonStyle(designer.on))}/>
         <RenderQualityControls sceneRef={sceneRef} name="whole-home" buttonStyle={buttonStyle}/>
         <button onClick={()=>{const standing=sceneRef.current?.standing;if(standing)standing.active?standing.leave():standing.enter(STAND_START)}} aria-pressed={!!stand?.active} style={buttonStyle(!!stand?.active)} title="Put the camera at eye height inside the room and look around">{stand?.active?'Leave standing view':'Stand here'}</button>
+        <button onClick={()=>setEntryDoorsOpen(value=>!value)} aria-pressed={entryDoorsOpen} style={buttonStyle(entryDoorsOpen)} title="Proposal: steel opens into corridor; wood reverses inward with a limited stop and narrow passage. Review Main entry note before fabrication.">{entryDoorsOpen?'Close':'Open'} entry door pair</button>
         <button onClick={()=>setShowCavity(value=>!value)} aria-pressed={showCavity} style={buttonStyle(showCavity)} title="The empty 3 ft deep cavity on the Main Entry side of the Drawing Room north wall, and the wall between them">{showCavity?'Hide entry wall cavity':'Show entry wall cavity'}</button>
         <button onClick={()=>setShowAcRoutes(value=>!value)} aria-pressed={showAcRoutes} style={buttonStyle(showAcRoutes)} title="The whole-home AC plan (docs/AC_PLAN.md): refrigerant pipes from each indoor unit to its outdoor unit with the length to order, and the drain pipes to where they discharge. A proposal from typical figures; nothing is measured.">{showAcRoutes?'Hide AC pipe routes':'Show AC pipe routes'}</button>
         <button onClick={()=>setMeasureMode(value=>!value)} aria-pressed={measureMode} style={buttonStyle(measureMode)}>{measureMode?'Stop measuring':'Measure'}</button>

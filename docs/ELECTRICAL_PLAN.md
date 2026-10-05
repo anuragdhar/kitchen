@@ -298,17 +298,20 @@ The electrician must verify:
 
 ## Main entry
 
-Status: proposed 2026-10-05; nothing measured on site (OPEN_ITEMS A7). Shown on: Main entry page. 11 points; connected load about 1252 W.
+Status: proposed 2026-10-06; nothing measured on site (OPEN_ITEMS A7). Shown on: Main entry page. 11 points; connected load about 1252 W.
+The landing opening has no door (owner correction 2026-10-06). Bell, corridor switch and future door-phone/lock conduit now
+follow the steel safety leaf at the arrival opening; the retained wooden leaf opens inward with a limited stop. This pair
+is a proposal with a narrow passage, not an installation approval: see `changes/2026-10-06-entry-door-pair.md`.
 
 | ID | Point | Where | What to fit | Use |
 | --- | --- | --- | --- | --- |
-| EN-1 | Corridor switch | corridor south wall (the shaft side), x 3072, 1200 high | switch for the corridor lights E1 + E2; 1 x 6 A socket | inside the corridor beside the outer door, on its latch side (owner: one switch at the door for the corridor lights) |
-| EN-2 | Bell push | outer wall with the steel door, z 2031, 1100 high | bell push on the landing face of the wall | wired to the existing door chime X-D3 in the Drawing Room, which stays |
+| EN-1 | Corridor switch | corridor south wall (the shaft side), x 1502, 1200 high | switch for the corridor lights E1 + E2; 1 x 6 A socket | PROPOSAL 2026-10-06: beside the steel arrival leaf, outside the locked line; owner wanted one switch at the door |
+| EN-2 | Bell push | corridor south wall (the shaft side), x 1702, 1100 high | bell push on the corridor south wall beside the paired arrival doors | PROPOSAL 2026-10-06: wired to the existing door chime X-D3 in the Drawing Room; no bell on the landing opening |
 | EN-3 | Gallery switch (arrival door) | shaft wall facing the gallery, z 1760, 1200 high | 2-way switch for the gallery lights E3 + E4; 1 x 6 A socket | on the shaft wall beside the arrival door, on its latch side: the gallery lights as you step in |
 | EN-4 | Gallery switch (Drawing Room door) | gallery east wall (plan x 515), from the Drawing Room wall, z 250, 1200 high | 2-way switch for the gallery lights E3 + E4 | beside the Drawing Room door (the lighting config's place for this switch). The latch side of that door is the east cabinet's doors, so the switch is on the hinge-side wall; the door swings away, into the Drawing Room |
 | EN-5 | Utility socket | gallery east wall (plan x 515), from the Drawing Room wall, z 2700, 300 high | 1 x 6/16 A combined socket | vacuum cleaner, a shoe dryer, festival lights; between the fold-down seat and the shoe rack |
 | EN-6 | Shoe rack light | gallery north wall (the shoe rack), x 567, 2000 high | LED strip with a door-contact switch (optional) (hidden on purpose) | inside the shoe rack: lights the shelves when the mirror doors open |
-| EN-7 | Video door phone conduit | outer wall with the steel door, z 2031, 1500 high | 25 mm conduit with a CAT6 and a 12 V pair, ending in a blank plate (optional) | for a video doorbell or smart lock later, above the bell push |
+| EN-7 | Video door phone conduit | corridor south wall (the shaft side), x 1702, 1500 high | 25 mm conduit with a CAT6 and a 12 V pair, ending in a blank plate (optional) | PROPOSAL 2026-10-06: above the relocated bell, conduit to the arrival frame; no electric lock selected, mechanical lock remains on the steel leaf |
 | EN-L1 | Corridor light E1 | ceiling, x 2785, z 2553 | ceiling light point for the round LED panel, recessed in the PVC ceiling | fitting E1 of entryLightingConfig.js; switched at EN-1 |
 | EN-L2 | Corridor light E2 | ceiling, x 1690, z 2553 | ceiling light point for the round LED panel, recessed in the PVC ceiling | fitting E2 of entryLightingConfig.js; switched at EN-1 |
 | EN-L3 | Gallery light E3 | ceiling, x 576, z 2413 | ceiling light point for the round LED panel, surface-mounted on the slab | fitting E3 of entryLightingConfig.js; switched at EN-3 and EN-4 (2-way) |
@@ -326,7 +329,7 @@ Checked by the app: 9 of 9 rules pass (11 points; 1 opening; 2 pieces of furnitu
 The electrician must verify:
 
 - Nothing in the entry is measured; every position is from the A501 plan image.
-- Which way the outer steel door hangs (hingeKnown is false in entryConfig.js); EN-1 and the bell push assume the latch on the south jamb.
+- PROPOSAL 2026-10-06: both leaves hinge north at arrivalDoor; steel opens west, wood east with a stop; EN-1 and the bell are on the corridor south wall beside the south latch. Confirm handing and the narrow passage.
 - Where the existing bell push and the corridor light switch are today.
 - If the AC outdoor unit goes in the bottom of the shoe rack (proposal, not decided), its supply and isolator come with that decision: not planned here.
 - The key station drawn beside the arrival door has no charger: phones charge at E1 inside the Drawing Room.
