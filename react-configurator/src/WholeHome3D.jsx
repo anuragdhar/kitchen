@@ -19,6 +19,7 @@ import {STUDY_ROOM} from './config/studyRoomConfig.js'
 import {createStudyTerrace} from './rooms/study/StudyTerrace.js'
 import {createBedroom3SouthExtension} from './rooms/bedroom3/Bedroom3SouthExtension.js'
 import {createBedroom3Bed} from './rooms/bedroom3/Bedroom3Bed.js'
+import {createBedroom1Bed} from './rooms/bedroom1/Bedroom1Layouts.js'
 import {createBedroom3EntryDoor} from './rooms/bedroom3/Bedroom3EntryDoor.js'
 import {createBedroom3Wardrobe} from './rooms/bedroom3/Bedroom3Wardrobe.js'
 import {createBedroom3WestChest} from './rooms/bedroom3/Bedroom3WestChest.js'
@@ -495,28 +496,8 @@ function LiveWholeHome3D({onOpenRoom}){
     }
     const lobbyDoor=bedroom.doors.find(door=>door.leadsTo==='Lobby / Dining')
     localBox(bg,lobbyDoor.widthMm-90,lobbyDoor.heightMm-80,35,lobbyDoor.fromMm+lobbyDoor.widthMm/2,(lobbyDoor.heightMm-80)/2,bedroom.lengthMm,wood)
-    const bed=bedroom.furniture?.bed
-    if(bed){
-      const bedLength=bed.lengthMm,bedWidth=bed.widthMm,bedWest=bed.fromWestMm,bedSouth=bed.fromSouthMm
-      const bedCenterX=bedWest+bedLength/2,bedCenterZ=bedroom.lengthMm-bedSouth-bedWidth/2
-      const bedFrame=new THREE.MeshStandardMaterial({color:'#806047',roughness:.68})
-      tagSurfaceMaterial(bedFrame,'wood')
-      const bedUpholstery=new THREE.MeshStandardMaterial({color:'#efe8dc',roughness:.94})
-      const bedCover=new THREE.MeshStandardMaterial({color:'#b7c7bd',roughness:.96})
-      const headboardMaterial=new THREE.MeshStandardMaterial({color:'#9a7656',roughness:.74})
-      tagSurfaceMaterial(headboardMaterial,'wood')
-      const pillowMaterial=new THREE.MeshStandardMaterial({color:'#fbf8f1',roughness:.98})
-      const baseHeight=250,mattressThickness=190
-      // In room-local coordinates x grows west-to-east and z grows north-to-south.
-      // The headboard sits at the east/south end; the bed's length follows the south wall.
-      localBox(bg,bedLength,baseHeight,bedWidth,bedCenterX,baseHeight/2,bedCenterZ,bedFrame)
-      localBox(bg,bedLength-35,mattressThickness,bedWidth-35,bedCenterX,baseHeight+mattressThickness/2,bedCenterZ,bedUpholstery)
-      localBox(bg,bedLength-470,65,bedWidth-100,bedWest+(bedLength-470)/2,baseHeight+mattressThickness+25,bedCenterZ,bedCover)
-      localBox(bg,85,920,bedWidth,bedWest+bedLength-43,710,bedCenterZ,headboardMaterial)
-      for(const offset of [-bedWidth*.23,bedWidth*.23]){
-        localBox(bg,380,80,610,bedWest+bedLength-260,baseHeight+mattressThickness+70,bedCenterZ+offset,pillowMaterial)
-      }
-    }
+    // The bed of layout A (the present one), from the same builder as the Bedroom 1 page (rooms/bedroom1/Bedroom1Layouts.js).
+    if(bedroom.furniture?.bed)bg.add(createBedroom1Bed(bedroom,'present'))
     const wardrobe=bedroom.furniture?.wardrobe
     if(wardrobe){
       const {depthMm:depth,lengthMm:length,heightMm:height,fromNorthMm:start}=wardrobe

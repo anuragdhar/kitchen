@@ -1,27 +1,20 @@
-import {tagSurfaceMaterial} from '../../render/surfaceRoles.mjs'
-import * as THREE from 'three'
+import {createBedMaterials, createMadeBed} from '../shared/furniture/Bed.js'
+
+// The six-foot square bed (roomShellConfig.js bedroom3.furniture.bed), head on the east wall. Footprint and centre are the
+// config's; the heights below are the ones this builder has always drawn (base top 250, mattress 190 so its top is at 440,
+// an 85 mm timber headboard inside the footprint reaching 1170), kept unchanged by the 2026-10-06 furniture pass, which
+// replaced the boxes with the made bed of rooms/shared/furniture/Bed.js. Colours are the owner's; the throw is new.
+const PROFILE = {baseMm: 250, mattressMm: 190, headboardMm: 85, headboardTopMm: 1170}
+const COLOURS = {frame: '#806047', headboard: '#9a7656', mattress: '#efe8dc', duvet: '#b7c7bd', pillow: '#fbf8f1', throw: '#bfa98a'}
 
 export function createBedroom3Bed(room){
-  const group=new THREE.Group()
-  group.name='Bedroom 3 six-foot square bed, headboard at east wall'
   const {bed}=room.furniture
-  const length=bed.lengthMm/1000,width=bed.widthMm/1000
-  const x=room.widthMm/1000-length/2,z=bed.centerFromNorthMm/1000
-  const frame=new THREE.MeshStandardMaterial({color:'#806047',roughness:.68})
-  tagSurfaceMaterial(frame,'wood','bedroom3')
-  const mattress=new THREE.MeshStandardMaterial({color:'#efe8dc',roughness:.94})
-  const cover=new THREE.MeshStandardMaterial({color:'#b7c7bd',roughness:.96})
-  const pillow=new THREE.MeshStandardMaterial({color:'#fbf8f1',roughness:.98})
-  const headboard=new THREE.MeshStandardMaterial({color:'#9a7656',roughness:.74})
-  tagSurfaceMaterial(headboard,'wood','bedroom3')
-  const addBox=(w,h,d,cx,cy,cz,material)=>{
-    const mesh=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),material)
-    mesh.position.set(cx,cy,cz);mesh.castShadow=true;mesh.receiveShadow=true;group.add(mesh)
-  }
-  addBox(length,.25,width,x,.125,z,frame)
-  addBox(length-.035,.19,width-.035,x,.345,z,mattress)
-  addBox(length-.40,.065,width-.10,x-.17,.475,z,cover)
-  addBox(.085,.92,width,room.widthMm/1000-.043,.71,z,headboard)
-  for(const offset of [-width*.23,width*.23])addBox(.38,.08,.61,room.widthMm/1000-.26,.51,z+offset,pillow)
+  const group=createMadeBed({
+    name:'Bedroom 3 six-foot square bed, headboard at east wall',lengthMm:bed.lengthMm,widthMm:bed.widthMm,
+    base:{topMm:PROFILE.baseMm},mattressMm:PROFILE.mattressMm,
+    headboard:{thicknessMm:PROFILE.headboardMm,topMm:PROFILE.headboardTopMm,bottomMm:PROFILE.baseMm},
+    pillows:2,throw:{fromFootMm:110,lengthMm:430},seed:3,
+  },createBedMaterials(COLOURS,{roomId:'bedroom3'}))
+  group.position.set((room.widthMm-bed.lengthMm/2)/1000,0,bed.centerFromNorthMm/1000)
   return group
 }
