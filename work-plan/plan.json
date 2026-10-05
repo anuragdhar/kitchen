@@ -1893,9 +1893,9 @@
       ],
       "status": "todo",
       "needs": "Freeze with the kitchen layout",
-      "estimateLow": 79500,
-      "estimateHigh": 132000,
-      "estimateBasis": "store unit 1092 x 2600: 30.6 sq ft x Rs 1,500-2,300; sliding cover 1000 x 2200: 23.7 sq ft x Rs 800-1,300; pull-out racks: 1 set x Rs 15,000-30,000. The refrigerator is not included.",
+      "estimateLow": 85500,
+      "estimateHigh": 141000,
+      "estimateBasis": "store unit 1092 x 2600: 30.6 sq ft x Rs 1,500-2,300; sliding cover 1092 x 2635: 31 sq ft x Rs 800-1,300; pull-out racks: 1 set x Rs 15,000-30,000. The refrigerator is not included.",
       "estimateConfidence": "low"
     },
     {

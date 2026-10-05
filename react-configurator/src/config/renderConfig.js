@@ -4,8 +4,11 @@ import { KITCHEN, PLINTH_HEIGHT } from './kitchenConfig.js'
 // Flush finish planes use a small depth-buffer bias, with no added storage depth.
 // Reflections use the existing scene environment (no real-time reflector).
 export const KITCHEN_MIRROR_MATERIAL = {
-  color:'#b99470', metalness:1, roughness:.08,
-  clearcoat:1, clearcoatRoughness:.04, envMapIntensity:1,
+  // A perfect mirror (metalness 1, roughness .08) showed only the dim studio environment and read as a black panel
+  // (looked at 2026-10-06), so the reflection is softened and a little bronze is kept as a base tone.
+  color:'#c9a47c', metalness:.82, roughness:.2,
+  clearcoat:1, clearcoatRoughness:.04, envMapIntensity:3.2,
+  emissive:'#5a3d24', emissiveIntensity:.35,
   polygonOffset:true, polygonOffsetFactor:-1, polygonOffsetUnits:-1,
 }
 
