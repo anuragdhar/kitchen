@@ -350,3 +350,10 @@ Six pieces of work, each with a note in `docs/changes/2026-10-05-*.md`:
 - **Electrical plans:** `src/config/roomElectricalConfig.js`, `docs/ELECTRICAL_PLAN.md` for the Lobby, Bedroom 1,
   Bedroom 3, Study, Home Office and Main entry; the three clashes with existing points have a resolution each.
 - Pooja Ghar: one round surface ceiling light in the middle of the alcove (`lobby.poojaAlcove.ceilingLight`).
+- Bedroom 3 east wall (owner 2026-10-05): the mirror dressing cabinet moved to the south end (750 x 457.2 x 2200, from z 2826)
+  and a floor-to-ceiling storage cabinet took its place at the north end (750 x 457.2 x 2700, from z 150); the overhead run
+  is now z 900-3576 (was 150-3576). The dressing down light moved from track B1 to B2 (B2's driver 60 -> 100 W) and a
+  dressing socket B3-S1 was added under the window sill. Checks in `src/domain/bedroom3EastCabinet.mjs`. Flagged, not
+  changed: the dressing cabinet stands 150 mm in front of the east 199 mm of the balcony window (open item C46). Note:
+  `docs/changes/2026-10-05-bedroom3-dressing-swap.md`.
+- Work plan: 112 tasks; rough total about Rs 16.1 to 30.8 lakh for 105 of them (planning ranges, not quotes).

@@ -104,6 +104,8 @@ documents refer to them.
 | C43 | Bedroom 3: the existing olive wardrobe that stays: its real colour and condition; keep it as it is, or re-laminate it later? | keep; the palette picks up its olive as an accent | Floor record; choose the palette |
 | C44 | Kitchen wall tile and worktop: never formally decided; the palettes keep them as drawn | confirm as drawn, or choose | Choose the palette (kitchen cabinets) |
 | C45 | One handle finish for the whole home | satin (brushed) stainless, to go with the entry door; brass only in the Pooja unit | Choose the palette |
+| C46 | Bedroom 3 dressing cabinet at the south end (moved there 2026-10-05): at 457 mm deep it stands 150 mm in front of the east 199 mm of the balcony window, from the sill up to 2,200. Accept that, or make this one cabinet about 258 mm deep so it stops at the window edge | accept it if that end of the window does not open; otherwise the shallower cabinet. Also check how the window opens | Bedroom 3 east cabinetry |
+| C47 | Bedroom 3 storage cabinet at the north end: keep the 18 in (457 mm) depth of the run, or make it wardrobe depth, 24 in (610 mm)? | 457: at 610 only about 48 mm is left to the toilet door frame. Its open north door reaches 156 mm into the line of the toilet doorway either way | Bedroom 3 east cabinetry |
 
 ## D. People to arrange
 

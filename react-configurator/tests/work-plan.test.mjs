@@ -147,7 +147,7 @@ test('the catch-up of 2026-10-05 is in the plan, and proposals stay proposals', 
   // The Lobby AC pipes go in before the Pooja woodwork and the balcony wardrobe.
   assert.ok(byId['carp-pooja'].dependsOn.includes('ac-piping-other') && byId['carp-bedroom1'].dependsOn.includes('ac-piping-other'))
   assert.match(byId['lights-pooja'].detail, /8 W round surface LED panel/); assert.ok(byId['lights-pooja'].dependsOn.includes('elec-first-fix-lobby'))
-  assert.match(byId['carp-bedroom3-east'].detail, /dressing cabinet moves to the SOUTH side/); assert.match(byId['carp-bedroom3-east'].estimateBasis, /regenerated/)
+  assert.match(byId['carp-bedroom3-east'].detail, /dressing cabinet moves to the SOUTH side/); assert.match(byId['carp-bedroom3-east'].estimateBasis, /full-height storage cabinet 750 x 2700.*dressing cabinet 750 x 2200/)
   // Folded in earlier: tracks moved off the ceiling mouldings, and the Bedroom 1 design.
   assert.match(byId['lighting-plan-drawing'].detail, /Totals: 3\.95 m of track/); assert.match(byId['lighting-plan-lobby'].detail, /Totals: 3\.5 m of track/); assert.match(byId['lighting-plan-bedroom3'].detail, /Totals: 5\.5 m of track/)
   for (const room of ['', '-lobby', '-bedroom1', '-bedroom3', '-study', '-kitchen']) assert.ok(byId[`elec-track-feed${room}`].dependsOn.includes('elec-track-setout'), `the ${room || 'drawing'} feed waits for the set-out`)
@@ -227,7 +227,7 @@ test('estimates are quantity x rate from the configs, and the stored figures mat
   assert.deepEqual([QUANTITIES.outerDoor.widthMm, QUANTITIES.outerDoor.heightMm], [905, 2200])
   assert.deepEqual(QUANTITIES.kitchen, {eastRunMm: 4746, westRunMm: 3298, openAppliancesMm: 1200})
   assert.deepEqual(QUANTITIES.windowBays.map(Math.round), [934, 899, 867])
-  assert.deepEqual(Object.fromEntries(Object.entries(QUANTITIES.roomPoints).map(([room, points]) => [room, points.all])), {lobby: 12, bedroom1: 11, bedroom3: 11, study: 9, office: 9, entry: 11})
+  assert.deepEqual(Object.fromEntries(Object.entries(QUANTITIES.roomPoints).map(([room, points]) => [room, points.all])), {lobby: 12, bedroom1: 11, bedroom3: 12, study: 9, office: 9, entry: 11})
   assert.deepEqual(QUANTITIES.roomPoints.lobby.counted, 6) // less two track feeds, the switchboard, its junction box, the pendant point and the AC point
   assert.deepEqual([QUANTITIES.acRuns.drawing.pipeM, QUANTITIES.acRuns.lobby.pipeM], [4.3, 4.4])
   assert.ok(QUANTITIES.acRuns.drawingShoeRack.pipeM > 9 && QUANTITIES.acRuns.drawing.drainM > 8)
