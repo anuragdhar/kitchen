@@ -8,6 +8,8 @@ import {RoomEnvironment} from 'three/examples/jsm/environments/RoomEnvironment.j
 import {BALCONY_OFFICE,BALCONY_DESK_HEIGHT_KEY} from './config/balconyOfficeConfig.js'
 import {balconyDeskLayout,FRAME_BEAM_WIDTH_MM,CLAMP_FROM_WEST_EDGE_MM} from './domain/balconyDesk.mjs'
 import {createDesignerRender} from './render/designerRender.js'
+import {createRoomElectricalPoints} from './rooms/shared/ElectricalPointMarkers.js'
+import RoomElectricalPanel from './home/RoomElectricalPanel.jsx'
 
 const mm=value=>value/1000
 const feetInches=valueMm=>{
@@ -554,6 +556,8 @@ export default function BalconyOffice3D(){
     if(fixedSection) addElectricalMarker(room,'N4 · PRINTER',mm(fixedSection.x1)+.045,toe+.23,mm(fixedSection.printer?.centerZ??(fixedSection.zStart+fixedSection.zEnd)/2),'#2563eb')
     addElectricalMarker(room,'D1 · 2× CAT6',rearD+.045,rearTop-.18,chaseStartZ+.45,'#0f766e')
     addElectricalMarker(movingDesk,'P1 · 8-WAY RAIL',deskX0+deskDepth*.62,-.11,deskCenterZ+.22,'#16a34a')
+    // The room light and its switch (config/roomElectricalConfig.js, office): the only points this page does not draw itself.
+    const planPoints=createRoomElectricalPoints('office',{wallFaceMm:20});planPoints.visible=showElectrical;room.add(planPoints);electricalOverlays.push({marker:planPoints,texture:{dispose:planPoints.userData.dispose}})
     // West-facing dual-monitor workstation, packed toward the north end.
     const standMaterial=makeMaterial('#242a31',.35)
     const screenMaterial=new THREE.MeshStandardMaterial({color:'#163b56',emissive:'#0d2638',emissiveIntensity:.45,roughness:.18,metalness:.08})
@@ -1069,7 +1073,7 @@ Architecture and finish: warm pale oak mica cabinetry with subtle grain, matte o
       </aside>}
       {showElectrical&&<aside aria-label="Electrical points legend" style={{position:'absolute',zIndex:7,right:12,top:12,width:'min(310px,calc(100% - 24px))',background:'rgba(255,255,255,.96)',border:'2px solid #2563eb',borderRadius:14,padding:12,boxShadow:'0 12px 30px rgba(20,15,35,.22)',color:'#231942',fontSize:11,lineHeight:1.45}}>
         <div style={{display:'flex',justifyContent:'space-between',gap:8}}><b style={{fontSize:14}}>3D electrical points</b><button onClick={()=>setShowElectrical(false)} aria-label="Hide electrical points" style={{border:0,background:'transparent',fontSize:18,cursor:'pointer'}}>×</button></div>
-        <div style={{marginTop:7}}><b style={{color:'#ea580c'}}>E1–E2</b> existing heater and router points (assumed) · <b style={{color:'#6b7280'}}>X1–X3</b> plates seen on the north wall in the phone scan of 2026-10-04 · <b style={{color:'#2563eb'}}>N1–N4</b> new fixed power · <b style={{color:'#16a34a'}}>P1</b> moving desk rail · <b style={{color:'#0f766e'}}>D1</b> two Cat6 runs</div>
+        <div style={{marginTop:7}}><b style={{color:'#ea580c'}}>E1–E2</b> existing heater and router points (assumed) · <b style={{color:'#6b7280'}}>X1–X3</b> plates seen on the north wall in the phone scan of 2026-10-04 · <b style={{color:'#2563eb'}}>N1–N4</b> new fixed power · <b style={{color:'#16a34a'}}>P1</b> moving desk rail · <b style={{color:'#0f766e'}}>D1</b> two Cat6 runs · <b style={{color:'#d97706'}}>HO-E1, HO-C1</b> room light and its switch (proposed 2026-10-05)</div>
       </aside>}
       {showAiPrompt&&<div role="presentation" onClick={()=>setShowAiPrompt(false)} style={{position:'fixed',zIndex:10000,inset:0,display:'grid',placeItems:'center',padding:20,background:'rgba(23,15,42,.72)',backdropFilter:'blur(4px)'}}>
         <aside role="dialog" aria-modal="true" aria-label="AI render prompt" onClick={event=>event.stopPropagation()} style={{width:'min(820px,calc(100vw - 32px))',maxHeight:'calc(100vh - 40px)',display:'flex',flexDirection:'column',background:'#fff',border:'3px solid #7c3aed',borderRadius:18,padding:'18px 20px',boxShadow:'0 28px 80px rgba(0,0,0,.42)',color:'#231942'}}>
@@ -1083,5 +1087,6 @@ Architecture and finish: warm pale oak mica cabinetry with subtle grain, matte o
       </div>}
       <div style={{position:'absolute',left:12,bottom:12,background:'rgba(17,24,39,.82)',color:'#fff',padding:'8px 10px',borderRadius:10,fontSize:11,lineHeight:1.45}}>West: {formatCarpentryDimension(BALCONY_OFFICE.worktop.westAdjustable.widthMm)} sit–stand top, {formatCarpentryDimension(BALCONY_OFFICE.worktop.movingGapMm)} gap, {formatCarpentryDimension(BALCONY_OFFICE.worktop.southFixed.lengthMm)} fixed south section<br/>Fixed section top: {formatCarpentryDimension(BALCONY_OFFICE.worktop.southFixed.topHeightMm)} (seated preset)<br/>Reference person: 5 ft 7 in, facing monitors</div>
     </div>
+    {showElectrical&&!isFullscreen&&<RoomElectricalPanel roomKey="office"/>}
   </section>
 }

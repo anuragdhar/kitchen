@@ -11,6 +11,8 @@ import {createStudyTerrace} from './rooms/study/StudyTerrace.js'
 import {createDesignerRender} from './render/designerRender.js'
 import {useDesignerRender} from './render/useDesignerRender.js'
 import {createRoomTrackLighting} from './rooms/shared/RoomTaskLighting.js'
+import {createRoomElectricalPoints} from './rooms/shared/ElectricalPointMarkers.js'
+import RoomElectricalPanel from './home/RoomElectricalPanel.jsx'
 import {STUDY_LIGHTING,STUDY_DIMMER_CIRCUITS} from './config/studyLightingConfig.js'
 import DrawingLightDimmer from './rooms/drawing/DrawingLightDimmer.jsx'
 
@@ -26,6 +28,7 @@ export default function StudyRoom3D(){
   const [showLabels,setShowLabels]=useState(true)
   const [showDirections,setShowDirections]=useState(true)
   const [kidsPreview,setKidsPreview]=useState('night')
+  const [showElectrical,setShowElectrical]=useState(false) // proposed electrical points (config/roomElectricalConfig.js, study)
 
   useEffect(()=>{
     const mount=mountRef.current
@@ -206,6 +209,7 @@ export default function StudyRoom3D(){
     // Track lights and the (assumed) ceiling fan (config/studyLightingConfig.js); the sliders below the toolbar dim one
     // circuit (run) at a time. Dark room: only those circuits light the room.
     const trackLighting=createRoomTrackLighting(STUDY_LIGHTING,STUDY_ROOM.dimensions,{realLights:true});room.add(trackLighting)
+    const electricalPoints=createRoomElectricalPoints('study',{wallFaceMm:60});electricalPoints.visible=false;room.add(electricalPoints)
     const setDarkRoom=on=>{
       hemi.intensity=on?.03:1.05;sun.intensity=on?0:1.7;fill.intensity=on?0:1.15;scene.environmentIntensity=on?.02:1
       scene.background.set(on?'#0b0d10':'#edf2f6')
@@ -227,8 +231,8 @@ export default function StudyRoom3D(){
     const interiorScene=registerInteriorScene({id:'study',scene,camera,renderer,zones:[{id:'study',min:[0,0,0],max:[W,H,L]}]})
     let raf=0;const render=()=>{controls.update();designerRender.render();raf=requestAnimationFrame(render)};render()
     eastGroup.visible=showEastWall;northGroup.visible=showNorthWall
-    sceneRef.current={setDesigner:on=>designerRender.setEnabled(on),setCamera,setTrackLight:(circuit,level)=>trackLighting.userData.setTrackLight(circuit,level),setDarkRoom,setEastVisible:value=>{eastGroup.visible=value},setNorthVisible:value=>{northGroup.visible=value},setKidsPreview:value=>{kidsGroup.visible=value!=='off';nightBeds.visible=value==='night';daySeats.visible=value==='day'},setLabelsVisible:value=>{labels.forEach(({sprite})=>{sprite.visible=value})},setDirectionsVisible:value=>{directionGroup.visible=value}}
-    return()=>{interiorScene.dispose();cancelAnimationFrame(raf);designerRender.dispose();observer.disconnect();controls.dispose();labels.forEach(({texture})=>texture.dispose());directionTextures.forEach(texture=>texture.dispose());room.traverse(object=>{object.geometry?.dispose?.();if(Array.isArray(object.material))object.material.forEach(m=>m.dispose());else object.material?.dispose?.()});environment.dispose();pmrem.dispose();renderer.dispose();renderer.domElement.remove();sceneRef.current=null}
+    sceneRef.current={setDesigner:on=>designerRender.setEnabled(on),setCamera,setTrackLight:(circuit,level)=>trackLighting.userData.setTrackLight(circuit,level),setDarkRoom,setEastVisible:value=>{eastGroup.visible=value},setNorthVisible:value=>{northGroup.visible=value},setKidsPreview:value=>{kidsGroup.visible=value!=='off';nightBeds.visible=value==='night';daySeats.visible=value==='day'},setLabelsVisible:value=>{labels.forEach(({sprite})=>{sprite.visible=value})},setDirectionsVisible:value=>{directionGroup.visible=value},setElectrical:value=>{electricalPoints.visible=value}}
+    return()=>{electricalPoints.userData.dispose();interiorScene.dispose();cancelAnimationFrame(raf);designerRender.dispose();observer.disconnect();controls.dispose();labels.forEach(({texture})=>texture.dispose());directionTextures.forEach(texture=>texture.dispose());room.traverse(object=>{object.geometry?.dispose?.();if(Array.isArray(object.material))object.material.forEach(m=>m.dispose());else object.material?.dispose?.()});environment.dispose();pmrem.dispose();renderer.dispose();renderer.domElement.remove();sceneRef.current=null}
   },[])
   useEffect(()=>{sceneRef.current?.setCamera(preset)},[preset])
   useEffect(()=>{sceneRef.current?.setEastVisible(showEastWall)},[showEastWall])
@@ -236,6 +240,7 @@ export default function StudyRoom3D(){
   useEffect(()=>{sceneRef.current?.setKidsPreview(kidsPreview)},[kidsPreview])
   useEffect(()=>{sceneRef.current?.setLabelsVisible(showLabels)},[showLabels])
   useEffect(()=>{sceneRef.current?.setDirectionsVisible(showDirections)},[showDirections])
+  useEffect(()=>{sceneRef.current?.setElectrical(showElectrical)},[showElectrical])
 
   return <section style={{marginTop:24,background:'#fff',border:'1px solid #dbe3e9',borderRadius:22,overflow:'hidden',boxShadow:'0 16px 42px rgba(23,32,51,.1)'}}>
     <div style={{padding:'14px 16px',display:'flex',alignItems:'center',justifyContent:'space-between',gap:12,flexWrap:'wrap',borderBottom:'1px solid #e2e8f0'}}>
@@ -248,9 +253,11 @@ export default function StudyRoom3D(){
         <button onClick={()=>setShowNorthWall(value=>!value)} style={{padding:'7px 10px',borderRadius:9,border:'1px solid #cbd5e1',background:showNorthWall?'#fff':'#fee2e2',color:'#172033',fontWeight:800,cursor:'pointer'}}>{showNorthWall?'Hide north wall':'Show north wall'}</button>
         <button onClick={()=>setShowLabels(value=>!value)} style={{padding:'7px 10px',borderRadius:9,border:'1px solid #cbd5e1',background:showLabels?'#dbeafe':'#fff',color:'#172033',fontWeight:800,cursor:'pointer'}}>{showLabels?'Hide labels':'Show labels'}</button>
         <button onClick={()=>setShowDirections(value=>!value)} style={{padding:'7px 10px',borderRadius:9,border:'1px solid #cbd5e1',background:showDirections?'#dbeafe':'#fff',color:'#172033',fontWeight:800,cursor:'pointer'}}>{showDirections?'Hide directions':'Show directions'}</button>
+        <button onClick={()=>setShowElectrical(value=>!value)} aria-pressed={showElectrical} style={{padding:'7px 10px',borderRadius:9,border:'1px solid #cbd5e1',background:showElectrical?'#172033':'#fff',color:showElectrical?'#fff':'#172033',fontWeight:800,cursor:'pointer'}} title="Proposed sockets, charging, switch, light and AC points for the Study, with the check results below the view (docs/ELECTRICAL_PLAN.md)">{showElectrical?'Hide electrical points':'Show electrical points'}</button>
         <DrawingLightDimmer circuits={STUDY_DIMMER_CIRCUITS} onChange={(circuit,level)=>sceneRef.current?.setTrackLight?.(circuit,level)} onDarkRoom={on=>sceneRef.current?.setDarkRoom?.(on)}/>
       </div>
     </div>
     <div style={{position:'relative'}}><div ref={mountRef} style={{height:'clamp(620px,82vh,1100px)',width:'100%'}}/>{showDirections&&<div aria-label="Study compass directions" style={{position:'absolute',right:12,bottom:12,display:'grid',gridTemplateColumns:'repeat(3,28px)',gridTemplateRows:'repeat(3,24px)',placeItems:'center',padding:'7px 9px',borderRadius:10,background:'rgba(255,255,255,.92)',border:'1px solid rgba(23,32,51,.3)',boxShadow:'0 5px 16px rgba(20,15,35,.16)',color:'#172033',fontSize:10,fontWeight:900}}>{['NW','N','NE','W','•','E','SW','S','SE'].map(direction=><span key={direction}>{direction}</span>)}</div>}</div>
+    {showElectrical&&<RoomElectricalPanel roomKey="study"/>}
   </section>
 }

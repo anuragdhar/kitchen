@@ -149,10 +149,31 @@ export function describeExistingPoint(p) {
 
 const list = names => names.length <= 1 ? names.join('') : `${names.slice(0, -1).join(', ')} and ${names[names.length - 1]}`
 
+const sentence = text => { const t = String(text).trim(); return t.charAt(0).toUpperCase() + t.slice(1) + (/[.!?]$/.test(t) ? '' : '.') }
+
 /**
- * Existing points against the planned design: {points, conflicts: [{id, name, kind, message}], ok}. kind is 'opening'
- * (the point is inside a planned door, window or open side) or 'hidden' (planned panelling, furniture or the open entry
- * door leaf covers it). Every message is one sentence the owner can act on.
+ * What the proposed plan does with an existing point (its `disposition` in existingElectricalConfig.js), as one line:
+ * "Relocate to E1. ...", "Blank off. ...", "Keep. ...". Empty when the point has no disposition yet.
+ */
+export function describeDisposition(p) {
+  const d = p.disposition
+  if (!d) return ''
+  const head = d.action === 'relocate' ? `Relocate to ${d.to}.` : d.action === 'blank' ? `Blank off${d.to ? `; the box is reused by ${d.to}` : ''}.` : `Keep${d.to ? ` (planned point ${d.to})` : ''}.`
+  return [head, d.note ? sentence(d.note) : '', d.feeds?.length ? `Feeds ${list(d.feeds)}.` : '', d.oldBox ? `Old box: ${sentence(d.oldBox)}` : ''].filter(Boolean).join(' ')
+}
+
+/** Does the point's disposition deal with a clash? Moving it or blanking it does; keeping it does only if marked `accept`. */
+export function dispositionResolves(p) {
+  const d = p.disposition
+  return Boolean(d && (d.action === 'relocate' || d.action === 'blank' || (d.action === 'keep' && d.accept)))
+}
+
+/**
+ * Existing points against the planned design: {points, conflicts: [{id, name, kind, finding, message, resolved, resolution}],
+ * open, ok}. kind is 'opening' (the point is inside a planned door, window or open side) or 'hidden' (planned panelling,
+ * furniture or the open entry door leaf covers it). `finding` is the clash itself; `message` adds the general advice (one
+ * sentence the owner can act on). A clash whose point has a disposition that deals with it is `resolved` and carries the
+ * `resolution` line; `open` lists the clashes still without one, and `ok` means there is none of those.
  */
 export function checkExistingElectrical(roomKey, room, {layoutKey = null, config = EXISTING_ELECTRICAL} = {}) {
   const points = existingPointsFor(roomKey, config), conflicts = []
@@ -161,8 +182,11 @@ export function checkExistingElectrical(roomKey, room, {layoutKey = null, config
     if (p.wall === 'ceiling') continue
     const label = describeExistingPoint(p)
     const inOpenings = openings.filter(o => o.wall === p.wall && overlap(p, o))
-    if (inOpenings.length) conflicts.push({id: p.id, name: p.name, kind: 'opening',
-      message: `${label} is inside the planned ${list(inOpenings.map(o => `${o.name} (${span(o.wall, o.a, o.b)})`))}: it has to be moved before that opening is made, or the opening must shift.`})
+    const add = (kind, finding, advice) => {
+      const resolved = dispositionResolves(p)
+      conflicts.push({id: p.id, name: p.name, kind, finding, message: `${finding}: ${advice}.`, resolved, resolution: resolved ? describeDisposition(p) : ''})
+    }
+    if (inOpenings.length) add('opening', `${label} is inside the planned ${list(inOpenings.map(o => `${o.name} (${span(o.wall, o.a, o.b)})`))}`, 'it has to be moved before that opening is made, or the opening must shift')
     const covered = blockers.filter(b => b.wall === p.wall && overlap(p, b))
     const leaf = covered.filter(b => b.leaf), fixed = covered.filter(b => !b.leaf)
     if (fixed.length) {
@@ -172,7 +196,7 @@ export function checkExistingElectrical(roomKey, room, {layoutKey = null, config
       const advice = panel ? 'move it (the proposed plan puts the main switchboard E1 on the east wall), or cut the panelling and the TV bracket around it and keep it reachable'
         : sofa ? 'anything plugged in there cannot be reached without moving the sofa; move the point, or accept it for a lamp or a permanently plugged device'
         : 'move the point, or cut the piece around it and keep it reachable'
-      conflicts.push({id: p.id, name: p.name, kind: 'hidden', message: `${label} would be ${partly ? 'partly ' : ''}covered by the planned ${what}: ${advice}.`})
+      add('hidden', `${label} would be ${partly ? 'partly ' : ''}covered by the planned ${what}`, advice)
     }
     if (leaf.length) {
       const b = leaf[0], partly = coverage(p, b) < .999
@@ -180,21 +204,25 @@ export function checkExistingElectrical(roomKey, room, {layoutKey = null, config
         : p.kind === 'distribution board' ? 'it can be reached only with the door closed, which is acceptable for MCBs that are rarely touched; keep a clear way to it'
         : p.kind === 'switchboard' ? 'a switch must be reachable as you come in, so move it clear of the leaf'
         : 'it can be used only with the door closed; move it if it is needed daily'
-      conflicts.push({id: p.id, name: p.name, kind: 'hidden', message: `${label} is ${partly ? 'partly ' : ''}behind the ${b.name} (the leaf covers the first ${r(b.b)} mm of the ${b.wall} wall): ${advice}.`})
+      add('hidden', `${label} is ${partly ? 'partly ' : ''}behind the ${b.name} (the leaf covers the first ${r(b.b)} mm of the ${b.wall} wall)`, advice)
     }
   }
-  return {points, conflicts, ok: conflicts.length === 0}
+  const open = conflicts.filter(c => !c.resolved)
+  return {points, conflicts, open, ok: open.length === 0}
 }
 
-/** Lines for the review brief: what exists, where it was measured from, and every conflict. Empty for a room without a scan. */
+/**
+ * Lines for the review brief: what exists, where it was measured from, what the plan does with each point, and every clash
+ * (RESOLVED with its resolution, or CONFLICT while it is open). Empty for a room without a scan.
+ */
 export function describeExistingElectrical(roomKey, room, {layoutKey = null, config = EXISTING_ELECTRICAL} = {}) {
   if (!hasExistingElectrical(roomKey, config)) return []
   const entry = config[roomKey], {points, conflicts} = checkExistingElectrical(roomKey, room, {layoutKey, config})
   const source = points[0]?.source ?? 'site scan'
   const lines = [`What is on the walls and ceiling TODAY, from the ${source} (small items about +/- 20 mm). These are records, not the proposed plan.`]
   if (entry.measured?.xOffsetMm) lines.push(`The scan measured x ${entry.measured.x}; ${entry.measured.xOffsetMm} mm has been subtracted so the figures below are from this room's west wall.`)
-  for (const p of points) lines.push(`${describeExistingPoint(p)}${p.note ? `; ${p.note}` : ''}${p.assumed ? ` [assumed: ${p.assumed}]` : ''}.`)
-  if (conflicts.length) for (const c of conflicts) lines.push(`CONFLICT: ${c.message}`)
+  for (const p of points) lines.push(`${describeExistingPoint(p)}${p.note ? `; ${p.note}` : ''}${p.assumed ? ` [assumed: ${p.assumed}]` : ''}.${p.disposition ? ` Plan: ${describeDisposition(p)}` : ''}`)
+  if (conflicts.length) for (const c of conflicts) lines.push(c.resolved ? `RESOLVED: ${c.finding}. ${c.resolution}` : `CONFLICT: ${c.message}`)
   else lines.push('No planned door, window, panel or piece of furniture lands on an existing point in this layout.')
   return lines
 }

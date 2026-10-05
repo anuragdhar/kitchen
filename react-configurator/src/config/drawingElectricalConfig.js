@@ -9,6 +9,9 @@
 // (CAT6, coax, phone, intercom, conduit), 'dedicated' (its own circuit). hidden: true where the box is meant to sit behind
 // equipment or furniture; every other point must stay reachable.
 // Heights follow common Indian practice: switchboards 1200, low sockets 300, TV box behind the screen, AC point near the unit.
+// replaces / fedFrom (2026-10-05): the EXISTING point (existingElectricalConfig.js) whose job this point takes over, or whose
+// box feeds it; the other side of that link is the existing point's `disposition`. The other rooms' plans are in
+// roomElectricalConfig.js (same vocabulary) and docs/ELECTRICAL_PLAN.md.
 export const DRAWING_ELECTRICAL = {
   layout: 'southSofas',
   points: [
@@ -26,7 +29,7 @@ export const DRAWING_ELECTRICAL = {
       outlets: 'LED batten with a door-contact switch',
       use: 'lights the winter-clothes closet when its doors open; nothing to remember to switch off'},
     // ---- East wall: arrival side, past the entry door's swing ----
-    {id: 'E1', name: 'Main switchboard + drop-zone charger', kind: 'lighting', wall: 'east', alongMm: 1250, heightMm: 1200,
+    {id: 'E1', name: 'Main switchboard + drop-zone charger', kind: 'lighting', wall: 'east', alongMm: 1250, heightMm: 1200, replaces: 'X-D1',
       outlets: 'switches for chandelier, uplight, reading light (2-way), sofa glow; 1 x 6 A socket; 1 USB-A + USB-C charger',
       use: 'first wall on the left after the entry door swing (850 mm); phones and keys can charge on arrival'},
     {id: 'E4', name: 'Utility socket', kind: 'power', wall: 'east', alongMm: 1850, heightMm: 300,
@@ -40,9 +43,9 @@ export const DRAWING_ELECTRICAL = {
       outlets: 'light point', use: 'west wall uplight (drawingLightingConfig), switched at E1'},
     {id: 'W3', name: 'Lamp + charging, west sofa north end', kind: 'charging', wall: 'west', alongMm: 1835, heightMm: 300,
       outlets: '1 x 6 A socket + 1 USB-A + USB-C', use: 'side-table lamp and phones at the end of the west sofa'},
-    {id: 'W4', name: 'Charging above the west sofa', kind: 'charging', wall: 'west', alongMm: 3800, heightMm: 1000,
+    {id: 'W4', name: 'Charging above the west sofa', kind: 'charging', wall: 'west', alongMm: 3800, heightMm: 1000, fedFrom: 'X-D5',
       outlets: '1 USB-A + USB-C charger + 1 x 6 A socket', use: 'reachable from the west sofa seats without getting up; just above the sofa back (about 925 mm)'},
-    {id: 'W6', name: 'Lamp + charging at the corner table', kind: 'charging', wall: 'west', alongMm: 4835, heightMm: 700,
+    {id: 'W6', name: 'Lamp + charging at the corner table', kind: 'charging', wall: 'west', alongMm: 4835, heightMm: 700, fedFrom: 'X-D5',
       outlets: '1 x 6 A socket + 1 USB-A + USB-C', use: 'just above the corner lamp table (550 high), for its lamp and phones at the west end of the south sofa'},
     {id: 'W5', name: 'Reading light', kind: 'lighting', wall: 'west', alongMm: 4645, heightMm: 1550,
       outlets: 'light point with a local switch (2-way with E1)', use: 'reading light over the corner lamp table and the west end of the south sofa'},
