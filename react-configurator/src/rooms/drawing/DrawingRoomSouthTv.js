@@ -1,13 +1,14 @@
 import * as THREE from 'three'
 import {createDarkLabelSprite} from '../shared/LabelSprite.js'
 import {southTvGeometry} from '../../domain/drawingRoomLayout.mjs'
+import {createSlatStripFixed} from './DrawingRoomSlatStrip.js'
 
 // Layout C built-ins (room.southLayout): the TV flat on the north wall between the west cabinet door and the entry door, and a
 // free-standing TV console below it (one piece on legs, in front of fluted wall panelling; it is dragged out before the hidden
 // west cabinet door is opened) holding everything else: the router (open lattice, west bay), set-top storage (lattice door),
 // the Bass Module 500 (open lattice, east bay), and on top the Soundbar 300, the landline and a desk intercom. Room frame: millimetres in the config, metres in the scene; x from the west wall,
 // z from the north wall. `wallFaceMm` is the distance from the nominal wall line to its drawn inside face.
-export function createDrawingRoomSouthTv(room, {wallFaceMm = 0} = {}) {
+export function createDrawingRoomSouthTv(room, {wallFaceMm = 0, surfaceMm = wallFaceMm} = {}) {
   const s = room.southLayout, sb = s.soundbar, bm = s.bassModule, k = s.console
   const group = new THREE.Group(); group.name = 'Drawing Room layout C: north-wall TV and east-wall router cabinet'
   const mat = (color, extra = {}) => new THREE.MeshStandardMaterial({color, roughness: .62, ...extra})
@@ -47,9 +48,10 @@ export function createDrawingRoomSouthTv(room, {wallFaceMm = 0} = {}) {
   // Fluted wall panelling behind the TV (s.wallPanel), from the console top line to the hidden door's head. The door opening
   // is left out: the door leaf (DrawingRoomWallStorage.js) carries the same slats there. Grooves are set out from the door's
   // west edge so both door edges fall on one.
+  let panelGroup = null
   if (s.wallPanel) {
     const wp = s.wallPanel, ws = room.wallStorage, top = ws.bottomMm + ws.heightMm, dx1 = ws.fromWestMm, dx2 = dx1 + ws.widthMm
-    const panelGroup = new THREE.Group(); panelGroup.name = 'North wall panelling (fluted, door height)'; group.add(panelGroup)
+    panelGroup = new THREE.Group(); panelGroup.name = 'North wall panelling (fluted, door height)'; group.add(panelGroup)
     const wood = mat(wp.color, {roughness: .6}), groove = mat(wp.grooveColor, {roughness: .8}), capMat = mat('#6a4429')
     const zc = wallFaceMm + wp.thicknessMm / 2, h = top - wp.bottomMm, cy = (top + wp.bottomMm) / 2
     for (const [a, b] of [[wp.fromWestMm, dx1], [dx2, wp.toMm]]) if (b > a) box(b - a, h, wp.thicknessMm, (a + b) / 2, cy, zc, wood, true, panelGroup)
@@ -61,6 +63,10 @@ export function createDrawingRoomSouthTv(room, {wallFaceMm = 0} = {}) {
     box(wp.toMm - wp.fromWestMm, wp.cap.heightMm, wp.cap.projectionMm, (wp.fromWestMm + wp.toMm) / 2, top + wp.cap.heightMm / 2, wallFaceMm + wp.cap.projectionMm / 2, capMat, true, panelGroup)
     box(wp.toMm - wp.fromWestMm - 60, 8, 10, (wp.fromWestMm + wp.toMm) / 2, top + wp.cap.heightMm + 4, wallFaceMm + 8, bias, false, panelGroup)
   }
+  // The second treatment (s.slatStrip, owner idea 2026-10-06): a floor-to-ceiling slat strip over the hidden door only, the
+  // rest of the wall plain. Hidden until setTvWall('slatStrip'); the TV and the console stay where they are.
+  const stripGroup = s.slatStrip ? createSlatStripFixed(room, {wallFaceMm: surfaceMm}) : null
+  if (stripGroup) { stripGroup.visible = false; group.add(stripGroup) }
   let shown = s.tv.installedTv
   const showTv = () => { for (const [key, g] of Object.entries(tvGroups)) g.visible = key === shown }
   showTv()
@@ -131,5 +137,11 @@ export function createDrawingRoomSouthTv(room, {wallFaceMm = 0} = {}) {
   // Drags the whole console (and what stands on it) out from the wall and back, as when the hidden west cabinet door is used.
   group.userData.setAccess = open => { for (const part of dragged) part.position.z = open ? k.dragOutMm / 1000 : 0 }
   group.userData.setTvSize = key => { if (tvGroups[key]) { shown = key; showTv() } }
+  // 'panel' (default): the full-width fluted panelling; 'slatStrip': the slat strip at the hidden door on a plain wall.
+  group.userData.setTvWall = key => {
+    const strip = key === 'slatStrip' && !!stripGroup
+    if (panelGroup) panelGroup.visible = !strip
+    if (stripGroup) stripGroup.visible = strip
+  }
   return group
 }

@@ -8,6 +8,9 @@ import {describeExistingElectrical} from './existingElectrical.mjs'
 import {bedroom1Review} from './bedroom1Layout.mjs'
 import {BEDROOM1_DESIGN} from '../config/bedroom1LayoutConfig.js'
 import {checkBedroom3EastCabinet, eastCabinetRoles} from './bedroom3EastCabinet.mjs'
+import {checkSlatStrip, DEFAULT_TV_WALL, tvWallTreatment} from './tvWallSlatStrip.mjs'
+import {DRAWING_CEILING_MOULDINGS, DRAWING_LIGHTING} from '../config/drawingLightingConfig.js'
+import {DRAWING_ELECTRICAL, DRAWING_LIGHT_FEEDS} from '../config/drawingElectricalConfig.js'
 
 const mm = v => `${Math.round(v)} mm`
 const size = (a, b) => `${Math.round(a)} x ${Math.round(b)}`
@@ -114,8 +117,15 @@ function drawingLayoutB(room) {
 }
 
 
-function drawingLayoutC(room) {
+/** The slat-strip check with the Drawing Room's lighting and electrical configs (layout C). */
+export function drawingSlatStripCheck(room) {
+  return checkSlatStrip(room, {mouldings: DRAWING_CEILING_MOULDINGS, tracks: DRAWING_LIGHTING.southSofas.tracks.runs, points: DRAWING_ELECTRICAL.points, routes: DRAWING_LIGHT_FEEDS.routes})
+}
+
+function drawingLayoutC(room, tvWall = DEFAULT_TV_WALL) {
   const s = room.southLayout, f = s.furniture, check = checkSouthLayout(room), g = check.tv, ct = s.furniture.cornerTable
+  // The TV-wall treatment (owner idea 2026-10-06): the default full-width fluted panelling, or a slat strip over the hidden door.
+  const strip = tvWallTreatment(room, tvWall) === 'slatStrip' ? drawingSlatStripCheck(room) : null, sg = strip?.geometry, ss = s.slatStrip
   const sofa = (r, along) => along === 'x' ? {x1: r.centerXmm - r.lengthMm / 2, x2: r.centerXmm + r.lengthMm / 2, z1: r.centerZmm - r.widthMm / 2, z2: r.centerZmm + r.widthMm / 2} : {x1: r.centerXmm - r.widthMm / 2, x2: r.centerXmm + r.widthMm / 2, z1: r.centerZmm - r.lengthMm / 2, z2: r.centerZmm + r.lengthMm / 2}
   const south = sofa(f.southSofa, 'x'), west = sofa(f.westSofa, 'z'), t = f.coffeeTable
   return {
@@ -124,9 +134,10 @@ function drawingLayoutC(room) {
       `West-wall 3-seater: centre (${f.westSofa.centerXmm}, ${f.westSofa.centerZmm}), ${size(f.westSofa.widthMm, f.westSofa.lengthMm)}, back on the west wall, faces east, ${mm(check.clearances.sofaToSofa)} north of the south sofa (an L in the south-west corner).`,
       `Oval coffee table: centre (${t.centerXmm}, ${t.centerZmm}), ${size(t.widthMm, t.lengthMm)}, inside the L. Rug under it.`,
       `TV: ${g.tv.diagonalInches}-inch (${g.tv.widthMm} x ${g.tv.heightMm}) flat on the north wall, x ${g.x1}-${g.x2}, bottom edge ${mm(g.bottomMm)}, centre ${mm(s.tv.centerHeightMm)} high; it fits between the west cabinet door and the entry door with ${mm(check.clearances.tvMarginsMm[s.tv.installedTv])} to spare (a 65-inch leaves ${mm(check.clearances.tvMarginsMm['65'])}).`,
-      `TV cabinet below the TV: one free-standing console x ${g.console.x1}-${g.console.x2}, on legs in front of fluted wall panelling, ${mm(s.console.depthMm)} deep, ${mm(g.console.bottomMm)}-${mm(g.console.topMm)} high (open below for cleaning). It holds everything: the Wi-Fi router behind an open lattice (west bay), set-top box storage behind a lattice door, the Bose Bass Module 500 behind an open lattice (east bay); on top the Bose Smart Soundbar 300 under the TV, the landline at the west end and a desk intercom at the east end. There is no cabinet on the east wall.`,
+      `TV cabinet below the TV: one free-standing console x ${g.console.x1}-${g.console.x2}, on legs in front of ${strip ? `a plain wall (its west end in front of the slat strip, ${mm(strip.clearances.consoleClearMm)} clear of the slats)` : 'fluted wall panelling'}, ${mm(s.console.depthMm)} deep, ${mm(g.console.bottomMm)}-${mm(g.console.topMm)} high (open below for cleaning). It holds everything: the Wi-Fi router behind an open lattice (west bay), set-top box storage behind a lattice door, the Bose Bass Module 500 behind an open lattice (east bay); on top the Bose Smart Soundbar 300 under the TV, the landline at the west end and a desk intercom at the east end. There is no cabinet on the east wall.`,
       `Round lamp table in the south-west corner at the south sofa's west end: centre (${ct.centerXmm}, ${ct.centerZmm}), ${mm(ct.diameterMm)} across, ${mm(ct.heightMm)} high (no table lamp: the wall reading light and the track lights serve it).`,
-      `Hidden west cabinet door: x ${room.wallStorage.fromWestMm}-${room.wallStorage.fromWestMm + room.wallStorage.widthMm}, ${mm(room.wallStorage.heightMm)} high, one flush leaf with no handle, hidden in the wall panelling, opening outward. The console overlaps it by ${mm(check.clearances.consoleMm.overlapsDoorMm)}; drag the console out ${mm(s.console.dragOutMm)} first.`,
+      `Hidden west cabinet door: x ${room.wallStorage.fromWestMm}-${room.wallStorage.fromWestMm + room.wallStorage.widthMm}, ${mm(room.wallStorage.heightMm)} high, one flush leaf with no handle, hidden in the ${strip ? 'slat strip' : 'wall panelling'}, opening outward. The console overlaps it by ${mm(check.clearances.consoleMm.overlapsDoorMm)}; drag the console out ${mm(s.console.dragOutMm)} first.`,
+      ...(strip ? [`TV wall in this version (owner idea 2026-10-06, not chosen; the default is fluted panelling x ${s.wallPanel.fromWestMm}-${s.wallPanel.toMm} up to the door head): a floor-to-ceiling strip of ${sg.counts.total} round-fronted timber slats over the hidden door only, x ${sg.band.x1}-${sg.band.x2}, ${size(ss.slatWidthMm, ss.slatDepthMm)} mm slats every ${mm(sg.pitchMm)} on a dark-painted wall; ${sg.counts.leaf} of them are on the door leaf, whose edges fall in the ${mm(ss.gapMm)} gaps; a ${mm(ss.headReveal.heightMm)} dark reveal runs across the strip at the door head. The rest of the TV wall is plain (${ss.restOfWall.finish}). Slat colour: ${ss.colorStatus}.`] : []),
     ],
     items: [
       {label: `Sofa ${f.southSofa.lengthMm}x${f.southSofa.widthMm}`, ...south, kind: 'seat'},
@@ -136,14 +147,16 @@ function drawingLayoutC(room) {
       {label: `TV console ${s.console.lengthMm}x${s.console.depthMm}`, x1: g.console.x1, z1: g.console.z1, x2: g.console.x2, z2: g.console.z2, kind: 'fixed'},
       {label: `Lamp table ${ct.diameterMm}`, x1: ct.centerXmm - ct.diameterMm / 2, z1: ct.centerZmm - ct.diameterMm / 2, x2: ct.centerXmm + ct.diameterMm / 2, z2: ct.centerZmm + ct.diameterMm / 2, kind: 'table'},
       {label: `West cabinet door ${room.wallStorage.widthMm}`, x1: room.wallStorage.fromWestMm, z1: 0, x2: room.wallStorage.fromWestMm + room.wallStorage.widthMm, z2: 40, kind: 'fixed'},
+      ...(strip ? [{label: `Slat strip ${sg.band.x2 - sg.band.x1}`, x1: sg.band.x1, z1: 0, x2: sg.band.x2, z2: sg.frontZ, kind: 'fixed'}] : []),
     ],
     measured: [
       `South sofa seats: ${spread(check.views.southSofa)}.`,
       `West sofa seats: ${spread(check.views.westSofa)} (side-on, as in any L).`,
       `Gaps: south sofa to table ${mm(check.clearances.southSofaToTable)}, west sofa to table ${mm(check.clearances.westSofaToTable)}, table to the entry-door walking line ${mm(check.clearances.tableToEntryLine)}.`,
       `At about 4.7 m from the south sofa a 55-inch screen is small (common guides put 4.7 m at 75 inches or more); the 65-inch is the largest that fits this wall.`,
+      ...(strip ? [`Slat strip: ${mm(strip.clearances.tvs['55'].xGapMm)} from the 55-inch TV (${mm(strip.clearances.tvs['65'].xGapMm)} from the 65-inch); the console's back stands ${mm(strip.clearances.consoleClearMm)} off the slats; the slatted leaf sweeps ${mm(strip.clearances.leafReachMm)} into the room and clears the dragged-out console by ${mm(strip.clearances.leafClearOfDraggedConsoleMm)}.`] : []),
     ],
-    issues: check.issues,
+    issues: strip ? [...check.issues, ...strip.issues] : check.issues,
   }
 }
 
@@ -292,14 +305,16 @@ export const REVIEW_TASKS = [
   'Tell me which of the dimensions above you could not verify from the pictures.',
 ]
 
-export function buildRoomReview({roomKey, room, layoutKey = null, references = [], date = new Date()}) {
+export function buildRoomReview({roomKey, room, layoutKey = null, tvWall = DEFAULT_TV_WALL, references = [], date = new Date()}) {
   // Bedroom 1 (config/bedroom1LayoutConfig.js): the default layout keeps the generic furniture list and gains the plan boxes,
   // measurements and known problems of its layout check; the alternative is described in full and named in the title.
   const bedroom1 = roomKey === 'bedroom1' ? bedroom1Review(room, layoutKey ?? BEDROOM1_DESIGN.defaultLayout) : null
   const bedroom1Alternative = bedroom1 && layoutKey && layoutKey !== BEDROOM1_DESIGN.defaultLayout
-  const layoutLabel = roomKey === 'drawing' && layoutKey ? `Layout ${DRAWING_LAYOUT_LABELS[layoutKey]}` : bedroom1Alternative ? bedroom1.label : null
+  // Layout C with the slat strip (owner idea 2026-10-06) says so in the title; the default panelling keeps the old title.
+  const stripShown = roomKey === 'drawing' && (layoutKey ?? 'southSofas') === 'southSofas' && tvWallTreatment(room, tvWall) === 'slatStrip'
+  const layoutLabel = roomKey === 'drawing' && layoutKey ? `Layout ${DRAWING_LAYOUT_LABELS[layoutKey]}${stripShown ? ', TV wall: slat strip at the hidden door' : ''}` : bedroom1Alternative ? bedroom1.label : null
   let layout = bedroom1Alternative ? bedroom1 : null
-  if (roomKey === 'drawing') layout = {southSofas: drawingLayoutC, northTv: drawingLayoutA, cornerSofas: drawingLayoutB, cornerConsole: drawingCornerConsole, cornerProjector: drawingCornerProjector}[layoutKey ?? 'southSofas'](room)
+  if (roomKey === 'drawing') layout = {southSofas: drawingLayoutC, northTv: drawingLayoutA, cornerSofas: drawingLayoutB, cornerConsole: drawingCornerConsole, cornerProjector: drawingCornerProjector}[layoutKey ?? 'southSofas'](room, tvWall)
   const dims = `${room.widthMm} x ${room.lengthMm} x ${room.heightMm} mm (width x length x ceiling)`
   const planItems = layout?.items ?? bedroom1?.items ?? genericPlanItems(roomKey, room)
   const sections = [
@@ -310,7 +325,7 @@ export function buildRoomReview({roomKey, room, layoutKey = null, references = [
   if (planItems.length) sections.push({heading: 'Plan boxes (x range, z range in mm)', lines: planItems.map(i => `${i.label}: x ${Math.round(i.x1)}-${Math.round(i.x2)}, z ${Math.round(i.z1)}-${Math.round(i.z2)}`)})
   if (layout ?? bedroom1) sections.push({heading: 'Measured from the model', lines: (layout ?? bedroom1).measured})
   if ((layout ?? bedroom1)?.issues.length) sections.push({heading: 'Known problems', lines: (layout ?? bedroom1).issues})
-  const existing = describeExistingElectrical(roomKey, room, {layoutKey: roomKey === 'drawing' ? (layoutKey ?? 'southSofas') : null})
+  const existing = describeExistingElectrical(roomKey, room, {layoutKey: roomKey === 'drawing' ? (layoutKey ?? 'southSofas') : null, tvWall})
   if (existing.length) sections.push({heading: 'Existing electrical points (site scan)', lines: existing})
   if (references.length) sections.push({heading: 'Style references (links)', lines: references.map(r => `${r.title}${r.tags?.length ? ` [${r.tags.join(', ')}]` : ''}: ${r.url}${r.notes ? ` - ${r.notes}` : ''}`)})
   sections.push({heading: 'Honest limits', lines: [
