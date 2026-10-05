@@ -199,8 +199,8 @@ Status: proposed 2026-10-05; switchboard, wall light and fan point reuse the sca
 | B3-W1 | Chest-top point | west wall, z 2488, 950 high | 2 x 6 A sockets + 1 USB-A + USB-C | a lamp and chargers on the chest, 150 mm above its top and clear of the artwork |
 | B3-W2 | Picture light (existing) | west wall, z 1880, 2230 high | the existing wall light point | kept as a picture light above the artwork over the chest; switched at B3-N1 |
 | B3-C1 | Ceiling fan | ceiling, x 2030, z 1820 | the existing ceiling fan point | ceiling fan at the scanned medallion; regulator at B3-N1 |
-| B3-C2 | Track 1 driver feed | ceiling, x 300, z 650 | switched 230 V point for the 60 W / 48 V track driver (dimmer at B3-N1) | at the west end of the north run, the end nearest the switchboard |
-| B3-C3 | Track 2 driver feed | ceiling, x 300, z 3100 | switched 230 V point for the 60 W / 48 V track driver (dimmer at B3-N1) | at the west end of the south run |
+| B3-C2 | Track 1 driver feed | ceiling, x 600, z 820 | switched 230 V point for the 60 W / 48 V track driver (dimmer at B3-N1) | at the west end of the north run, the end nearest the switchboard |
+| B3-C3 | Track 2 driver feed | ceiling, x 600, z 2906 | switched 230 V point for the 60 W / 48 V track driver (dimmer at B3-N1) | at the west end of the south run |
 
 Circuits (proposed breakers; the electrician sizes cables and breakers):
 
