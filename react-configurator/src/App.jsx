@@ -24,6 +24,9 @@ import { buildPlanDxf as buildPlanDxfPure } from './kitchen/export/planDxf.mjs'
 import { buildBOM as buildBOMPure, buildBOMCsv as buildBOMCsvPure, buildBOMMarkdown as buildBOMMarkdownPure } from './kitchen/export/bom.mjs'
 import { deriveKitchenServices } from './kitchen/services.mjs'
 import WallElevation from './kitchen/WallElevation.jsx'
+import {KITCHEN_MIRROR_SPLASHBACK} from './config/kitchenConfig.js'
+import {mirrorSplashbackRectangles} from './domain/mirrorSplashback.mjs'
+import {addKitchenMirrorSplashbacks} from './rooms/kitchen/KitchenMirrorSplashback.js'
 import NorthSouthElevation from './kitchen/NorthSouthElevation.jsx'
 import ReferencesView from './kitchen/ReferencesView.jsx'
 
@@ -917,18 +920,18 @@ export default function App(){
         })
       }
       // uppers - no gap between lower (1350-1850) and top (1850-2700) - LED strip at 1322
-      addBox('east lower upper body',KITCHEN.width-320,0,1350,320,usableLen,500,surface.shutter)
+      addBox('east lower upper body',KITCHEN.width-320,0,KITCHEN_MIRROR_SPLASHBACK.upperUndersideMm,320,usableLen,500,surface.shutter)
       {
         const rack = west.find(x=>x.id==='sinkUpperDishRack')
         if(rack && westLen>0){
           const before = rack.y - westStart
           const afterStart = rack.y + rack.w
           const afterLen = (westStart+westLen) - afterStart
-          if(before>0) addBox('west lower upper body before rack',0,westStart,1350,320,before,500,surface.shutter)
-          if(afterLen>0) addBox('west lower upper body after rack',0,afterStart,1350,320,afterLen,500,surface.shutter)
+          if(before>0) addBox('west lower upper body before rack',0,westStart,KITCHEN_MIRROR_SPLASHBACK.upperUndersideMm,320,before,500,surface.shutter)
+          if(afterLen>0) addBox('west lower upper body after rack',0,afterStart,KITCHEN_MIRROR_SPLASHBACK.upperUndersideMm,320,afterLen,500,surface.shutter)
           addBox('west top upper body after door clear zone',0,westStart,1850,westTopUpperDepth,westLen,850,surface.topCabinet)
         } else {
-          if(westLen>0) addBox('west lower upper body after door clear zone',0,westStart,1350,320,westLen,500,surface.shutter)
+          if(westLen>0) addBox('west lower upper body after door clear zone',0,westStart,KITCHEN_MIRROR_SPLASHBACK.upperUndersideMm,320,westLen,500,surface.shutter)
           if(westLen>0) addBox('west top upper body after door clear zone',0,westStart,1850,westTopUpperDepth,westLen,850,surface.topCabinet)
         }
       }
@@ -947,8 +950,10 @@ export default function App(){
         addUpperFronts('west lower','west',320,westStart,westLen,1350,500,westModules,surface.middleCabinet)
         addUpperFronts('west top','west',westTopUpperDepth,westStart,westLen,1850,850,westModules,surface.topCabinet)
       }
-      addBox('east 600x1200 patterned tile backsplash',KITCHEN.width-18,0,900,18,usableLen,600,makeLargePatternTileMat(usableLen,600))
-      if(westLen>0) addBox('west 600x1200 patterned tile backsplash',0,westStart,900,18,westLen,600,makeLargePatternTileMat(westLen,600))
+      const splash=KITCHEN_MIRROR_SPLASHBACK
+      addBox('east 600x1200 patterned tile backsplash',KITCHEN.width-splash.tileFaceDepthMm,0,splash.counterTopMm,splash.tileFaceDepthMm,usableLen,splash.tileZoneHeightMm,makeLargePatternTileMat(usableLen,splash.tileZoneHeightMm))
+      if(westLen>0) addBox('west 600x1200 patterned tile backsplash',0,westStart,splash.counterTopMm,splash.tileFaceDepthMm,westLen,splash.tileZoneHeightMm,makeLargePatternTileMat(westLen,splash.tileZoneHeightMm))
+      addKitchenMirrorSplashbacks(scene,mirrorSplashbackRectangles({east:activeEast,west:activeWest})).forEach(mesh=>registerCutaway(mesh,[mesh.userData.mirrorSplashback.wall]))
       {
         const winBaseX=(KITCHEN.width-KITCHEN.window.w)/2
         const northTileW=KITCHEN.window.w+100
@@ -1051,7 +1056,7 @@ export default function App(){
             scene.add(knob)
           })
           // The chimney body is hidden inside the upper cabinet; only a slim underside vent is visible.
-          addBox('east hidden chimney vent slot',KITCHEN.width-352,it.y+80,1326,24,540,18,surface.dark)
+          addBox('east hidden chimney vent slot',KITCHEN.width-352,it.y+80,KITCHEN_MIRROR_SPLASHBACK.hoodUndersideMm,24,540,18,surface.dark)
           addBox('east hidden chimney warm task light',KITCHEN.width-356,it.y+170,1316,20,300,10,surface.led)
           addPoint('cooktop task glow',KITCHEN.width-520,it.y+350,1280,1.7,900)
         } else if(it.id==='trashCan'){
@@ -2294,6 +2299,8 @@ export default function App(){
           <div>Shutters: <b>{bom.shutterCount}</b> &nbsp; Drawers: <b>{bom.drawerCount}</b> &nbsp; Handles: <b>{bom.handleCount}</b> (handleless)</div>
           <div>Countertop: <b>{bom.counterLenM} m ({bom.counterLenMm} mm)</b> x 600D/600D, {COUNTER_THICKNESS}mm thick, {renderMaterials.counter}</div>
           <div>Backsplash: <b>{bom.backsplashAreaM2} m2</b> (height {BACKSPLASH_HEIGHT}mm, {materials.backsplash})</div>
+          <div>Proposed bronze mirror finish: <b>{bom.mirrorAreaM2} m2</b> (within the existing splashback zone; not extra tile area)</div>
+          {bom.mirrorPanels.map(p=><div key={p.id}>{p.wall} / {p.applianceId}: {p.w} x {p.h} mm, {p.mounting}</div>)}
           <div style={{marginTop:6,fontSize:12,color:'#555'}}>Appliances: {bom.appliances.map(a=>`${a.id} y${a.y}`).join('  |  ')}</div>
           <div style={{fontSize:12,color:'#555'}}>Notes: {bom.notes.join('  |  ')}</div>
         </div>

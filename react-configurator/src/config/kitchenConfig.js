@@ -257,6 +257,16 @@ export const MODULE_DEFS = {
 export const PLINTH_HEIGHT = 100
 export const COUNTER_THICKNESS = 38
 export const BACKSPLASH_HEIGHT = 600
+// Owner, 2026-10-06: "Can we have bronze mirror splashback behind gas and sink."
+// PROPOSAL: 150 mm each side, clipped to the run and splash-zone neighbours.
+// PROPOSAL: mirror the existing east slider face; do not move/rebuild its storage.
+// The reference levels/depth below are ASSUMPTIONS from the existing App.jsx
+// builder (mm), not new site measurements; the builder shares them unchanged.
+export const KITCHEN_MIRROR_SPLASHBACK = {
+  enabled:true, marginMm:150, eastSliderTreatment:'face',
+  counterTopMm:900, tileZoneHeightMm:BACKSPLASH_HEIGHT,
+  upperUndersideMm:1350, hoodUndersideMm:1326, tileFaceDepthMm:18,
+}
 export function autoFillModules(totalLen){
   const sizes=[900,750,600,450,300]
   let remaining=totalLen
