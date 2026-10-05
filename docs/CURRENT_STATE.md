@@ -371,3 +371,6 @@ Six pieces of work, each with a note in `docs/changes/2026-10-05-*.md`:
 - Render quality (`docs/changes/2026-10-05-render-quality.md`): every live 3D view is built by `src/render/liveView.js`
   with one exposure, fitted soft sun shadows, a shared daylight rig (`src/render/lightRig.js`), lamp colour from Kelvin,
   a Quality switch (Auto / Draft / Standard / High) and Save picture. Appearance only; no geometry changed.
+- 2026-10-06: Drawing Room track feeds. Points C2 and C3 (one driver feed per track, at the run end nearest the
+  switchboard), `DRAWING_LIGHT_FEEDS` (rotary LED dimmer per circuit, cable routes from the existing north-wall
+  switchboard X-D1: 2.4 m and 4.5 m), `checkLightFeeds`; the routes draw with "Show electrical points".

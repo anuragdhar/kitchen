@@ -31,9 +31,11 @@ Positions are measured inside the room: **x** from the west wall, **z** from the
 | S2 | Lamp + charging, south sofa east end | south wall, x 2850, 300 high | 1 x 6 A socket + 1 USB-A + USB-C + 2-way chandelier switch | side-table lamp and phones at the open end of the south sofa |
 | S3 | Spare / heater socket | south wall, x 3200, 300 high | 1 x 6/16 A combined socket | room heater, air purifier or decorative lights by the window |
 | C1 | Chandelier | ceiling, x 1600, z 2705 | ceiling light point with a hook rated for the fitting | existing chandelier on the centre ceiling medallion, between the two ceiling fans (owner 2026-10-04); position from the phone scan of 2026-10-04 |
+| C2 | Track 1 driver feed | ceiling, x 2320, z 540 | switched and dimmed 230 V point for the 60 W / 48 V track driver | at the east end of Track 1 (the TV-wall spots); its own dimmer at the switchboard |
+| C3 | Track 2 driver feed | ceiling, x 640, z 2000 | switched and dimmed 230 V point for the 100 W / 48 V track driver | at the north end of Track 2 (west wall: general and reading light); its own dimmer at the switchboard |
 | F1 | Floor box at the coffee table (optional) | floor, x 1230, z 3425 | flush floor box: 1 x 6 A + USB-A/C, lid closes over plugs | charging at the table and the west sofa; must be chased into the floor before tiling, under the rug |
 
-Totals: 17 points: 5 socket points, 5 charging points (1 optional), 5 lighting and switch points, 1 data point and 1 dedicated AC point.
+Totals: 19 points: 5 socket points, 5 charging points (1 optional), 7 lighting and switch points, 1 data point and 1 dedicated AC point.
 
 ## Phone charging
 
@@ -126,3 +128,31 @@ panelling, a TV, a cabinet or console, a sofa standing against that wall, or the
 wiring routes, whether a point can be moved, or anything the scan did not capture (what is behind curtains or furniture).
 The Drawing Room's three ceiling points are not repeated here: they are already the fan and chandelier positions in
 `drawingLightingConfig.js` and C1 above.
+
+## How the lights are dimmed, and the wires to the tracks (2026-10-06)
+
+**Dimming.** Each lighting circuit has its own knob at the switchboard: a modular rotary LED dimmer. It looks and turns
+like a fan speed regulator, but it is a different part, and a fan regulator must not be used on a light. Three knobs:
+the chandelier, Track 1 and Track 2. The two fans keep their regulators. A track cannot dim one head on its own; the
+whole track goes up and down together.
+
+The dimmer has to match the track's driver (the small box that turns mains power into the 48 V the track runs on). The
+proposal is a "phase-cut" (triac) dimmable driver with a trailing-edge rotary dimmer, because it needs no extra control
+wire. The alternative, a 0-10 V or DALI driver, dims more smoothly at low levels but needs two more wires in the same
+conduit. Buy the track, drivers and dimmers as one matched set from one maker (open item C17).
+
+**Wires.** One feed per track, at the end nearest the switchboard, in a 20 mm conduit chased up the wall and into the
+ceiling plaster. Shown as orange lines when "Show electrical points" is on.
+
+| Feed | From the switchboard | Length |
+| --- | --- | --- |
+| C2, Track 1 | up the north wall to the ceiling, 0.5 m east along the wall, then 0.54 m out to the east end of Track 1 | about 2.4 m |
+| C3, Track 2 | up the north wall to the ceiling, 1.2 m west along the wall, then 2.0 m south to the north end of Track 2 | about 4.5 m |
+
+Total about 6.9 m of conduit; allow 10 % more for bends and tails. Where a chase crosses the plaster ceiling moulding it
+is cut through and the moulding made good: the conduit is buried, unlike the track, which must sit on flat ceiling.
+
+**Which switchboard.** The routes start at the existing switchboard beside the TV on the north wall, which the owner
+takes as the board for these lights (2026-10-06). As drawn, that board is behind the 55-inch TV and inside the wall
+panelling, so either the board or the TV has to move (open item C28). If the board moves along the same wall, only the
+first vertical leg moves with it. If it moves to the east wall (point E1), each route gets about 2.5 m longer.

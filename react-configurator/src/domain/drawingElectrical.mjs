@@ -88,3 +88,37 @@ export function checkElectricalPlan(room, plan) {
   for (const p of plan.points) byKind[p.kind] = (byKind[p.kind] ?? 0) + 1
   return {ok: issues.length === 0, issues, byKind, reach}
 }
+
+/** Length of a feed route in mm: the sum of its straight legs. */
+export function feedRouteLengthMm(route) {
+  return Math.round(route.points.slice(1).reduce((sum, p, i) => sum + Math.hypot(p.xMm - route.points[i].xMm, p.zMm - route.points[i].zMm, p.yMm - route.points[i].yMm), 0))
+}
+
+/**
+ * The track feeds of a room: every track run of `lighting` has one feed point in `plan` at an end of the run, and a route in
+ * `feeds` that starts at the switchboard, runs in straight legs parallel to the walls or vertical, stays in the room, and
+ * ends at that feed point on the ceiling. Returns {ok, issues, routes: [{id, run, lengthMm}], totalMm}.
+ */
+export function checkLightFeeds(room, plan, lighting, feeds) {
+  const issues = [], need = (ok, message) => { if (!ok) issues.push(message) }
+  const board = feeds.switchboard, routes = []
+  need(feeds.dimmer.circuits.includes('chandelier'), 'the chandelier has no dimmer')
+  for (const run of lighting.tracks.runs) {
+    const point = plan.points.find(p => p.feedsRun === run.id), route = feeds.routes.find(r => r.run === run.id)
+    need(point, `${run.id} has no feed point in the electrical plan`); need(route, `${run.id} has no cable route`)
+    need(feeds.dimmer.circuits.includes(run.id), `${run.id} has no dimmer at the switchboard`)
+    if (!point || !route) continue
+    const along = run.axis === 'x' ? point.xMm : point.zMm, across = run.axis === 'x' ? point.zMm : point.xMm
+    need(across === run.atMm && (along === run.fromMm || along === run.toMm), `${point.id} is not at an end of ${run.id}`)
+    const first = route.points[0], last = route.points[route.points.length - 1]
+    need(first.xMm === board.xMm && first.yMm === board.heightMm && first.zMm === 0, `${route.id}: the route does not start at the switchboard`)
+    need(last.xMm === point.xMm && last.zMm === point.zMm && last.yMm === feeds.ceilingMm, `${route.id}: the route does not end at its feed point on the ceiling`)
+    route.points.slice(1).forEach((p, i) => {
+      const q = route.points[i], moved = [p.xMm !== q.xMm, p.yMm !== q.yMm, p.zMm !== q.zMm].filter(Boolean).length
+      need(moved === 1, `${route.id}: leg ${i + 1} is not a single straight run parallel to a wall`)
+      need(p.xMm >= 0 && p.xMm <= room.widthMm && p.zMm >= 0 && p.zMm <= room.lengthMm && p.yMm <= feeds.ceilingMm, `${route.id}: leg ${i + 1} leaves the room`)
+    })
+    routes.push({id: route.id, run: run.id, lengthMm: feedRouteLengthMm(route)})
+  }
+  return {ok: issues.length === 0, issues, routes, totalMm: routes.reduce((sum, r) => sum + r.lengthMm, 0)}
+}

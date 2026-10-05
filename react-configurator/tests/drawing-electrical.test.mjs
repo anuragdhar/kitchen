@@ -1,7 +1,9 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import {checkElectricalPlan, electricalPointPosition} from '../src/domain/drawingElectrical.mjs'
-import {DRAWING_ELECTRICAL} from '../src/config/drawingElectricalConfig.js'
+import {checkElectricalPlan, electricalPointPosition, checkLightFeeds, feedRouteLengthMm} from '../src/domain/drawingElectrical.mjs'
+import {DRAWING_ELECTRICAL, DRAWING_LIGHT_FEEDS} from '../src/config/drawingElectricalConfig.js'
+import {DRAWING_LIGHTING} from '../src/config/drawingLightingConfig.js'
+import {EXISTING_ELECTRICAL} from '../src/config/existingElectricalConfig.js'
 import {EMPTY_ROOM_SHELLS} from '../src/config/roomShellConfig.js'
 import {AC_PLAN} from '../src/config/acPlanConfig.js'
 import {indoorUnitBox} from '../src/domain/acPlan.mjs'
@@ -54,4 +56,22 @@ test('point positions land on the right wall', () => {
   assert.deepEqual(at('E1'), {x: room.widthMm, y: 1200, z: 1250})
   assert.deepEqual(at('C1'), {x: 1600, y: room.heightMm, z: 2705})
   assert.ok(at('N3').z < 0, 'the closet light is behind the north wall')
+})
+
+test('each track has a feed at its end, a dimmer and a cable route from the switchboard beside the TV (owner 2026-10-06)', () => {
+  const lighting = DRAWING_LIGHTING.southSofas, result = checkLightFeeds(room, DRAWING_ELECTRICAL, lighting, DRAWING_LIGHT_FEEDS)
+  assert.deepEqual(result.issues, [])
+  assert.deepEqual(result.routes, [{id: 'C2', run: 'T1', lengthMm: 2387}, {id: 'C3', run: 'T2', lengthMm: 4503}])
+  assert.equal(result.totalMm, 6890)
+  assert.deepEqual(DRAWING_LIGHT_FEEDS.dimmer.circuits, ['chandelier', 'T1', 'T2'])
+  assert.match(DRAWING_LIGHT_FEEDS.dimmer.kind, /rotary LED dimmer/)
+  // The switchboard is the existing board from the scan, at its centre.
+  const board = EXISTING_ELECTRICAL.drawing.points.find(p => p.id === 'X-D1'), s = DRAWING_LIGHT_FEEDS.switchboard
+  assert.deepEqual([s.xMm, s.heightMm], [Math.round((board.fromMm + board.toMm) / 2), (board.bottomMm + board.topMm) / 2])
+  // The feed points follow the track runs: moving a run without its feed is caught.
+  const moved = structuredClone(lighting); moved.tracks.runs[0].toMm = 2200
+  assert.match(checkLightFeeds(room, DRAWING_ELECTRICAL, moved, DRAWING_LIGHT_FEEDS).issues.join(' | '), /C2 is not at an end of T1/)
+  const bent = structuredClone(DRAWING_LIGHT_FEEDS); bent.routes[1].points[2] = {xMm: 640, zMm: 300, yMm: 2700}
+  assert.match(checkLightFeeds(room, DRAWING_ELECTRICAL, lighting, bent).issues.join(' | '), /C3: leg 2 is not a single straight run/)
+  assert.equal(feedRouteLengthMm({points: [{xMm: 0, zMm: 0, yMm: 0}, {xMm: 0, zMm: 0, yMm: 1000}, {xMm: 500, zMm: 0, yMm: 1000}]}), 1500)
 })

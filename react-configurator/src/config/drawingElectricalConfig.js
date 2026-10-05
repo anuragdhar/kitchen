@@ -59,16 +59,55 @@ export const DRAWING_ELECTRICAL = {
     // ---- Ceiling and floor ----
     {id: 'C1', name: 'Chandelier', kind: 'lighting', wall: 'ceiling', xMm: 1600, zMm: 2705,
       outlets: 'ceiling light point with a hook rated for the fitting', use: 'existing chandelier on the centre ceiling medallion, between the two ceiling fans (owner 2026-10-04); position from the phone scan of 2026-10-04'},
+    // Owner 2026-10-06: "we need a line from these tracks to the switchboard". One feed per track run, at the end of the run
+    // nearest the switchboard; the run's 48 V driver sits at that end. Positions follow drawingLightingConfig.js (a test
+    // keeps them on the run ends); the cable routes are DRAWING_LIGHT_FEEDS below.
+    {id: 'C2', name: 'Track 1 driver feed', kind: 'lighting', wall: 'ceiling', xMm: 2320, zMm: 540, feedsRun: 'T1',
+      outlets: 'switched and dimmed 230 V point for the 60 W / 48 V track driver', use: 'at the east end of Track 1 (the TV-wall spots); its own dimmer at the switchboard'},
+    {id: 'C3', name: 'Track 2 driver feed', kind: 'lighting', wall: 'ceiling', xMm: 640, zMm: 2000, feedsRun: 'T2',
+      outlets: 'switched and dimmed 230 V point for the 100 W / 48 V track driver', use: 'at the north end of Track 2 (west wall: general and reading light); its own dimmer at the switchboard'},
     {id: 'F1', name: 'Floor box at the coffee table', kind: 'charging', wall: 'floor', xMm: 1230, zMm: 3425, optional: true,
       outlets: 'flush floor box: 1 x 6 A + USB-A/C, lid closes over plugs',
       use: 'charging at the table and the west sofa; must be chased into the floor before tiling, under the rug'},
   ],
   circuits: [
-    'Lighting: one 6 A MCB circuit for C1, W2, W5, N3 and the sofa glow (S1).',
+    'Lighting: one 6 A MCB circuit for C1, C2, C3, W2, W5, N3 and the sofa glow (S1).',
     'Sockets: one 16 A MCB circuit for N1, N2, N4, E1, E4, W3, W4, W6, S2, S3 and F1, protected by a 30 mA RCBO/RCCB.',
     'AC: W1 on its own circuit sized to the AC nameplate (typically 16-20 A), with its own MCB.',
     'Media: plug-in surge protection (or a surge device at the board) for N1, N2 and N4.',
     'Data: CAT6 from N4 to N1 and N2, coax to N2, phone line and intercom cable to N4, all inside the TV wall; run low-voltage cables in their own conduits, crossing mains only at right angles.',
   ],
   safety: 'All sockets three-pin with an effective earth, BIS-marked (IS 1293); modular boxes and plates; concealed PVC conduit. A licensed electrician must confirm the existing wiring, earthing, MCB/RCBO ratings and the intercom and broadband entry before any chasing.',
+}
+
+// How the Drawing Room lights are controlled and wired (owner 2026-10-06).
+//
+// CONTROL. One knob per circuit at the switchboard: a modular rotary LED dimmer, which looks and turns like a fan speed
+// regulator but is a different part (a fan regulator must NOT be used on a light). Three dimmers: the chandelier, Track 1
+// and Track 2; the two fans keep their regulators. The dimmer must match the driver: `protocol` is the proposal (a
+// phase-cut "triac" dimmable 48 V driver with a trailing-edge rotary dimmer, the kind that needs no extra control cable).
+// The alternative is a 0-10 V or DALI driver, which needs two more cores in the same conduit. Buy track, drivers and dimmers
+// as one matched set from one maker (work-plan/OPEN_ITEMS.md, C17).
+//
+// SWITCHBOARD. The owner takes the switchboard beside the TV on the north wall as the one that controls these lights. That is
+// the existing board X-D1 (existingElectricalConfig.js: x 1710-1905, 1235-1495 high), which as drawn is behind the TV and
+// the wall panelling; whether the board or the TV moves is open item C28. The routes below start at that board. If it
+// moves along the north wall, only the first vertical leg moves with it; if it moves to the east wall (point E1 above, the
+// electrical plan's proposal), each route gets about 2.5 m longer.
+//
+// ROUTES. Millimetres in the room frame (x from the west wall, z from the north wall, y up). Each is a 20 mm conduit chased
+// up the wall from the board and then into the ceiling plaster to the feed end of its run, turning at right angles. A chase
+// that crosses the plaster ceiling moulding is cut through it and the moulding made good: the conduit is buried, unlike
+// the track, which must sit on flat ceiling. Lengths are along the route; add about 10 % for bends and tails.
+export const DRAWING_LIGHT_FEEDS = {
+  switchboard: {existingId: 'X-D1', wall: 'north', xMm: 1808, heightMm: 1365, status: 'the existing board; its final place is open item C28'},
+  dimmer: {kind: 'modular rotary LED dimmer, one per circuit', protocol: 'phase-cut (triac), trailing edge', circuits: ['chandelier', 'T1', 'T2'],
+    status: 'proposal: the dimmer type must match the track drivers bought'},
+  ceilingMm: 2700,
+  routes: [
+    {id: 'C2', run: 'T1', label: 'Track 1 feed', cable: '3-core 1.5 sq mm in 20 mm conduit',
+      points: [{xMm: 1808, zMm: 0, yMm: 1365}, {xMm: 1808, zMm: 0, yMm: 2700}, {xMm: 2320, zMm: 0, yMm: 2700}, {xMm: 2320, zMm: 540, yMm: 2700}]},
+    {id: 'C3', run: 'T2', label: 'Track 2 feed', cable: '3-core 1.5 sq mm in 20 mm conduit',
+      points: [{xMm: 1808, zMm: 0, yMm: 1365}, {xMm: 1808, zMm: 0, yMm: 2700}, {xMm: 640, zMm: 0, yMm: 2700}, {xMm: 640, zMm: 2000, yMm: 2700}]},
+  ],
 }
