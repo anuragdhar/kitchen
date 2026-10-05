@@ -58,6 +58,8 @@ import {wallPiecesAroundStorage} from './domain/wallStorage.mjs'
 import {createLiveView} from './render/liveView.js'
 import {DAYLIGHT_RIG} from './render/lightRig.js'
 import RenderQualityControls from './render/RenderQualityControls.jsx'
+import StandingCameraControls from './render/StandingCameraControls.jsx'
+import {createStandingCamera} from './render/standingCamera.js'
 import {useDesignerRender} from './render/useDesignerRender.js'
 import {createExistingElectricalPoints} from './rooms/shared/ExistingElectricalPoints.js'
 import {createEntryWallCavity} from './rooms/entry/EntryWallCavity.js'
@@ -76,6 +78,8 @@ const WALL_FACE_MM=WALL_THICKNESS_M*500
 const PLAN_MARK_KEY='a501-whole-home-plan-mark-v1'
 
 const ROOMS=HOME_ROOM_LAYOUTS
+// Where "Stand here" first puts the camera: the middle of the Lobby / Dining, from where every room is a few steps away.
+const STAND_START=(([x1,y1,x2,y2])=>({xMm:X((x1+x2)/2)*1000,zMm:Z((y1+y2)/2)*1000,headingDeg:90}))(HOME_ROOM_LAYOUTS.find(room=>room.key==='lobby').bounds)
 
 // Wall spans follow the visible plan lines, with gaps left for the current openings.
 const WALLS=[
@@ -101,6 +105,7 @@ function LiveWholeHome3D({onOpenRoom}){
   const mountRef=useRef(null),sceneRef=useRef(null)
   const designer=useDesignerRender(sceneRef)
   const [view,setView]=useState('perspective')
+  const [stand,setStand]=useState(null) // "Stand here" camera readout (render/standingCamera.js)
   const [showWalls,setShowWalls]=useState(true)
   const [showPoojaPerson,setShowPoojaPerson]=useState(true)
   const [showIroningBoard,setShowIroningBoard]=useState(false)
@@ -799,12 +804,13 @@ function LiveWholeHome3D({onOpenRoom}){
     const interiorScene=registerInteriorScene({id:'whole-home',scene,camera,renderer,zones:ROOMS.map((r,index)=>({id:interiorRoomIds[index],min:[X(r.bounds[0]),0,Z(r.bounds[1])],max:[X(r.bounds[2]),HEIGHT,Z(r.bounds[3])]}))})
     let raf=0;const render=()=>{controls.update();view.render();raf=requestAnimationFrame(render)};render()
     sceneRef.current={clearItem,liveView:view,setAcRoutes:visible=>{acRoutes.visible=visible},setDesigner:on=>view.setDesigner(on),setCavity:visible=>{cavityGroup.visible=visible},setRoomLight,setTvLabels:visible=>drawingLayouts.setLabels(visible),setDrawingLayout:key=>drawingLayouts.setLayout(key),setDrawingArm:pulled=>drawingLayouts.setArm(pulled),setElectrical:visible=>drawingLayouts?.setElectrical(visible),setExistingElectrical:visible=>{for(const g of [existingDrawing,existingLobby])if(g)g.visible=visible},setDoorSwing:visible=>drawingLayouts.setDoorSwing(visible),setStorageOpen:open=>drawingLayouts.setStorageOpen(open),setDrawingTv:key=>drawingLayouts.setTvSize(key),setMedicineCabinetOpen:value=>doorInfill.userData.setOpen(value),setStorageCoverOpen:value=>storeStorage.userData.setCoverOpen(value),setMirrorOpen:value=>vanity.userData.setMirrorOpen?.(value),setPartitionOpen:value=>partition.userData.setOpen?.(value),setCamera,setWallsVisible:visible=>{walls.visible=visible},setBoardOpen:value=>{ironingStorage.userData.setBoardOpen(value)},setPoojaPersonVisible:visible=>{seatedPerson.visible=visible},setPoojaDoorsOpen:value=>{poojaDoors.userData.setDoorsOpen(value)},clearMark,setDaylight,setMeasure,clearMeasure}
+    const standing=createStandingCamera({camera,controls,domElement:renderer.domElement,bounds:{minX:.2,maxX:W-.2,minZ:.2,maxZ:L-.2},onChange:setStand});sceneRef.current.standing=standing
     setRoomLight(roomLightRef.current/100)
     setDaylight(sunHourRef.current)
-    return()=>{acRoutes.userData.dispose();interiorScene.dispose();cancelAnimationFrame(raf);existingDrawing?.userData.dispose();existingLobby?.userData.dispose();view.dispose();observer.disconnect();renderer.domElement.removeEventListener('pointerdown',onPointerDown);renderer.domElement.removeEventListener('pointerup',onPointerUp);renderer.domElement.removeEventListener('pointermove',onPointerMove);window.removeEventListener('keydown',onMeasureKey);cancelAnimationFrame(moveFrame);tip.remove();controls.dispose();model.traverse(object=>{object.geometry?.dispose?.();object.material?.dispose?.()});markedWallMaterial.dispose();texture.dispose();renderer.dispose();renderer.domElement.remove();sceneRef.current=null}
+    return()=>{standing.dispose();acRoutes.userData.dispose();interiorScene.dispose();cancelAnimationFrame(raf);existingDrawing?.userData.dispose();existingLobby?.userData.dispose();view.dispose();observer.disconnect();renderer.domElement.removeEventListener('pointerdown',onPointerDown);renderer.domElement.removeEventListener('pointerup',onPointerUp);renderer.domElement.removeEventListener('pointermove',onPointerMove);window.removeEventListener('keydown',onMeasureKey);cancelAnimationFrame(moveFrame);tip.remove();controls.dispose();model.traverse(object=>{object.geometry?.dispose?.();object.material?.dispose?.()});markedWallMaterial.dispose();texture.dispose();renderer.dispose();renderer.domElement.remove();sceneRef.current=null}
   },[])
 
-  useEffect(()=>{sceneRef.current?.setCamera(view)},[view])
+  useEffect(()=>{sceneRef.current?.standing?.leave();sceneRef.current?.setCamera(view)},[view])
   useEffect(()=>{sceneRef.current?.setWallsVisible(showWalls)},[showWalls])
   useEffect(()=>{sceneRef.current?.setPoojaPersonVisible(showPoojaPerson)},[showPoojaPerson])
   useEffect(()=>{sceneRef.current?.setBoardOpen(showIroningBoard)},[showIroningBoard])
@@ -858,6 +864,7 @@ function LiveWholeHome3D({onOpenRoom}){
         <button onClick={()=>setPoojaDoorsOpen(value=>!value)} style={buttonStyle(poojaDoorsOpen)}>{poojaDoorsOpen?'Close Pooja doors':'Open Pooja doors'}</button>
         <button {...designer.button(buttonStyle(designer.on))}/>
         <RenderQualityControls sceneRef={sceneRef} name="whole-home" buttonStyle={buttonStyle}/>
+        <button onClick={()=>{const standing=sceneRef.current?.standing;if(standing)standing.active?standing.leave():standing.enter(STAND_START)}} aria-pressed={!!stand?.active} style={buttonStyle(!!stand?.active)} title="Put the camera at eye height inside the room and look around">{stand?.active?'Leave standing view':'Stand here'}</button>
         <button onClick={()=>setShowCavity(value=>!value)} aria-pressed={showCavity} style={buttonStyle(showCavity)} title="The empty 3 ft deep cavity on the Main Entry side of the Drawing Room north wall, and the wall between them">{showCavity?'Hide entry wall cavity':'Show entry wall cavity'}</button>
         <button onClick={()=>setShowAcRoutes(value=>!value)} aria-pressed={showAcRoutes} style={buttonStyle(showAcRoutes)} title="The whole-home AC plan (docs/AC_PLAN.md): refrigerant pipes from each indoor unit to its outdoor unit with the length to order, and the drain pipes to where they discharge. A proposal from typical figures; nothing is measured.">{showAcRoutes?'Hide AC pipe routes':'Show AC pipe routes'}</button>
         <button onClick={()=>setMeasureMode(value=>!value)} aria-pressed={measureMode} style={buttonStyle(measureMode)}>{measureMode?'Stop measuring':'Measure'}</button>
@@ -899,6 +906,7 @@ function LiveWholeHome3D({onOpenRoom}){
       </label>
       <span style={{fontSize:10,color:'#94a3b8'}}>Indicative equinox sun path · true north ≈{TRUE_NORTH_OFFSET_DEG}° off plan north · not a solar study</span>
     </div>}
+    <StandingCameraControls readout={stand} onSet={next=>sceneRef.current?.standing?.set(next)} onLeave={()=>sceneRef.current?.standing?.leave()} frame="position in the whole-home model, where x grows west and z grows north" facing="facing 0 = south, 90 = west"/>
     <div ref={mountRef} style={{height:'clamp(620px,82vh,1050px)',width:'100%',display:markMode?'none':'block'}}/>
     {markMode?<PlanMarkPanel image={floorPlanImage} width={PLAN_WIDTH} height={PLAN_HEIGHT} rooms={ROOMS} mark={planMark} onChange={setPlanMark} onClose={()=>setMarkMode(false)}/>
       :<><ItemDimensionsPanel item={pickedItem} onClear={()=>sceneRef.current?.clearItem()}/><WallSelectionPanel selection={wallSelection} note={wallNote} onNoteChange={setWallNote} onClear={()=>sceneRef.current?.clearMark()}/></>}

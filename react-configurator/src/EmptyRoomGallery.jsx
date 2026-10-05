@@ -2,6 +2,8 @@ import {registerInteriorScene} from './render/interiorScene.js'
 import {createLiveView} from './render/liveView.js'
 import {createDaylightRig} from './render/lightRig.js'
 import RenderQualityControls from './render/RenderQualityControls.jsx'
+import StandingCameraControls from './render/StandingCameraControls.jsx'
+import {createStandingCamera} from './render/standingCamera.js'
 import {useDesignerRender} from './render/useDesignerRender.js'
 import {tagSurfaceMaterial} from './render/surfaceRoles.mjs'
 import {createDrawingLobbyPartition} from './rooms/drawing/DrawingLobbyPartition.js'
@@ -60,6 +62,7 @@ function referencesFor(roomKey){
 export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView='overview',showSelector=true}){
   const [roomKey,setRoomKey]=useState(initialRoomKey)
   const [view,setView]=useState(initialView)
+  const [stand,setStand]=useState(null) // "Stand here" camera readout (render/standingCamera.js)
   const [showSouthWall,setShowSouthWall]=useState(initialRoomKey==='lobby'||initialRoomKey==='drawing'||initialRoomKey==='bedroom1')
   const [tvLabels,setTvLabels]=useState(initialRoomKey==='drawing'),tvLabelsRef=useRef(initialRoomKey==='drawing')
   const [drawingLayout,setDrawingLayout]=useState('southSofas'),drawingLayoutRef=useRef('southSofas')
@@ -426,11 +429,12 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
       return {views,project}
     }
     sceneRef.current={clearItem,liveView:view,setDesigner:on=>view.setDesigner(on),captureReview,setTrackLight:(circuit,level)=>{drawingLayouts?.setTrackLight(circuit,level);taskLighting.userData.setTrackLight?.(circuit,level);setDaylight(daylightRef.current)},setDarkRoom:on=>{darkRoom=on;setDaylight(daylightRef.current)},setTvLabels:visible=>drawingLayouts?.setLabels(visible),setDrawingLayout:key=>drawingLayouts?.setLayout(key),setDrawingArm:pulled=>drawingLayouts?.setArm(pulled),setElectrical:visible=>{drawingLayouts?.setElectrical(visible);if(roomElectrical)roomElectrical.visible=visible},setExistingElectrical:visible=>{if(existingPoints)existingPoints.visible=visible},setDoorSwing:visible=>drawingLayouts?.setDoorSwing(visible),setStorageOpen:open=>drawingLayouts?.setStorageOpen(open),setDrawingTv:key=>drawingLayouts?.setTvSize(key),setMirrorOpen:value=>vanity.userData.setMirrorOpen?.(value),setPartitionOpen:value=>partition.userData.setOpen?.(value),setCamera,setSouthVisible:value=>{southWall.visible=value},setFurnitureVisible:value=>{furniture.visible=value},setBoardOpen:value=>{ironingStorage?.userData.setBoardOpen(value)},setPoojaDoorsOpen:value=>{poojaDoors?.userData.setDoorsOpen(value)},clearMark,setDaylight}
+    const standing=createStandingCamera({camera,controls,domElement:renderer.domElement,bounds:{minX:.2,maxX:W+extensionDepth-.2,minZ:.2,maxZ:L+southDepth-.2},onChange:setStand});sceneRef.current.standing=standing
     if(bedroom1Layouts){const dim=sceneRef.current.setTrackLight;Object.assign(sceneRef.current,{setBedroom1Layout:key=>bedroom1Layouts.setLayout(key),setTrackLight:(circuit,level)=>{bedroom1Layouts.setTrackLight(circuit,level);dim(circuit,level)}})}
-    return()=>{interiorScene.dispose();cancelAnimationFrame(raf);existingPoints?.userData.dispose();roomElectrical?.userData.dispose();view.dispose();observer.disconnect();renderer.domElement.removeEventListener('pointerdown',onPointerDown);renderer.domElement.removeEventListener('pointerup',onPointerUp);controls.dispose();labelTextures.forEach(texture=>texture.dispose());shell.traverse(object=>{object.geometry?.dispose?.();if(Array.isArray(object.material))object.material.forEach(material=>material.dispose());else object.material?.dispose?.()});markedWallMaterial.dispose();rig.dispose();renderer.dispose();renderer.domElement.remove();sceneRef.current=null}
+    return()=>{standing.dispose();interiorScene.dispose();cancelAnimationFrame(raf);existingPoints?.userData.dispose();roomElectrical?.userData.dispose();view.dispose();observer.disconnect();renderer.domElement.removeEventListener('pointerdown',onPointerDown);renderer.domElement.removeEventListener('pointerup',onPointerUp);controls.dispose();labelTextures.forEach(texture=>texture.dispose());shell.traverse(object=>{object.geometry?.dispose?.();if(Array.isArray(object.material))object.material.forEach(material=>material.dispose());else object.material?.dispose?.()});markedWallMaterial.dispose();rig.dispose();renderer.dispose();renderer.domElement.remove();sceneRef.current=null}
   },[roomKey,initialView])
 
-  useEffect(()=>{sceneRef.current?.setCamera(view)},[view,roomKey])
+  useEffect(()=>{sceneRef.current?.standing?.leave();sceneRef.current?.setCamera(view)},[view,roomKey])
   useEffect(()=>{sceneRef.current?.setSouthVisible(showSouthWall)},[showSouthWall,roomKey])
   useEffect(()=>{sceneRef.current?.setFurnitureVisible(showFurniture)},[showFurniture,roomKey])
   useEffect(()=>{tvLabelsRef.current=tvLabels;sceneRef.current?.setTvLabels(tvLabels)},[tvLabels,roomKey])
@@ -491,6 +495,7 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
         {roomKey==='drawing'&&<button onClick={()=>setView('tvWall')} aria-pressed={view==='tvWall'} style={buttonStyle(view==='tvWall')}>TV wall view</button>}
         <button {...designer.button(buttonStyle(designer.on))}/>
         <RenderQualityControls sceneRef={sceneRef} name={roomKey} buttonStyle={buttonStyle}/>
+        <button onClick={()=>{const standing=sceneRef.current?.standing;if(standing)standing.active?standing.leave():standing.enter()}} aria-pressed={!!stand?.active} style={buttonStyle(!!stand?.active)} title="Put the camera at eye height inside the room and look around">{stand?.active?'Leave standing view':'Stand here'}</button>
         {roomKey==='drawing'&&<button onClick={()=>setView('northWall')} aria-pressed={view==='northWall'} style={buttonStyle(view==='northWall')}>North wall view</button>}
         {roomKey==='bedroom3'&&<button onClick={()=>{setShowSouthWall(true);setView('southOpenings')}} aria-pressed={view==='southOpenings'} style={buttonStyle(view==='southOpenings')}>Balcony door + window</button>}
         {room.poojaAlcove&&<button onClick={()=>{setView('pooja');setPoojaDoorsOpen(true)}} aria-pressed={view==='pooja'} style={buttonStyle(view==='pooja')}>Pooja view</button>}
@@ -522,6 +527,7 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
         {hasExistingElectrical(roomKey)&&<button onClick={()=>setShowExisting(value=>!value)} aria-pressed={showExisting} style={buttonStyle(showExisting)} title="The switchboards, distribution board, sockets and lights that are on the walls TODAY (phone scan 2026-10-04): grey plates with a blue outline, at true size, plus a list of where the planned design lands on one of them">{showExisting?'Hide existing electrical points':'Show existing electrical points'}</button>}
       </div>
     </div>
+    <StandingCameraControls readout={stand} onSet={next=>sceneRef.current?.standing?.set(next)} onLeave={()=>sceneRef.current?.standing?.leave()} frame="x from the west wall, z from the north wall"/>
     <div ref={mountRef} style={{height:'clamp(620px,82vh,1100px)',width:'100%'}}/>
     {showElectrical&&hasRoomElectrical(roomKey)&&<RoomElectricalPanel roomKey={roomKey}/>}
     {roomKey==='bedroom1'&&showFurniture&&<Bedroom1LayoutPanel layout={bedroom1Layout}/>}

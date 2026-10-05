@@ -384,3 +384,5 @@ unchanged and measured by tests (`sofa-models`, `bed-furniture`, `furniture-boun
 way, with no config change: the Lobby page drew the dining table turned 90 degrees (it is 700 east-west by 1200
 north-south, as config and Whole home 3D have it); lamp tables drawn 570 high are now the configured 550; the sofa seat
 is drawn about 443 high (was about 560). No models or textures were downloaded.
+- 2026-10-06: "Stand here" first-person camera on the shared room page and Whole home 3D (`src/render/standingCamera.js`,
+  `standingCameraMath.mjs`, `StandingCameraControls.jsx`); note `docs/changes/2026-10-06-standing-camera.md`.
