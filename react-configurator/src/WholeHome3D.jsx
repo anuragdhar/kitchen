@@ -56,6 +56,7 @@ import {wallPiecesAroundStorage} from './domain/wallStorage.mjs'
 import {createDesignerRender} from './render/designerRender.js'
 import {useDesignerRender} from './render/useDesignerRender.js'
 import {createExistingElectricalPoints} from './rooms/shared/ExistingElectricalPoints.js'
+import {createDarkLabelSprite} from './rooms/shared/LabelSprite.js'
 
 // The A501 plan is south-up: image right is west and image down is north.
 const PLAN_WIDTH=PLAN_IMAGE.widthPx,PLAN_HEIGHT=PLAN_IMAGE.heightPx
@@ -222,12 +223,8 @@ function LiveWholeHome3D({onOpenRoom}){
         cavityGroup.add(mesh,edges)
       }
       const cavityLabel=(text,x,y,z)=>{
-        const canvas=document.createElement('canvas');canvas.width=640;canvas.height=96
-        const g=canvas.getContext('2d');g.fillStyle='rgba(15,23,42,.88)';g.beginPath();g.roundRect(4,4,632,88,18);g.fill()
-        g.fillStyle='#fff';g.font='bold 38px sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillText(text,320,50)
-        const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.SRGBColorSpace
-        const sprite=new THREE.Sprite(new THREE.SpriteMaterial({map:texture,depthTest:false,transparent:true}))
-        sprite.scale.set(1.5,.225,1);sprite.position.set(x,y,z);sprite.renderOrder=10;cavityGroup.add(sprite)
+        const sprite=createDarkLabelSprite(text,{widthPx:640,background:'rgba(15,23,42,.88)'})
+        sprite.scale.set(1.5,.225,1);sprite.position.set(x,y,z);cavityGroup.add(sprite)
       }
       ghost(c,c.heightMm,'#0d9488',.34)
       ghost(wall,c.heightMm,'#f59e0b',.15)
