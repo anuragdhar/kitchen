@@ -1,3 +1,4 @@
+import {ironingStorageTopMm} from '../domain/lobbyIroningStorage.mjs'
 // One air-conditioning plan for the whole home (2026-10-05). A PROPOSAL built on typical figures: nothing here is measured
 // on site and an AC dealer / installer confirms every size, route and clearance. Checks: src/domain/acPlan.mjs;
 // owner's summary: docs/AC_PLAN.md.
@@ -215,7 +216,7 @@ export const AC_SPACES = [
       seats: dining.chairRowsZmm.flatMap(z => [-1, 1].map(side => ({label: 'dining chair', ...rectAt(dining.diningTable.centerXmm + side * dining.chairOffsetXmm, z, DINING_CHAIR_MM, DINING_CHAIR_MM)}))),
       beds: []},
     ceiling: {tracks: LOBBY_LIGHTING.tracks.runs, fans: [lobbyFan], bladeDiameterMm: DRAWING_LIGHTING.southSofas.ceilingFans.bladeDiameterMm},
-    tall: [{label: 'ironing storage', x1: lobby.widthMm - dining.eastIroningStorage.depthMm, x2: lobby.widthMm, z1: dining.eastIroningStorage.fromNorthMm, z2: dining.eastIroningStorage.fromNorthMm + dining.eastIroningStorage.lengthMm, topMm: dining.eastIroningStorage.heightMm}],
+    tall: [{label: 'ironing storage', x1: lobby.widthMm - dining.eastIroningStorage.depthMm, x2: lobby.widthMm, z1: dining.eastIroningStorage.fromNorthMm, z2: dining.eastIroningStorage.fromNorthMm + dining.eastIroningStorage.lengthMm, topMm: ironingStorageTopMm(lobby)}],
   },
   {
     id: 'bedroom1', name: 'Bedroom 1 + balcony', frame: 'bedroom1', type: 'window', status: 'owned', tons: windowAc.tons, tonsKnown: true,

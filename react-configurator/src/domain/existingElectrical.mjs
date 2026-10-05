@@ -1,3 +1,4 @@
+import {ironingStorageTopMm} from './lobbyIroningStorage.mjs'
 // Existing electrical points (phone scan 2026-10-04) against the planned design: positions for drawing and plain-language
 // conflict checks. Pure: no React, Three.js or DOM. Millimetres, room frame: x from the west wall, z from the north wall,
 // y up. Points: EXISTING_ELECTRICAL in config/existingElectricalConfig.js.
@@ -137,7 +138,7 @@ export function plannedBlockers(roomKey, room, layoutKey = null, tvWall = DEFAUL
   }
   if (roomKey === 'lobby') {
     const s = room.furniture?.eastIroningStorage
-    if (s) rows.push({name: 'ironing storage unit', wall: 'east', a: s.fromNorthMm, b: s.fromNorthMm + s.lengthMm, bottom: 0, top: s.heightMm})
+    if (s) rows.push({name: 'ironing storage unit', wall: 'east', a: s.fromNorthMm, b: s.fromNorthMm + s.lengthMm, bottom: 0, top: ironingStorageTopMm(room)})
   }
   return rows
 }

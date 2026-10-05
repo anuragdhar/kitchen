@@ -112,10 +112,26 @@ export const EMPTY_ROOM_SHELLS={
     // round panels already used for the Main entry (entryLightingConfig.js: 170 mm across, 35 deep, 8 W, 800 lm); the fitting
     // in the Home Office was not measured, so copy its make and colour of light from the real one.
     poojaAlcove:{wall:'north',fromMm:3793,widthMm:1200,depthMm:1000,altarVisible:false,templeDepthMm:254,seatedPersonFromWestMm:400,platformHeightMm:190,drawerDepthMm:550,
+      // Owner 2026-10-06: "single slider door which slides to left" / "fix the half door on the east".
+      // PROPOSAL: default avoids the north dining chair hit by slideWest (domain/poojaDoor.mjs).
+      door:{style:'fixedEastSlideWest',options:{bifoldEast:'Original east bi-fold',slideWest:'Full leaf slides west',fixedEastSlideWest:'East fixed / west slides east',fixedEastSwingIn:'East fixed / west swings inward'},
+        // Existing builder dimensions, now shared with the checks; not site measurements.
+        heightMm:2240,headInsetMm:100,jambMm:80,bifoldInsetMm:75,bottomGapMm:20,faceMm:95,leafBackMm:-2.5,leafFrontMm:72.5,bifoldAngleDeg:86.4,
+        // PROPOSAL/ASSUMPTION 2026-10-06: second top-hung lane 90 mm in front; no floor track.
+        slidingLaneMm:90,topHung:true,floorTrack:false,railHeightMm:25,railDepthMm:35,
+        // ASSUMPTION: conservative body/plate envelopes; chair dimensions match furniture/chairs.js.
+        seatedWidthMm:600,seatedDepthMm:600,seatedHeightMm:1200,chairSizeMm:440,chairHeightMm:860,electricalPlateMm:100,electricalAccessMm:100},
       ceilingLight:{kind:'round surface LED panel, as in the Home Office',diameterMm:170,depthMm:35,watts:8,lumens:800,centred:true,status:'owner 2026-10-05; size typical, not measured'}},
     furniture:{
       diningTable:{centerXmm:2200,centerZmm:620,widthMm:700,lengthMm:1200,heightMm:745},chairRowsZmm:[290,950],chairOffsetXmm:620,
-      eastIroningStorage:{fromNorthMm:650,lengthMm:1450,depthMm:400,heightMm:1000,doorCount:3,centerBayWidthMm:600,boardLengthMm:950,boardWidthMm:300},
+      eastIroningStorage:{fromNorthMm:650,lengthMm:1450,depthMm:400,heightMm:1000,doorCount:3,centerBayWidthMm:600,boardLengthMm:950,boardWidthMm:300,
+        // Owner 2026-10-06: "cabinet that is on the east wall go to the top of the ceiling". heightMm remains the lower unit.
+        // PROPOSAL: carcass stops 30 mm below ceiling, open scribe allowance; do not bridge the corner moulding yet.
+        upper:{toCeiling:true,scribeGapMm:30,panelMm:18,doorThicknessMm:28,doorGapMm:12,handleLengthMm:140,handleThicknessMm:24},
+        // PROPOSAL 2026-10-06: L-E1 stays at 1250 high, inside the centre upper bay behind its door; owner to confirm.
+        ironSocket:{id:'L-E1',placement:'inside centre upper bay behind door; proposed, owner to confirm'},
+        // ASSUMPTION: conservative envelope of the existing spot/reading head, including its tilt.
+        trackHeadReachMm:160},
     },
     doors:[
       // Phone scan 2026-10-04: the toilet door is 605 mm clear between its jambs, 1060-1665 from the west (was 1000 + 900).

@@ -1,3 +1,4 @@
+import {ironingStorageTopMm} from './lobbyIroningStorage.mjs'
 // Builds the facts an outside reviewer (a person or an online AI) needs about a room, from the same
 // config the 3D scenes use. Pure: no React, Three.js or DOM. Units are millimetres unless stated.
 import {BEDROOM1_CLOSED_DOOR, closedDoorSpanMm} from '../config/bedroom1ClosedDoor.js'
@@ -233,7 +234,7 @@ function genericPlanItems(roomKey, room) {
   if (roomKey === 'lobby') {
     const t = f.diningTable, s = f.eastIroningStorage
     if (t) add(`Table ${t.lengthMm}x${t.widthMm}`, t.centerXmm - t.widthMm / 2, t.centerZmm - t.lengthMm / 2, t.centerXmm + t.widthMm / 2, t.centerZmm + t.lengthMm / 2, 'table')
-    if (s) add(`Ironing unit ${s.lengthMm}x${s.depthMm}`, W - s.depthMm, s.fromNorthMm, W, s.fromNorthMm + s.lengthMm, 'fixed')
+    if (s) add(`Ironing unit ${s.lengthMm}x${s.depthMm}, lower ${s.heightMm} / top ${ironingStorageTopMm(room)}`, W - s.depthMm, s.fromNorthMm, W, s.fromNorthMm + s.lengthMm, 'fixed')
   }
   if (roomKey === 'bedroom3') {
     const b = f.bed
