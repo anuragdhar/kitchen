@@ -1,6 +1,8 @@
 // Checks and positions for the Drawing Room electrical plan (pure: no React or Three.js). Millimetres, room frame: x from the
 // west wall, z from the north wall, y up. Points: DRAWING_ELECTRICAL in config/drawingElectricalConfig.js.
 import {southTvGeometry, WALL_FACE_MM} from './drawingRoomLayout.mjs'
+import {indoorUnitBox} from './acPlan.mjs'
+import {AC_PLAN} from '../config/acPlanConfig.js'
 
 const SOFA_BACK_MM = 950 // a point lower than this, behind a sofa standing against the wall, cannot be reached
 const NEAR_WALL_MM = 250 // a sofa within this of a wall line counts as standing against it
@@ -39,7 +41,10 @@ export function checkElectricalPlan(room, plan) {
   const door = room.doors.find(d => d.wall === 'north'), ws = room.wallStorage, win = room.windows.find(w => w.wall === 'south')
   const tvs = Object.keys(room.southLayout.tv.tvs).map(key => southTvGeometry(room, key)), console = tvs[0].console
   const blockers = againstWalls(room)
-  const ac = {z1: room.furniture.sofa.centerZmm - 510, z2: room.furniture.sofa.centerZmm + 510, y1: 2230, y2: 2510} // RoomAirConditioning.js
+  // The west-wall indoor unit as the AC plan places it (config/acPlanConfig.js) and the room pages draw it
+  // (rooms/shared/RoomAirConditioning.js): along z1-z2 of the west wall, from bottomMm up.
+  const acBox = indoorUnitBox(AC_PLAN.spaces.find(s => s.id === 'drawing'), AC_PLAN)
+  const ac = {z1: acBox.z1, z2: acBox.z2, y1: acBox.bottomMm, y2: acBox.topMm}
   const ids = new Set()
   for (const p of plan.points) {
     const label = `${p.id} (${p.name})`

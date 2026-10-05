@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import {createDarkLabelSprite} from '../shared/LabelSprite.js'
 import {tvWallGeometry} from '../../domain/drawingRoomLayout.mjs'
 
 // North-wall TV cabinet for the Drawing Room (owner brief 2026-09-29, plan in
@@ -112,13 +113,8 @@ export function createDrawingRoomTvWall(room, {insetMm = 0} = {}) {
   // Labels for the plan (toggle with setLabels).
   const labels = new THREE.Group(); labels.name = 'TV wall labels'; group.add(labels)
   const label = (text, xMm, yMm) => {
-    const canvas = document.createElement('canvas'); canvas.width = 512; canvas.height = 96
-    const c = canvas.getContext('2d')
-    c.fillStyle = 'rgba(20,24,28,.86)'; c.beginPath(); c.roundRect(4, 4, 504, 88, 18); c.fill()
-    c.fillStyle = '#fff'; c.font = 'bold 40px sans-serif'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(text, 256, 50)
-    const texture = new THREE.CanvasTexture(canvas); texture.colorSpace = THREE.SRGBColorSpace
-    const sprite = new THREE.Sprite(new THREE.SpriteMaterial({map: texture, depthTest: false, transparent: true}))
-    sprite.scale.set(.62, .116, 1); sprite.position.set(xMm / 1000, yMm / 1000, (D + 260) / 1000); sprite.renderOrder = 10
+    const sprite = createDarkLabelSprite(text, {fontPx: 40})
+    sprite.scale.set(.62, .116, 1); sprite.position.set(xMm / 1000, yMm / 1000, (D + 260) / 1000)
     labels.add(sprite)
   }
   label('65" TV', g.bayCenterX, g.tvTopMm + 120)

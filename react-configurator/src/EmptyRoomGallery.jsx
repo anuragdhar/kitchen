@@ -21,11 +21,11 @@ import {createRoomAirConditioning} from './rooms/shared/RoomAirConditioning.js'
 import {createAcOutdoorUnitsForRoom} from './rooms/shared/AcOutdoorUnit.js'
 import {HOME_ROOM_LAYOUTS} from './config/homeRoomViews.js'
 import {createRoomTaskLighting} from './rooms/shared/RoomTaskLighting.js'
-import {createRug,createPottedPlant,createWallArt,createFloorLamp,createCushion,createLaundryHamper} from './rooms/shared/RoomDecor.js'
+import {createRug,createPottedPlant,createWallArt,createFloorLamp} from './rooms/shared/RoomDecor.js'
 import {createDrawingRoomLayouts,DRAWING_LAYOUTS} from './rooms/drawing/DrawingRoomLayouts.js'
 import {createBedroom1Layouts} from './rooms/bedroom1/Bedroom1Layouts.js'
 import {Bedroom1LayoutToggle,Bedroom1LayoutPanel,BEDROOM1_DEFAULT_LAYOUT} from './rooms/bedroom1/Bedroom1LayoutPanel.jsx'
-import DrawingLightDimmer from './rooms/drawing/DrawingLightDimmer.jsx'
+import RoomLightDimmer from './rooms/shared/RoomLightDimmer.jsx'
 import {ROOM_DIMMER_CIRCUITS} from './config/roomLightingCircuits.js'
 import {buildRoomReview} from './domain/roomReview.mjs'
 import {composeReviewSheet,canvasToBlob} from './render/reviewSheet.js'
@@ -34,6 +34,7 @@ import inspirationSeed from '../../inspiration/library.json'
 import {createLobbyConcealedDoor} from './rooms/lobby/LobbyConcealedDoor.js'
 import {createBedroom3DressingTable} from './rooms/bedroom3/Bedroom3DressingTable.js'
 import {createWindowDetail} from './rooms/shared/WindowDetail.js'
+import {roomWallOpenings} from './domain/roomOpenings.mjs'
 import WallSelectionPanel from './WallSelectionPanel.jsx'
 import ItemDimensionsPanel from './ItemDimensionsPanel.jsx'
 import {pickItem,selectionOutline} from './render/dimensionPick.js'
@@ -131,27 +132,6 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
         if(bottom===0) addBox(.035,.085,to-from,side==='west'?.055:W-.055,.05,center,trimMaterial,parent)
       }
     }
-    const openingsFor=side=>{
-      const result=[]
-      const passage=room.wallOpenings?.[side]
-      if(passage) result.push({kind:'passage',from:mm(passage.fromMm),to:mm(passage.toMm),bottom:0,top:H})
-      if(side==='north'&&room.wallStorage){const st=room.wallStorage;result.push({kind:'passage',from:mm(st.fromWestMm),to:mm(st.fromWestMm+st.widthMm),bottom:mm(st.bottomMm),top:mm(st.bottomMm+st.heightMm)})}
-      const recess=room.furniture?.northEastRecessWardrobe
-      if(side==='north'&&recess) result.push({kind:'passage',from:W-mm(recess.fromEastMm+recess.widthMm),to:W-mm(recess.fromEastMm),bottom:0,top:H})
-      if(side==='south'&&room.southExtension){
-        const {cabinet,balcony}=room.southExtension
-        result.push({kind:'passage',from:mm(cabinet.fromWestMm),to:mm(cabinet.fromWestMm+cabinet.widthMm),bottom:mm(cabinet.floorClearanceMm),top:mm(cabinet.floorClearanceMm+cabinet.heightMm)})
-        // `design` (transom, rails) lets the shared window builder draw the scanned top lights and mid rail; absent fields draw as before.
-        const doorDesign=balcony.doorTransomMm?{fromMm:balcony.doorFromWestMm,widthMm:balcony.doorWidthMm,bottomMm:0,topMm:balcony.doorHeightMm,transomMm:balcony.doorTransomMm}:undefined
-        const windowDesign=balcony.windowTransomMm||balcony.windowRailsMm?{fromMm:balcony.windowFromWestMm,widthMm:balcony.windowWidthMm,bottomMm:balcony.windowSillMm,topMm:balcony.windowTopMm,transomMm:balcony.windowTransomMm,railsMm:balcony.windowRailsMm}:undefined
-        result.push({kind:'glassDoor',from:mm(balcony.doorFromWestMm),to:mm(balcony.doorFromWestMm+balcony.doorWidthMm),bottom:0,top:mm(balcony.doorHeightMm),frameStyle:'dark',design:doorDesign})
-        result.push({kind:'window',from:mm(balcony.windowFromWestMm),to:mm(balcony.windowFromWestMm+balcony.windowWidthMm),bottom:mm(balcony.windowSillMm),top:mm(balcony.windowTopMm),frameStyle:'dark',mullionFractions:[],design:windowDesign})
-      }
-      for(const door of room.doors||[]) if(door.wall===side) result.push({kind:'door',from:mm(door.fromMm),to:mm(door.fromMm+door.widthMm),bottom:0,top:mm(door.heightMm)})
-      // `design` carries the millimetre entry so the shared builder can draw bays, transom, shutters, nets and the outside screen.
-      for(const window of room.windows||[]) if(window.wall===side) result.push({kind:'window',from:mm(window.fromMm),to:mm(window.fromMm+window.widthMm),bottom:mm(window.bottomMm),top:mm(window.topMm),frameStyle:window.frameStyle,mullionFractions:window.mullionFractions,design:window.transomMm||window.bays||window.rollerNet||window.outsideScreen||window.frameColor?window:undefined})
-      return result.sort((a,b)=>a.from-b.from)
-    }
     const addOpeningDetail=(side,opening)=>{
       if(side!=='north'&&side!=='south') return
       if(roomKey==='bedroom3'&&side==='north'&&opening.kind==='door')return
@@ -173,7 +153,8 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
       if(room.openSide===side) continue
       const length=side==='north'||side==='south'?W:L
       let cursor=0
-      for(const opening of openingsFor(side)){
+      // Openings from the shell config, sorted along the wall (domain/roomOpenings.mjs).
+      for(const opening of roomWallOpenings(room,side)){
         addWallSpan(side,cursor,opening.from)
         addWallSpan(side,opening.from,opening.to,0,opening.bottom)
         addWallSpan(side,opening.from,opening.to,opening.top,H)
@@ -568,7 +549,7 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
         {roomKey==='bedroom1'&&<Bedroom1LayoutToggle layout={bedroom1Layout} onChange={setBedroom1Layout} style={buttonStyle}/>}
         {roomKey==='drawing'&&<button onClick={()=>setDoorSwing(value=>!value)} aria-pressed={doorSwing} style={buttonStyle(doorSwing)} title="The entry door opens into the room: red is the area its leaf sweeps">{doorSwing?'Hide entry door swing':'Show entry door swing'}</button>}
         {roomKey==='drawing'&&<button onClick={()=>setStorageOpen(value=>!value)} aria-pressed={storageOpen} style={buttonStyle(storageOpen)} title="The west cabinet of the entry pocket, entered through a narrow hidden door at the west end of the Drawing Room's north wall: the TV console is dragged out and the door, hidden in the wall panelling, swings outward to show the shelves">{storageOpen?'Close hidden west cabinet':'Open hidden west cabinet'}</button>}
-        {ROOM_DIMMER_CIRCUITS[roomKey]&&(roomKey!=='drawing'||drawingLayout==='southSofas')&&<DrawingLightDimmer key={roomKey} circuits={ROOM_DIMMER_CIRCUITS[roomKey]} onChange={(circuit,level)=>sceneRef.current?.setTrackLight?.(circuit,level)} onDarkRoom={on=>sceneRef.current?.setDarkRoom?.(on)}/>}
+        {ROOM_DIMMER_CIRCUITS[roomKey]&&(roomKey!=='drawing'||drawingLayout==='southSofas')&&<RoomLightDimmer key={roomKey} circuits={ROOM_DIMMER_CIRCUITS[roomKey]} onChange={(circuit,level)=>sceneRef.current?.setTrackLight?.(circuit,level)} onDarkRoom={on=>sceneRef.current?.setDarkRoom?.(on)}/>}
         {roomKey==='drawing'&&drawingLayout==='southSofas'&&<button onClick={()=>setShowElectrical(value=>!value)} aria-pressed={showElectrical} style={buttonStyle(showElectrical)} title="Proposed sockets, charging, switch, light and data points for layout C (docs/DRAWING_ROOM_ELECTRICAL.md)">{showElectrical?'Hide electrical points':'Show electrical points'}</button>}
         {hasRoomElectrical(roomKey)&&<button onClick={()=>setShowElectrical(value=>!value)} aria-pressed={showElectrical} style={buttonStyle(showElectrical)} title="Proposed sockets, charging, switch, light and AC points for this room, with the check results below the view (docs/ELECTRICAL_PLAN.md)">{showElectrical?'Hide electrical points':'Show electrical points'}</button>}
         {roomKey==='drawing'&&(drawingLayout==='cornerConsole'||drawingLayout==='southSofas')&&<>
