@@ -38,7 +38,7 @@ function sideChairForms({depth, width, seatH, backTop, backStyle = 'panel'}) {
   let back
   if (backStyle === 'pad') {
     back = easedBox(.05, backH, width - .04, .02, .03, {curveSegments: 4, bevelSegments: 3})
-    back.translate(0, -backH / 2, 0); back.rotateZ(rake); back.translate(-hx + .045, panelCentreY, 0)
+    back.translate(0, -backH / 2, 0); back.rotateZ(rake); back.translate(-hx + .058, panelCentreY, 0)
   } else {
     back = bentPanel(width - .04, backH, .014, .5, rake, 18) // radius .5 m: keep equal to R below
     back.rotateY(Math.PI / 2) // width along z, concave front towards +x
@@ -46,9 +46,10 @@ function sideChairForms({depth, width, seatH, backTop, backStyle = 'panel'}) {
   }
   // Posts end behind the back (on the panel's rear face, which the bend brings forward towards the panel's ends), at its
   // mid-height, so they never show through its front.
-  const postZ = hz - .05, postR = .0095, R = .5
-  const postTopX = backStyle === 'pad' ? -hx + .03 : -hx + .02 - .007 + R * (1 - Math.cos(postZ / R)) - postR - .001
-  for (const s of [-1, 1]) frame.push(rodThrough([[btx, railY, s * tz], [(btx + postTopX) / 2 - .008, (railY + panelCentreY) / 2, s * (tz + postZ) / 2], [postTopX, panelCentreY, s * postZ]], postR, {tubular: 12, radial: 10}))
+  const postZ = hz - .05, postR = .0095, R = .5, dy = backH * .3, lean = dy * Math.sin(rake)
+  const rearX = backStyle === 'pad' ? -hx + .058 - .025 * Math.cos(rake) - lean : -hx + .02 - .007 + R * (1 - Math.cos(postZ / R)) - lean
+  const postTopX = rearX - postR - .001, postTopY = panelCentreY + dy
+  for (const s of [-1, 1]) frame.push(rodThrough([[btx, railY, s * tz], [(btx + postTopX) / 2 - .006, (railY + postTopY) / 2, s * (tz + postZ) / 2], [postTopX, postTopY, s * postZ]], postR, {tubular: 12, radial: 10}))
   const metal = merged(frame)
   fitGeometries([metal, seat, back], {x: [-hx, hx], y: [0, backTop], z: [-hz, hz]})
   return {frame: metal, seat, back}

@@ -1,6 +1,6 @@
 import * as THREE from 'three'
 import {createCoffeeTable, createRoundSideTable} from '../shared/furniture/tables.js'
-import {createTableLamp} from '../shared/furniture/decor.js'
+import {createTableLamp, createPottedPlant} from '../shared/furniture/decor.js'
 
 // Two identical 3-seaters plus the coffee table, rug and styling from the owner's references
 // (cream sofas, terracotta cushions, dark carved wood). Positions come from the room config
@@ -157,14 +157,7 @@ function southWindowDressing(room, {wallFaceMm = 0} = {}) {
   const bar = new THREE.Mesh(new THREE.CylinderGeometry(.012, .012, mm(rodEast - rodWest), 12), rod)
   bar.rotation.z = Math.PI / 2; bar.position.set(mm((rodWest + rodEast) / 2), top + .02, z); decor.add(bar)
   // Floor plant in a woven-look pot, south-east corner beyond the sofa.
-  const px = mm(room.widthMm - wallFaceMm) - .28, pz = mm(room.lengthMm - wallFaceMm) - .3
-  const pot = new THREE.Mesh(new THREE.CylinderGeometry(.15, .12, .32, 20), new THREE.MeshStandardMaterial({color: '#b08a5a', roughness: .9})); pot.position.set(px, .16, pz); pot.castShadow = true; decor.add(pot)
-  const leaf = new THREE.MeshStandardMaterial({color: '#3f7d3a', roughness: .85})
-  for (let i = 0; i < 7; i++) {
-    const blade = new THREE.Mesh(new THREE.SphereGeometry(.09, 12, 8), leaf)
-    const a = i / 7 * Math.PI * 2
-    blade.scale.set(.5, 2.6 + (i % 3) * .5, .5); blade.position.set(px + Math.cos(a) * .1, .55 + (i % 3) * .1, pz + Math.sin(a) * .1); blade.rotation.z = Math.cos(a) * .35; blade.rotation.x = Math.sin(a) * .35
-    blade.castShadow = true; decor.add(blade)
-  }
+  // The leafy plant of rooms/shared/furniture/decor.js (2026-10-06), about the size of the earlier sphere cluster.
+  const plant = createPottedPlant({heightM: 1.0, spreadM: .5}); plant.position.set(mm(room.widthMm - wallFaceMm) - .28, 0, mm(room.lengthMm - wallFaceMm) - .3); decor.add(plant)
   return decor
 }

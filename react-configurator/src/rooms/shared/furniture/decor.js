@@ -162,7 +162,8 @@ export function createLaundryHamper() {
   const weave = weaveTexture({cells: 16, strands: 4, contrast: .55})
   const weaveMaterial = new THREE.MeshStandardMaterial({color: '#c9a876', roughness: .92})
   if (weave) {
-    const map = weave.clone(); map.repeat.set(6, 3); map.colorSpace = THREE.NoColorSpace; map.needsUpdate = true
+    // u runs once round the body (a whole number of repeats, so the seam matches), v is height in metres: ~15 mm cells.
+    const map = weave.clone(); map.repeat.set(5, 4); map.colorSpace = THREE.NoColorSpace; map.needsUpdate = true
     weaveMaterial.map = map; weaveMaterial.bumpMap = map; weaveMaterial.bumpScale = 2.2
     weaveMaterial.addEventListener('dispose', () => map.dispose())
   }

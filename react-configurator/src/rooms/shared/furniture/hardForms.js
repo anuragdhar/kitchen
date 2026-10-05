@@ -123,7 +123,7 @@ export const easedBox = (w, h, d, edge, corner = edge, options) => easedSlab(rou
 /**
  * Turned part: profile [[radius, y], ...] revolved about y. List the profile counter-clockwise (out along the bottom, up the
  * outside, in along the top) so the faces point outwards. Sharp profile corners get two extra points 1.5 mm either side, so
- * smooth shading stays on the corner instead of bending the whole face.
+ * smooth shading stays on the corner instead of bending the whole face. UVs: u around (0..1), v = height in metres.
  */
 export function turned(profile, segments = 32) {
   const pts = profile.map(([r, y]) => new THREE.Vector2(Math.max(r, 0), y)), out = [pts[0]]
@@ -136,7 +136,10 @@ export function turned(profile, segments = 32) {
     } else out.push(b)
   }
   out.push(pts[pts.length - 1])
-  return smoothed(new THREE.LatheGeometry(out, segments))
+  // LatheGeometry's own normals are smooth around and along the profile, and its seam keeps separate UVs.
+  const g = new THREE.LatheGeometry(out, segments), position = g.getAttribute('position'), uv = g.getAttribute('uv')
+  for (let i = 0; i < uv.count; i++) uv.setY(i, position.getY(i))
+  return g
 }
 
 /** A round leg tapering from rTop to rBottom between two points (bottom, top: [x, y, z]); orientation baked in. */
