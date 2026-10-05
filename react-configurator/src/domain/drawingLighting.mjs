@@ -73,11 +73,6 @@ export function mirrorTrackConfig(tracks, widthMm, lengthMm) {
   })}
 }
 
-/** Dimmer circuits of a room: the general light first (when the room has one), then one per run. */
-export function dimmerCircuits(tracks, general = null) {
-  return [...(general ? [['chandelier', general]] : []), ...tracks.runs.map(run => [run.id, run.label.split(':')[0]])]
-}
-
 const distanceToRun = (run, point) => {
   const along = run.axis === 'x' ? point.x : point.z, across = run.axis === 'x' ? point.z : point.x
   const clamped = Math.min(Math.max(along, run.fromMm), run.toMm)

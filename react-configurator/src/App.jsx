@@ -343,7 +343,6 @@ export default function App(){
     const controlsRef=useRef(null)
     const cameraRef=useRef(null)
     const [diagnostics,setDiagnostics]=useState(()=>{try{return JSON.parse(localStorage.getItem('kitchen-diagnostics')||'[]')}catch{return []}})
-    const saveDiagnostics=(list)=>{ localStorage.setItem('kitchen-diagnostics',JSON.stringify(list)); setDiagnostics(list) }
     useEffect(()=>{
       const mount=mountRef.current
       if(!mount)return
@@ -745,36 +744,6 @@ export default function App(){
         mesh.receiveShadow=true
         scene.add(mesh)
         return mesh
-      }
-      const addPotteryWallPlanter=(name,x,y,z,scale,palette)=>{
-        const potMat=makeMat(palette.body,1,{roughness:.5,metalness:.02})
-        const whiteMat=makeMat('#f7f3e7',1,{roughness:.55,metalness:.01})
-        const blueMat=makeMat(palette.blue||'#123c78',1,{roughness:.48,metalness:.02})
-        const soilMat=makeMat('#352317',1,{roughness:.9})
-        const flowerMat=makeMat(palette.flower,1,{roughness:.72,metalness:0})
-        const fillerMat=makeMat(palette.filler||'#e6ead8',1,{roughness:.8,metalness:0})
-        const stemMat=makeMat('#6f7646',1,{roughness:.78,metalness:0})
-        const r=72*scale
-        const h=118*scale
-        addBox(`${name} wall bracket`,KITCHEN.shaft.w+20,y-r*.56,z+18*scale,74*scale,18*scale,32*scale,surface.dark)
-        addCylinder(`${name} blue pottery planter bowl`,x,y,z,r,r*.78,h,potMat,1,36)
-        addCylinder(`${name} dark blue rim`,x,y,z+h-12*scale,r*1.04,r*1.04,12*scale,blueMat,1,36)
-        addCylinder(`${name} white upper band`,x,y,z+h-32*scale,r*.98,r*.98,12*scale,whiteMat,1,36)
-        addCylinder(`${name} blue lower band`,x,y,z+22*scale,r*.88,r*.82,12*scale,blueMat,1,36)
-        addCylinder(`${name} soil`,x,y,z+h-8*scale,r*.84,r*.84,10*scale,soilMat,1,32)
-        ;[-.55,0,.55].forEach((off,i)=>{
-          addBox(`${name} white pottery motif ${i+1}`,x-r*.64,y+off*r*.82,z+h*.43,8*scale,20*scale,26*scale,whiteMat)
-          addSphere(`${name} blue pottery dot ${i+1}`,x-r*.7,y+off*r*.82,z+h*.62,8*scale,blueMat,1,[1,.45,1])
-        })
-        ;[-.45,-.15,.18,.48].forEach((off,i)=>{
-          const stemY=y+off*r*.95
-          const stemZ=z+h+8*scale+i*8*scale
-          addCylinder(`${name} flower stem ${i+1}`,x-8*scale,stemY,stemZ,3*scale,3*scale,(108+i*12)*scale,stemMat,1,8)
-          addSphere(`${name} flower cluster ${i+1}`,x-18*scale,stemY,stemZ+(118+i*12)*scale,18*scale, i%2===0?flowerMat:fillerMat,1,[1.15,.8,1])
-        })
-        ;[-.62,-.28,.05,.38,.66].forEach((off,i)=>{
-          addSphere(`${name} tiny filler bloom ${i+1}`,x-22*scale,y+off*r,z+h+92*scale+(i%2)*32*scale,8*scale,fillerMat,1,[1,.9,1])
-        })
       }
       // floor, walls and ceiling envelope
       addBox('floor',0,0,-30,KITCHEN.width,KITCHEN.length,30,surface.floor)
