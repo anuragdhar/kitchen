@@ -15,7 +15,7 @@ import {createEntryCeilingLights} from './rooms/entry/EntryCeilingLights.js'
 import {createShoeRackWithAcBay} from './rooms/entry/ShoeRackAcBay.js'
 import {createRoomElectricalPoints} from './rooms/shared/ElectricalPointMarkers.js'
 import RoomElectricalPanel from './home/RoomElectricalPanel.jsx'
-import {checkShoeRackAcBay} from './domain/entryFittings.mjs'
+import {checkShoeRackAcBay,checkEntryDoorPair} from './domain/entryFittings.mjs'
 import shoeRackWoodTexture from '../../Interior/entry-textures/shoe-rack-wood.png'
 import {createLiveView} from './render/liveView.js'
 import {createDaylightRig} from './render/lightRig.js'
@@ -23,11 +23,13 @@ import RenderQualityControls from './render/RenderQualityControls.jsx'
 import {useDesignerRender} from './render/useDesignerRender.js'
 
 const acBayCheck=checkShoeRackAcBay(ENTRY),acBayOther=checkShoeRackAcBay(ENTRY,acBayCheck.orientation==='lengthwise'?'across':'lengthwise')
+const doorPairCheck=checkEntryDoorPair(ENTRY)
 const buttonStyle=active=>({padding:'7px 11px',borderRadius:9,border:'1px solid #cbd5e1',background:active?'#172033':'#fff',color:active?'#fff':'#172033',fontWeight:800,cursor:'pointer'})
 
 export default function EntryGallery3D(){
   const [view,setView]=useState('overview'),[acBay,setAcBay]=useState(false),acBayRef=useRef(false)
   const [showElectrical,setShowElectrical]=useState(false) // proposed electrical points (config/roomElectricalConfig.js, entry)
+  const [doorsOpen,setDoorsOpen]=useState(false)
   const mountRef=useRef(null),sceneRef=useRef(null)
   const designer=useDesignerRender(sceneRef)
 
@@ -76,11 +78,13 @@ export default function EntryGallery3D(){
     const drawingBounds=HOME_ROOM_LAYOUTS.find(room=>room.key==='drawing').bounds
     ENTRY_WALL_SEGMENTS.forEach(segment=>(wallPiecesAroundStorage(segment,EMPTY_ROOM_SHELLS.drawing,drawingBounds,height)||[[segment,0,height]]).forEach(([piece,bottom,top])=>addSpan(piece,bottom,top)))
     entryPocketEastWallSpans(height).forEach(([segment,bottom,top])=>addSpan(segment,bottom,top))
-    model.add(createEntryArrivalDoor(x,z))
+    const woodenDoor=createEntryArrivalDoor(x,z);model.add(woodenDoor)
     model.add(createEntryFoldSeat(x,z))
     model.add(createEntryEastCabinet(x,z))
-    // First (outer) door: ventilated stainless steel (ENTRY.outerDoor); round ceiling lights (config/entryLightingConfig.js).
-    model.add(createEntryOuterDoor(x,z))
+    // Owner 2026-10-06: no door at landing; proposed steel + wood pair at arrivalDoor.
+    const steelDoor=createEntryOuterDoor(x,z);model.add(steelDoor)
+    const setDoorsOpen=open=>{steelDoor.userData.setOpen(open?ENTRY.outerDoor.maxOpenAngleDegrees:0);woodenDoor.userData.setOpen(open?ENTRY.arrivalDoor.maxOpenAngleDegrees:0)}
+    setDoorsOpen(false)
     model.add(createEntryCeilingLights(x,z,{realLights:true}))
     // Proposed electrical points: their frame is this page's (x from plan x 515 growing west, z from plan y 715 growing north).
     const electricalPoints=createRoomElectricalPoints('entry',{wallFaceMm:45});electricalPoints.visible=false;model.add(electricalPoints)
@@ -119,18 +123,13 @@ export default function EntryGallery3D(){
     }
     addLabel('TO DRAWING ROOM',x((inner.fromPlanX+inner.toPlanX)/2),2.42,.22,1.12)
     addLabel('ENTRY SHAFT',x((ENTRY.shaft.planX1+ENTRY.shaft.planX2)/2),2.44,z((ENTRY.shaft.planY1+ENTRY.shaft.planY2)/2),.95)
-    addLabel('STEEL OUTER DOOR',width-.2,2.48,z((outer.fromPlanY+outer.toPlanY)/2),1.0)
+    addLabel('OPEN LANDING ACCESS',width-.2,2.48,z((outer.fromPlanY+outer.toPlanY)/2),1.0)
+    addLabel('PROPOSED DOOR PAIR',x(ENTRY.arrivalDoor.wallPlanX),2.48,z((ENTRY.arrivalDoor.fromPlanY+ENTRY.arrivalDoor.toPlanY)/2),1.0)
     addLabel('SHOE RACK',rackX,rackHeight+.18,rackFront+.08,.9)
 
-    // Key station (owner request 2026-09-28: "where to store the keys"):
-    // wall-mounted tray + hooks just inside the arrival door, on the wall
-    // segment it's hung on (ENTRY.arrivalDoor, wallPlanX 575). The door hinges
-    // north and swings west-outside, so the interior face here is clear of
-    // its swing at every open angle; placed toward the door's north end so
-    // it's the first thing at hand on entry, well clear of the shoe rack at
-    // the south end of the same run.
-    const keyStationX=x(ENTRY.arrivalDoor.wallPlanX)+.045
-    const keyStationZ=z(ENTRY.arrivalDoor.fromPlanY+20)
+    // PROPOSAL 2026-10-06: existing tray/hooks moved off the shared opening onto the solid gallery shaft face.
+    const keyStationX=x(ENTRY.keyStation.wallPlanX)+ENTRY.keyStation.faceOffsetMm/1000
+    const keyStationZ=z(ENTRY.keyStation.planY)
     const keyTray=new THREE.Mesh(new THREE.BoxGeometry(.03,.05,.22),timber)
     keyTray.position.set(keyStationX,1.5,keyStationZ);keyTray.castShadow=true;keyTray.receiveShadow=true;model.add(keyTray)
     for(const dz of [-.07,0,.07]){
@@ -151,19 +150,21 @@ export default function EntryGallery3D(){
     const observer=new ResizeObserver(resize);observer.observe(mount);resize()
     const interiorScene=registerInteriorScene({id:'entry',scene,camera,renderer,zones:[{id:'entry',min:[0,0,0],max:[width,height,length]}]})
     let raf=0;const render=()=>{controls.update();view.render();raf=requestAnimationFrame(render)};render()
-    sceneRef.current={liveView:view,setCamera,setAcBay,setDesigner:on=>view.setDesigner(on),setElectrical:value=>{electricalPoints.visible=value}}
+    sceneRef.current={liveView:view,setCamera,setAcBay,setDoorsOpen,setDesigner:on=>view.setDesigner(on),setElectrical:value=>{electricalPoints.visible=value}}
     return()=>{electricalPoints.userData.dispose();interiorScene.dispose();cancelAnimationFrame(raf);view.dispose();observer.disconnect();controls.dispose();labelTextures.forEach(texture=>texture.dispose());model.traverse(object=>{object.geometry?.dispose?.();if(Array.isArray(object.material))object.material.forEach(material=>material.dispose());else object.material?.dispose?.()});rig.dispose();renderer.dispose();renderer.domElement.remove();sceneRef.current=null}
   },[])
 
   useEffect(()=>{sceneRef.current?.setCamera(view)},[view])
   useEffect(()=>{acBayRef.current=acBay;sceneRef.current?.setAcBay(acBay)},[acBay])
   useEffect(()=>{sceneRef.current?.setElectrical(showElectrical)},[showElectrical])
+  useEffect(()=>{sceneRef.current?.setDoorsOpen(doorsOpen)},[doorsOpen])
 
   return <section style={{background:'#fff',border:'1px solid #dbe3e9',borderRadius:22,overflow:'hidden',boxShadow:'0 16px 42px rgba(23,32,51,.1)'}}>
     <div style={{padding:'14px 16px',display:'flex',gap:12,alignItems:'center',justifyContent:'space-between',flexWrap:'wrap',borderBottom:'1px solid #e2e8f0'}}>
-      <div><b style={{fontSize:18,color:'#172033'}}>Northwest entry gallery</b><div style={{fontSize:12,color:'#64748b',marginTop:3}}>Ventilated stainless outer door · corridor with round lights · shaft · arrival door · shoe rack · door to Drawing Room</div></div>
+      <div><b style={{fontSize:18,color:'#172033'}}>Northwest entry gallery</b><div style={{fontSize:12,color:'#64748b',marginTop:3}}>Open landing access · corridor with round lights · shaft · proposed steel + wood arrival pair · shoe rack · door to Drawing Room</div></div>
       <div style={{display:'flex',gap:7,flexWrap:'wrap',alignItems:'center'}}><button {...designer.button(buttonStyle(designer.on))}/><RenderQualityControls sceneRef={sceneRef} name="main-entry" buttonStyle={buttonStyle}/><button onClick={()=>setView('overview')} style={buttonStyle(view==='overview')}>Overview</button><button onClick={()=>setView('top')} style={buttonStyle(view==='top')}>Top</button><button onClick={()=>setShowElectrical(value=>!value)} aria-pressed={showElectrical} style={buttonStyle(showElectrical)} title="Proposed switch, socket, bell and light points for the entry, with the check results below the view (docs/ELECTRICAL_PLAN.md)">{showElectrical?'Hide electrical points':'Show electrical points'}</button><button onClick={()=>{setView(acBay?'overview':'acBay');setAcBay(!acBay)}} style={buttonStyle(acBay)}>{acBay?'Hide':'Show'} AC outdoor unit under the shoe rack</button></div>
     </div>
+    <div style={{margin:'10px 16px',fontSize:13,color:'#7c2d12'}}><button onClick={()=>setDoorsOpen(value=>!value)} aria-pressed={doorsOpen} style={buttonStyle(doorsOpen)}>{doorsOpen?'Close':'Open'} entry door pair</button> Proposal: steel safety door outside the retained wooden door. Wood now opens inward to its proposed stop. Landing access stays open. {doorPairCheck.warnings[0]}.</div>
     {acBay&&<div style={{margin:'10px 16px',padding:'10px 12px',borderRadius:10,background:'#fff7ed',border:'1px solid #fed7aa',fontSize:13,color:'#7c2d12'}}>
       <b>Proposal, not decided: the AC outdoor unit in the bottom of the shoe rack.</b> Seen from outside. Drawn {acBayCheck.orientation}: the fan blows out through {acBayCheck.dischargeThrough}. Bay {acBayCheck.bayWidthMm} wide x {acBayCheck.bayHeightMm} high x {acBayCheck.bayDepthMm} deep from the gallery face, {acBayCheck.beyondWallMm} mm beyond the outer wall; {acBayCheck.shoeHeightLeftMm} mm of rack height is left for shoes ({Math.round(acBayCheck.shoeHeightLostFraction*100)}% lost).
       {acBayCheck.issues.map(issue=><div key={issue} style={{color:'#b91c1c'}}>Does not work as drawn: {issue}.</div>)}

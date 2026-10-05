@@ -3,7 +3,8 @@ import assert from 'node:assert/strict'
 import {ENTRY} from '../src/config/entryConfig.js'
 import {ENTRY_LIGHTING} from '../src/config/entryLightingConfig.js'
 import {ROOM_LIGHTING} from '../src/home/lighting.mjs'
-import {entrySections, checkEntryLighting, checkEntryOuterDoor, entryOuterDoorGeometry, VENT_OPEN_FRACTION_MIN, checkShoeRackAcBay} from '../src/domain/entryFittings.mjs'
+import {entrySections, checkEntryLighting, checkEntryOuterDoor, entryOuterDoorGeometry, VENT_OPEN_FRACTION_MIN, checkShoeRackAcBay, checkEntryDoorPair, entryDoorLeafPolygons} from '../src/domain/entryFittings.mjs'
+import {roomElectricalReport} from '../src/domain/roomElectricalModels.mjs'
 
 test('the entry has four sections in walking order; the corridor and the inner gallery are the two a person walks through', () => {
   const sections = entrySections(ENTRY)
@@ -16,17 +17,67 @@ test('the entry has four sections in walking order; the corridor and the inner g
   assert.ok(gallery.lengthMm >= 3150 && gallery.lengthMm <= 3250, `gallery ${gallery.lengthMm} long`)
 })
 
-test('the first (outer) door is a ventilated, lockable stainless steel door that fills the opening drawn on the plan', () => {
+test('owner 2026-10-06: steel moves to arrivalDoor; landing remains an unchanged plain opening', () => {
   const result = checkEntryOuterDoor(ENTRY)
   assert.deepEqual(result.issues, [])
-  assert.deepEqual([result.openingWidthMm, result.openingHeightMm, result.leafWidthMm, result.leafHeightMm], [905, 2200, 815, 2145])
+  // Owner relocation; proposed packed jambs leave 1127 mm leaves in the 1287 mm arrival opening.
+  assert.deepEqual([result.openingWidthMm, result.openingHeightMm, result.leafWidthMm, result.leafHeightMm], [1287, 2200, 1127, 2145])
+  assert.equal(ENTRY.outerDoor.mountedAt, 'arrivalDoor')
   assert.ok(result.ventOpenFraction >= VENT_OPEN_FRACTION_MIN && result.ventOpenAreaM2 > 0.6, `free air ${result.ventOpenAreaM2} m2, ${result.ventOpenFraction} of the leaf`)
   assert.deepEqual(result.panels.map(p => p.kind), ['sheet', 'grille', 'sheet', 'grille', 'sheet'])
   assert.equal(ENTRY.outerDoor.openAngleDegrees, 0)
-  // Decided: the wooden doors behind it are unchanged, and nothing wooden is added at the outer opening.
+  // Opening positions/heights and the Drawing Room door stay; only the arrival leaf's proposed fit/swing changes.
   assert.deepEqual([ENTRY.arrivalDoor.wallPlanX, ENTRY.arrivalDoor.fromPlanY, ENTRY.arrivalDoor.toPlanY, ENTRY.arrivalDoor.heightMm], [575, 810, 874, 2200])
   assert.deepEqual([ENTRY.innerOpening.wallPlanY, ENTRY.innerOpening.fromPlanX, ENTRY.innerOpening.toPlanX, ENTRY.innerOpening.heightMm], [715, 515, 570, 2100])
   assert.deepEqual([ENTRY.outerEntryOpening.fromPlanY, ENTRY.outerEntryOpening.toPlanY, ENTRY.outerEntryOpening.heightMm], [822, 867, 2200])
+})
+
+test('proposed paired leaves clear complete arcs, walls, fittings, AC bay and controls, but warn about access', () => {
+  const r = checkEntryDoorPair(ENTRY)
+  assert.deepEqual(r.issues, [])
+  assert.equal(r.leafSeparationMm, 40)
+  assert.equal(r.passageMm, 508)
+  assert.match(r.warnings.join(' '), /passage.*review access/)
+  assert.deepEqual([ENTRY.outerDoor.hinge,ENTRY.outerDoor.opens,ENTRY.outerDoor.maxOpenAngleDegrees], ['north','west-outside',85])
+  assert.deepEqual([ENTRY.arrivalDoor.hinge,ENTRY.arrivalDoor.opens,ENTRY.arrivalDoor.maxOpenAngleDegrees], ['north','east-inside',60])
+  for (const leaf of Object.values(r.leaves)) {
+    assert.ok(leaf.clearances.length >= 12)
+    assert.ok(leaf.clearances.every(c => c.clearanceMm >= ENTRY.doorPair.obstacleMarginMm))
+  }
+  // Plan +x WEST: steel swings toward +x; wood toward -x. Same pure transforms feed both builders.
+  const steel = entryDoorLeafPolygons(ENTRY,'outerDoor',85)[0], wood = entryDoorLeafPolygons(ENTRY,'arrivalDoor',60)[0]
+  assert.ok(Math.max(...steel.map(p=>p.x)) > 1200)
+  assert.ok(Math.min(...wood.map(p=>p.x)) < -1000)
+})
+
+test('pair rejects the old wooden swing, untrimmed leaf, wall strike, crossing leaves and displaced controls', () => {
+  const bad = patch => { const e=structuredClone(ENTRY); patch(e); return checkEntryDoorPair(e).issues.join(' | ') }
+  assert.match(bad(e=>{e.arrivalDoor.opens='west-outside'}), /open away/)
+  assert.match(bad(e=>{e.arrivalDoor.maxOpenAngleDegrees=90}), /gallery east wall/)
+  assert.match(bad(e=>{e.outerDoor.maxOpenAngleDegrees=90}), /corridor north wall/)
+  assert.match(bad(e=>{e.arrivalDoor.leafJambGapMm=0}), /corridor north wall/)
+  // South hinge also clears at the limited stop, but adds a hinge relocation and changes the latch/switch side.
+  assert.equal(bad(e=>{e.arrivalDoor.hinge='south'}), '')
+  assert.match(bad(e=>{e.outerDoor.faceOffsetMm=0}), /face clearance/)
+  assert.match(bad(e=>{e.doorPair.electricalFaceMm=300}), /EN-1|EN-2/)
+  assert.match(bad(e=>{e.foldSeat.depthMm=1000}), /deployed fold seat/)
+  assert.match(bad(e=>{e.shoeRack.widthMm=1800}), /shoe rack|AC bay/)
+  assert.match(bad(e=>{e.wallCavity.eastCabinet.planY2=850}), /east cabinet/)
+  assert.match(bad(e=>{e.arrivalDoor.openAngleDegrees=80}), /outside the checked arc/)
+})
+
+test('bell, future lock conduit and corridor switch follow the new locked line with stable electrical IDs', () => {
+  const {points,check,model}=roomElectricalReport('entry')
+  assert.deepEqual(check.issues, [])
+  for (const [id,along] of [['EN-1',ENTRY.doorPair.corridorSwitchAlongMm],['EN-2',ENTRY.doorPair.bellAlongMm],['EN-7',ENTRY.doorPair.bellAlongMm]]) {
+    const p=points.find(p=>p.id===id)
+    assert.equal(p.wall,'corridorSouth');assert.equal(p.alongMm,along)
+    assert.match(p.use,/PROPOSAL 2026-10-06/)
+  }
+  assert.equal(points.filter(p=>p.wall==='outerWall').length,0)
+  assert.equal(model.doors.find(d=>d.id==='outer').latchAt.x, (ENTRY.arrivalDoor.wallPlanX-ENTRY.planBounds.x1)*ENTRY.planScale.xMetresPerPixel*1000+ENTRY.outerDoor.faceOffsetMm)
+  // Security: +plan x is west/outside. The rack/service door is EAST of arrival, not in the unlocked corridor.
+  assert.ok(ENTRY.shoeRack.planX2 < ENTRY.arrivalDoor.wallPlanX)
 })
 
 test('the door checks catch a gap between panels, a lock on the grille, a solid door and an inward swing', () => {

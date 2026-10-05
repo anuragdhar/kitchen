@@ -124,7 +124,8 @@ const PAINT_SQFT = paintArea(drawing.widthMm, drawing.lengthMm) + paintArea(lobb
   + paintArea(ENTRY.clearWidthMm, ENTRY.approachLengthMm) * 2.5 // corridor plus the longer inner gallery
 const SKIRTING_RFT = [drawing, lobby, bedroom1, bedroom3].reduce((total, room) => total + rft(2 * (room.widthMm + room.lengthMm)), rft(2 * (STUDY_ROOM.dimensions.widthMm + STUDY_ROOM.dimensions.lengthMm))) * 0.75
 
-const outerDoor = {widthMm: Math.round(Math.abs(ENTRY.outerEntryOpening.toPlanY - ENTRY.outerEntryOpening.fromPlanY) * ENTRY.planScale.zMetresPerPixel * 1000), heightMm: ENTRY.outerEntryOpening.heightMm}
+// Owner 2026-10-06: no door is allowed in the landing opening; the steel door is priced for the arrival (wooden door) opening.
+const outerDoor = {widthMm: Math.round(Math.abs(ENTRY.arrivalDoor.toPlanY - ENTRY.arrivalDoor.fromPlanY) * ENTRY.planScale.zMetresPerPixel * 1000), heightMm: ENTRY.arrivalDoor.heightMm}
 const storage = drawing.wallStorage // the west cabinet behind the Drawing Room north wall
 const b1Door = lobby.doors.find(door => door.leadsTo === 'Bedroom 1')
 const oldB1DoorWidthMm = Math.abs(BEDROOM1_CLOSED_DOOR.planXWest - BEDROOM1_CLOSED_DOOR.planXEast) * lobby.widthMm / (515 - 255) // lobby plan bounds x 255-515

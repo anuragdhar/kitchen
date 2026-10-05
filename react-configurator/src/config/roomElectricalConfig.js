@@ -273,12 +273,12 @@ export const ROOM_ELECTRICAL = {
   },
   // ---------------------------------------------------------------- Main entry (walls named in roomElectricalModels.mjs)
   entry: {
-    room: 'Main entry', status: 'proposed 2026-10-05; nothing measured on site (OPEN_ITEMS A7)',
+    room: 'Main entry', status: 'proposed 2026-10-06: bell, conduit and corridor switch follow the paired arrival doors; nothing measured on site (OPEN_ITEMS A7)',
     points: [
       {id: 'EN-1', name: 'Corridor switch', kind: 'lighting', wall: 'corridorSouth', anchor: 'outerDoorInside', heightMm: 1200, switchboard: true, forDoor: 'outer', switches: ['S1'], loadW: W.switchboard,
-        outlets: 'switch for the corridor lights E1 + E2; 1 x 6 A socket', use: 'inside the corridor beside the outer door, on its latch side (owner: one switch at the door for the corridor lights)'},
-      {id: 'EN-2', name: 'Bell push', kind: 'data', wall: 'outerWall', anchor: 'outerDoorLatchStrip', heightMm: 1100, noLoad: true,
-        outlets: 'bell push on the landing face of the wall', use: 'wired to the existing door chime X-D3 in the Drawing Room, which stays'},
+        outlets: 'switch for the corridor lights E1 + E2; 1 x 6 A socket', use: 'PROPOSAL 2026-10-06: corridor south wall beside the steel arrival leaf, outside the locked line; owner wanted one switch at the door'},
+      {id: 'EN-2', name: 'Bell push', kind: 'data', wall: 'corridorSouth', anchor: 'outerDoorLatchStrip', heightMm: 1100, noLoad: true,
+        outlets: 'bell push on the corridor south wall beside the paired arrival doors', use: 'PROPOSAL 2026-10-06: wired to the existing door chime X-D3 in the Drawing Room, which stays; no bell on the landing opening'},
       {id: 'EN-3', name: 'Gallery switch (arrival door)', kind: 'lighting', wall: 'shaftFace', anchor: 'arrivalDoorLatch', heightMm: 1200, switchboard: true, forDoor: 'arrival', switches: ['S2'], loadW: W.switchboard,
         outlets: '2-way switch for the gallery lights E3 + E4; 1 x 6 A socket', use: 'on the shaft wall beside the arrival door, on its latch side: the gallery lights as you step in'},
       {id: 'EN-4', name: 'Gallery switch (Drawing Room door)', kind: 'lighting', wall: 'galleryEast', alongMm: 250, heightMm: 1200, switchboard: true, forDoor: 'drawing', switches: ['S2'], noLoad: true,
@@ -287,8 +287,8 @@ export const ROOM_ELECTRICAL = {
         outlets: '1 x 6/16 A combined socket', use: 'vacuum cleaner, a shoe dryer, festival lights; between the fold-down seat and the shoe rack'},
       {id: 'EN-6', name: 'Shoe rack light', kind: 'lighting', wall: 'galleryNorth', anchor: 'shoeRackMiddle', heightMm: 2000, hidden: true, optional: true, loadW: W.lightPoint,
         outlets: 'LED strip with a door-contact switch', use: 'inside the shoe rack: lights the shelves when the mirror doors open'},
-      {id: 'EN-7', name: 'Video door phone conduit', kind: 'data', wall: 'outerWall', anchor: 'outerDoorLatchStrip', heightMm: 1500, optional: true, noLoad: true,
-        outlets: '25 mm conduit with a CAT6 and a 12 V pair, ending in a blank plate', use: 'for a video doorbell or smart lock later, above the bell push'},
+      {id: 'EN-7', name: 'Video door phone conduit', kind: 'data', wall: 'corridorSouth', anchor: 'outerDoorLatchStrip', heightMm: 1500, optional: true, noLoad: true,
+        outlets: '25 mm conduit with a CAT6 and a 12 V pair, ending in a blank plate', use: 'PROPOSAL 2026-10-06: above the relocated bell; future doorbell or lock conduit to the arrival frame, no electric lock selected; existing mechanical lock stays on the steel leaf'},
       {id: 'EN-L1', name: 'Corridor light E1', kind: 'lighting', fitting: 'E1', light: 'S1',
         outlets: 'ceiling light point for the round LED panel, recessed in the PVC ceiling', use: 'fitting E1 of entryLightingConfig.js; switched at EN-1'},
       {id: 'EN-L2', name: 'Corridor light E2', kind: 'lighting', fitting: 'E2', light: 'S1',
@@ -304,7 +304,7 @@ export const ROOM_ELECTRICAL = {
     ],
     verify: [
       'Nothing in the entry is measured; every position is from the A501 plan image.',
-      'Which way the outer steel door hangs (hingeKnown is false in entryConfig.js); EN-1 and the bell push assume the latch on the south jamb.',
+      'PROPOSAL 2026-10-06: both leaves hinge north at arrivalDoor; steel opens west, wood east with a stop; EN-1 and the bell are on the corridor south wall beside the south latch. Confirm handing and the narrow passage.',
       'Where the existing bell push and the corridor light switch are today.',
       'If the AC outdoor unit goes in the bottom of the shoe rack (proposal, not decided), its supply and isolator come with that decision: not planned here.',
       'The key station drawn beside the arrival door has no charger: phones charge at E1 inside the Drawing Room.',

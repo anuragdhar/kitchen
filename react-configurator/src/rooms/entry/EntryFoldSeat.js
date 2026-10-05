@@ -12,10 +12,10 @@ export function createEntryFoldSeat(x,z){
   const seatTop=new THREE.MeshStandardMaterial({color:'#2b2f33',roughness:.5,metalness:.1})
   const hinge=new THREE.MeshStandardMaterial({color:'#8c8f92',metalness:.7,roughness:.3})
 
-  const seatHeightM=.46,seatDepthM=.34,seatWidthM=.36,wallX=x(ENTRY.planBounds.x1)
+  const seatConfig=ENTRY.foldSeat,seatHeightM=seatConfig.heightMm/1000,seatDepthM=seatConfig.depthMm/1000,seatWidthM=seatConfig.widthMm/1000,wallX=x(seatConfig.wallPlanX)
   // Position along the west wall, just south of the shoe-rack corner so the
   // door swing and shoe rack access both stay clear.
-  const seatZ=z(ENTRY.shaft.planY1+35)
+  const seatZ=z(seatConfig.centrePlanY)
 
   // Wall mounting plate (fixed, always visible whether the seat is up or down).
   const plate=new THREE.Mesh(new THREE.BoxGeometry(.018,.30,.30),frame)
