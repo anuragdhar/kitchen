@@ -388,3 +388,15 @@ is drawn about 443 high (was about 560). No models or textures were downloaded.
   `standingCameraMath.mjs`, `StandingCameraControls.jsx`); note `docs/changes/2026-10-06-standing-camera.md`.
 - 2026-10-06 (owner): the Lobby toilet door is an ordinary visible door again. The continuous panel wall on the Lobby south
   wall that hid it (`LobbyConcealedDoor.js`) is removed; the door opening (1060 + 605 x 2100) is unchanged.
+- 2026-10-06 (owner): storage beside the fridge has a floor-to-ceiling timber louvre slider (1092 x 2635, was a plain 1000 x 2200
+  cover) and a fixed matching panel above the fridge; the fixed face is recessed 48 mm so the slider passes in front. Sizes are
+  proposals; fridge ventilation not verified. `src/domain/storeStorageLouvre.mjs`; note `docs/changes/2026-10-06-storage-louvre.md`.
+- 2026-10-06 (owner): bronze mirror splashback proposal behind the hob (1000 x 426, on the east slider face) and the sink
+  (1062 x 450), following those items when they move (`src/domain/mirrorSplashback.mjs`); in the elevations and BOM. Drawn as a
+  bronze panel, not a true mirror reflection. Note `docs/changes/2026-10-06-bronze-mirror-splashback.md`.
+- 2026-10-06 (owner): the dining pendant is now a hanging oak planter-shelf light (1000 x 300 x 40, underside 1780, four rods,
+  LED under, plants on top), same circuit id `chandelier` (`src/rooms/shared/DiningShelfLight.js`). About 16 kg hanging, not
+  engineered; still no ceiling point over the table. Note `docs/changes/2026-10-06-dining-shelf-light.md`.
+- 2026-10-06 (owner idea): Drawing Room layout C has a switchable slat strip over the hidden door beside the TV
+  (`southLayout.slatStrip`, `src/domain/tvWallSlatStrip.mjs`); full panelling stays the default. Note `docs/changes/2026-10-06-slat-strip.md`.
+- 2026-10-06: Codex CLI (owner's ChatGPT plan) did the louvre, mirror and dining light work in separate worktrees; reviewed, tested and merged here.

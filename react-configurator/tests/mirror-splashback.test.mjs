@@ -21,9 +21,9 @@ test('bronze mirror proposal uses live dimensions and existing slider face',()=>
   ])
   assert.deepEqual(layout,before)
   assert.equal(KITCHEN_MIRROR_SPLASHBACK.marginMm,150)
-  assert.equal(KITCHEN_MIRROR_MATERIAL.color,'#b99470')
-  assert.equal(KITCHEN_MIRROR_MATERIAL.metalness,1)
-  assert.equal(KITCHEN_MIRROR_MATERIAL.roughness,.08)
+  assert.equal(KITCHEN_MIRROR_MATERIAL.color,'#c9a47c')
+  assert.equal(KITCHEN_MIRROR_MATERIAL.metalness,.82)
+  assert.equal(KITCHEN_MIRROR_MATERIAL.roughness,.2)
 })
 
 test('hob mirror follows moves and resized appliances without changing saved items',()=>{
