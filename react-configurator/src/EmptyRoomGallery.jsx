@@ -23,6 +23,8 @@ import {HOME_ROOM_LAYOUTS} from './config/homeRoomViews.js'
 import {createRoomTaskLighting} from './rooms/shared/RoomTaskLighting.js'
 import {createRug,createPottedPlant,createWallArt,createFloorLamp,createCushion,createLaundryHamper} from './rooms/shared/RoomDecor.js'
 import {createDrawingRoomLayouts,DRAWING_LAYOUTS} from './rooms/drawing/DrawingRoomLayouts.js'
+import {createBedroom1Layouts} from './rooms/bedroom1/Bedroom1Layouts.js'
+import {Bedroom1LayoutToggle,Bedroom1LayoutPanel,BEDROOM1_DEFAULT_LAYOUT} from './rooms/bedroom1/Bedroom1LayoutPanel.jsx'
 import DrawingLightDimmer from './rooms/drawing/DrawingLightDimmer.jsx'
 import {ROOM_DIMMER_CIRCUITS} from './config/roomLightingCircuits.js'
 import {buildRoomReview} from './domain/roomReview.mjs'
@@ -58,6 +60,7 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
   const [showSouthWall,setShowSouthWall]=useState(initialRoomKey==='lobby'||initialRoomKey==='drawing'||initialRoomKey==='bedroom1')
   const [tvLabels,setTvLabels]=useState(initialRoomKey==='drawing'),tvLabelsRef=useRef(initialRoomKey==='drawing')
   const [drawingLayout,setDrawingLayout]=useState('southSofas'),drawingLayoutRef=useRef('southSofas')
+  const [bedroom1Layout,setBedroom1Layout]=useState(BEDROOM1_DEFAULT_LAYOUT),bedroom1LayoutRef=useRef(BEDROOM1_DEFAULT_LAYOUT) // config/bedroom1LayoutConfig.js
   const [armOut,setArmOut]=useState(false),[tvSize,setTvSize]=useState('55'),[doorSwing,setDoorSwing]=useState(true),[storageOpen,setStorageOpen]=useState(false),[showElectrical,setShowElectrical]=useState(false)
   const [showExisting,setShowExisting]=useState(false) // existing switchboards and sockets from the phone scan (existingElectricalConfig.js)
   const [review,setReview]=useState(null),[reviewBusy,setReviewBusy]=useState(false),[reviewNote,setReviewNote]=useState('')
@@ -282,6 +285,7 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
     partition.userData.setOpen?.(partitionOpen)
     if(roomKey==='lobby')wallParent('south').add(createLobbyConcealedDoor(room))
     let ironingStorage=null
+    let bedroom1Layouts=null
     if(roomKey==='bedroom3'){
       furniture.add(createBedroom3Bed(room))
       furniture.add(vanity)
@@ -297,63 +301,10 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
     }
     if(roomKey==='drawing'){
       furniture.add(drawingLayouts.furniture)
-    }else if(roomKey==='bedroom1'&&room.furniture?.bed){
-      const bed=room.furniture.bed
-      const bedWest=mm(bed.fromWestMm),bedSouth=L-mm(bed.fromSouthMm),bedLength=mm(bed.lengthMm),bedWidth=mm(bed.widthMm)
-      const bedCenterX=bedWest+bedLength/2,bedCenterZ=bedSouth-bedWidth/2
-      const bedFrame=new THREE.MeshStandardMaterial({color:'#806047',roughness:.68})
-      tagSurfaceMaterial(bedFrame,'wood')
-      const bedUpholstery=new THREE.MeshStandardMaterial({color:'#efe8dc',roughness:.94})
-      const bedCover=new THREE.MeshStandardMaterial({color:'#b7c7bd',roughness:.96})
-      const pillowMaterial=new THREE.MeshStandardMaterial({color:'#fbf8f1',roughness:.98})
-      const headboardMaterial=new THREE.MeshStandardMaterial({color:'#9a7656',roughness:.74})
-      tagSurfaceMaterial(headboardMaterial,'wood')
-      const baseHeight=.25,mattressThickness=.19
-      // Bed head is at the east/south end; its 1829 mm length follows the south wall westward.
-      addBox(bedLength,baseHeight,bedWidth,bedCenterX,baseHeight/2,bedCenterZ,bedFrame,furniture)
-      addBox(bedLength-.035,mattressThickness,bedWidth-.035,bedCenterX,baseHeight+mattressThickness/2,bedCenterZ,bedUpholstery,furniture)
-      addBox(bedLength-.470,.065,bedWidth-.100,bedWest+(bedLength-.470)/2,baseHeight+mattressThickness+.025,bedCenterZ,bedCover,furniture)
-      addBox(.085,.92,bedWidth,bedWest+bedLength-.043,.71,bedCenterZ,headboardMaterial,furniture)
-      for(const offset of [-bedWidth*.23,bedWidth*.23]){
-        addBox(.38,.08,.61,bedWest+bedLength-.26,.25+ mattressThickness+.07,bedCenterZ+offset,pillowMaterial,furniture)
-      }
-      const wardrobe=room.furniture.wardrobe
-      if(wardrobe){
-        const depth=mm(wardrobe.depthMm),length=mm(wardrobe.lengthMm),height=mm(wardrobe.heightMm)
-        const start=mm(wardrobe.fromNorthMm),center=start+length/2,doors=wardrobe.doorCount||3
-        const body=new THREE.MeshStandardMaterial({color:'#d0c0aa',roughness:.76})
-        tagSurfaceMaterial(body,'wood')
-        const front=new THREE.MeshStandardMaterial({color:'#e9e1d4',roughness:.66})
-        tagSurfaceMaterial(front,'wood')
-        const handle=new THREE.MeshStandardMaterial({color:'#373b3c',metalness:.62,roughness:.31})
-        addBox(depth,height,length,depth/2,height/2,center,body,furniture)
-        for(let i=0;i<doors;i++){
-          const panelLength=length/doors-.012,z=start+(i+.5)*length/doors
-          addBox(.025,height-.14,panelLength,depth+.014,(height+.09)/2,z,front,furniture)
-          addBox(.018,.25,.018,depth+.034,1.15,z+panelLength*.35,handle,furniture)
-        }
-        addBox(depth+.035,.09,length,depth/2,.045,center,body,furniture)
-      }
-      const balconyFurniture=room.balconyExtension?.furniture
-      if(balconyFurniture){
-        const table=balconyFurniture.table,chair=balconyFurniture.chair
-        const tableX=W+mm(table.centerFromBedroomWallMm),tableZ=mm(table.centerFromNorthMm)
-        const chairX=W+mm(chair.centerFromBedroomWallMm),chairZ=mm(chair.centerFromNorthMm)
-        const tabletop=new THREE.MeshStandardMaterial({color:'#b28a60',roughness:.67})
-        tagSurfaceMaterial(tabletop,'wood')
-        const frame=new THREE.MeshStandardMaterial({color:'#353b3d',metalness:.58,roughness:.34})
-        const seat=new THREE.MeshStandardMaterial({color:'#d9cec1',roughness:.92})
-        const tw=mm(table.widthMm),td=mm(table.depthMm),th=mm(table.heightMm)
-        // The work surface runs north-south beside the east glazing.
-        addBox(td,.04,tw,tableX,th,tableZ,tabletop,furniture)
-        for(const dx of [-td/2+.055,td/2-.055])for(const dz of [-tw/2+.055,tw/2-.055])
-          addBox(.03,th-.04,.03,tableX+dx,(th-.04)/2,tableZ+dz,frame,furniture)
-        const cw=mm(chair.widthMm),cd=mm(chair.depthMm),seatH=mm(chair.seatHeightMm),backH=mm(chair.backHeightMm)
-        addBox(cd,.07,cw,chairX,seatH,chairZ,seat,furniture)
-        for(const dx of [-cd/2+.06,cd/2-.06])for(const dz of [-cw/2+.06,cw/2-.06])
-          addBox(.028,seatH-.04,.028,chairX+dx,(seatH-.04)/2,chairZ+dz,frame,furniture)
-        addBox(.05,backH-seatH,cw,chairX-cd/2+.03,(backH+seatH)/2,chairZ,seat,furniture)
-      }
+    }else if(roomKey==='bedroom1'){
+      // Bed, wardrobe, balcony table and chair, decor and the alternative layout: rooms/bedroom1/Bedroom1Layouts.js.
+      bedroom1Layouts=createBedroom1Layouts(room,{initial:bedroom1LayoutRef.current,defaultLighting:taskLighting,realLights:true})
+      furniture.add(bedroom1Layouts.furniture);shell.add(bedroom1Layouts.lighting);wallParent('south').add(bedroom1Layouts.southWall)
     }else if(roomKey==='lobby'){
       ironingStorage=createLobbyEastIroningStorage(room)
       furniture.add(ironingStorage)
@@ -400,19 +351,6 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
       const lobbyPlant=createPottedPlant(1.15);lobbyPlant.position.set(.5,0,L-.5);furniture.add(lobbyPlant)
       const lobbyLamp=createFloorLamp();lobbyLamp.position.set(3.55,0,.35);furniture.add(lobbyLamp)
       const lobbyArt=createWallArt(.95,.68,'#87775f');lobbyArt.position.set(2.9,1.5,L-.05);lobbyArt.rotation.y=Math.PI;furniture.add(lobbyArt)
-    }
-    if(roomKey==='bedroom1'&&room.furniture?.bed){
-      // Decor pass (owner request 2026-09-28): rug beside the bed, cushions at
-      // the headboard, art on the east wall, plant clear of doors and recess.
-      const b1Rug=createRug(1.2,1.3,'#c7b9a6');b1Rug.position.set(1.05,0,2.55);furniture.add(b1Rug)
-      for(const dz of [-.28,.28]){const cushion=createCushion(.34,dz<0?'#8d9c8f':'#b48b60');cushion.position.set(3.02,.445,2.478+dz);cushion.rotation.y=Math.PI/2;furniture.add(cushion)}
-      const b1Art=createWallArt(.85,.6,'#7e8b99');b1Art.position.set(W-.05,1.55,2.478);b1Art.rotation.y=-Math.PI/2;furniture.add(b1Art)
-      const b1Plant=createPottedPlant(1);b1Plant.position.set(2.2,0,.32);furniture.add(b1Plant)
-      // Laundry hamper (owner request 2026-09-29): open floor south of the
-      // wardrobe (which ends at z=1.8) and west of the bed (which starts at
-      // x=1.524), just inside the south door to Lobby/Dining - clear of both
-      // and clear of the door swing (door spans x 0.1-1.0 at the south wall).
-      const hamper=createLaundryHamper();hamper.position.set(0.85,0,2.65);furniture.add(hamper)
     }
     furniture.visible=showFurniture
     southWall.visible=showSouthWall
@@ -551,6 +489,7 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
       return {views,project}
     }
     sceneRef.current={clearItem,setDesigner:on=>designerRender.setEnabled(on),captureReview,setTrackLight:(circuit,level)=>{drawingLayouts?.setTrackLight(circuit,level);taskLighting.userData.setTrackLight?.(circuit,level);setDaylight(daylightRef.current)},setDarkRoom:on=>{darkRoom=on;setDaylight(daylightRef.current)},setTvLabels:visible=>drawingLayouts?.setLabels(visible),setDrawingLayout:key=>drawingLayouts?.setLayout(key),setDrawingArm:pulled=>drawingLayouts?.setArm(pulled),setElectrical:visible=>{drawingLayouts?.setElectrical(visible);if(roomElectrical)roomElectrical.visible=visible},setExistingElectrical:visible=>{if(existingPoints)existingPoints.visible=visible},setDoorSwing:visible=>drawingLayouts?.setDoorSwing(visible),setStorageOpen:open=>drawingLayouts?.setStorageOpen(open),setDrawingTv:key=>drawingLayouts?.setTvSize(key),setMirrorOpen:value=>vanity.userData.setMirrorOpen?.(value),setPartitionOpen:value=>partition.userData.setOpen?.(value),setCamera,setSouthVisible:value=>{southWall.visible=value},setFurnitureVisible:value=>{furniture.visible=value},setBoardOpen:value=>{ironingStorage?.userData.setBoardOpen(value)},setPoojaDoorsOpen:value=>{poojaDoors?.userData.setDoorsOpen(value)},clearMark,setDaylight}
+    if(bedroom1Layouts){const dim=sceneRef.current.setTrackLight;Object.assign(sceneRef.current,{setBedroom1Layout:key=>bedroom1Layouts.setLayout(key),setTrackLight:(circuit,level)=>{bedroom1Layouts.setTrackLight(circuit,level);dim(circuit,level)}})}
     return()=>{interiorScene.dispose();cancelAnimationFrame(raf);existingPoints?.userData.dispose();roomElectrical?.userData.dispose();designerRender.dispose();observer.disconnect();renderer.domElement.removeEventListener('pointerdown',onPointerDown);renderer.domElement.removeEventListener('pointerup',onPointerUp);controls.dispose();labelTextures.forEach(texture=>texture.dispose());shell.traverse(object=>{object.geometry?.dispose?.();if(Array.isArray(object.material))object.material.forEach(material=>material.dispose());else object.material?.dispose?.()});markedWallMaterial.dispose();environment.dispose();pmrem.dispose();renderer.dispose();renderer.domElement.remove();sceneRef.current=null}
   },[roomKey,initialView])
 
@@ -559,6 +498,7 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
   useEffect(()=>{sceneRef.current?.setFurnitureVisible(showFurniture)},[showFurniture,roomKey])
   useEffect(()=>{tvLabelsRef.current=tvLabels;sceneRef.current?.setTvLabels(tvLabels)},[tvLabels,roomKey])
   useEffect(()=>{drawingLayoutRef.current=drawingLayout;sceneRef.current?.setDrawingLayout(drawingLayout);sceneRef.current?.setCamera(view)},[drawingLayout])
+  useEffect(()=>{bedroom1LayoutRef.current=bedroom1Layout;sceneRef.current?.setBedroom1Layout?.(bedroom1Layout)},[bedroom1Layout,roomKey])
   useEffect(()=>{sceneRef.current?.setDrawingArm(armOut)},[armOut,roomKey])
   useEffect(()=>{sceneRef.current?.setDoorSwing(doorSwing)},[doorSwing,roomKey])
   // A picked item's outline would be stale once the room, layout or visibility changes.
@@ -573,13 +513,13 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
   useEffect(()=>{sceneRef.current?.setPoojaDoorsOpen(poojaDoorsOpen)},[poojaDoorsOpen,roomKey])
   useEffect(()=>{daylightRef.current=daylightOn;sceneRef.current?.setDaylight(daylightOn)},[daylightOn,roomKey])
 
-  useEffect(()=>{setReview(previous=>{if(previous)URL.revokeObjectURL(previous.url);return null});setReviewNote('')},[roomKey,drawingLayout])
+  useEffect(()=>{setReview(previous=>{if(previous)URL.revokeObjectURL(previous.url);return null});setReviewNote('')},[roomKey,drawingLayout,bedroom1Layout])
   const makeReview=async()=>{
     setReviewBusy(true);setReviewNote('')
     try{
       await new Promise(resolve=>setTimeout(resolve,30))
       const shots=sceneRef.current.captureReview()
-      const brief=buildRoomReview({roomKey,room,layoutKey:roomKey==='drawing'?drawingLayoutRef.current:null,references:referencesFor(roomKey)})
+      const brief=buildRoomReview({roomKey,room,layoutKey:roomKey==='drawing'?drawingLayoutRef.current:roomKey==='bedroom1'?bedroom1LayoutRef.current:null,references:referencesFor(roomKey)})
       const blob=await canvasToBlob(composeReviewSheet({review:brief,room,views:shots.views,project:shots.project}))
       setReview(previous=>{if(previous)URL.revokeObjectURL(previous.url);return {url:URL.createObjectURL(blob),blob,text:brief.text,title:brief.title}})
     }catch(error){setReviewNote('Could not build the review sheet: '+error.message)}
@@ -596,7 +536,7 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
     const url=URL.createObjectURL(blobOrText instanceof Blob?blobOrText:new Blob([blobOrText],{type}))
     const link=document.createElement('a');link.href=url;link.download=name;link.click();setTimeout(()=>URL.revokeObjectURL(url),1000)
   }
-  const reviewName=roomKey+(roomKey==='drawing'?'-layout-'+drawingLayout:'')+'-review'
+  const reviewName=roomKey+(roomKey==='drawing'?'-layout-'+drawingLayout:roomKey==='bedroom1'&&bedroom1Layout!==BEDROOM1_DEFAULT_LAYOUT?'-layout-'+bedroom1Layout:'')+'-review'
 
   return <>
     {showSelector&&<div style={{display:'flex',gap:8,flexWrap:'wrap',marginBottom:14}}>
@@ -624,6 +564,7 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
         {roomKey==='drawing'&&<label style={{display:'flex',alignItems:'center',gap:6,fontWeight:800,fontSize:13}}>Layout
           <select value={drawingLayout} onChange={event=>setDrawingLayout(event.target.value)} style={{padding:'7px 8px',borderRadius:9,border:'1px solid #cbd5e1',maxWidth:360}}>{DRAWING_LAYOUTS.map(layout=><option key={layout.key} value={layout.key}>{layout.label}</option>)}</select>
         </label>}
+        {roomKey==='bedroom1'&&<Bedroom1LayoutToggle layout={bedroom1Layout} onChange={setBedroom1Layout} style={buttonStyle}/>}
         {roomKey==='drawing'&&<button onClick={()=>setDoorSwing(value=>!value)} aria-pressed={doorSwing} style={buttonStyle(doorSwing)} title="The entry door opens into the room: red is the area its leaf sweeps">{doorSwing?'Hide entry door swing':'Show entry door swing'}</button>}
         {roomKey==='drawing'&&<button onClick={()=>setStorageOpen(value=>!value)} aria-pressed={storageOpen} style={buttonStyle(storageOpen)} title="The west cabinet of the entry pocket, entered through a narrow hidden door at the west end of the Drawing Room's north wall: the TV console is dragged out and the door, hidden in the wall panelling, swings outward to show the shelves">{storageOpen?'Close hidden west cabinet':'Open hidden west cabinet'}</button>}
         {ROOM_DIMMER_CIRCUITS[roomKey]&&(roomKey!=='drawing'||drawingLayout==='southSofas')&&<DrawingLightDimmer key={roomKey} circuits={ROOM_DIMMER_CIRCUITS[roomKey]} onChange={(circuit,level)=>sceneRef.current?.setTrackLight?.(circuit,level)} onDarkRoom={on=>sceneRef.current?.setDarkRoom?.(on)}/>}
@@ -645,6 +586,7 @@ export default function EmptyRoomGallery({initialRoomKey='bedroom1',initialView=
     </div>
     <div ref={mountRef} style={{height:'clamp(620px,82vh,1100px)',width:'100%'}}/>
     {showElectrical&&hasRoomElectrical(roomKey)&&<RoomElectricalPanel roomKey={roomKey}/>}
+    {roomKey==='bedroom1'&&showFurniture&&<Bedroom1LayoutPanel layout={bedroom1Layout}/>}
     {showExisting&&hasExistingElectrical(roomKey)&&<ExistingElectricalPanel roomKey={roomKey} room={room} layoutKey={roomKey==='drawing'?drawingLayout:null}/>}
     {(review||reviewNote)&&<div style={{padding:16,borderTop:'1px solid #e2e8f0',background:'#f8fafc'}}>
       <div style={{display:'flex',gap:8,flexWrap:'wrap',alignItems:'center',marginBottom:10}}>

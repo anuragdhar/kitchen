@@ -3,7 +3,7 @@ import {LOBBY_LIGHTING} from '../../config/lobbyLightingConfig.js'
 import {BEDROOM1_LIGHTING} from '../../config/bedroom1LightingConfig.js'
 import {BEDROOM3_LIGHTING} from '../../config/bedroom3LightingConfig.js'
 import {STUDY_LIGHTING} from '../../config/studyLightingConfig.js'
-import {createTrackLights,createCeilingFans} from '../drawing/DrawingRoomLighting.js'
+import {createTrackLights,createCeilingFans,createCeilingMouldings} from '../drawing/DrawingRoomLighting.js'
 
 // Track lighting configs by room page (the Drawing Room's lives with its layouts: rooms/drawing/DrawingRoomLighting.js;
 // the Kitchen's frame is converted in rooms/kitchen/KitchenTrackLights.js).
@@ -16,6 +16,8 @@ export function createRoomTrackLighting(config,{widthMm,lengthMm,heightMm},{real
   const group=new THREE.Group();group.name='Track lighting'
   const tracks=createTrackLights(config.tracks,heightMm/1000,{realLights,room:{x:widthMm/1000,z:lengthMm/1000}});group.add(tracks)
   if(config.ceilingFans)group.add(createCeilingFans(config.ceilingFans,heightMm/1000))
+  // Existing plaster mouldings, where a phone scan recorded them (Lobby, Bedroom 3): drawn so the runs can be judged against them.
+  if(config.ceilingMouldings)group.add(createCeilingMouldings(config.ceilingMouldings,{widthMm,lengthMm,heightMm}))
   group.userData.setTrackLight=(circuit,level)=>tracks.userData.setLevel(circuit,level)
   return group
 }
@@ -37,6 +39,8 @@ export function createRoomTaskLighting(room,{realLights=false}={}){
       mesh.position.set(x,y,z);group.add(mesh)
     }
     // The linear pendant over the dining table (config/lobbyLightingConfig.js pendant): its own circuit ('chandelier').
+    // The sizes below are recorded there too (bar canopy 100 x 750, body 160 x 900) for the ceiling check; there is no
+    // existing ceiling point here and the canopy as drawn straddles the north moulding (see the config note).
     const table=room.furniture.diningTable,x=table.centerXmm/1000,z=table.centerZmm/1000
     box(.10,.04,.75,x,room.heightMm/1000-.03,z,metal)
     for(const dz of [-.3,.3])box(.006,.90,.006,x,2.17,z+dz,metal)

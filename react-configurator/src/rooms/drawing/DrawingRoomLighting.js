@@ -1,5 +1,33 @@
 import * as THREE from 'three'
-import {DRAWING_LIGHTING} from '../../config/drawingLightingConfig.js'
+import {DRAWING_LIGHTING, DRAWING_CEILING_MOULDINGS} from '../../config/drawingLightingConfig.js'
+import {mouldingShapes} from '../../domain/drawingLighting.mjs'
+
+// Existing plaster ceiling mouldings (config ceilingMouldings, from the phone scans): the raised border line, a ring in
+// each corner and the round medallions, drawn low on the slab so the tracks can be judged against them. Room frame in
+// metres (x from the west wall, z from the north wall); `room` gives widthMm, lengthMm and heightMm. The shapes are the
+// ones the pure check uses (domain/drawingLighting.mjs mouldingShapes), so what is drawn is what is checked: a corner
+// ring is drawn as the circle that fills its checked square. The painted border colour is not drawn.
+export function createCeilingMouldings(mouldings, room) {
+  const group = new THREE.Group(); group.name = 'Ceiling mouldings (existing, from the phone scan)'
+  const plaster = new THREE.MeshStandardMaterial({color: '#f6f3ec', roughness: .92}), edge = new THREE.MeshStandardMaterial({color: '#d9d2c4', roughness: .92})
+  const ceiling = room.heightMm / 1000, p = mouldings.projectionMm / 1000
+  const add = (geometry, material, x, y, z, name) => { const mesh = new THREE.Mesh(geometry, material); mesh.position.set(x, y, z); mesh.name = name; group.add(mesh); return mesh }
+  // A flat ring lying on the ceiling: a torus squashed to the moulding's projection.
+  const ring = (radius, x, z, name, tube = .014) => { const mesh = add(new THREE.TorusGeometry(radius - tube, tube, 8, 48), edge, x, ceiling, z, name); mesh.rotation.x = Math.PI / 2; mesh.scale.z = p / tube; return mesh }
+  for (const shape of mouldingShapes(room, mouldings)) {
+    if (shape.kind === 'border') add(new THREE.BoxGeometry((shape.x2 - shape.x1) / 1000, p, (shape.z2 - shape.z1) / 1000), plaster, (shape.x1 + shape.x2) / 2000, ceiling - p / 2, (shape.z1 + shape.z2) / 2000, shape.label)
+    else if (shape.kind === 'ring') {
+      const radius = Math.min(shape.x2 - shape.x1, shape.z2 - shape.z1) / 2000, x = (shape.x1 + shape.x2) / 2000, z = (shape.z1 + shape.z2) / 2000
+      ring(radius, x, z, shape.label); ring(radius * .45, x, z, shape.label)
+    } else {
+      const r = shape.radius / 1000, x = shape.x / 1000, z = shape.z / 1000
+      // The face of the medallion is a disc seen from below only, so the Top view (no ceiling) still shows the room through it.
+      add(new THREE.CircleGeometry(r, 48), plaster, x, ceiling - p * .6, z, shape.label).rotation.x = Math.PI / 2
+      ring(r, x, z, shape.label); ring(r * .62, x, z, shape.label)
+    }
+  }
+  return group
+}
 
 // Ceiling fans (config.ceilingFans): canopy, down-rod, motor and three blades each. Room frame in metres: x from the west
 // wall, z from the north wall; `ceiling` is the slab height. Positions are assumed in rooms that are not measured yet
@@ -141,6 +169,8 @@ export function createDrawingLayoutLights(room, layoutKey) {
     box(.10, .008, .10, .27, 1.507, z, warm)
   }
   if (config.ceilingFans) group.add(createCeilingFans(config.ceilingFans, ceiling))
+  // The ceiling is the same whatever the seating layout, so every layout shows its mouldings.
+  group.add(createCeilingMouldings(DRAWING_CEILING_MOULDINGS, room))
   const tracks = config.tracks ? createTrackLights(config.tracks, ceiling) : null
   if (tracks) group.add(tracks)
   // Dimmer, one circuit at a time: 'chandelier', or a run id ('T1', 'T2'); level 0 = off, 1 = planned. The level is also kept

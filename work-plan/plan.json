@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "note": "Renovation work plan for A501. Edit in the app (Work plan page) or here. Sizes are from the model, not site measurements.",
+  "note": "Renovation work plan for A501. Edit in the app (Work plan page) or here. Sizes are from the model, not site measurements. Estimates are planning ranges in rupees, not quotes (docs/WORK_PLAN_BUDGET.md).",
   "phases": [
     {
       "id": "measure",
@@ -16,23 +16,23 @@
     },
     {
       "id": "electrical-rough",
-      "name": "4. Electrical first fix (conduits and boxes)"
+      "name": "4. Electrical first fix and AC piping (before plaster)"
     },
     {
       "id": "surfaces",
-      "name": "5. Plaster and flooring"
+      "name": "5. Plaster, making good and flooring"
     },
     {
       "id": "carpentry",
-      "name": "6. Carpentry"
+      "name": "6. Carpentry and steel fabrication"
     },
     {
       "id": "paint",
-      "name": "7. Painting"
+      "name": "7. Painting and polish"
     },
     {
       "id": "second-fix",
-      "name": "8. Electrical and plumbing fittings"
+      "name": "8. Fit-out: lights, switches, AC units, nets, blinds, plumbing fittings"
     },
     {
       "id": "finish",
@@ -88,24 +88,14 @@
       "trade": "general",
       "title": "Measure the rooms on site and compare with the plan",
       "room": "Whole home",
-      "detail": "The model uses floor-plan sizes. Measure the Drawing Room north wall, the entry pocket, the entry door leaf and the window sill before ordering anything.",
+      "detail": "The model uses floor-plan sizes and, since 2026-10-04, phone scans that are good to about 30-50 mm. Take the tape measurements listed in work-plan/OPEN_ITEMS.md section A (A1 to A24) before ordering anything. docs/NEXT_STEPS.md lists them in the order that unblocks the most work.",
       "dependsOn": [],
       "status": "todo",
-      "source": "docs/CURRENT_STATE.md"
-    },
-    {
-      "id": "engineer-check",
-      "phase": "measure",
-      "trade": "civil",
-      "title": "Get the builder or structural engineer to approve every wall opening",
-      "room": "Drawing Room / Main entry / Lobby / Bedroom 3",
-      "detail": "Four openings need approval: the cabinet door through the 9-inch Drawing Room north wall, the entry pocket, the wall to be removed on the left after the entry for the shoe rack, and the new doorway at the northwest corner of the Lobby into Bedroom 3 (owner 2026-10-04; this doorway does not exist yet). Ask which walls are load-bearing and what support (lintel or beam) each needs.",
-      "dependsOn": [
-        "site-measure"
-      ],
-      "status": "todo",
-      "needs": "Structural approval before any cutting",
-      "source": "docs/ENTRY_WALL_CAVITY.md"
+      "source": "work-plan/OPEN_ITEMS.md",
+      "estimateLow": 0,
+      "estimateHigh": 0,
+      "estimateBasis": "No contractor cost: the owner's own time.",
+      "estimateConfidence": "medium"
     },
     {
       "id": "pocket-check",
@@ -118,7 +108,39 @@
         "site-measure"
       ],
       "status": "todo",
-      "source": "docs/ENTRY_WALL_CAVITY.md"
+      "source": "docs/ENTRY_WALL_CAVITY.md",
+      "openItems": [
+        "A5",
+        "B1",
+        "B2"
+      ],
+      "estimateLow": 0,
+      "estimateHigh": 0,
+      "estimateBasis": "Inspection by the owner with the mason; no separate cost.",
+      "estimateConfidence": "medium"
+    },
+    {
+      "id": "engineer-check",
+      "phase": "measure",
+      "trade": "civil",
+      "title": "Get the builder or structural engineer to approve every wall opening and every steel support",
+      "room": "Drawing Room / Main entry / Lobby / Bedroom 1",
+      "detail": "To approve: (1) the cabinet door through the 9-inch Drawing Room north wall; (2) the steel floor over the open shaft behind it; (3) the partition in the entry pocket; (4) the window and the wall below it at the entry, taken out for the shoe rack, and the iron frame that carries the rack (a larger platform projecting about 900 mm if the AC outdoor unit goes under the rack: owner proposal 2026-10-05, not decided); (5) the new doorway for the moved Bedroom 1 door at the west end of the Lobby north wall (recorded on 2026-10-04 as a doorway into Bedroom 3 by mistake: that wall is shared with Bedroom 1); (6) whether the hanging beam between the Drawing Room and the Lobby takes about 180 kg of top-hung sliding glass doors; (7) how the iron frame for the window AC is fixed in the Bedroom 1 balcony. Ask which walls are load-bearing and what support (lintel or beam) each needs.",
+      "dependsOn": [
+        "site-measure",
+        "pocket-check"
+      ],
+      "status": "todo",
+      "needs": "Structural approval before any cutting",
+      "source": "docs/ENTRY_WALL_CAVITY.md",
+      "openItems": [
+        "D1",
+        "A6"
+      ],
+      "estimateLow": 15000,
+      "estimateHigh": 40000,
+      "estimateBasis": "engineer: 1 job x Rs 15,000-40,000. Fee depends on whether a drawing and a signed certificate are asked for.",
+      "estimateConfidence": "low"
     },
     {
       "id": "society-permission",
@@ -129,7 +151,67 @@
       "detail": "Many societies need notice or permission for wall changes, debris removal hours and a change to the outer door or gate.",
       "dependsOn": [],
       "status": "todo",
-      "needs": "Society permission"
+      "needs": "Society permission",
+      "openItems": [
+        "B3"
+      ],
+      "estimateBasis": "Not estimated: The society's fee or refundable deposit for renovation work is not known."
+    },
+    {
+      "id": "electrician-survey",
+      "phase": "measure",
+      "trade": "electrical",
+      "title": "Electrician to survey existing wiring, earthing and the distribution board",
+      "room": "Whole home",
+      "detail": "Confirm existing points, MCB/RCBO ratings, the AC rating, and where intercom, broadband and DTH cables enter. Also look at the three clashes the phone scan found (docs/changes/2026-10-04-existing-electrical.md): the Drawing Room switchboard is behind the planned TV and panelling; three socket plates on the west wall are behind the west sofa; the Lobby switchboard stands where the moved Bedroom 1 door is planned. The distribution board is partly behind the entry door leaf when that door stands open: keep a clear way to it.",
+      "dependsOn": [],
+      "status": "todo",
+      "source": "docs/DRAWING_ROOM_ELECTRICAL.md",
+      "openItems": [
+        "D2",
+        "A2"
+      ],
+      "estimateLow": 1500,
+      "estimateHigh": 4000,
+      "estimateBasis": "survey: 1 visit x Rs 1,500-4,000.",
+      "estimateConfidence": "medium"
+    },
+    {
+      "id": "finalise-layouts",
+      "phase": "measure",
+      "trade": "general",
+      "title": "Freeze the furniture layouts that fix where points and openings go",
+      "room": "Whole home",
+      "detail": "Electrical points follow the furniture (Drawing Room layout C). Confirm layouts before chasing walls.",
+      "dependsOn": [],
+      "status": "todo",
+      "source": "docs/DRAWING_ROOM_TV_WALL.md",
+      "openItems": [
+        "A12",
+        "C12"
+      ],
+      "estimateLow": 0,
+      "estimateHigh": 0,
+      "estimateBasis": "No contractor cost: the owner's own time.",
+      "estimateConfidence": "medium"
+    },
+    {
+      "id": "plumbing-scope",
+      "phase": "measure",
+      "trade": "plumbing",
+      "title": "List the plumbing changes wanted",
+      "room": "Kitchen / washrooms / balcony",
+      "detail": "No plumbing change is recorded in the project yet. Decide: kitchen sink and water purifier points, washing machine, washroom fittings, balcony water heater. Add each as its own task.",
+      "dependsOn": [],
+      "status": "todo",
+      "needs": "Owner decision",
+      "openItems": [
+        "E3"
+      ],
+      "estimateLow": 0,
+      "estimateHigh": 0,
+      "estimateBasis": "No contractor cost: the owner's own time.",
+      "estimateConfidence": "medium"
     },
     {
       "id": "entry-ceiling-plan",
@@ -142,40 +224,17 @@
         "site-measure"
       ],
       "status": "todo",
-      "needs": "Owner to visit shops and choose the plank; confirm plank direction, light colour (neutral white proposed) and count (two proposed)"
-    },
-    {
-      "id": "electrician-survey",
-      "phase": "measure",
-      "trade": "electrical",
-      "title": "Electrician to survey existing wiring, earthing and the distribution board",
-      "room": "Whole home",
-      "detail": "Confirm existing points, MCB/RCBO ratings, the AC rating, and where intercom, broadband and DTH cables enter.",
-      "dependsOn": [],
-      "status": "todo",
-      "source": "docs/DRAWING_ROOM_ELECTRICAL.md"
-    },
-    {
-      "id": "plumbing-scope",
-      "phase": "measure",
-      "trade": "plumbing",
-      "title": "List the plumbing changes wanted",
-      "room": "Kitchen / washrooms / balcony",
-      "detail": "No plumbing change is recorded in the project yet. Decide: kitchen sink and water purifier points, washing machine, washroom fittings, balcony water heater. Add each as its own task.",
-      "dependsOn": [],
-      "status": "todo",
-      "needs": "Owner decision"
-    },
-    {
-      "id": "finalise-layouts",
-      "phase": "measure",
-      "trade": "general",
-      "title": "Freeze the furniture layouts that fix where points and openings go",
-      "room": "Whole home",
-      "detail": "Electrical points follow the furniture (Drawing Room layout C). Confirm layouts before chasing walls.",
-      "dependsOn": [],
-      "status": "todo",
-      "source": "docs/DRAWING_ROOM_TV_WALL.md"
+      "needs": "Owner to visit shops and choose the plank; confirm plank direction, light colour (neutral white proposed) and count (two proposed)",
+      "openItems": [
+        "C3",
+        "C4",
+        "C5",
+        "C6"
+      ],
+      "estimateLow": 0,
+      "estimateHigh": 0,
+      "estimateBasis": "No contractor cost: the owner's own time.",
+      "estimateConfidence": "medium"
     },
     {
       "phase": "measure",
@@ -183,12 +242,152 @@
       "trade": "general",
       "title": "Drawing Room AC: choose the size, the indoor position and where the outdoor unit goes",
       "room": "Drawing Room",
-      "detail": "Owner 2026-10-04: the Drawing Room has no AC; one has to be bought. The room is about 3.35 x 5.34 m (18 sq m, 193 sq ft), but its east side is open to the Lobby/Dining (about 16 sq m more), so the AC cools both unless that opening can be closed. Starting point: an inverter split AC of 1.5 ton if only the Drawing Room is cooled, 2 ton if the opening stays open; ask the dealer to confirm for the top-floor heat and sun on the south window. The electrical plan already has the AC point on the west wall, 3,080 mm from the north wall and 2,300 high, above the west sofa. Decide where the outdoor unit hangs, because that fixes the pipe route and its length. Update 2026-10-04: glass sliding doors between the Drawing Room and the Lobby are decided, so the AC can be sized for the Drawing Room alone (about 1.5 ton), to be confirmed by the dealer. Owner proposal 2026-10-05: stand the outdoor unit on the shoe rack platform at the north end of the entry, in the bottom of the rack, behind a fixed grille, with a service door on the inside (docs/changes/2026-10-05-shoe-rack-ac-bay.md; toggle on the Main entry page). By typical sizes it fits turned lengthwise, not across. Ask the dealer for the chosen model's clearances and the pipe length from the indoor position (about 9-10 m from the west wall, about 4-5 m from the north or east wall near the entry door).",
+      "detail": "Owner 2026-10-04: the Drawing Room has no AC; one has to be bought. The room is about 3.35 x 5.34 m (18 sq m, 193 sq ft), but its east side is open to the Lobby/Dining (about 16 sq m more), so the AC cools both unless that opening can be closed. Starting point: an inverter split AC of 1.5 ton if only the Drawing Room is cooled, 2 ton if the opening stays open; ask the dealer to confirm for the top-floor heat and sun on the south window. The electrical plan already has the AC point on the west wall, 3,080 mm from the north wall and 2,300 high, above the west sofa. Decide where the outdoor unit hangs, because that fixes the pipe route and its length. Update 2026-10-04: glass sliding doors between the Drawing Room and the Lobby are decided, so the AC can be sized for the Drawing Room alone (about 1.5 ton), to be confirmed by the dealer. Owner proposal 2026-10-05: stand the outdoor unit on the shoe rack platform at the north end of the entry, in the bottom of the rack, behind a fixed grille, with a service door on the inside (docs/changes/2026-10-05-shoe-rack-ac-bay.md; toggle on the Main entry page). By typical sizes it fits turned lengthwise, not across. Ask the dealer for the chosen model's clearances and the pipe length from the indoor position (about 9-10 m from the west wall, about 4-5 m from the north or east wall near the entry door). SECOND OPTION (owner mark 2026-10-05, docs/changes/2026-10-05-ac-outdoor-units.md): on a wall bracket outside the Drawing Room west wall at its south end, about 2-3 m of pipe from the indoor unit; the better of the two if that face is open air, a technician can reach it and the society allows it. Neither place is decided.",
       "dependsOn": [
         "site-measure"
       ],
       "status": "todo",
-      "needs": "Owner decision: tonnage and model; indoor wall; outdoor unit position (society rules may apply)"
+      "needs": "Owner decision: tonnage and model; indoor wall; outdoor unit position (society rules may apply)",
+      "openItems": [
+        "C15",
+        "A21",
+        "A22",
+        "D4"
+      ],
+      "estimateLow": 0,
+      "estimateHigh": 0,
+      "estimateBasis": "A decision; the AC itself is priced in the fitting task.",
+      "estimateConfidence": "medium"
+    },
+    {
+      "id": "ac-plan-home",
+      "phase": "measure",
+      "trade": "general",
+      "title": "Whole-home AC plan: which room gets which AC, and where each outdoor unit goes",
+      "room": "Whole home",
+      "detail": "PENDING NOTE: a design for this is being written on 2026-10-05 (docs/changes/2026-10-05-*.md, section \"For the work plan\"). This task holds its place; the tasks from that note replace or extend it. Known today (docs/changes/2026-10-05-ac-outdoor-units.md): Bedroom 3 and Bedroom 2 (Study) have split ACs whose outdoor units stay where they are (owner: about 6 ft and 5 ft up). The owner's 1.5 ton window AC is to go in the east side of the Bedroom 1 balcony on an iron frame. A split AC outdoor unit for Bedroom 1 outside the kitchen north wall, above the window AC, is a proposal (\"can we place\"), not decided; if the window AC replaces the Bedroom 1 split AC, that outdoor unit is not needed. The Bedroom 1 design check wants nothing within 600 mm in front of the window AC; in layout A it blows at the bed, in layout B across its foot. The Drawing Room AC has its own tasks.",
+      "dependsOn": [
+        "site-measure"
+      ],
+      "status": "todo",
+      "needs": "The whole-home AC note. Owner decision C31: window AC only in Bedroom 1, or the split AC as well. Measurements A22 and A23",
+      "source": "docs/changes/2026-10-05-ac-outdoor-units.md",
+      "openItems": [
+        "C31",
+        "A22",
+        "A23",
+        "D4"
+      ],
+      "estimateLow": 0,
+      "estimateHigh": 0,
+      "estimateBasis": "A decision; pending the whole-home AC note.",
+      "estimateConfidence": "medium"
+    },
+    {
+      "id": "bedroom1-design-freeze",
+      "phase": "measure",
+      "trade": "general",
+      "title": "Bedroom 1: choose layout A (bed along the south wall, as now) or layout B (bed head on the south wall)",
+      "room": "Bedroom 1",
+      "detail": "OWNER DECISION, not taken. The design check of 2026-10-05 found that the present layout (A) cannot be fully fixed without moving the bed: one sleeper is against the wall, the medicine cabinet in the old doorway is behind the bed and cannot be used, and the bed is in the balcony opening and the window AC's air stream. Layout B is RECOMMENDED by the design note and drawn behind a button on the Bedroom 1 page: the same bed turned with its head on the south wall, a walkway on both sides (642 and 679 mm; they depend on the room really being 3,353 wide), a dressing table with mirror on the north wall, one bedside table on the east, the medicine cabinet doors starting 1,250 mm above the floor, and lighting track 2 turned to run east-west over the pillows. Its costs: the open floor in the middle of the room goes, the bed head is against the closed doorway (sound from the Lobby), and the Lobby door opens beside the bed. Layout A is workable for one person, but then the medicine cabinet should go somewhere else. Unchanged in both: the door moved to the west end of the Lobby wall, the three wardrobes, the balcony and the window AC. Already changed in the model for both layouts: the hamper and rug moved out of the door swing, and the balcony wardrobe has sliding panels because the window AC blocks a hinged door.",
+      "dependsOn": [
+        "site-measure"
+      ],
+      "status": "todo",
+      "needs": "Owner: A or B, and is the bed used by two people (C35). Tape or scan the room first (A27). Which way the new Lobby door and the washroom door open (C36)",
+      "openItems": [
+        "C35",
+        "A27",
+        "A24",
+        "C36"
+      ],
+      "estimateLow": 0,
+      "estimateHigh": 0,
+      "estimateBasis": "A decision between two drawn layouts; what layout B adds is priced in its own task.",
+      "estimateConfidence": "medium",
+      "source": "docs/changes/2026-10-05-bedroom1-design.md"
+    },
+    {
+      "id": "palette-choose",
+      "phase": "measure",
+      "trade": "general",
+      "title": "Whole-home palette: choose wall colours, the wood shade and the metal finish",
+      "room": "Whole home",
+      "detail": "PENDING NOTE: a design for this is being written on 2026-10-05 (docs/changes/2026-10-05-*.md, section \"For the work plan\"). This task holds its place; the tasks from that note replace or extend it. It fixes the wall and ceiling colours for the painter, the one wood tone for the TV panel wall, the console and the south window (C11, C19), and the laminate and metal finishes for the carpenter and the fabricator.",
+      "dependsOn": [],
+      "status": "todo",
+      "needs": "The whole-home palette note; owner approval of the colours",
+      "openItems": [
+        "C11",
+        "C19"
+      ],
+      "estimateLow": 0,
+      "estimateHigh": 0,
+      "estimateBasis": "A decision; pending the whole-home palette note. Sample pots are small change.",
+      "estimateConfidence": "medium"
+    },
+    {
+      "id": "elec-other-rooms",
+      "phase": "measure",
+      "trade": "electrical",
+      "title": "Electrical point plans for the other rooms",
+      "room": "Other rooms",
+      "detail": "Only the Drawing Room has a full point plan (the Home Office has a preliminary one). PENDING: the electrical plans for all rooms being drawn on 2026-10-05 (docs/changes/2026-10-05-*.md, section \"For the work plan\"). Their tasks replace the two \"other rooms\" placeholders in phases 4 and 8, and settle what happens to the Drawing Room points drawn before the track lights were decided.",
+      "dependsOn": [
+        "finalise-layouts",
+        "electrician-survey"
+      ],
+      "status": "todo",
+      "needs": "The electrical plans note (being written 2026-10-05)",
+      "estimateLow": 0,
+      "estimateHigh": 0,
+      "estimateBasis": "A plan on paper; pending the electrical plans note.",
+      "estimateConfidence": "medium"
+    },
+    {
+      "id": "drawing-switchboard-decide",
+      "phase": "measure",
+      "trade": "electrical",
+      "title": "Drawing Room switchboard behind the TV: decide whether the board or the TV moves",
+      "room": "Drawing Room",
+      "detail": "The phone scan puts the existing switchboard on the north wall at 1,710-1,905 mm from the west wall and 1,235-1,495 high: behind the TV (both sizes) and inside the fluted panelling. The owner decided on 2026-10-04 that there is no switchboard on the east wall, so the earlier answer (move it there) is off the table. Options to settle with the electrician: (a) move the board along the north wall to the strip between the TV and the entry door, if the taped width allows; (b) keep the board and shift the TV west so it clears; (c) keep a small access panel behind the TV for a junction box and bring the switches out to a new plate. Nothing is decided.",
+      "dependsOn": [
+        "electrician-survey",
+        "finalise-layouts"
+      ],
+      "status": "todo",
+      "needs": "Tape the board (A1, A2) and decide the TV size (C12); then choose (C28)",
+      "source": "docs/changes/2026-10-04-existing-electrical.md",
+      "openItems": [
+        "C28",
+        "A1",
+        "A2",
+        "C12"
+      ],
+      "estimateLow": 0,
+      "estimateHigh": 0,
+      "estimateBasis": "A decision with the electrician; the work is priced in the switchboard task.",
+      "estimateConfidence": "medium"
+    },
+    {
+      "id": "lighting-track-mouldings",
+      "phase": "measure",
+      "trade": "general",
+      "title": "Ceiling mouldings: tape them in the Drawing Room, Lobby and Bedroom 3; photograph the other ceilings",
+      "room": "Whole home",
+      "detail": "The phone scans show plaster mouldings (a raised border with corner rings) on the Drawing Room, Lobby and Bedroom 3 ceilings. A surface track cannot be screwed flat across one. On 2026-10-05 every track in those three rooms was moved or shortened in the model so that it sits on flat slab, at least 40 mm from any moulding: nothing crosses a moulding, so no spacers and no cutting of plaster. The mouldings are drawn on the three room pages and in Whole home 3D. Still to do on site: tape how far the raised line is from each wall, how far the corner rings reach and how far the plaster stands down, so the set-out can be trusted. The Bedroom 1, Study and Kitchen ceilings have not been scanned; photograph or scan them, because if they have the same mouldings their tracks need the same treatment. Taking the plaster work off during the repaint, so the tracks could go back to their first positions, was not assumed.",
+      "dependsOn": [],
+      "status": "todo",
+      "needs": "Tape the mouldings (A25); photograph or scan the Bedroom 1, Study and Kitchen ceilings (A26)",
+      "openItems": [
+        "A25",
+        "A26"
+      ],
+      "estimateLow": 0,
+      "estimateHigh": 0,
+      "estimateBasis": "No contractor cost: the owner's own time.",
+      "estimateConfidence": "medium",
+      "source": "docs/changes/2026-10-05-tracks-and-mouldings.md"
     },
     {
       "phase": "measure",
@@ -196,12 +395,23 @@
       "trade": "general",
       "title": "Drawing Room: finalise layered lighting with track lights (no false ceiling)",
       "room": "Drawing Room",
-      "detail": "Owner 2026-10-04, decided: track lights plus the existing chandelier, no false ceiling, no table lamps and no swing-arm wall lights. The room has TWO ceiling fans (one at each end) and the chandelier midway between them. Drawn in the 3D model (Drawing Room, layout C): 48 V magnetic surface track, white, fixed straight to the slab. Track 1, 2.0 m, parallel to the TV wall and 400 mm in front of it: three 7 W spot heads (about 600 lumens each, 24-36 degree beam, anti-glare) aimed at the fluted panel, none at the screen. Track 2, 2.7 m, along the west wall 600 mm off it, over the sofas: two 15 W diffused linear heads (about 1,400 lumens each) between the two fans, and three 12 W READING heads (about 1,000 lumens each, 36 degree beam) pointing straight down at the seats: the two ends of the west sofa and the west end of the south sofa. Reading is done by turning Track 2 up; it is dimmed for TV. Totals: 4.7 m of track, 8 heads, 87 W, about 7,600 lumens, all dimmable. CIRCUITS (owner, later 2026-10-04): the heads on a track cannot be dimmed one by one, only the whole track, so ONE TRACK = ONE CIRCUIT, each with its own 48 V driver and its own wall dimmer: Track 1 on a 60 W driver (21 W of heads), Track 2 on a 100 W driver (66 W of heads), both hidden where they can be reached (the cap of the panel wall). Track 2 keeps its reading and diffused heads together on one dimmer: turn the whole track up to read, down for TV; the chandelier carries the general light. The mix of light on a track is fixed by which heads are clipped on. Colour: warm white 3000 K for the spots; the diffused and reading heads may be the tunable 3-in-1 type, neutral white being better for long reading. Mood light: dim the tracks, and use colour-changing (RGB + warm white) LED strip for the strip on top of the TV panel and the glow under the south sofa. Keep downward heads out from under the fan blades. The fan and chandelier positions in the model are assumed.",
+      "detail": "Owner 2026-10-04, decided: track lights plus the existing chandelier, no false ceiling, no table lamps and no swing-arm wall lights. The room has TWO ceiling fans (one at each end) and the chandelier midway between them. Drawn in the 3D model (Drawing Room, layout C): 48 V magnetic surface track, white, fixed straight to the slab. Track 1, 1.5 m, parallel to the TV wall and 540 mm from it (moved inboard of the ceiling moulding 2026-10-05): three 7 W spot heads (about 600 lumens each, 24-36 degree beam, anti-glare) aimed at the fluted panel, none at the screen. Track 2, 2.45 m (stops short of the corner ring), along the west wall 640 mm off it, over the sofas: two 15 W diffused linear heads (about 1,400 lumens each) between the two fans, and three 12 W READING heads (about 1,000 lumens each, 36 degree beam) pointing straight down at the seats: the two ends of the west sofa and the west end of the south sofa. Reading is done by turning Track 2 up; it is dimmed for TV. Totals: 3.95 m of track, 8 heads, 87 W, about 7,600 lumens, all dimmable. CIRCUITS (owner, later 2026-10-04): the heads on a track cannot be dimmed one by one, only the whole track, so ONE TRACK = ONE CIRCUIT, each with its own 48 V driver and its own wall dimmer: Track 1 on a 60 W driver (21 W of heads), Track 2 on a 100 W driver (66 W of heads), both hidden where they can be reached (the cap of the panel wall). Track 2 keeps its reading and diffused heads together on one dimmer: turn the whole track up to read, down for TV; the chandelier carries the general light. The mix of light on a track is fixed by which heads are clipped on. Colour: warm white 3000 K for the spots; the diffused and reading heads may be the tunable 3-in-1 type, neutral white being better for long reading. Mood light: dim the tracks, and use colour-changing (RGB + warm white) LED strip for the strip on top of the TV panel and the glow under the south sofa. Keep downward heads out from under the fan blades.",
       "dependsOn": [
-        "finalise-layouts"
+        "finalise-layouts",
+        "lighting-track-mouldings"
       ],
       "status": "todo",
-      "needs": "MEASURE: the fan blade diameter and how far the fans hang (positions are from the phone scan). Buy track, heads and the two drivers from one maker so they fit each other; check the dimmer type matches the driver"
+      "needs": "MEASURE: the fan blade diameter and how far the fans hang (positions are from the phone scan), and the ceiling mouldings (A25). Buy track, heads and the two drivers from one maker so they fit each other; check the dimmer type matches the driver",
+      "openItems": [
+        "C17",
+        "C27",
+        "C18",
+        "A25"
+      ],
+      "estimateLow": 0,
+      "estimateHigh": 0,
+      "estimateBasis": "No contractor cost: the owner's own time.",
+      "estimateConfidence": "medium"
     },
     {
       "phase": "measure",
@@ -209,12 +419,45 @@
       "trade": "general",
       "title": "Lobby / Dining: finalise track lighting (no false ceiling)",
       "room": "Lobby / Dining",
-      "detail": "Owner 2026-10-04: track lights in the Lobby too, for flexibility. Drawn in the 3D model: the same 48 V magnetic surface track as the Drawing Room, white, fixed to the slab, in two runs that hug the walls so the middle of the ceiling stays free. Track 1, 2.6 m, along the south wall about 500 mm off it, east of the toilet door: two 7 W spots on the wall and two 15 W diffused heads for general light. Track 2, 1.5 m, in front of the ironing storage on the east wall: one 7 W spot on the storage doors and one 12 W down spot over the pulled-out ironing board. The linear pendant over the dining table stays. Totals: 4.1 m of track, 6 heads, 63 W, about 5,600 lumens, warm white 3000 K. Each track is its own circuit with its own 48 V 60 W driver and its own wall dimmer (owner 2026-10-04: the heads on a track dim together); the pendant is a third switch. The old strip lights of the earlier design are removed from the model. Use the same maker as the Drawing Room so heads can be swapped between rooms.",
+      "detail": "Owner 2026-10-04: track lights in the Lobby too, for flexibility. Drawn in the 3D model: the same 48 V magnetic surface track as the Drawing Room, white, fixed to the slab, in two runs that hug the walls so the middle of the ceiling stays free. Track 1, 2.0 m (shortened 2026-10-05 to stop before the corner ring), along the south wall 537 mm off it, east of the toilet door: two 7 W spots on the wall and two 15 W diffused heads for general light. Track 2, 1.5 m, in front of the ironing storage, 893 mm off the east wall: one 7 W spot on the storage doors and one 12 W down spot over the pulled-out ironing board. The pendant over the dining table has NO ceiling point above the table (see the pendant decision task). Totals: 3.5 m of track, 6 heads, 63 W, about 5,600 lumens, warm white 3000 K. Each track is its own circuit with its own 48 V 60 W driver and its own wall dimmer (owner 2026-10-04: the heads on a track dim together); the pendant is a third switch. The old strip lights of the earlier design are removed from the model. Use the same maker as the Drawing Room so heads can be swapped between rooms.",
       "dependsOn": [
-        "finalise-layouts"
+        "finalise-layouts",
+        "lighting-track-mouldings"
       ],
       "status": "todo",
-      "needs": "Is there a ceiling fan in the Lobby, and where? Confirm the two track positions; where the driver hides"
+      "needs": "The centre medallion is taken as a ceiling fan (\"probable, from the scan\"): confirm, with its blade size (C22). Does the domed light on the small rosette stay (C34)? Tape the mouldings (A25). Where the drivers hide",
+      "openItems": [
+        "C22",
+        "C27",
+        "A25",
+        "C34"
+      ],
+      "estimateLow": 0,
+      "estimateHigh": 0,
+      "estimateBasis": "No contractor cost: the owner's own time.",
+      "estimateConfidence": "medium"
+    },
+    {
+      "id": "lobby-pendant-decide",
+      "phase": "measure",
+      "trade": "general",
+      "title": "Lobby dining pendant: decide how it is fed and fixed",
+      "room": "Lobby / Dining",
+      "detail": "The pendant is drawn over the dining table, 2,200 mm from the west wall and 620 from the north wall, but there is NO ceiling point there: the two real points are on the room's centre line about 1,600 from the north wall, and the nearer one carries the fan. Its long bar canopy (750 mm as drawn) would also lie across the north moulding, and it hangs beside the fan (the canopy is about 100 mm outside the circle of 1,200 mm blades; a 1,400 mm fan would reach it). Options: (a) a new ceiling point over the table with a small round canopy (up to about 200 mm sits on flat ceiling), fed on the surface or in the plaster, since the slab cannot be chased; (b) move the pendant or the table; (c) a different fitting, or rely on the tracks. A swag from the domed-light point 1,860 mm away is possible but would look poor. Not decided; the table and pendant are still drawn as before.",
+      "dependsOn": [
+        "lighting-track-mouldings"
+      ],
+      "status": "todo",
+      "needs": "Owner decision C33; whether the fan stays at the centre medallion and its blade size (C22)",
+      "source": "docs/changes/2026-10-05-tracks-and-mouldings.md",
+      "openItems": [
+        "C33",
+        "C22"
+      ],
+      "estimateLow": 0,
+      "estimateHigh": 0,
+      "estimateBasis": "A decision; the new feed is priced in its own task.",
+      "estimateConfidence": "medium"
     },
     {
       "phase": "measure",
@@ -222,12 +465,23 @@
       "trade": "general",
       "title": "Bedroom 1: track lighting (no false ceiling)",
       "room": "Bedroom 1",
-      "detail": "Owner 2026-10-04: the same track lights as the Drawing Room and Lobby. Drawn in the 3D model (config bedroom1LightingConfig.js): two runs of 48 V magnetic surface track on the slab, white, warm white 3000 K, each run its own circuit with its own driver and wall dimmer. Track 1, 2.6 m, 800 mm off the west wall along the wardrobe: three 7 W spots on the wardrobe doors (they light the inside when the doors are open) and two 15 W diffused heads for soft general light; 51 W on a 100 W driver. Track 2, 1.2 m, over the bed 750 mm from the headboard wall: one 12 W reading head straight down over each sleeper's chest (the head is further east, out of the beam) and a 7 W spot washing the headboard wall; 31 W on a 60 W driver. Totals: 3.8 m of track, 8 heads, 82 W, about 7,200 lumens (660 per square metre), all dimmable. The ceiling fan is ASSUMED at the room centre with 1200 mm blades; both tracks keep at least 270 mm from its blades. The generic strip lights of the earlier overlay are removed from the model.",
+      "detail": "Owner 2026-10-04: the same track lights as the Drawing Room and Lobby. Drawn in the 3D model (config bedroom1LightingConfig.js): two runs of 48 V magnetic surface track on the slab, white, warm white 3000 K, each run its own circuit with its own driver and wall dimmer. Track 1, 2.6 m, 800 mm off the west wall along the wardrobe: three 7 W spots on the wardrobe doors (they light the inside when the doors are open) and two 15 W diffused heads for soft general light; 51 W on a 100 W driver. Track 2, 1.2 m, over the bed 750 mm from the headboard wall: one 12 W reading head straight down over each sleeper's chest (the head is further east, out of the beam) and a 7 W spot washing the headboard wall; 31 W on a 60 W driver. Totals: 3.8 m of track, 8 heads, 82 W, about 7,200 lumens (660 per square metre), all dimmable. The ceiling fan is ASSUMED at the room centre with 1200 mm blades; both tracks keep at least 270 mm from its blades. The generic strip lights of the earlier overlay are removed from the model. IF LAYOUT B is chosen (not decided): track 1 stays; track 2 turns to run east-west, 720 mm from the south wall, from 1,300 to 2,520 mm from the west wall, with a reading head over each sleeper and a spot on the headboard wall between them.",
       "dependsOn": [
-        "finalise-layouts"
+        "finalise-layouts",
+        "lighting-track-mouldings",
+        "bedroom1-design-freeze"
       ],
       "status": "todo",
-      "needs": "MEASURE: where the ceiling fan is, its blade size and drop (OPEN_ITEMS C23). Confirm the wardrobe track position (800 off the west wall) and that the bed track may run over the bed"
+      "needs": "MEASURE: where the ceiling fan is, its blade size and drop (OPEN_ITEMS C23). Confirm the wardrobe track position (800 off the west wall) and that the bed track may run over the bed. The ceiling has not been scanned: if it has mouldings like the Drawing Room, the track ends have to move (A26)",
+      "openItems": [
+        "C23",
+        "A26",
+        "C35"
+      ],
+      "estimateLow": 0,
+      "estimateHigh": 0,
+      "estimateBasis": "No contractor cost: the owner's own time.",
+      "estimateConfidence": "medium"
     },
     {
       "phase": "measure",
@@ -235,12 +489,22 @@
       "trade": "general",
       "title": "Bedroom 3: track lighting (no false ceiling)",
       "room": "Bedroom 3",
-      "detail": "Owner 2026-10-04. Drawn in the 3D model (config bedroom3LightingConfig.js): two runs of 48 V magnetic surface track on the slab, white, warm white 3000 K, each its own circuit with its own 60 W driver and wall dimmer, both 3.05 m long from 300 mm off the west wall to 150 mm short of the east cabinet bridge (which reaches 2650 mm). Track 1, 650 mm off the north wall: a 15 W diffused head, a 7 W spot on the north-wall art, a 12 W reading head aimed at the north sleeper's chest from the foot side (about 24 degrees of tilt, so the lamp is not over the eyes), and a 12 W down light over the dressing spot in front of the mirror cabinet; 46 W. Track 2, 626 mm off the south wall: two 7 W spots on the wardrobe fronts (the cabinet through the south wall), a 15 W diffused head and the south sleeper's 12 W reading head aimed the same way; 41 W. Totals: 6.1 m of track, 8 heads, 87 W, about 7,600 lumens (515 per square metre). The ceiling fan is ASSUMED at the room centre until the phone-scan point is patched in; the tracks pass the checks with the fan anywhere within 400 mm of the centre. The generic strip lights of the earlier overlay are removed from the model.",
+      "detail": "Owner 2026-10-04. Drawn in the 3D model (config bedroom3LightingConfig.js): two runs of 48 V magnetic surface track on the slab, white, warm white 3000 K, each its own circuit with its own 60 W driver and wall dimmer, both 2.75 m long from 600 mm off the west wall (moved inboard of the mouldings and corner rings 2026-10-05) to 150 mm short of the east cabinet bridge (which reaches 2650 mm). Track 1, 820 mm off the north wall: a 15 W diffused head, a 7 W spot on the north-wall art, a 12 W reading head aimed at the north sleeper's chest from the foot side (about 19 degrees of tilt, so the lamp is not over the eyes), and a 12 W down light over the dressing spot in front of the mirror cabinet; 46 W. Track 2, 820 mm off the south wall: two 7 W spots on the wardrobe fronts (the cabinet through the south wall), a 15 W diffused head and the south sleeper's 12 W reading head aimed the same way; 41 W. Totals: 5.5 m of track, 8 heads, 87 W, about 7,600 lumens (515 per square metre). The ceiling fan is at the phone-scan point (2030 from the west wall, 1820 from the north wall); the tracks pass the checks with it anywhere within 150 mm of that point. Blade size and drop are still assumed. The generic strip lights of the earlier overlay are removed from the model.",
       "dependsOn": [
-        "finalise-layouts"
+        "finalise-layouts",
+        "lighting-track-mouldings"
       ],
       "status": "todo",
-      "needs": "MEASURE: the ceiling fan point from the phone scan (OPEN_ITEMS C24), its blade size and drop. Confirm the aimed reading heads"
+      "needs": "MEASURE: the fan blade size and drop (C24, A19) and the mouldings (A25). Confirm the aimed reading heads",
+      "openItems": [
+        "C24",
+        "A19",
+        "A25"
+      ],
+      "estimateLow": 0,
+      "estimateHigh": 0,
+      "estimateBasis": "No contractor cost: the owner's own time.",
+      "estimateConfidence": "medium"
     },
     {
       "phase": "measure",
@@ -250,10 +514,19 @@
       "room": "Study",
       "detail": "Owner 2026-10-04. Drawn in the 3D model (config studyLightingConfig.js) for the kids layout: two runs of 48 V magnetic surface track on the slab, white, warm white 3000 K, each its own circuit with its own driver and wall dimmer. Track 1, 2.6 m, 850 mm off the north wall along the bookshelf: a 7 W spot on each glazed bay and a 15 W diffused head; 36 W on a 60 W driver. Track 2, 2.6 m, 540 mm off the east wall: a 12 W reading head aimed at the child in bed from the foot side (16 degrees of tilt), a 12 W down light on the desk top, and two 15 W diffused heads; 54 W on a 100 W driver. Totals: 5.2 m of track, 8 heads, 90 W, about 8,000 lumens (500 per square metre). The ceiling fan is ASSUMED at the room centre with 1200 mm blades. The balcony office is lit separately. The generic strip lights of the earlier overlay are removed from the model.",
       "dependsOn": [
-        "finalise-layouts"
+        "finalise-layouts",
+        "lighting-track-mouldings"
       ],
       "status": "todo",
-      "needs": "MEASURE: where the ceiling fan is, its blade size and drop (OPEN_ITEMS C25). Settle the kids layout first: the bed/desk track follows the furniture"
+      "needs": "MEASURE: where the ceiling fan is, its blade size and drop (OPEN_ITEMS C25). Settle the kids layout first: the bed/desk track follows the furniture. The ceiling has not been scanned: if it has mouldings like the Drawing Room, the track ends have to move (A26)",
+      "openItems": [
+        "C25",
+        "A26"
+      ],
+      "estimateLow": 0,
+      "estimateHigh": 0,
+      "estimateBasis": "No contractor cost: the owner's own time.",
+      "estimateConfidence": "medium"
     },
     {
       "phase": "measure",
@@ -263,10 +536,39 @@
       "room": "Kitchen",
       "detail": "Owner 2026-10-04. Drawn in the 3D model (config kitchenLightingConfig.js): one run of 48 V magnetic surface track on the slab down the middle of the walkway (1187 mm from the west wall, between the top wall cabinets that reach the ceiling), 3.95 m from near the window to near the door, neutral white 4000 K: three 15 W diffused heads for shadow-free light along both counters, a 12 W down light aimed at the front of the hob and one aimed at the sink (both under 30 degrees of tilt, onto the worktop); 69 W on a 100 W driver, its own wall dimmer. The under-cabinet LED strips of the cabinet design stay as a second dimmable circuit: a ceiling light cannot reach the back of a counter under a cabinet that goes to the ceiling. Totals from the track: 5 heads, about 6,200 lumens (560 per square metre). There is no ceiling fan in the kitchen (the exhaust fan is in the window). If the hob or the sink moves, the two down lights move with them.",
       "dependsOn": [
-        "finalise-layouts"
+        "finalise-layouts",
+        "lighting-track-mouldings"
       ],
       "status": "todo",
-      "needs": "Confirm 4000 K for the kitchen (the other rooms are 3000 K) and that there is no ceiling fan (OPEN_ITEMS C26). Where the driver hides (top of the wall cabinets)"
+      "needs": "Confirm 4000 K for the kitchen (the other rooms are 3000 K) and that there is no ceiling fan (OPEN_ITEMS C26). Where the driver hides (top of the wall cabinets). The ceiling has not been scanned: if it has mouldings like the Drawing Room, the track ends have to move (A26)",
+      "openItems": [
+        "C26",
+        "A26"
+      ],
+      "estimateLow": 0,
+      "estimateHigh": 0,
+      "estimateBasis": "No contractor cost: the owner's own time.",
+      "estimateConfidence": "medium"
+    },
+    {
+      "id": "window-screen-trial",
+      "phase": "measure",
+      "trade": "general",
+      "title": "Drawing Room south window: trial one ready-made outdoor roll-up blind on one section",
+      "room": "Drawing Room",
+      "detail": "Owner 2026-10-05: before choosing between bamboo and an outdoor screen, buy ONE ready-made outdoor HDPE roll-up blind (the rope roll-up \"waterproof chick\" type, sold by width in feet) and hang it outside one section of the south window. A 3 ft (914 mm) piece suits one section (the bays are about 934 / 899 / 867 wide; drop about 1,500 from the head to the sill). Check over a week: that the rolled-up blind fits inside the fixed top band (about 390) and clears the outward-opening shutters, that the cord can be worked from inside, how it flaps in wind, heat and glare at 3-5 pm, and the look from outside. Nothing else has to be done first.",
+      "dependsOn": [],
+      "status": "todo",
+      "needs": "Buy one 3 ft piece; note the result (OPEN_ITEMS C20)",
+      "source": "work-plan/OPEN_ITEMS.md",
+      "openItems": [
+        "C20",
+        "B6"
+      ],
+      "estimateLow": 500,
+      "estimateHigh": 2000,
+      "estimateBasis": "trial blind: 1 each x Rs 800-1,800. One ready-made piece for one section.",
+      "estimateConfidence": "medium"
     },
     {
       "id": "shoe-rack-wall",
@@ -280,7 +582,15 @@
         "society-permission"
       ],
       "status": "todo",
-      "needs": "Structural approval; measure the opening width and the window height"
+      "needs": "Structural approval; measure the opening width and the window height",
+      "openItems": [
+        "A3",
+        "C2"
+      ],
+      "estimateLow": 9500,
+      "estimateHigh": 19500,
+      "estimateBasis": "window and wall, taken as the rack size 865 x 2134: 19.9 sq ft x Rs 120-220; lintel: 1 each x Rs 5,000-10,000; reveals: 1 each x Rs 2,500-5,000. The opening is not measured (A3).",
+      "estimateConfidence": "low"
     },
     {
       "id": "shoe-rack-support",
@@ -291,25 +601,90 @@
       "detail": "Owner 2026-10-04: before the shoe rack goes in, something has to carry it, ideally an iron angle. A welded angle frame (a base the size of the rack, with brackets or legs) anchored into the wall and the slab edge, set level. Because it sits in an opening to the outside, use galvanised or stainless angle, or mild steel with anti-rust primer and two coats of paint. The fabricator sizes the angle for a full rack of shoes plus the cabinet itself; ask the engineer to confirm the fixing into the wall. If the AC outdoor unit goes under the rack (owner proposal 2026-10-05, not decided), the frame becomes a platform projecting about 900 mm beyond the outer wall and carries about 35 kg more with vibration: the engineer and the fabricator must size it for that, with anti-vibration pads, a fall to the outside for rain, and a fixed welded grille on three sides.",
       "dependsOn": [
         "shoe-rack-wall",
-        "engineer-check"
+        "engineer-check",
+        "ac-choose"
       ],
       "status": "todo",
-      "needs": "Final shoe rack size, so the frame matches it: 15 in (381 mm) deep is decided; height about 6 1/2 ft and the width are to be confirmed"
+      "needs": "Final shoe rack size, so the frame matches it: 15 in (381 mm) deep is decided; height about 6 1/2 ft and the width are to be confirmed",
+      "openItems": [
+        "C1",
+        "D3"
+      ],
+      "estimateLow": 3000,
+      "estimateHigh": 5500,
+      "estimateBasis": "angle frame, about: 30 kg x Rs 110-170. Weight assumed for a plain frame the size of the rack; an AC platform (proposal) would be two to three times this.",
+      "estimateConfidence": "low"
+    },
+    {
+      "id": "lobby-switchboard-move",
+      "phase": "civil",
+      "trade": "electrical",
+      "title": "Lobby: move the switchboard out of the way of the new Bedroom 1 doorway",
+      "room": "Lobby / Dining",
+      "detail": "The Lobby switchboard is on the north wall about 375-575 mm from the west corner and 1,215-1,495 high (phone scan), inside the planned doorway (100-1,000 mm). Before the wall is cut: find out what it controls, choose its new place (for example just east of the new door frame, on the latch side), extend the wires in conduit to a modular box there, and make the old position dead. Done in the civil phase because the wall cannot be cut until the board is gone.",
+      "dependsOn": [
+        "electrician-survey",
+        "bedroom1-design-freeze"
+      ],
+      "status": "todo",
+      "needs": "What the board controls and where it goes (A14, C30)",
+      "source": "docs/changes/2026-10-04-existing-electrical.md",
+      "openItems": [
+        "A14",
+        "C30"
+      ],
+      "estimateLow": 4000,
+      "estimateHigh": 9000,
+      "estimateBasis": "switchboard moved: 1 each x Rs 4,000-9,000. What the board controls is not known (A14).",
+      "estimateConfidence": "low"
     },
     {
       "id": "lobby-bedroom3-opening",
       "phase": "civil",
       "trade": "civil",
-      "title": "Lobby northwest corner: cut a new doorway into Bedroom 3",
-      "room": "Lobby / Bedroom 3",
-      "detail": "Owner 2026-10-04: this doorway does not exist yet. Mark the new opening at the northwest corner of the Lobby into Bedroom 3 on site, agreeing its exact position and finished size with the door installer. Check for services in the wall before cutting. Form the opening with the support specified in the structural approval, remove debris and prepare the jambs and head for the frame. Coordinate frame fixing and making good with the door installer.",
+      "title": "Lobby north wall, west end: cut the new doorway for the moved Bedroom 1 door",
+      "room": "Bedroom 1 / Lobby",
+      "detail": "Owner 2026-10-04: this doorway does not exist yet. The Bedroom 1 door moves to the west end of the wall between the Lobby and Bedroom 1: 900 wide x 2,100 high, starting 100 mm from the Lobby's west corner, as drawn in the 3D model (not measured). Today's door is about 2,580-3,530 mm from that corner (phone scan). NOTE: this task was first recorded as a doorway \"into Bedroom 3\"; Bedroom 3 does not touch this wall, so it is read as the Bedroom 1 door (OPEN_ITEMS E6 asks the owner to confirm). The Lobby switchboard stands in this stretch of wall (about 375-575 mm from the corner, 1,215-1,495 high) and must be moved first. Mark the opening on site with the door installer, check for other services in the wall, form the opening with the support the engineer specifies, remove debris and prepare the jambs and head for the frame.",
       "dependsOn": [
         "engineer-check",
         "society-permission",
-        "electrician-survey"
+        "electrician-survey",
+        "lobby-switchboard-move",
+        "bedroom1-design-freeze"
       ],
       "status": "todo",
-      "needs": "Confirm exact opening position, width and height on site; structural approval and any required support; door frame type and fixing sequence"
+      "needs": "Structural approval; the Lobby switchboard moved first (A14); exact position, width and height taped on site (A24); hinge side and swing (C36): hinged on the west jamb it parks against the west wall and suits both bedroom layouts",
+      "openItems": [
+        "A24",
+        "E6",
+        "C36"
+      ],
+      "estimateLow": 9500,
+      "estimateHigh": 19500,
+      "estimateBasis": "doorway 900 x 2100: 20.3 sq ft x Rs 120-220; lintel: 1 each x Rs 5,000-10,000; reveals: 1 each x Rs 2,500-5,000. Wall thickness not measured.",
+      "estimateConfidence": "low"
+    },
+    {
+      "id": "bedroom1-old-door-close",
+      "phase": "civil",
+      "trade": "civil",
+      "title": "Bedroom 1: take out the old door and close the old doorway on the Lobby side",
+      "room": "Bedroom 1 / Lobby",
+      "detail": "Owner 2026-09-29: once the new doorway is open, remove the old door and frame (about 2,580-3,530 mm from the Lobby's west corner by the phone scan) and close the opening with a 12 mm fibre-cement sheet on a frame, flush with the Lobby face, jointed and ready for paint. The cavity left on the bedroom side becomes the medicine cabinet (carpentry task). The opening is about 0.83 m wide x 2.1 m high, scaled from the plan drawing. If layout B is chosen the bed head stands against this infill: add a layer of acoustic board in it.",
+      "dependsOn": [
+        "lobby-bedroom3-opening"
+      ],
+      "status": "todo",
+      "needs": "Tape the old doorway and the wall thickness (A24)",
+      "source": "docs/CURRENT_STATE.md",
+      "openItems": [
+        "A24",
+        "C35"
+      ],
+      "estimateLow": 2500,
+      "estimateHigh": 5500,
+      "estimateBasis": "old doorway about 826 x 2100: 18.7 sq ft x Rs 160-280. Opening scaled from the plan drawing.",
+      "estimateConfidence": "low"
     },
     {
       "id": "north-wall-door",
@@ -320,11 +695,19 @@
       "detail": "Opening 500 wide x 1800 high at the west end of the north wall (100-600 mm from the west wall), with a lintel, into the west half of the entry pocket. Kept only as wide as a person needs (490 clear) so it can be hidden in the wall panelling. Behind this wall is an open shaft with no floor: fix a barrier across the opening as soon as it is cut and keep it until the steel floor is in.",
       "dependsOn": [
         "engineer-check",
-        "pocket-check"
+        "pocket-check",
+        "society-permission"
       ],
       "status": "todo",
       "needs": "Structural approval",
-      "source": "docs/ENTRY_WALL_CAVITY.md"
+      "source": "docs/ENTRY_WALL_CAVITY.md",
+      "openItems": [
+        "A6"
+      ],
+      "estimateLow": 8500,
+      "estimateHigh": 17500,
+      "estimateBasis": "opening 500 x 1800: 9.7 sq ft x Rs 120-220; lintel: 1 each x Rs 5,000-10,000; reveals: 1 each x Rs 2,500-5,000. In a 9-inch wall; the engineer may ask for more support.",
+      "estimateConfidence": "low"
     },
     {
       "id": "west-cabinet-frame",
@@ -340,7 +723,17 @@
       ],
       "status": "todo",
       "needs": "SAFETY: this is a floor over a drop. A structural engineer must design and sign it off (as a floor, typically 200-300 kg per square metre, not for one 100 kg person). Keep the society permission in writing. Check for pipes or cables in the shaft that still need access. Barrier the opening and stop anything falling down the shaft while work is open.",
-      "source": "docs/drawings/west-cabinet-platform.png"
+      "source": "docs/drawings/west-cabinet-platform.png",
+      "openItems": [
+        "A5",
+        "B1",
+        "C10",
+        "D3"
+      ],
+      "estimateLow": 6500,
+      "estimateHigh": 11000,
+      "estimateBasis": "steel floor, about: 62 kg x Rs 110-170. Angles, hollow section and 5 mm plate over about 650 x 1105; the engineer's design decides the real weight. A cast slab is the alternative.",
+      "estimateConfidence": "low"
     },
     {
       "id": "pocket-partition",
@@ -350,10 +743,19 @@
       "room": "Main entry",
       "detail": "Full-height partition about 736 mm from the Drawing Room west wall line; the east cabinet stays open to the entry gallery.",
       "dependsOn": [
-        "pocket-check"
+        "pocket-check",
+        "engineer-check"
       ],
       "status": "todo",
-      "source": "docs/ENTRY_WALL_CAVITY.md"
+      "source": "docs/ENTRY_WALL_CAVITY.md",
+      "openItems": [
+        "A5",
+        "A8"
+      ],
+      "estimateLow": 6000,
+      "estimateHigh": 10000,
+      "estimateBasis": "partition: 32.1 sq ft x Rs 190-300. Length taken as the pocket depth; not measured.",
+      "estimateConfidence": "low"
     },
     {
       "id": "main-gate",
@@ -367,7 +769,16 @@
         "site-measure"
       ],
       "status": "todo",
-      "needs": "Measure the opening (OPEN_ITEMS A7). Choose the grille pattern (bars, louvres or perforated sheet), the finish, the lock and the hinge side; get a fabricator quote. Confirm with the society if the outer look matters"
+      "needs": "Measure the opening (OPEN_ITEMS A7). Choose the grille pattern (bars, louvres or perforated sheet), the finish, the lock and the hinge side; get a fabricator quote. Confirm with the society if the outer look matters",
+      "openItems": [
+        "A7",
+        "C9",
+        "D3"
+      ],
+      "estimateLow": 39000,
+      "estimateHigh": 68000,
+      "estimateBasis": "door for the 905 x 2200 opening: 21.4 sq ft x Rs 1,600-2,600; lock: 1 each x Rs 5,000-12,000. Opening from the plan, not measured (A7).",
+      "estimateConfidence": "low"
     },
     {
       "id": "shaft-cover",
@@ -381,7 +792,35 @@
         "society-permission"
       ],
       "status": "todo",
-      "needs": "Choose the type; measure the opening; check with the society, since the shaft is shared"
+      "needs": "Choose the type; measure the opening; check with the society, since the shaft is shared",
+      "openItems": [
+        "A7",
+        "C8",
+        "B4",
+        "D3"
+      ],
+      "estimateBasis": "Not estimated: The cover is not measured and has no size in the model (A7); the type is not chosen (C8)."
+    },
+    {
+      "id": "bedroom3-cupboard-remove",
+      "phase": "civil",
+      "trade": "carpentry",
+      "title": "Bedroom 3: take out the existing corner cupboard",
+      "room": "Bedroom 3",
+      "detail": "The phone scan shows a cupboard in the north-east corner (690 deep x 970 along the north wall, 1,990 high). The planned mirror dressing cabinet stands in its footprint and replaces it. Empty it, dismantle it and make good the wall and floor behind. The existing olive wardrobe in the south bay and the existing AC stay.",
+      "dependsOn": [
+        "finalise-layouts"
+      ],
+      "status": "todo",
+      "needs": "Confirm the existing AC stays (A20)",
+      "source": "docs/SITE_SCAN_2026-10-04_BEDROOM3.md",
+      "openItems": [
+        "A20"
+      ],
+      "estimateLow": 1500,
+      "estimateHigh": 3500,
+      "estimateBasis": "half a load of debris: 0.5 load x Rs 3,500-6,500. Labour to dismantle is small if it is a wooden cupboard; more if masonry.",
+      "estimateConfidence": "low"
     },
     {
       "id": "debris",
@@ -389,14 +828,20 @@
       "trade": "civil",
       "title": "Remove debris and make good the cut edges",
       "room": "Whole home",
-      "detail": "Plaster the reveals of every new opening ready for frames.",
+      "detail": "Plaster the reveals of every new opening ready for frames. Cart away the old window, the old Bedroom 1 door and frame and the Bedroom 3 cupboard.",
       "dependsOn": [
         "shoe-rack-wall",
         "north-wall-door",
         "lobby-bedroom3-opening",
-        "pocket-partition"
+        "bedroom1-old-door-close",
+        "pocket-partition",
+        "bedroom3-cupboard-remove"
       ],
-      "status": "todo"
+      "status": "todo",
+      "estimateLow": 7000,
+      "estimateHigh": 26000,
+      "estimateBasis": "loads: 2 to 4 load x Rs 3,500-6,500. Three openings, one closed doorway and the old window.",
+      "estimateConfidence": "low"
     },
     {
       "id": "plumbing-rough",
@@ -408,22 +853,32 @@
       "dependsOn": [
         "plumbing-scope"
       ],
-      "status": "todo"
+      "status": "todo",
+      "estimateBasis": "Not estimated: No plumbing change is listed yet (plumbing-scope)."
     },
     {
       "id": "elec-chase-drawing",
       "phase": "electrical-rough",
       "trade": "electrical",
-      "title": "Chase walls and fix conduits and boxes for the 17 Drawing Room points",
+      "title": "Drawing Room: chase walls and fix conduits and boxes for the remaining points of the 17-point plan",
       "room": "Drawing Room",
-      "detail": "TV box behind the screen, media and router points behind the TV console with a 50 mm HDMI conduit between them, main switchboard on the east wall, AC point, sofa charging points, lights and the closet light.",
+      "detail": "The 17-point plan (docs/DRAWING_ROOM_ELECTRICAL.md) less the points that have their own tasks: the TV wall points (N1, N2, N4), the AC point (W1), the optional floor box (F1) and the track feeds. Left here: the sofa charging points, the utility and spare sockets, the sofa glow socket, the chandelier point and the closet light. NOT to be built as drawn: the main switchboard on the east wall (E1), dropped by the owner on 2026-10-04; what happens to the existing board is open (C28). The plan was drawn before the track lights were decided (no table lamps, no swing-arm wall lights), so the wall uplight (W2) and the reading light (W5) are probably no longer wanted: to be settled with the electrical plans for all rooms.",
       "dependsOn": [
         "electrician-survey",
         "finalise-layouts",
-        "north-wall-door"
+        "north-wall-door",
+        "drawing-switchboard-decide"
       ],
       "status": "todo",
-      "source": "docs/DRAWING_ROOM_ELECTRICAL.md"
+      "source": "docs/DRAWING_ROOM_ELECTRICAL.md",
+      "needs": "Decision C28 (the switchboard); the electrical plans note for which wall-light points stay",
+      "openItems": [
+        "C28"
+      ],
+      "estimateLow": 13000,
+      "estimateHigh": 22000,
+      "estimateBasis": "light points: 4 point x Rs 900-1,500; socket and charging points: 5 point x Rs 1,200-2,000; 6/16 A points: 2 point x Rs 1,800-3,000. From the 17-point plan less the TV wall, AC, floor box and the dropped east switchboard; some points may go once the electrical plans note arrives.",
+      "estimateConfidence": "low"
     },
     {
       "id": "elec-tv-wall",
@@ -438,7 +893,14 @@
       ],
       "status": "todo",
       "needs": "Final TV size and bracket position, so the box is hidden for both the 55 and the 65 inch TV",
-      "source": "docs/DRAWING_ROOM_ELECTRICAL.md"
+      "source": "docs/DRAWING_ROOM_ELECTRICAL.md",
+      "openItems": [
+        "C12"
+      ],
+      "estimateLow": 10000,
+      "estimateHigh": 17500,
+      "estimateBasis": "socket boxes: 3 point x Rs 1,800-3,000; own circuit: 1 each x Rs 4,500-8,000; conduit: 1 m x Rs 250-450.",
+      "estimateConfidence": "medium"
     },
     {
       "id": "elec-drawing-switchboard",
@@ -446,12 +908,45 @@
       "trade": "electrical",
       "title": "Replace the old Drawing Room switchboard with a modular switch plate",
       "room": "Drawing Room",
-      "detail": "Owner 2026-10-04 (electrician): the existing switchboard is on the north wall on the east side of the TV, about 10 cm from the wall end, at about the middle height of the TV, and it falls inside the area the panelling will cover. It controls this room's fans and lights and has a power socket. Replace it in the same place with a modular plate: take out the old board, fit a modular metal box of the right size (count the modules: one per light switch, two per fan regulator, two per socket, plus one or two spare), re-terminate the existing wires and check each for damaged insulation and a proper earth. Use step or electronic fan regulators of the same modular range. Set the new box forward by the panel build-up (18 mm panel plus the 20-25 mm batten gap) with a box extension ring, so the plate ends up flush on the panel face. The plate itself is fitted after painting. Decided 2026-10-04: no switchboard on the east wall; this board stays the room's only one, so point E1 of the earlier electrical plan is dropped (the 3D model still shows it until the board is measured).",
+      "detail": "Owner 2026-10-04 (electrician): the existing switchboard is on the north wall on the east side of the TV, about 10 cm from the wall end, at about the middle height of the TV, and it falls inside the area the panelling will cover. It controls this room's fans and lights and has a power socket. Replace it in the same place with a modular plate: take out the old board, fit a modular metal box of the right size (count the modules: one per light switch, two per fan regulator, two per socket, plus one or two spare), re-terminate the existing wires and check each for damaged insulation and a proper earth. Use step or electronic fan regulators of the same modular range. Set the new box forward by the panel build-up (18 mm panel plus the 20-25 mm batten gap) with a box extension ring, so the plate ends up flush on the panel face. The plate itself is fitted after painting. Decided 2026-10-04: no switchboard on the east wall; this board stays the room's only one, so point E1 of the earlier electrical plan is dropped (the 3D model still shows it until the board is measured). PHONE SCAN 2026-10-04: the board is about 195 wide x 260 high, 1,710-1,905 mm from the west wall and 1,235-1,495 high. That is behind the TV itself (both the 55 and the 65 inch) and inside the panelling, so replacing it in the same place works only if the TV or the board moves: see the decision task (C28).",
       "dependsOn": [
-        "electrician-survey"
+        "electrician-survey",
+        "drawing-switchboard-decide"
       ],
       "status": "todo",
-      "needs": "MEASURE: the board's width and height, its distance from the entry door frame, and the height of its centre. CHECK: that the TV does not cover it (a 55-inch TV centred as drawn ends 120 mm from the door frame; a 65-inch ends 10 mm from it). Count the fans, lights and sockets; choose the modular range and colour"
+      "needs": "DECIDE FIRST (C28): move the board, or keep it and shift the TV. MEASURE: the board's width and height, its distance from the entry door frame, and the height of its centre. CHECK: that the TV does not cover it (a 55-inch TV centred as drawn ends 120 mm from the door frame; a 65-inch ends 10 mm from it). Count the fans, lights and sockets; choose the modular range and colour",
+      "openItems": [
+        "A1",
+        "A2",
+        "C14",
+        "C28"
+      ],
+      "estimateLow": 4000,
+      "estimateHigh": 9000,
+      "estimateBasis": "switchboard: 1 each x Rs 4,000-9,000. More if it is moved to another wall (C28).",
+      "estimateConfidence": "low"
+    },
+    {
+      "id": "elec-drawing-west-sockets",
+      "phase": "electrical-rough",
+      "trade": "electrical",
+      "title": "Drawing Room west wall: the three socket plates behind the west sofa",
+      "room": "Drawing Room",
+      "detail": "The phone scan shows three socket plates low on the west wall (4,050-4,500 mm from the north wall, 260-375 high), partly behind the west sofa in layout C: plugs there cannot be reached without moving the sofa. Either keep them for things that stay plugged in (a lamp, the sofa glow driver), or move them clear of the sofa while the walls are open. The proposed plan already adds charging points beside the seats.",
+      "dependsOn": [
+        "electrician-survey",
+        "finalise-layouts"
+      ],
+      "status": "todo",
+      "needs": "Owner decision C29: keep for fixed plugs, or move",
+      "source": "docs/changes/2026-10-04-existing-electrical.md",
+      "openItems": [
+        "C29"
+      ],
+      "estimateLow": 0,
+      "estimateHigh": 6000,
+      "estimateBasis": "plates moved: 0 to 3 point x Rs 1,200-2,000. Nothing if they stay for fixed plugs; three points if they move (C29).",
+      "estimateConfidence": "low"
     },
     {
       "id": "elec-floor-box",
@@ -465,7 +960,14 @@
       ],
       "status": "todo",
       "needs": "Owner decision",
-      "source": "docs/DRAWING_ROOM_ELECTRICAL.md"
+      "source": "docs/DRAWING_ROOM_ELECTRICAL.md",
+      "openItems": [
+        "C32"
+      ],
+      "estimateLow": 0,
+      "estimateHigh": 9000,
+      "estimateBasis": "floor box: 0 to 1 each x Rs 4,500-9,000. Optional (C32).",
+      "estimateConfidence": "low"
     },
     {
       "id": "elec-data",
@@ -475,23 +977,30 @@
       "room": "Drawing Room",
       "detail": "Low-voltage cables in their own conduits; cross mains only at right angles.",
       "dependsOn": [
-        "elec-chase-drawing"
+        "elec-chase-drawing",
+        "elec-tv-wall"
       ],
       "status": "todo",
-      "source": "docs/DRAWING_ROOM_ELECTRICAL.md"
+      "source": "docs/DRAWING_ROOM_ELECTRICAL.md",
+      "estimateLow": 4500,
+      "estimateHigh": 9000,
+      "estimateBasis": "cable runs: 4 run x Rs 1,200-2,200. CAT6, coax, phone, intercom.",
+      "estimateConfidence": "medium"
     },
     {
-      "id": "elec-other-rooms",
+      "id": "elec-chase-other-rooms",
       "phase": "electrical-rough",
       "trade": "electrical",
-      "title": "Plan electrical points for the other rooms",
+      "title": "Other rooms: chase walls and fix conduits and boxes",
       "room": "Other rooms",
-      "detail": "Only the Drawing Room and the Balcony office have a point plan so far.",
+      "detail": "PENDING NOTE: a design for this is being written on 2026-10-05 (docs/changes/2026-10-05-*.md, section \"For the work plan\"). This task holds its place; the tasks from that note replace or extend it. Placeholder for the first fix in the Lobby, the bedrooms, the Study, the Home Office and the Kitchen once their point plans exist. The kitchen points must be in before the kitchen cabinets.",
       "dependsOn": [
-        "finalise-layouts"
+        "elec-other-rooms",
+        "electrician-survey"
       ],
       "status": "todo",
-      "needs": "Plan not made yet"
+      "needs": "The electrical plans note",
+      "estimateBasis": "Not estimated: The point plans for the other rooms are not in the project yet (pending the electrical plans note)."
     },
     {
       "id": "elec-entry-ceiling",
@@ -501,10 +1010,177 @@
       "room": "Main entry",
       "detail": "Owner 2026-10-04 (electrician). Before the PVC ceiling goes up: chase a conduit from a switch box beside the main door up the wall, and run it on the slab above the ceiling line to each light position, leaving about 300 mm of spare wire at each point. Two light points are proposed in the corridor, on one switch. Take the supply from the nearest lighting circuit. Mark the light positions on the slab from the plank layout so they land where the cut-outs will be. Inner gallery (the part after the wooden main door, past the shoe rack to the Drawing Room door, which has no light today and keeps its plaster ceiling): two more points for surface-mounted round panels of the same type, one about 780 mm in front of the shoe rack's mirror doors (over the fold-down seat and the key tray) and one about 660 mm from the Drawing Room wall in front of the open east cabinet, on their own switch beside the Drawing Room door (a two-way switch at the main door is an option). Answer to the owner's question of 2026-10-04 whether this 4th section needs a spotlight or a track light: no; the round panels do the job, see docs/changes/2026-10-04-entry.md.",
       "dependsOn": [
-        "entry-ceiling-plan"
+        "entry-ceiling-plan",
+        "electrician-survey"
       ],
       "status": "todo",
-      "needs": "Light count and positions, and the switch position, from the entry ceiling plan; owner to agree the two gallery lights and their switch"
+      "needs": "Light count and positions, and the switch position, from the entry ceiling plan; owner to agree the two gallery lights and their switch",
+      "openItems": [
+        "C5",
+        "C6"
+      ],
+      "estimateLow": 5000,
+      "estimateHigh": 9000,
+      "estimateBasis": "light points: 4 point x Rs 900-1,500; switch drops: 2 point x Rs 900-1,500.",
+      "estimateConfidence": "medium"
+    },
+    {
+      "phase": "electrical-rough",
+      "id": "elec-track-feed",
+      "trade": "electrical",
+      "title": "Drawing Room: power feed points for the track lights and wall lights",
+      "room": "Drawing Room",
+      "detail": "Electrician. One feed point at the wall end of each track, brought up inside the wall and across the wall-ceiling corner, so no wire shows on the slab; the track itself carries the power along its length. One track = one circuit: a separate dimmed line for each track back to the switchboard (two dimmers), and the chandelier on its own switch. Fix the two 48 V drivers (60 W for Track 1, 100 W for Track 2) where they can be reached, for example inside the cap of the panel wall; check the dimmer type matches the driver. Take down the old small wall light in the north-west and the wall reading light, and either reuse their wiring as the track feeds or close the points with blank plates.",
+      "dependsOn": [
+        "lighting-plan-drawing",
+        "electrician-survey",
+        "elec-track-setout"
+      ],
+      "status": "todo",
+      "estimateLow": 4000,
+      "estimateHigh": 7000,
+      "estimateBasis": "track runs: 2 run x Rs 2,000-3,500. Run and head counts from the lighting config.",
+      "estimateConfidence": "medium"
+    },
+    {
+      "phase": "electrical-rough",
+      "id": "elec-track-feed-lobby",
+      "trade": "electrical",
+      "title": "Lobby / Dining: power feed points for the track lights",
+      "room": "Lobby / Dining",
+      "detail": "Electrician. One feed point at the wall end of each of the two tracks, brought up inside the wall, each track on its own dimmed line (one track = one circuit, two dimmers); the dining pendant on a separate switch. Fix the two 48 V 60 W drivers where they can be reached.",
+      "dependsOn": [
+        "lighting-plan-lobby",
+        "electrician-survey",
+        "elec-track-setout"
+      ],
+      "status": "todo",
+      "estimateLow": 4000,
+      "estimateHigh": 7000,
+      "estimateBasis": "track runs: 2 run x Rs 2,000-3,500. Run and head counts from the lighting config.",
+      "estimateConfidence": "medium"
+    },
+    {
+      "id": "elec-track-feed-bedroom1",
+      "phase": "electrical-rough",
+      "trade": "electrical",
+      "title": "Bedroom 1: power feed points for the track lights",
+      "room": "Bedroom 1",
+      "detail": "Electrician. One feed point at the wall end of each track run, brought up inside the wall and across the wall-ceiling corner; one track = one circuit, so each run gets its own dimmed line back to the switchboard (two dimmers). Fix each 48 V driver where it can be reached (above the wardrobe). Check the dimmer type matches the driver.",
+      "dependsOn": [
+        "lighting-plan-bedroom1",
+        "electrician-survey",
+        "elec-track-setout"
+      ],
+      "status": "todo",
+      "estimateLow": 4000,
+      "estimateHigh": 7000,
+      "estimateBasis": "track runs: 2 run x Rs 2,000-3,500. Run and head counts from the lighting config.",
+      "estimateConfidence": "medium"
+    },
+    {
+      "id": "elec-track-feed-bedroom3",
+      "phase": "electrical-rough",
+      "trade": "electrical",
+      "title": "Bedroom 3: power feed points for the track lights",
+      "room": "Bedroom 3",
+      "detail": "Electrician. One feed point at the wall end of each track run, brought up inside the wall and across the wall-ceiling corner; one track = one circuit, so each run gets its own dimmed line back to the switchboard (two dimmers). Fix each 48 V driver where it can be reached (in the overhead cabinet run). Check the dimmer type matches the driver.",
+      "dependsOn": [
+        "lighting-plan-bedroom3",
+        "electrician-survey",
+        "elec-track-setout"
+      ],
+      "status": "todo",
+      "estimateLow": 4000,
+      "estimateHigh": 7000,
+      "estimateBasis": "track runs: 2 run x Rs 2,000-3,500. Run and head counts from the lighting config.",
+      "estimateConfidence": "medium"
+    },
+    {
+      "id": "elec-track-feed-study",
+      "phase": "electrical-rough",
+      "trade": "electrical",
+      "title": "Study: power feed points for the track lights",
+      "room": "Study",
+      "detail": "Electrician. One feed point at the wall end of each track run, brought up inside the wall and across the wall-ceiling corner; one track = one circuit, so each run gets its own dimmed line back to the switchboard (two dimmers). Fix each 48 V driver where it can be reached (on top of the bookshelf). Check the dimmer type matches the driver.",
+      "dependsOn": [
+        "lighting-plan-study",
+        "electrician-survey",
+        "elec-track-setout"
+      ],
+      "status": "todo",
+      "estimateLow": 4000,
+      "estimateHigh": 7000,
+      "estimateBasis": "track runs: 2 run x Rs 2,000-3,500. Run and head counts from the lighting config.",
+      "estimateConfidence": "medium"
+    },
+    {
+      "id": "elec-track-feed-kitchen",
+      "phase": "electrical-rough",
+      "trade": "electrical",
+      "title": "Kitchen: power feed point for the ceiling track",
+      "room": "Kitchen",
+      "detail": "Electrician. One feed point at the wall end of each track run, brought up inside the wall and across the wall-ceiling corner; one track = one circuit, so each run gets its own dimmed line back to the switchboard (one dimmer, plus the switch of the under-cabinet strips). Fix each 48 V driver where it can be reached (on top of the wall cabinets). Check the dimmer type matches the driver.",
+      "dependsOn": [
+        "lighting-plan-kitchen",
+        "electrician-survey",
+        "elec-track-setout"
+      ],
+      "status": "todo",
+      "estimateLow": 2000,
+      "estimateHigh": 3500,
+      "estimateBasis": "track runs: 1 run x Rs 2,000-3,500. Run and head counts from the lighting config.",
+      "estimateConfidence": "medium"
+    },
+    {
+      "id": "elec-track-setout",
+      "phase": "electrical-rough",
+      "trade": "electrical",
+      "title": "Set out every track on the ceiling from the mouldings before fixing any feed",
+      "room": "Whole home",
+      "detail": "Electrician, with the owner. Mark each track run on the slab from the positions in docs/LIGHTING.md, measured from the walls AND checked against the real mouldings: every run at least 40 mm clear of a raised line or corner ring, and clear of the fan blades. Where the tape disagrees with the scan, the moulding wins: shift the run and note the new figure. Only then fix the feed points, which sit at the wall end of each run.",
+      "dependsOn": [
+        "lighting-track-mouldings",
+        "lighting-plan-drawing",
+        "lighting-plan-lobby",
+        "lighting-plan-bedroom1",
+        "lighting-plan-bedroom3",
+        "lighting-plan-study",
+        "lighting-plan-kitchen"
+      ],
+      "status": "todo",
+      "needs": "The taped mouldings (A25) and the ceiling photographs (A26)",
+      "source": "docs/changes/2026-10-05-tracks-and-mouldings.md",
+      "openItems": [
+        "A25",
+        "A26"
+      ],
+      "estimateLow": 0,
+      "estimateHigh": 0,
+      "estimateBasis": "Part of the electrician's first fix for the track feeds; no separate charge expected.",
+      "estimateConfidence": "medium"
+    },
+    {
+      "id": "elec-lobby-pendant-feed",
+      "phase": "electrical-rough",
+      "trade": "electrical",
+      "title": "Lobby: new ceiling feed for the dining pendant, once its position is decided",
+      "room": "Lobby / Dining",
+      "detail": "Electrician. If the pendant stays over the table: a new ceiling point there on its own switch, run in the plaster or in a neat surface conduit (the slab cannot be chased), with a hook rated for the fitting, placed on flat ceiling clear of the north moulding. If the owner chooses another answer (C33), this task is marked done without work.",
+      "dependsOn": [
+        "lobby-pendant-decide",
+        "electrician-survey"
+      ],
+      "status": "todo",
+      "needs": "Decision C33",
+      "source": "docs/changes/2026-10-05-tracks-and-mouldings.md",
+      "openItems": [
+        "C33"
+      ],
+      "estimateLow": 0,
+      "estimateHigh": 1500,
+      "estimateBasis": "new ceiling point: 0 to 1 point x Rs 900-1,500. Nothing if the pendant is dropped or goes on an existing point (C33).",
+      "estimateConfidence": "low"
     },
     {
       "phase": "electrical-rough",
@@ -518,7 +1194,14 @@
         "society-permission"
       ],
       "status": "todo",
-      "needs": "The AC model, so the pipe sizes match; the outdoor unit position"
+      "needs": "The AC model, so the pipe sizes match; the outdoor unit position",
+      "openItems": [
+        "C15"
+      ],
+      "estimateLow": 3000,
+      "estimateHigh": 15500,
+      "estimateBasis": "extra pipe: 0 to 7 m x Rs 800-1,300; core cut and fixing: 1 each x Rs 3,000-6,000. About 3 m to a bracket on the west wall (inside the kit) or about 10 m to the shoe rack (C15).",
+      "estimateConfidence": "low"
     },
     {
       "phase": "electrical-rough",
@@ -531,49 +1214,51 @@
         "ac-choose",
         "electrician-survey"
       ],
-      "status": "todo"
+      "status": "todo",
+      "openItems": [
+        "C15"
+      ],
+      "estimateLow": 4500,
+      "estimateHigh": 8000,
+      "estimateBasis": "AC circuit: 1 each x Rs 4,500-8,000.",
+      "estimateConfidence": "medium"
     },
     {
+      "id": "elec-ac-window-point",
       "phase": "electrical-rough",
-      "id": "elec-track-feed",
       "trade": "electrical",
-      "title": "Drawing Room: power feed points for the track lights and wall lights",
-      "room": "Drawing Room",
-      "detail": "Electrician. One feed point at the wall end of each track, brought up inside the wall and across the wall-ceiling corner, so no wire shows on the slab; the track itself carries the power along its length. One track = one circuit: a separate dimmed line for each track back to the switchboard (two dimmers), and the chandelier on its own switch. Fix the two 48 V drivers (60 W for Track 1, 100 W for Track 2) where they can be reached, for example inside the cap of the panel wall; check the dimmer type matches the driver. Take down the old small wall light in the north-west and the wall reading light, and either reuse their wiring as the track feeds or close the points with blank plates.",
+      "title": "Bedroom 1 balcony: dedicated power socket for the window AC",
+      "room": "Bedroom 1",
+      "detail": "A separate circuit from the distribution board for the 1.5 ton window AC: its own 20 A breaker, 4 sq mm copper wire with earth, to a 16/20 A socket within reach of the AC's own cable, clear of rain. Nothing else on this circuit.",
       "dependsOn": [
-        "lighting-plan-drawing",
+        "ac-plan-home",
         "electrician-survey"
       ],
-      "status": "todo"
+      "status": "todo",
+      "needs": "Where the socket can go (A23); the whole-home AC plan",
+      "openItems": [
+        "A23",
+        "C31"
+      ],
+      "estimateLow": 4500,
+      "estimateHigh": 8000,
+      "estimateBasis": "AC circuit: 1 each x Rs 4,500-8,000.",
+      "estimateConfidence": "medium"
     },
     {
+      "id": "ac-piping-other",
       "phase": "electrical-rough",
-      "id": "elec-track-feed-lobby",
-      "trade": "electrical",
-      "title": "Lobby / Dining: power feed points for the track lights",
-      "room": "Lobby / Dining",
-      "detail": "Electrician. One feed point at the wall end of each of the two tracks, brought up inside the wall, each track on its own dimmed line (one track = one circuit, two dimmers); the dining pendant on a separate switch. Fix the two 48 V 60 W drivers where they can be reached.",
+      "trade": "ac",
+      "title": "Other rooms: AC copper, drain and cable runs before plaster",
+      "room": "Other rooms",
+      "detail": "PENDING NOTE: a design for this is being written on 2026-10-05 (docs/changes/2026-10-05-*.md, section \"For the work plan\"). This task holds its place; the tasks from that note replace or extend it. Placeholder for any new or moved AC piping outside the Drawing Room (for example a Bedroom 1 split AC, if it is kept).",
       "dependsOn": [
-        "lighting-plan-lobby",
-        "electrician-survey"
+        "ac-plan-home",
+        "society-permission"
       ],
-      "status": "todo"
-    },
-    {
-      "phase": "electrical-rough",
-      "id": "elec-track-feed-rooms",
-      "trade": "electrical",
-      "title": "Bedroom 1, Bedroom 3, Study and Kitchen: power feed points for the track lights",
-      "room": "Whole home",
-      "detail": "Electrician. One feed point at the wall end of each track run, brought up inside the wall and across the wall-ceiling corner; one track = one circuit, so each run gets its own dimmed line back to the switchboard (two dimmers per bedroom and in the Study, one in the Kitchen plus the switch of the under-cabinet strips). Fix each 48 V driver (60 W or 100 W, as sized in the lighting tasks) where it can be reached: above a wardrobe, in a cabinet top, on top of the kitchen wall cabinets. Check the dimmer type matches the driver.",
-      "dependsOn": [
-        "lighting-plan-bedroom1",
-        "lighting-plan-bedroom3",
-        "lighting-plan-study",
-        "lighting-plan-kitchen",
-        "electrician-survey"
-      ],
-      "status": "todo"
+      "status": "todo",
+      "needs": "The whole-home AC note",
+      "estimateBasis": "Not estimated: Which rooms get new piping is not decided (pending the whole-home AC note)."
     },
     {
       "id": "plaster",
@@ -581,31 +1266,54 @@
       "trade": "civil",
       "title": "Close chases, plaster and level the walls",
       "room": "Whole home",
-      "detail": "",
+      "detail": "After every conduit, AC pipe and plumbing line is in and tested. Close the chases, plaster and level, and make good around the new and the closed openings.",
       "dependsOn": [
         "elec-chase-drawing",
+        "elec-tv-wall",
+        "elec-drawing-switchboard",
+        "elec-drawing-west-sockets",
         "elec-data",
-        "plumbing-rough",
-        "debris",
-        "ac-piping",
+        "elec-chase-other-rooms",
+        "elec-entry-ceiling",
         "elec-track-feed",
         "elec-track-feed-lobby",
-        "elec-track-feed-rooms"
+        "elec-track-feed-bedroom1",
+        "elec-track-feed-bedroom3",
+        "elec-track-feed-study",
+        "elec-track-feed-kitchen",
+        "ac-piping",
+        "elec-ac-point",
+        "elec-ac-window-point",
+        "ac-piping-other",
+        "plumbing-rough",
+        "debris",
+        "main-gate",
+        "shaft-cover",
+        "elec-track-setout",
+        "elec-lobby-pendant-feed"
       ],
-      "status": "todo"
+      "status": "todo",
+      "estimateLow": 11000,
+      "estimateHigh": 20000,
+      "estimateBasis": "chases, about 35 points x 8 ft: 280 running ft x Rs 40-70. Only the points priced above; the other rooms add to it. Opening reveals are priced with each opening.",
+      "estimateConfidence": "low"
     },
     {
       "id": "flooring",
       "phase": "surfaces",
       "trade": "civil",
       "title": "Flooring and skirting repairs where walls were cut",
-      "room": "Drawing Room / Main entry / Lobby / Bedroom 3",
-      "detail": "Include floor and skirting repairs at the new Lobby northwest doorway into Bedroom 3.",
+      "room": "Drawing Room / Main entry / Lobby / Bedroom 1",
+      "detail": "Floor and skirting repairs at the Drawing Room cabinet door, the shoe rack opening, the new Bedroom 1 doorway and the closed old one.",
       "dependsOn": [
         "plaster",
         "elec-floor-box"
       ],
-      "status": "todo"
+      "status": "todo",
+      "estimateLow": 7500,
+      "estimateHigh": 13500,
+      "estimateBasis": "patches at three openings and the closed doorway: 30 sq ft x Rs 250-450. Area assumed; matching an old floor is the risk.",
+      "estimateConfidence": "low"
     },
     {
       "id": "skirting",
@@ -620,7 +1328,15 @@
       ],
       "status": "todo",
       "needs": "OPTIONAL (owner 2026-10-04: a lot of work for the whole home). Decide before plaster work starts: do it, do only some rooms, or skip",
-      "notes": "If done, it must be finished before painting. Skipping it does not hold up anything else."
+      "notes": "If done, it must be finished before painting. If it is skipped, mark it Done so that painting is not held up.",
+      "openItems": [
+        "A9",
+        "C7"
+      ],
+      "estimateLow": 17000,
+      "estimateHigh": 35000,
+      "estimateBasis": "skirting: 194 running ft x Rs 90-180. OPTIONAL. Room perimeters less a quarter for doors and cabinets; flush skirting costs more than the range.",
+      "estimateConfidence": "low"
     },
     {
       "id": "entry-ceiling",
@@ -635,7 +1351,15 @@
         "elec-entry-ceiling"
       ],
       "status": "todo",
-      "needs": "Plank chosen"
+      "needs": "Plank chosen",
+      "openItems": [
+        "C3",
+        "C5"
+      ],
+      "estimateLow": 2000,
+      "estimateHigh": 4000,
+      "estimateBasis": "corridor 2134 x 1000: 23 sq ft x Rs 90-160. A small job: expect a minimum charge near the high figure.",
+      "estimateConfidence": "medium"
     },
     {
       "id": "carp-west-cabinet",
@@ -647,10 +1371,15 @@
       "dependsOn": [
         "north-wall-door",
         "plaster",
-        "west-cabinet-frame"
+        "west-cabinet-frame",
+        "pocket-partition"
       ],
       "status": "todo",
-      "source": "docs/ENTRY_WALL_CAVITY.md"
+      "source": "docs/ENTRY_WALL_CAVITY.md",
+      "estimateLow": 32000,
+      "estimateHigh": 51500,
+      "estimateBasis": "cabinet box, front 650 x 2700: 18.9 sq ft x Rs 1,500-2,300; hidden door fittings: 1 set x Rs 4,000-8,000. A deep box (about 1.1 m) with sides and back: expect the high figure.",
+      "estimateConfidence": "low"
     },
     {
       "id": "carp-tv-panel",
@@ -658,16 +1387,25 @@
       "trade": "carpentry",
       "title": "Clean panel wall behind the TV that hides the cabinet door",
       "room": "Drawing Room",
-      "detail": "Owner 2026-10-04 (carpenter). Fluted panelling on the north wall from 40 to 2100 mm from the west wall, floor to 1800 high, 18 thick, a groove every 100 mm set out from the hidden door so both door edges fall on a groove; a slim cap with a light strip on top. Fix it on 20-25 mm battens, not straight on the wall: the gap behind is where the electrician runs the TV and console cables, so the wall need not be chased. SWITCHBOARD: the existing board (east of the TV, mid-TV height) falls inside the panel. Do not flute that part: make the east end of the panelling a plain flat strip, about 250 mm wide and full height, in the same finish, and cut one clean rectangular opening in it for the modular box; the switch plate then sits flat and covers the cut edge. A plate cannot sit flat across grooves. Also cut neat openings for the socket boxes behind the TV and behind the console. Fix a plywood backing piece behind the panel where the TV bracket bolts through into the wall.",
+      "detail": "Owner 2026-10-04 (carpenter). Fluted panelling on the north wall from 40 to 2100 mm from the west wall, floor to 1800 high, 18 thick, a groove every 100 mm set out from the hidden door so both door edges fall on a groove; a slim cap with a light strip on top. Fix it on 20-25 mm battens, not straight on the wall: the gap behind is where the electrician runs the TV and console cables, so the wall need not be chased. SWITCHBOARD: the existing board (east of the TV, mid-TV height) falls inside the panel. Do not flute that part: make the east end of the panelling a plain flat strip, about 250 mm wide and full height, in the same finish, and cut one clean rectangular opening in it for the modular box; the switch plate then sits flat and covers the cut edge. A plate cannot sit flat across grooves. Also cut neat openings for the socket boxes behind the TV and behind the console. Fix a plywood backing piece behind the panel where the TV bracket bolts through into the wall. The phone scan puts the board at 1,710-1,905 mm from the west wall, behind the TV: the plain strip described here applies only after decision C28.",
       "dependsOn": [
         "plaster",
         "carp-west-cabinet",
         "elec-tv-wall",
-        "elec-drawing-switchboard"
+        "elec-drawing-switchboard",
+        "palette-choose"
       ],
       "status": "todo",
       "needs": "Panel finish and colour; exact switchboard size and position (the electrician fits the box first, then the carpenter cuts to it)",
-      "source": "docs/DRAWING_ROOM_TV_WALL.md"
+      "source": "docs/DRAWING_ROOM_TV_WALL.md",
+      "openItems": [
+        "C11",
+        "C28"
+      ],
+      "estimateLow": 18500,
+      "estimateHigh": 33500,
+      "estimateBasis": "panelling 2060 x 1800: 39.9 sq ft x Rs 450-800; cap light: 2.1 m x Rs 350-700.",
+      "estimateConfidence": "medium"
     },
     {
       "id": "carp-tv-console",
@@ -681,7 +1419,11 @@
         "carp-tv-panel"
       ],
       "status": "todo",
-      "source": "docs/DRAWING_ROOM_TV_WALL.md"
+      "source": "docs/DRAWING_ROOM_TV_WALL.md",
+      "estimateLow": 18000,
+      "estimateHigh": 31500,
+      "estimateBasis": "console 1600 long: 5.2 running ft x Rs 3,500-6,000.",
+      "estimateConfidence": "medium"
     },
     {
       "id": "carp-shoe-rack",
@@ -695,7 +1437,16 @@
         "plaster"
       ],
       "status": "todo",
-      "needs": "TO BE CONFIRMED: height (about 6 1/2 ft) and width; measure the opening and the wall thickness"
+      "needs": "TO BE CONFIRMED: height (about 6 1/2 ft) and width; measure the opening and the wall thickness",
+      "openItems": [
+        "A3",
+        "A4",
+        "C1"
+      ],
+      "estimateLow": 32500,
+      "estimateHigh": 51500,
+      "estimateBasis": "rack 865 x 2134: 19.9 sq ft x Rs 1,500-2,300; mirror doors: 19.9 sq ft x Rs 150-280. Weatherproof back and sides are extra; height and width to be confirmed (C1).",
+      "estimateConfidence": "low"
     },
     {
       "id": "carp-entry-seat",
@@ -709,35 +1460,287 @@
         "carp-shoe-rack"
       ],
       "status": "todo",
-      "needs": "Confirm the wall and position once the shoe rack is in; choose the seat finish"
+      "needs": "Confirm the wall and position once the shoe rack is in; choose the seat finish",
+      "openItems": [
+        "C13"
+      ],
+      "estimateLow": 4500,
+      "estimateHigh": 9000,
+      "estimateBasis": "seat: 1 each x Rs 4,500-9,000.",
+      "estimateConfidence": "medium"
     },
     {
       "id": "carp-lobby-bedroom3-door",
       "phase": "carpentry",
       "trade": "carpentry",
-      "title": "Lobby northwest corner: install the new door into Bedroom 3",
-      "room": "Lobby / Bedroom 3",
-      "detail": "Owner 2026-10-04: supply and install a new door at the new northwest Lobby opening into Bedroom 3. Measure the approved opening, fit the frame and leaf with hinges, handles, latch or lock and a door stop. Coordinate any frame fixing needed before plaster with the mason. Confirm hinge side and opening direction against circulation and furniture on both sides. Finish the door and trim, make good frame joints and check that it opens, closes and latches freely.",
+      "title": "Bedroom 1: hang the new door in the moved doorway",
+      "room": "Bedroom 1 / Lobby",
+      "detail": "Owner 2026-10-04: supply and install a new door in the new doorway at the west end of the Lobby north wall (the moved Bedroom 1 door). Measure the approved opening, fit the frame and leaf with hinges, handles, latch or lock and a door stop. Coordinate any frame fixing needed before plaster with the mason. Confirm hinge side and opening direction against circulation and furniture on both sides. Finish the door and trim, make good frame joints and check that it opens, closes and latches freely.",
       "dependsOn": [
         "lobby-bedroom3-opening",
         "plaster",
         "flooring"
       ],
       "status": "todo",
-      "needs": "Choose door and frame material, finish and hardware; confirm final size, hinge side and swing"
+      "needs": "Choose door and frame material, finish and hardware; confirm final size, hinge side and swing (C36)",
+      "estimateLow": 18000,
+      "estimateHigh": 32000,
+      "estimateBasis": "door: 1 each x Rs 18,000-32,000.",
+      "estimateConfidence": "medium",
+      "openItems": [
+        "C36"
+      ]
     },
     {
-      "id": "carp-other",
+      "id": "carp-bedroom1-medicine-cabinet",
       "phase": "carpentry",
       "trade": "carpentry",
-      "title": "Other carpentry: wardrobes, kitchen cabinets, study, pooja, balcony office",
-      "room": "Other rooms",
-      "detail": "One line for now. Split into a task per room when each design is frozen.",
+      "title": "Bedroom 1: medicine cabinet in the closed old doorway",
+      "room": "Bedroom 1",
+      "detail": "Owner 2026-09-29. A shallow cabinet in the cavity of the closed doorway, opening into Bedroom 1: two flush doors, five shelves, about 0.83 m wide x 2.1 m high. The usable depth is only about 50 mm in the model, because the wall is drawn 85 mm thick; the real wall looks thicker on the plan, so measure before making it. In the model the bed stands in front of its lower part. Layout decision (C35): in layout A the bed stands in front of the cabinet and it cannot be used, so it should then go somewhere else; in layout B its doors start 1,250 mm above the floor, above the headboard, with a fixed panel below.",
       "dependsOn": [
-        "finalise-layouts"
+        "bedroom1-old-door-close",
+        "bedroom1-design-freeze",
+        "plaster"
       ],
       "status": "todo",
-      "needs": "Split per room"
+      "needs": "Wall thickness (A24); the Bedroom 1 design note",
+      "source": "docs/CURRENT_STATE.md",
+      "openItems": [
+        "A24",
+        "C35"
+      ],
+      "estimateLow": 14500,
+      "estimateHigh": 24500,
+      "estimateBasis": "shallow cabinet about 826 x 2100: 18.7 sq ft x Rs 800-1,300. Usable depth is only about 50 mm in the model; measure the wall first.",
+      "estimateConfidence": "low"
+    },
+    {
+      "id": "carp-bedroom1",
+      "phase": "carpentry",
+      "trade": "carpentry",
+      "title": "Bedroom 1: the three wardrobes (balcony wardrobe with sliding doors)",
+      "room": "Bedroom 1",
+      "detail": "The same in layout A and layout B. A three-door wardrobe on the west wall (1,800 x 2,400, 508 deep); a two-door wardrobe in the north-east recess (850 x 2,700, 400 deep); and a wardrobe on the balcony side of the Pooja wall (1,200 x 2,700, 508 deep) with two SLIDING panels, because the window AC stops a hinged door at 41 degrees. Check the depth of the niche in the Pooja wall before fixing the balcony wardrobe's depth and position; its clearance to the window AC (217 mm in the model) depends on the AC's real casing. Suggested, not decided: sliding doors on the west wardrobe too, which would ease the west walkway of layout B (its hinged doors clear the bed by only 42 mm).",
+      "dependsOn": [
+        "bedroom1-design-freeze",
+        "plaster"
+      ],
+      "status": "todo",
+      "needs": "Tape the room, the Pooja wall niche and the window AC (A27, A23). West wardrobe doors hinged or sliding (C37)",
+      "estimateLow": 159000,
+      "estimateHigh": 244000,
+      "estimateBasis": "west wardrobe 1800 x 2400: 46.5 sq ft x Rs 1,500-2,300; north-east recess wardrobe 850 x 2700: 24.7 sq ft x Rs 1,500-2,300; balcony wardrobe 1200 x 2700: 34.9 sq ft x Rs 1,500-2,300. The same three wardrobes in layout A and layout B; sliding panels on the balcony wardrobe are inside the rate.",
+      "estimateConfidence": "low",
+      "source": "docs/changes/2026-10-05-bedroom1-design.md",
+      "openItems": [
+        "A27",
+        "A23",
+        "C37"
+      ]
+    },
+    {
+      "id": "carp-bedroom1-layout-b",
+      "phase": "carpentry",
+      "trade": "carpentry",
+      "title": "Bedroom 1, only if layout B is chosen: dressing table with wall mirror, and a bedside table",
+      "room": "Bedroom 1",
+      "detail": "NOT DECIDED (C35). Layout B adds a dressing table on the north wall between the washroom door and the recess wardrobe (900 wide x 350 deep x 750 high, 1,510 mm from the west wall) with a wall mirror 700 x 900 above it and a stool, and one bedside table east of the bed head (400 x 350 x 550 high). The sizes are the design note's proposals. The side by the Lobby door has no room for a table: a headboard ledge or a small wall shelf would serve that sleeper. If layout A stays, mark this task done without work.",
+      "dependsOn": [
+        "bedroom1-design-freeze",
+        "plaster"
+      ],
+      "status": "todo",
+      "needs": "Owner decision C35",
+      "source": "docs/changes/2026-10-05-bedroom1-design.md",
+      "openItems": [
+        "C35"
+      ],
+      "estimateLow": 0,
+      "estimateHigh": 27500,
+      "estimateBasis": "dressing table 900 long: 0 to 3 running ft x Rs 3,500-6,000; wall mirror 700 x 900: 0 to 6.8 sq ft x Rs 150-280; bedside table 400 long: 0 to 1.3 running ft x Rs 3,500-6,000. Nothing if layout A stays (C35). The stool and any acoustic board behind the bed head are not included.",
+      "estimateConfidence": "low"
+    },
+    {
+      "id": "carp-bedroom3-east",
+      "phase": "carpentry",
+      "trade": "carpentry",
+      "title": "Bedroom 3: cabinets on both sides of the bed, the overhead run and the slatted AC bay",
+      "room": "Bedroom 3",
+      "detail": "Owner 2026-10-03, honey oak, 18 in (457 mm) deep overall. North of the bed: a mirror dressing cabinet 750 wide x 2,200 high. South of the bed: a low cabinet 750 x 600 with two drawers. Above: an overhead run 3,426 wide x 450 high from 2,200 to 2,650, with a central 1,200 mm slatted bay, open underneath, around the existing AC (about 30 mm of headroom by the scan). A headboard shelf between the cabinets. Model sizes, checked against the phone scan: the dressing cabinet clears the toilet door by about 200 mm.",
+      "dependsOn": [
+        "bedroom3-cupboard-remove",
+        "finalise-layouts",
+        "plaster"
+      ],
+      "status": "todo",
+      "needs": "Tape the door approach and the AC (A19, A20). The slatted panel must lift off for AC service",
+      "source": "docs/CURRENT_STATE.md",
+      "openItems": [
+        "A19",
+        "A20"
+      ],
+      "estimateLow": 63500,
+      "estimateHigh": 101000,
+      "estimateBasis": "dressing cabinet 750 x 2200: 17.8 sq ft x Rs 1,500-2,300; overhead run 3426 x 450: 16.6 sq ft x Rs 1,500-2,300; low cabinet 750: 2.5 running ft x Rs 3,500-6,000; mirror: 12.5 sq ft x Rs 150-280; headboard shelf: 5.2 sq ft x Rs 350-600. The slatted AC bay is priced as overhead cabinet front.",
+      "estimateConfidence": "low"
+    },
+    {
+      "id": "carp-bedroom3-chest",
+      "phase": "carpentry",
+      "trade": "carpentry",
+      "title": "Bedroom 3: low chest of drawers on the west wall, with the artwork above",
+      "room": "Bedroom 3",
+      "detail": "Owner 2026-10-04. Honey-oak chest 1,400 long x 450 deep x 800 high, six drawers, centred opposite the bed (1,163 mm from the north wall). A framed artwork 1,100 x 700 hangs 250 mm above it.",
+      "dependsOn": [
+        "finalise-layouts",
+        "plaster"
+      ],
+      "status": "todo",
+      "source": "docs/CURRENT_STATE.md",
+      "estimateLow": 16000,
+      "estimateHigh": 28000,
+      "estimateBasis": "chest 1400 long, six drawers: 4.6 running ft x Rs 3,500-6,000. The artwork is the owner's purchase and is not included.",
+      "estimateConfidence": "medium"
+    },
+    {
+      "id": "carp-kitchen",
+      "phase": "carpentry",
+      "trade": "carpentry",
+      "title": "Kitchen: base and wall cabinets, counter and backsplash",
+      "room": "Kitchen",
+      "detail": "As configured in the kitchen planner (not a frozen design): the east wall with a 600 deep base run the full 4,746 mm, wall cabinets in two tiers to the ceiling, the open microwave shelf and appliance garage, the hob at 2,400 mm; the west wall after the 610 mm door clear zone with open bays for the washing machine and the dishwasher, the 762 mm sink, wall cabinets in two tiers and the shaft at the north end. Counter and 600 mm backsplash on both sides, under-cabinet LED strips. All kitchen pipes and electrical points must be in first.",
+      "dependsOn": [
+        "finalise-layouts",
+        "plaster",
+        "plumbing-rough",
+        "elec-chase-other-rooms",
+        "elec-track-feed-kitchen"
+      ],
+      "status": "todo",
+      "needs": "Freeze the kitchen layout; choose laminate, counter stone and handles. Appliances are bought separately",
+      "estimateLow": 318000,
+      "estimateHigh": 501000,
+      "estimateBasis": "base cabinets, 4746 east + 2098 west, 900 high: 66.3 sq ft x Rs 1,900-2,900; wall cabinets, 4746 east + 3298 west, 1350 high in two tiers: 117 sq ft x Rs 1,400-2,100; counter: 52 sq ft x Rs 400-900; backsplash: 52 sq ft x Rs 150-300. Run lengths from the kitchen config. Sink, hob, chimney, dishwasher and other appliances are NOT included.",
+      "estimateConfidence": "low"
+    },
+    {
+      "id": "carp-kitchen-store",
+      "phase": "carpentry",
+      "trade": "carpentry",
+      "title": "Kitchen store: pull-out storage and its sliding cover",
+      "room": "Kitchen",
+      "detail": "As drawn in the model: west-facing pull-out storage in the former store recess beside the refrigerator, about 1,092 wide x 2,600 high x 1,000 deep, with pull-out racks and a sliding cover about 1,000 x 2,200.",
+      "dependsOn": [
+        "finalise-layouts",
+        "plaster"
+      ],
+      "status": "todo",
+      "needs": "Freeze with the kitchen layout",
+      "estimateLow": 79500,
+      "estimateHigh": 132000,
+      "estimateBasis": "store unit 1092 x 2600: 30.6 sq ft x Rs 1,500-2,300; sliding cover 1000 x 2200: 23.7 sq ft x Rs 800-1,300; pull-out racks: 1 set x Rs 15,000-30,000. The refrigerator is not included.",
+      "estimateConfidence": "low"
+    },
+    {
+      "id": "carp-office-desk",
+      "phase": "carpentry",
+      "trade": "carpentry",
+      "title": "Home Office: sit-stand top, the fixed south section and the rear cabinet",
+      "room": "Home Office",
+      "detail": "Owner 2026-10-04: the long desk is split. A 1,500 x 762 x 25 mm top on the sit-stand frame, set 25 mm (one inch) off the west wall; a FIXED section at the south end, 743 long in the model and cut on site to the taped length, top at 838 mm (level with the seated height), with a full-depth cabinet below (printer shelf, one shelf, two sliding fronts, no hinged doors or pull-outs because only about 270 mm of floor is free in front); a one-inch gap between the two. Under the moving top a low rear cabinet 1,500 long x 305 deep x 680 high in two bays with slots for the desk feet.",
+      "dependsOn": [
+        "finalise-layouts",
+        "plaster"
+      ],
+      "status": "todo",
+      "needs": "Tape the room length, the south-east column and the boxing under the south window (A15, A17). Check the frame's real feet before cutting the slots",
+      "source": "docs/changes/2026-10-04-home-office.md",
+      "openItems": [
+        "A15",
+        "A17"
+      ],
+      "estimateLow": 32000,
+      "estimateHigh": 55500,
+      "estimateBasis": "moving top 1500 x 762: 12.3 sq ft x Rs 350-600; fixed top 743 x 762: 6.1 sq ft x Rs 350-600; cabinet under the fixed section 743: 2.4 running ft x Rs 3,500-6,000; rear cabinet 1500: 4.9 running ft x Rs 3,500-6,000. The sit-stand frame is taken as already owned. The fixed section is cut to the taped room length (A15, A17).",
+      "estimateConfidence": "low"
+    },
+    {
+      "id": "carp-office-north-cabinet",
+      "phase": "carpentry",
+      "trade": "carpentry",
+      "title": "Home Office: north wall cabinet with the water heater and router bays",
+      "room": "Home Office",
+      "detail": "Floor-to-ceiling cabinet on the north wall, 914 wide: an upper part 864 high x 406 deep with the water heater bay (500) and the router bay, and a shallow book section below (127 deep). By the phone scan the heater would overlap the bay's west side panel by about 35 mm: widen the bay toward the wall or shift the cabinet.",
+      "dependsOn": [
+        "finalise-layouts",
+        "plaster"
+      ],
+      "status": "todo",
+      "needs": "Tape the heater (A16) and the room (A15)",
+      "source": "docs/SITE_SCAN_2026-10-04_HOME_OFFICE.md",
+      "openItems": [
+        "A15",
+        "A16"
+      ],
+      "estimateLow": 26500,
+      "estimateHigh": 42500,
+      "estimateBasis": "upper cabinet 914 x 864: 8.5 sq ft x Rs 1,500-2,300; shallow book section 914 x 1778: 17.5 sq ft x Rs 800-1,300. The heater bay may have to be widened (A16).",
+      "estimateConfidence": "low"
+    },
+    {
+      "id": "carp-lobby-ironing",
+      "phase": "carpentry",
+      "trade": "carpentry",
+      "title": "Lobby: ironing storage on the east wall",
+      "room": "Lobby / Dining",
+      "detail": "As drawn in the model: a low unit 1,450 long x 400 deep x 1,000 high on the east wall, three doors, with a pull-out ironing board (950 x 300) in the centre bay.",
+      "dependsOn": [
+        "finalise-layouts",
+        "plaster"
+      ],
+      "status": "todo",
+      "needs": "Confirm the design",
+      "estimateLow": 22500,
+      "estimateHigh": 41000,
+      "estimateBasis": "storage 1450 long: 4.8 running ft x Rs 3,500-6,000; ironing board: 1 each x Rs 6,000-12,000.",
+      "estimateConfidence": "low"
+    },
+    {
+      "id": "carp-pooja",
+      "phase": "carpentry",
+      "trade": "carpentry",
+      "title": "Pooja alcove: the unit, platform and drawers",
+      "room": "Lobby / Dining",
+      "detail": "As drawn in the model: the alcove on the Lobby north wall is 1,200 wide x 1,000 deep, with a 190 mm platform, drawers and a 254 mm deep temple. There is no detailed design yet.",
+      "dependsOn": [
+        "finalise-layouts",
+        "plaster"
+      ],
+      "status": "todo",
+      "needs": "A design for the Pooja unit; materials (wood, stone, brass)",
+      "estimateLow": 52000,
+      "estimateHigh": 80500,
+      "estimateBasis": "unit across the 1200 alcove, full height: 34.9 sq ft x Rs 1,500-2,300. No detailed design in the config; stone, brass or carved work is extra.",
+      "estimateConfidence": "low"
+    },
+    {
+      "id": "carp-study",
+      "phase": "carpentry",
+      "trade": "carpentry",
+      "title": "Study (Bedroom 2): furniture for the kids layout",
+      "room": "Study",
+      "detail": "Not designed yet. The existing three-bay glazed bookshelf on the north wall and the raised south-wall cabinet stay. The bed and desk of the kids layout are drawn but have no agreed sizes.",
+      "dependsOn": [
+        "finalise-layouts",
+        "plaster"
+      ],
+      "status": "todo",
+      "needs": "Settle the kids layout first (C25)",
+      "openItems": [
+        "C25"
+      ],
+      "estimateBasis": "Not estimated: The kids layout (bed, desk) has no config of its own yet and is not settled (C25); the bookshelf and the south cabinet already exist."
     },
     {
       "id": "carp-window-centre",
@@ -745,28 +1748,45 @@
       "trade": "carpentry",
       "title": "Drawing Room south window: replace the fixed centre section with two outward-opening shutters, and glaze them",
       "room": "Drawing Room",
-      "detail": "Owner 2026-10-04 (carpenter). The south window has a wooden frame in three sections; the two side sections have shutters opening outward and the centre section is fixed. Take out the fixed centre panel and make two wooden shutters for it that open outward, so all three sections match: two shutters each, six in all. Copy the existing shutters exactly (wood, section sizes, mouldings, rail heights) so the new pair cannot be told apart. Hardware to match the old: hinges, a tower bolt top and bottom, a handle, and a stay or hook to hold each shutter open in wind. Glass: 5 mm clear glass, toughened if the pane is large or low, bedded in sealant and fixed with wooden beading; check the old panes at the same time and replace any that are cracked or loose. The owner confirms (2026-10-04) that nothing outside blocks the centre shutters; keep it that way when the AC outdoor unit is placed. The window is about 2.3 m wide and from 550 to 2,100 mm above the floor in the model; the three section widths are not measured. Note (owner 2026-10-04): the top of the window, about 1 ft, is a fixed band across the sections; the new centre shutters are made for the opening part below it, the same height as the existing side shutters.",
+      "detail": "Owner 2026-10-04 (carpenter). The south window has a wooden frame in three sections; the two side sections have shutters opening outward and the centre section is fixed. Take out the fixed centre panel and make two wooden shutters for it that open outward, so all three sections match: two shutters each, six in all. Copy the existing shutters exactly (wood, section sizes, mouldings, rail heights) so the new pair cannot be told apart. Hardware to match the old: hinges, a tower bolt top and bottom, a handle, and a stay or hook to hold each shutter open in wind. Glass: 5 mm clear glass, toughened if the pane is large or low, bedded in sealant and fixed with wooden beading; check the old panes at the same time and replace any that are cracked or loose. The owner confirms (2026-10-04) that nothing outside blocks the centre shutters; keep it that way when the AC outdoor unit is placed. PHONE SCAN 2026-10-04 (approximate, tape before ordering; now drawn in the 3D model): the frame is 2,700 wide in three bays of about 934 / 899 / 867, sill 935, a transom at 2,040 and fixed top lights above it to the head at 2,430. The new centre pair is about 899 wide x 1,105 high. Note (owner 2026-10-04): the top of the window, about 1 ft, is a fixed band across the sections; the new centre shutters are made for the opening part below it, the same height as the existing side shutters.",
       "dependsOn": [
         "site-measure"
       ],
       "status": "todo",
-      "needs": "Measure the three sections; glass type (clear, frosted or tinted)"
+      "needs": "Measure the three sections; glass type (clear, frosted or tinted)",
+      "openItems": [
+        "A10",
+        "C19",
+        "B6"
+      ],
+      "estimateLow": 12500,
+      "estimateHigh": 21500,
+      "estimateBasis": "centre pair 899 x 1105: 10.7 sq ft x Rs 1,200-2,000. Sizes from the phone scan.",
+      "estimateConfidence": "medium"
     },
     {
-      "id": "paint",
-      "phase": "paint",
-      "trade": "painting",
-      "title": "Putty, primer and paint",
-      "room": "Whole home",
-      "detail": "After carpentry carcasses are in, before fixtures.",
+      "id": "ac-window-frame",
+      "phase": "carpentry",
+      "trade": "fabrication",
+      "title": "Bedroom 1 balcony: welded iron frame for the window AC",
+      "room": "Bedroom 1",
+      "detail": "Owner 2026-10-05: the 1.5 ton window AC already owned goes in the east side of the Bedroom 1 balcony, at the owner's mark, on a welded iron-angle frame. The frame carries about 50 kg with vibration: anchor it into masonry, not into the aluminium glazing frame; slope it slightly outward so condensate and rain run out; at least half of the casing must be outside so its side louvres breathe. Drawn at a typical casing (660 wide x 430 high x 700 deep) on top of the 1 m parapet, centred 1,353 mm from the balcony's north end. Anti-rust primer and two coats of paint.",
       "dependsOn": [
-        "plaster",
-        "carp-west-cabinet",
-        "carp-tv-console",
-        "carp-lobby-bedroom3-door",
-        "window-wood-finish"
+        "ac-plan-home",
+        "engineer-check"
       ],
-      "status": "todo"
+      "status": "todo",
+      "needs": "Measure the real AC, the parapet and the glazing panel (A23); confirm the window AC stays in the plan (C31)",
+      "source": "docs/changes/2026-10-05-ac-outdoor-units.md",
+      "openItems": [
+        "A23",
+        "C31",
+        "D3"
+      ],
+      "estimateLow": 2000,
+      "estimateHigh": 4000,
+      "estimateBasis": "angle frame, about: 22 kg x Rs 110-170. For a casing about 660 x 430 x 700, 50 kg; the real unit is not measured (A23).",
+      "estimateConfidence": "low"
     },
     {
       "phase": "paint",
@@ -777,29 +1797,248 @@
       "detail": "Owner 2026-10-04: the window on the south wall is painted white; give it a wooden shade. The frame is wood (confirmed). Strip the white paint from the frame and all six shutters, sand to bare wood, stain to the chosen shade and finish with PU or melamine polish, two or three coats; on the outside faces use an exterior-grade finish, because they get sun and rain. The two new centre shutters are finished together with the old ones so the colour is the same. Match the shade to the TV panel wall and console so the room has one wood tone. Do this before the walls get their final coat, and mask the glass.",
       "dependsOn": [
         "plaster",
-        "carp-window-centre"
+        "carp-window-centre",
+        "palette-choose"
       ],
       "status": "todo",
-      "needs": "The wood shade"
+      "needs": "The wood shade",
+      "openItems": [
+        "C19"
+      ],
+      "estimateLow": 21500,
+      "estimateHigh": 39500,
+      "estimateBasis": "frame and six shutters, both faces: 86.9 sq ft x Rs 250-450. Stripping old paint is slow; the outside face needs an exterior finish.",
+      "estimateConfidence": "low"
+    },
+    {
+      "id": "paint",
+      "phase": "paint",
+      "trade": "painting",
+      "title": "Putty, primer and paint",
+      "room": "Whole home",
+      "detail": "After the carpentry carcasses are in, before fittings. Colours from the whole-home palette (pending that note).",
+      "dependsOn": [
+        "plaster",
+        "flooring",
+        "skirting",
+        "palette-choose",
+        "window-wood-finish",
+        "carp-west-cabinet",
+        "carp-tv-panel",
+        "carp-tv-console",
+        "carp-shoe-rack",
+        "carp-entry-seat",
+        "carp-lobby-bedroom3-door",
+        "carp-bedroom1-medicine-cabinet",
+        "carp-bedroom1",
+        "carp-bedroom3-east",
+        "carp-bedroom3-chest",
+        "carp-kitchen",
+        "carp-kitchen-store",
+        "carp-office-desk",
+        "carp-office-north-cabinet",
+        "carp-lobby-ironing",
+        "carp-pooja",
+        "carp-study",
+        "carp-window-centre",
+        "ac-window-frame",
+        "carp-bedroom1-layout-b"
+      ],
+      "status": "todo",
+      "estimateLow": 73500,
+      "estimateHigh": 135000,
+      "estimateBasis": "walls and ceilings: 3359 sq ft x Rs 22-40. Eight spaces from the model, less 20 % for openings and cabinets; toilets and balconies not included. Colours pending the palette note.",
+      "estimateConfidence": "medium"
     },
     {
       "id": "elec-second-fix",
       "phase": "second-fix",
       "trade": "electrical",
-      "title": "Fit switches, sockets, USB chargers and light fittings; test every circuit",
+      "title": "Drawing Room: fit switches, sockets and USB chargers; test every circuit",
       "room": "Drawing Room",
-      "detail": "Includes the RCBO test, earth test and labelling the board. Also fix the track lights to the slab, clip in and aim the heads after the furniture is in place.",
+      "detail": "Includes the RCBO test, earth test and labelling the board. The track lights are fitted in their own task for each room.",
       "dependsOn": [
         "paint",
         "elec-chase-drawing",
         "elec-tv-wall",
         "elec-drawing-switchboard",
-        "elec-track-feed",
-        "elec-track-feed-lobby",
-        "elec-track-feed-rooms"
+        "elec-drawing-west-sockets",
+        "elec-data",
+        "elec-ac-point"
       ],
       "status": "todo",
-      "source": "docs/DRAWING_ROOM_ELECTRICAL.md"
+      "source": "docs/DRAWING_ROOM_ELECTRICAL.md",
+      "estimateLow": 2000,
+      "estimateHigh": 4000,
+      "estimateBasis": "fit and test: 1 job x Rs 2,000-4,000. The plates and switches are inside the point rates.",
+      "estimateConfidence": "medium"
+    },
+    {
+      "id": "elec-second-fix-other",
+      "phase": "second-fix",
+      "trade": "electrical",
+      "title": "Other rooms: fit switches and sockets; test every circuit",
+      "room": "Other rooms",
+      "detail": "PENDING NOTE: a design for this is being written on 2026-10-05 (docs/changes/2026-10-05-*.md, section \"For the work plan\"). This task holds its place; the tasks from that note replace or extend it. Placeholder for the second fix of the other rooms' points.",
+      "dependsOn": [
+        "paint",
+        "elec-chase-other-rooms"
+      ],
+      "status": "todo",
+      "needs": "The electrical plans note",
+      "estimateBasis": "Not estimated: Follows the point plans for the other rooms (pending the electrical plans note)."
+    },
+    {
+      "id": "lights-track-drawing",
+      "phase": "second-fix",
+      "trade": "electrical",
+      "title": "Drawing Room: buy and fit the track lights",
+      "room": "Drawing Room",
+      "detail": "Buy the track, heads, drivers and dimmers from ONE maker so they fit each other. Fix the 48 V magnetic surface track to the slab after painting, connect each run to its driver and dimmer, clip in the heads and aim them once the furniture is in place. Two runs (1.5 m and 2.45 m), 8 heads: 3 spots, 2 diffused, 3 reading; a 60 W and a 100 W driver; two dimmers.",
+      "dependsOn": [
+        "paint",
+        "elec-track-feed"
+      ],
+      "status": "todo",
+      "needs": "Maker and colour (C17, C27)",
+      "source": "docs/LIGHTING.md",
+      "openItems": [
+        "C17",
+        "C27"
+      ],
+      "estimateLow": 21500,
+      "estimateHigh": 43000,
+      "estimateBasis": "track: 4 m x Rs 900-1,800; spot heads: 3 each x Rs 900-1,800; diffused heads: 2 each x Rs 1,300-2,500; reading heads: 3 each x Rs 1,200-2,200; 60 W drivers: 1 each x Rs 1,800-3,000; 100 W drivers: 1 each x Rs 2,500-4,500; dimmers: 2 each x Rs 1,500-3,500; fixing: 2 run x Rs 1,000-2,000. Counts from the lighting config; one maker for track, heads and drivers.",
+      "estimateConfidence": "medium"
+    },
+    {
+      "id": "lights-track-lobby",
+      "phase": "second-fix",
+      "trade": "electrical",
+      "title": "Lobby / Dining: buy and fit the track lights",
+      "room": "Lobby / Dining",
+      "detail": "Buy the track, heads, drivers and dimmers from ONE maker so they fit each other. Fix the 48 V magnetic surface track to the slab after painting, connect each run to its driver and dimmer, clip in the heads and aim them once the furniture is in place. Two runs (2.0 m and 1.5 m), 6 heads; two 60 W drivers; two dimmers. The dining pendant stays on its own switch.",
+      "dependsOn": [
+        "paint",
+        "elec-track-feed-lobby"
+      ],
+      "status": "todo",
+      "needs": "Maker (C27)",
+      "source": "docs/LIGHTING.md",
+      "openItems": [
+        "C27"
+      ],
+      "estimateLow": 18000,
+      "estimateHigh": 36000,
+      "estimateBasis": "track: 3.5 m x Rs 900-1,800; spot heads: 3 each x Rs 900-1,800; diffused heads: 2 each x Rs 1,300-2,500; reading heads: 1 each x Rs 1,200-2,200; 60 W drivers: 2 each x Rs 1,800-3,000; dimmers: 2 each x Rs 1,500-3,500; fixing: 2 run x Rs 1,000-2,000. Counts from the lighting config; one maker for track, heads and drivers.",
+      "estimateConfidence": "medium"
+    },
+    {
+      "id": "lights-track-bedroom1",
+      "phase": "second-fix",
+      "trade": "electrical",
+      "title": "Bedroom 1: buy and fit the track lights",
+      "room": "Bedroom 1",
+      "detail": "Buy the track, heads, drivers and dimmers from ONE maker so they fit each other. Fix the 48 V magnetic surface track to the slab after painting, connect each run to its driver and dimmer, clip in the heads and aim them once the furniture is in place. Two runs (2.6 m and 1.2 m), 8 heads; a 100 W and a 60 W driver; two dimmers.",
+      "dependsOn": [
+        "paint",
+        "elec-track-feed-bedroom1"
+      ],
+      "status": "todo",
+      "needs": "Maker (C27)",
+      "source": "docs/LIGHTING.md",
+      "openItems": [
+        "C27"
+      ],
+      "estimateLow": 21000,
+      "estimateHigh": 42000,
+      "estimateBasis": "track: 3.8 m x Rs 900-1,800; spot heads: 4 each x Rs 900-1,800; diffused heads: 2 each x Rs 1,300-2,500; reading heads: 2 each x Rs 1,200-2,200; 60 W drivers: 1 each x Rs 1,800-3,000; 100 W drivers: 1 each x Rs 2,500-4,500; dimmers: 2 each x Rs 1,500-3,500; fixing: 2 run x Rs 1,000-2,000. Counts from the lighting config; one maker for track, heads and drivers.",
+      "estimateConfidence": "medium"
+    },
+    {
+      "id": "lights-track-bedroom3",
+      "phase": "second-fix",
+      "trade": "electrical",
+      "title": "Bedroom 3: buy and fit the track lights",
+      "room": "Bedroom 3",
+      "detail": "Buy the track, heads, drivers and dimmers from ONE maker so they fit each other. Fix the 48 V magnetic surface track to the slab after painting, connect each run to its driver and dimmer, clip in the heads and aim them once the furniture is in place. Two runs of 2.75 m, 8 heads; two 60 W drivers; two dimmers.",
+      "dependsOn": [
+        "paint",
+        "elec-track-feed-bedroom3"
+      ],
+      "status": "todo",
+      "needs": "Maker (C27)",
+      "source": "docs/LIGHTING.md",
+      "openItems": [
+        "C27"
+      ],
+      "estimateLow": 22000,
+      "estimateHigh": 44000,
+      "estimateBasis": "track: 5.5 m x Rs 900-1,800; spot heads: 3 each x Rs 900-1,800; diffused heads: 2 each x Rs 1,300-2,500; reading heads: 3 each x Rs 1,200-2,200; 60 W drivers: 2 each x Rs 1,800-3,000; dimmers: 2 each x Rs 1,500-3,500; fixing: 2 run x Rs 1,000-2,000. Counts from the lighting config; one maker for track, heads and drivers.",
+      "estimateConfidence": "medium"
+    },
+    {
+      "id": "lights-track-study",
+      "phase": "second-fix",
+      "trade": "electrical",
+      "title": "Study: buy and fit the track lights",
+      "room": "Study",
+      "detail": "Buy the track, heads, drivers and dimmers from ONE maker so they fit each other. Fix the 48 V magnetic surface track to the slab after painting, connect each run to its driver and dimmer, clip in the heads and aim them once the furniture is in place. Two runs of 2.6 m, 8 heads; a 60 W and a 100 W driver; two dimmers.",
+      "dependsOn": [
+        "paint",
+        "elec-track-feed-study"
+      ],
+      "status": "todo",
+      "needs": "Maker (C27)",
+      "source": "docs/LIGHTING.md",
+      "openItems": [
+        "C27"
+      ],
+      "estimateLow": 22500,
+      "estimateHigh": 45500,
+      "estimateBasis": "track: 5.2 m x Rs 900-1,800; spot heads: 3 each x Rs 900-1,800; diffused heads: 3 each x Rs 1,300-2,500; reading heads: 2 each x Rs 1,200-2,200; 60 W drivers: 1 each x Rs 1,800-3,000; 100 W drivers: 1 each x Rs 2,500-4,500; dimmers: 2 each x Rs 1,500-3,500; fixing: 2 run x Rs 1,000-2,000. Counts from the lighting config; one maker for track, heads and drivers.",
+      "estimateConfidence": "medium"
+    },
+    {
+      "id": "lights-track-kitchen",
+      "phase": "second-fix",
+      "trade": "electrical",
+      "title": "Kitchen: buy and fit the ceiling track",
+      "room": "Kitchen",
+      "detail": "Buy the track, heads, drivers and dimmers from ONE maker so they fit each other. Fix the 48 V magnetic surface track to the slab after painting, connect each run to its driver and dimmer, clip in the heads and aim them once the furniture is in place. One run of 3.95 m, 5 heads, neutral white 4000 K; a 100 W driver; one dimmer.",
+      "dependsOn": [
+        "paint",
+        "elec-track-feed-kitchen",
+        "carp-kitchen"
+      ],
+      "status": "todo",
+      "needs": "Maker; confirm 4000 K (C26, C27)",
+      "source": "docs/LIGHTING.md",
+      "openItems": [
+        "C26",
+        "C27"
+      ],
+      "estimateLow": 14500,
+      "estimateHigh": 29500,
+      "estimateBasis": "track: 4 m x Rs 900-1,800; diffused heads: 3 each x Rs 1,300-2,500; reading heads: 2 each x Rs 1,200-2,200; 100 W drivers: 1 each x Rs 2,500-4,500; dimmers: 1 each x Rs 1,500-3,500; fixing: 1 run x Rs 1,000-2,000. Counts from the lighting config; one maker for track, heads and drivers. The under-cabinet strips are part of the kitchen cabinets.",
+      "estimateConfidence": "medium"
+    },
+    {
+      "id": "elec-entry-lights",
+      "phase": "second-fix",
+      "trade": "electrical",
+      "title": "Entry: fit the four round lights and the two switches, and test",
+      "room": "Main entry",
+      "detail": "Owner 2026-10-04 (electrician). Corridor: cut two round openings (105 mm) in the PVC planks, connect and clip in the two recessed 8 W LED panel lights; each driver sits above the ceiling on the batten, not resting on the PVC. Inner gallery: fix the two surface-mounted 8 W round panels to the plaster ceiling. Fit the switch plate at the main door (corridor pair) and the one beside the Drawing Room door (gallery pair), and test. Single colour; neutral white 4000 K is proposed, not yet agreed (C6).",
+      "dependsOn": [
+        "elec-entry-ceiling",
+        "entry-ceiling"
+      ],
+      "status": "todo",
+      "estimateLow": 1000,
+      "estimateHigh": 3000,
+      "estimateBasis": "round panels: 4 each x Rs 350-700.",
+      "estimateConfidence": "medium"
     },
     {
       "id": "plumbing-second-fix",
@@ -812,7 +2051,8 @@
         "paint",
         "plumbing-rough"
       ],
-      "status": "todo"
+      "status": "todo",
+      "estimateBasis": "Not estimated: No plumbing change is listed yet (plumbing-scope)."
     },
     {
       "id": "tv-mount",
@@ -825,20 +2065,11 @@
         "elec-second-fix",
         "carp-tv-console"
       ],
-      "status": "todo"
-    },
-    {
-      "id": "elec-entry-lights",
-      "phase": "second-fix",
-      "trade": "electrical",
-      "title": "Entry ceiling: fit the lights and the switch, and test",
-      "room": "Main entry",
-      "detail": "Owner 2026-10-04 (electrician). Cut the round openings in the PVC planks, connect and clip in the recessed LED panel lights (single colour; neutral white proposed), fit the switch plate at the door and test. Each driver sits above the ceiling on the batten, not resting on the PVC.",
-      "dependsOn": [
-        "elec-entry-ceiling",
-        "entry-ceiling"
-      ],
-      "status": "todo"
+      "status": "todo",
+      "estimateLow": 2500,
+      "estimateHigh": 6000,
+      "estimateBasis": "bracket and mounting: 1 job x Rs 2,500-6,000. The TV and the sound system are owned.",
+      "estimateConfidence": "medium"
     },
     {
       "phase": "second-fix",
@@ -852,7 +2083,49 @@
         "elec-ac-point",
         "paint"
       ],
-      "status": "todo"
+      "status": "todo",
+      "estimateLow": 38000,
+      "estimateHigh": 55000,
+      "estimateBasis": "1.5 ton split AC: 1 each x Rs 38,000-55,000. Tonnage to be confirmed by the dealer; a stabiliser, if needed, is extra.",
+      "estimateConfidence": "medium"
+    },
+    {
+      "id": "ac-window-install",
+      "phase": "second-fix",
+      "trade": "ac",
+      "title": "Bedroom 1 balcony: fit the window AC on its frame",
+      "room": "Bedroom 1",
+      "detail": "Cut one glazing panel to the casing size, lift the AC onto the frame, seal the gap around the casing, fit a drain tray and pipe so the condensate does not fall on the floors below, plug it into its own socket and run a cooling test. It cools the balcony first: cold air reaches the bedroom through the 2.2 m opening, which must stay open and clear. It is louder in the room than a split AC.",
+      "dependsOn": [
+        "ac-window-frame",
+        "elec-ac-window-point",
+        "paint"
+      ],
+      "status": "todo",
+      "needs": "Which glazing panel is at the mark (A23)",
+      "source": "docs/changes/2026-10-05-ac-outdoor-units.md",
+      "openItems": [
+        "A23"
+      ],
+      "estimateLow": 5000,
+      "estimateHigh": 12000,
+      "estimateBasis": "fitting: 1 job x Rs 2,500-6,000; glazing panel: 1 job x Rs 2,500-6,000. The AC itself is already owned.",
+      "estimateConfidence": "low"
+    },
+    {
+      "id": "ac-install-other",
+      "phase": "second-fix",
+      "trade": "ac",
+      "title": "Other rooms: fit or refit AC units after painting",
+      "room": "Other rooms",
+      "detail": "PENDING NOTE: a design for this is being written on 2026-10-05 (docs/changes/2026-10-05-*.md, section \"For the work plan\"). This task holds its place; the tasks from that note replace or extend it. Placeholder for any AC bought or moved outside the Drawing Room.",
+      "dependsOn": [
+        "ac-piping-other",
+        "paint"
+      ],
+      "status": "todo",
+      "needs": "The whole-home AC note",
+      "estimateBasis": "Not estimated: Which rooms get a new or moved AC is not decided (pending the whole-home AC note)."
     },
     {
       "phase": "second-fix",
@@ -866,7 +2139,15 @@
         "carp-window-centre"
       ],
       "status": "todo",
-      "needs": "Measure the clear opening of each section after the centre shutters are made; cassette at the top (pull down) or at the side (pull across)"
+      "needs": "Measure the clear opening of each section after the centre shutters are made; cassette at the top (pull down) or at the side (pull across)",
+      "openItems": [
+        "C19",
+        "A10"
+      ],
+      "estimateLow": 8000,
+      "estimateHigh": 14500,
+      "estimateBasis": "three nets: 32.1 sq ft x Rs 250-450. Sizes from the phone scan.",
+      "estimateConfidence": "medium"
     },
     {
       "id": "lobby-shutter",
@@ -876,25 +2157,45 @@
       "room": "Drawing Room / Lobby",
       "detail": "Owner 2026-10-04, decided: slim aluminium frame with fluted glass, and NOTHING on the floor. The opening is about 3,280 mm wide and about 2,395 mm high under the hanging beam (model sizes, not measured). How to build it: top-hung sliding panels, all the weight carried by a track fixed under the beam, no floor track. Three panels of about 1,100 mm on a three-line (telescopic) track, linked panel to panel at the bottom so they steady each other; the only guide is one small fitting at the parking end, beside the wall and out of the walking line. Proposed: extend the track about 1.1 m past the opening along the solid wall north of it, so the panels park in front of that wall and the whole opening is clear. Glass: 8 mm toughened, fluted (vertical flutes); if toughened fluted glass is hard to find locally, use clear toughened glass with a fluted film. Soft-close dampers; brush seals at the top and between panels and a brush strip along each bottom edge, to hold the AC cooling; recessed flush pulls. Each panel weighs roughly 55-60 kg, about 180 kg in all, hanging from the beam. PVC folding and crystal folding were considered and dropped. The 3D model still draws a 10-panel folding partition.",
       "dependsOn": [
-        "paint"
+        "paint",
+        "site-measure",
+        "engineer-check"
       ],
       "status": "todo",
-      "needs": "Measure the opening width and the height under the beam; engineer or fabricator to confirm the beam takes about 180 kg on anchors; which side the panels park on (Drawing Room or Lobby face of the wall); frame colour"
+      "needs": "Measure the opening width and the height under the beam; engineer or fabricator to confirm the beam takes about 180 kg on anchors; which side the panels park on (Drawing Room or Lobby face of the wall); frame colour",
+      "openItems": [
+        "A11",
+        "C16",
+        "D6"
+      ],
+      "estimateLow": 92500,
+      "estimateHigh": 153000,
+      "estimateBasis": "opening 3277 x 2395: 84.5 sq ft x Rs 1,100-1,800. Model sizes (scan: about 3100 x 2445). Toughened fluted glass may not be stocked locally.",
+      "estimateConfidence": "low"
     },
     {
       "id": "window-outside-chick",
       "phase": "second-fix",
       "trade": "windows",
-      "title": "Drawing Room south window: roll-up sun screen (bamboo chick) on the outside",
+      "title": "Drawing Room south window: roll-up sun screen on the outside (bamboo chick or ready-made HDPE blind, decided after the trial)",
       "room": "Drawing Room",
-      "detail": "Owner 2026-10-04: the window faces south-west and takes a lot of sun and heat in the Delhi summer; a curtain is used now. A roll-up screen (bamboo chick) on the outside stops the heat before it comes through the glass. New information from the owner: the top of the window, about 1 ft, is a FIXED band, and the opening shutters start below it; there is a cover above the window. Design (drawing: docs/drawings/south-window-chick-cord.png): hang the screen close to the wall, about 85 mm out, from hooks just under the frame head. Rolled UP, the roll (about 100 mm across) parks in front of the fixed band, above the shutters, so all six shutters open freely under it. Rolled DOWN, it covers the whole window; the shutters must be shut first, which they are on a hot afternoon with the AC on. The pull cord comes INTO the room through a small lined hole (brass or ceramic eyelet) in the frame head and ties on a hook inside, so it is worked from inside. Hook the bottom rail to two hooks at the sill when it is down, so wind cannot swing it. Width about 2.5 m, drop about 1.7 m. Stainless steel hooks. Plain bamboo lasts two or three monsoons outside; a PVC-coated or HDPE outdoor screen looks similar and lasts longer. This replaces the earlier idea of hanging it 450 mm out from the edge of the cover: no long brackets, less wind sway, better shade.",
+      "detail": "Owner 2026-10-04: the window faces south-west and takes a lot of sun and heat in the Delhi summer; a curtain is used now. A roll-up screen (bamboo chick) on the outside stops the heat before it comes through the glass. New information from the owner: the top of the window, about 1 ft, is a FIXED band, and the opening shutters start below it; there is a cover above the window. Design (drawing: docs/drawings/south-window-chick-cord.png): hang the screen close to the wall, about 85 mm out, from hooks just under the frame head. Rolled UP, the roll (about 100 mm across) parks in front of the fixed band, above the shutters, so all six shutters open freely under it. Rolled DOWN, it covers the whole window; the shutters must be shut first, which they are on a hot afternoon with the AC on. The pull cord comes INTO the room through a small lined hole (brass or ceramic eyelet) in the frame head and ties on a hook inside, so it is worked from inside. Hook the bottom rail to two hooks at the sill when it is down, so wind cannot swing it. PHONE SCAN 2026-10-04: the frame is 2,700 wide, the drop from the head to the sill about 1,500 and the top band about 390. Owner 2026-10-05: a ready-made outdoor HDPE roll-up blind is being considered instead of bamboo, tried first on one section (see the trial task); a 3 ft (914) piece suits one section, and three 4 ft pieces do not fit side by side. Stainless steel hooks. Plain bamboo lasts two or three monsoons outside; a PVC-coated or HDPE outdoor screen looks similar and lasts longer. This replaces the earlier idea of hanging it 450 mm out from the edge of the cover: no long brackets, less wind sway, better shade.",
       "dependsOn": [
         "carp-window-centre",
-        "window-wood-finish"
+        "window-wood-finish",
+        "window-screen-trial"
       ],
       "status": "todo",
-      "needs": "Measure the height of the fixed top band (the rolled screen must fit inside it) and the window width. Bamboo or outdoor PVC/HDPE screen. Society rules on the outside look",
-      "source": "docs/drawings/south-window-chick-cord.png"
+      "needs": "The result of the trial piece (OPEN_ITEMS C20). Measure the height of the fixed top band (the rolled screen must fit inside it) and the window width. Society rules on the outside look",
+      "source": "docs/drawings/south-window-chick-cord.png",
+      "openItems": [
+        "C20",
+        "B6"
+      ],
+      "estimateLow": 1500,
+      "estimateHigh": 5500,
+      "estimateBasis": "pieces: 2 to 3 each x Rs 800-1,800. After the trial piece; a made-to-measure bamboo chick is in the same range.",
+      "estimateConfidence": "low"
     },
     {
       "id": "furniture",
@@ -908,7 +2209,8 @@
         "flooring"
       ],
       "status": "todo",
-      "source": "docs/DRAWING_ROOM_TV_WALL.md"
+      "source": "docs/DRAWING_ROOM_TV_WALL.md",
+      "estimateBasis": "Not estimated: It is not recorded which pieces (sofas, table, rug) are bought new and which are already owned."
     },
     {
       "id": "snag",
@@ -918,13 +2220,29 @@
       "room": "Whole home",
       "detail": "",
       "dependsOn": [
-        "elec-second-fix",
+        "elec-second-fix-other",
+        "lights-track-drawing",
+        "lights-track-lobby",
+        "lights-track-bedroom1",
+        "lights-track-bedroom3",
+        "lights-track-study",
+        "lights-track-kitchen",
+        "elec-entry-lights",
         "plumbing-second-fix",
-        "furniture",
-        "main-gate",
-        "carp-shoe-rack"
+        "tv-mount",
+        "ac-install",
+        "ac-window-install",
+        "ac-install-other",
+        "window-mosquito-net",
+        "lobby-shutter",
+        "window-outside-chick",
+        "furniture"
       ],
-      "status": "todo"
+      "status": "todo",
+      "estimateLow": 6000,
+      "estimateHigh": 12000,
+      "estimateBasis": "deep clean: 1 job x Rs 6,000-12,000.",
+      "estimateConfidence": "medium"
     }
   ]
 }
