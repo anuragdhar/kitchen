@@ -347,10 +347,12 @@ export function createThrow({under, mattress, xFrom, xTo, drop = {left: .1, righ
  * bottom, the sides pulled in between the corners, a shallow dent where a head lies (`dent`, metres). Bottom rests on y = 0.
  * About 380 triangles.
  */
-export function pillowGeometry({length, width, height, seamHeight = .03, pinch = .05, dent = .012, seed = 2, nu = 12, nv = 8}) {
+export function pillowGeometry({length, width, height, seamHeight = .03, pinch = .05, dent = .012, seed = 2, nu = 12, nv = 8, flange = 0}) {
   const ph = k => hash(seed * 7 + k) * Math.PI * 2
   const us = spread(-1, 1, nu, t => -Math.cos(Math.PI * t) * .5 + .5), vs = spread(-1, 1, nv, t => -Math.cos(Math.PI * t) * .5 + .5)
-  const crown = (u, v) => Math.max(0, (1 - Math.abs(u) ** 2.2)) ** .8 * Math.max(0, (1 - Math.abs(v) ** 2.2)) ** .8
+  // `flange` (metres): a flat border of the pillowcase all round (an "Oxford" edge), where the two halves meet flat.
+  const fu = 1 + 2 * flange / length, fv = 1 + 2 * flange / width
+  const crown = (u, v) => Math.max(0, (1 - Math.min(1, Math.abs(u * fu)) ** 2.2)) ** .8 * Math.max(0, (1 - Math.min(1, Math.abs(v * fv)) ** 2.2)) ** .8
   const outline = (u, v) => [u * length / 2 * (1 - pinch * (1 - v * v)), v * width / 2 * (1 - pinch * .8 * (1 - u * u))]
   const half = upper => {
     const pts = [], uv = [], shade = []
@@ -362,7 +364,7 @@ export function pillowGeometry({length, width, height, seamHeight = .03, pinch =
         : seamHeight * (1 - f ** .35)
       pts.push([x, y, z]); uv.push([x, z])
       // A little darker toward the seam and underneath, so a white pillow keeps its shape in bright light.
-      shade.push(upper ? .8 + .2 * Math.sqrt(f) : .72)
+      shade.push(upper ? .62 + .38 * Math.sqrt(f) : .55)
     }
     return gridGeometry(pts, uv, us.length, vs.length, [Math.floor(us.length / 2) * vs.length + Math.floor(vs.length / 2), [0, upper ? 1 : -1, 0]], shade)
   }

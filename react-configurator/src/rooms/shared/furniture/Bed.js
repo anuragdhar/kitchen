@@ -32,9 +32,9 @@ export function createBedMaterials(colours, {roomId} = {}) {
     // Weave tiles of 45-60 mm (32 threads each): visible as a soft texture close up, averaged away by mip-mapping at a distance.
     mattress: fabricMaterial(colours.mattress, {tileMetres: .045, normalScale: .35, sheen: .35}),
     piping: fabricMaterial(`#${piping.getHexString()}`, {tileMetres: .03, normalScale: .3, sheen: .3}),
-    duvet: fabricMaterial(colours.duvet, {tileMetres: .06, normalScale: .3, sheen: .55, vertexColors: true}),
+    duvet: fabricMaterial(colours.duvet, {tileMetres: .06, normalScale: .3, sheen: .55, vertexColors: true, side: THREE.DoubleSide}),
     pillow: fabricMaterial(colours.pillow, {tileMetres: .05, normalScale: .28, sheen: .45, vertexColors: true}),
-    throw: colours.throw ? fabricMaterial(colours.throw, {pattern: 'knit', tileMetres: .07, normalScale: .7, sheen: .7, vertexColors: true}) : null,
+    throw: colours.throw ? fabricMaterial(colours.throw, {pattern: 'knit', tileMetres: .07, normalScale: .7, sheen: .7, vertexColors: true, side: THREE.DoubleSide}) : null,
     cushions: (colours.cushions || []).map(color => fabricMaterial(color, {tileMetres: .04, normalScale: .45, sheen: .7, vertexColors: true})),
   }
 }
@@ -105,7 +105,7 @@ export function createMadeBed(spec, materials) {
     for (let i = 0; i < pillowCount; i++) {
       const z = pillowCount > 1 ? zMid + (i - (pillowCount - 1) / 2) * (pillowWidth + .025) : zMid
       const place = new THREE.Matrix4().compose(new THREE.Vector3(pillowFront + pillowLength / 2, top, z), new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), (i % 2 ? 1 : -1) * .025), new THREE.Vector3(1, 1, 1))
-      pillows.push([pillowGeometry({length: pillowLength, width: pillowWidth, height: .12, seamHeight: .032, seed: (spec.seed || 1) * 5 + i}), place])
+      pillows.push([pillowGeometry({length: pillowLength, width: pillowWidth, height: .12, seamHeight: .03, flange: .025, nv: 10, seed: (spec.seed || 1) * 5 + i}), place])
     }
     add(mergeGeometries(pillows), materials.pillow, 'pillow')
   }
