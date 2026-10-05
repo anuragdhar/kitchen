@@ -3,7 +3,7 @@ import React,{useEffect,useRef,useState} from 'react'
 import * as THREE from 'three'
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js'
 import {createStoreStorage} from './rooms/shared/StoreStorage.js'
-import {KITCHEN_REFRIGERATOR as FRIDGE} from './config/kitchenConfig.js'
+import {KITCHEN_REFRIGERATOR as FRIDGE,KITCHEN_STORE_STORAGE as STORAGE} from './config/kitchenConfig.js'
 import {createLiveView} from './render/liveView.js'
 import {createDaylightRig} from './render/lightRig.js'
 import RenderQualityControls from './render/RenderQualityControls.jsx'
@@ -31,12 +31,12 @@ export default function StorageGallery3D(){
   const setView=view=>{controls.target.set(1.25,.9,1.2);camera.up.set(0,1,0);if(view==='top'){camera.position.set(1.25,6,1.2);camera.up.set(0,0,1)}else if(view==='front')camera.position.set(-3,1.5,1.2);else camera.position.set(-2.5,3.2,3.9);camera.lookAt(controls.target);controls.update()}
   setView('overview')
   const resize=()=>{view.setSize(mount.clientWidth,mount.clientHeight,true);camera.aspect=mount.clientWidth/mount.clientHeight;camera.updateProjectionMatrix()};const observer=new ResizeObserver(resize);observer.observe(mount);resize()
-  const interiorScene=registerInteriorScene({id:'storage',scene,camera,renderer,zones:[{id:'storage',min:[0,0,0],max:[3,2.7,2.5]}]})
+  const interiorScene=registerInteriorScene({id:'storage',scene,camera,renderer,zones:[{id:'storage',min:[0,0,0],max:[3,STORAGE.louvre.ceilingHeightMm/1000,2.5]}]})
   let raf;const render=()=>{controls.update();view.render();raf=requestAnimationFrame(render)};render()
   sceneRef.current={liveView:view,setDesigner:on=>view.setDesigner(on),setView,setOpen:model.userData.setCoverOpen}
   return()=>{interiorScene.dispose();cancelAnimationFrame(raf);view.dispose();rig.dispose();observer.disconnect();controls.dispose();scene.traverse(o=>{o.geometry?.dispose();o.material?.dispose?.()});renderer.dispose();renderer.domElement.remove();sceneRef.current=null}
  },[])
  useEffect(()=>{sceneRef.current?.setOpen(open)},[open])
  const style={padding:'9px 14px',borderRadius:8,border:'1px solid #b6a793',background:'#fff',cursor:'pointer'}
- return <main className="storage-workspace" style={{padding:'24px clamp(18px,3vw,48px)'}}><style>{`@media(min-width:1500px){.storage-workspace{padding-left:280px!important}}`}</style><h1>Storage beside the fridge</h1><p>Two sideways rolling racks · sliding cover parks toward the fridge</p><div style={{display:'flex',gap:8,flexWrap:'wrap'}}><button style={style} onClick={()=>setOpen(v=>!v)}>{open?'Close storage cover':'Open storage cover'}</button>{['overview','front','top'].map(v=><button key={v} style={style} onClick={()=>sceneRef.current?.setView(v)}>{v[0].toUpperCase()+v.slice(1)}</button>)}<RenderQualityControls sceneRef={sceneRef} name="storage" buttonStyle={()=>style}/></div><div ref={mountRef} style={{height:'75vh',minHeight:500,marginTop:12,borderRadius:16,overflow:'hidden'}}/><p>The parked cover sits in front of the fridge area; close it before fully opening the fridge doors.</p></main>
+ return <main className="storage-workspace" style={{padding:'24px clamp(18px,3vw,48px)'}}><style>{`@media(min-width:1500px){.storage-workspace{padding-left:280px!important}}`}</style><h1>Storage beside the fridge</h1><p>Two rolling racks behind a floor-to-ceiling timber louvre slider, with matching fixed slats above the fridge</p><div style={{display:'flex',gap:8,flexWrap:'wrap'}}><button style={style} onClick={()=>setOpen(v=>!v)}>{open?'Close storage cover':'Open storage cover'}</button>{['overview','front','top'].map(v=><button key={v} style={style} onClick={()=>sceneRef.current?.setView(v)}>{v[0].toUpperCase()+v.slice(1)}</button>)}<RenderQualityControls sceneRef={sceneRef} name="storage" buttonStyle={()=>style}/></div><div ref={mountRef} style={{height:'75vh',minHeight:500,marginTop:12,borderRadius:16,overflow:'hidden'}}/><p>The louvred cover parks in front of the fridge; close it before opening the fridge doors. The fixed upper panel sits slightly behind the slider so it can pass. Proposed {STORAGE.louvre.ventilationGapMm} mm gap above the fridge: the fridge needs air, and manufacturer clearances have not been verified.</p></main>
 }

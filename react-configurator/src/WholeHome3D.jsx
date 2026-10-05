@@ -536,13 +536,16 @@ function LiveWholeHome3D({onOpenRoom}){
 
     const kb=boundsFor('Kitchen'),kg=roomGroup(kb,KITCHEN.width,KITCHEN.length)
     kg.add(createRoomTrackLighting(KITCHEN_LIGHTING,KITCHEN_LIGHTING.room)) // the ceiling track (config/kitchenLightingConfig.js); this group is in the room frame, so no mirroring here
-    const storeStorage=createStoreStorage()
+    const fridge=KITCHEN_REFRIGERATOR
+    // Storage inherits the kitchen plan's z scale; the existing fridge below is drawn at true width.
+    // Convert its span into that room frame so the upper panel covers it without moving racks or fridge.
+    // If needed the fixed panel extends behind the closed slider, still separated by the passing gap.
+    const storeStorage=createStoreStorage({fridge:{...fridge,widthMm:fridge.widthMm/kg.scale.z,southWallThicknessMm:fridge.southWallThicknessMm/kg.scale.z}})
     storeStorage.userData.setCoverOpen(storageCoverOpen)
     storeStorage.position.z=KITCHEN.length/1000
     kg.add(storeStorage)
     roomEdge(kb,KITCHEN.width,KITCHEN.length,'south',[{start:KITCHEN.door.x,end:KITCHEN.door.x+KITCHEN.door.w,top:HEIGHT}])
     roomEdge(kb,KITCHEN.width,KITCHEN.length,'north',[{start:KITCHEN.window.x,end:KITCHEN.window.x+KITCHEN.window.w,bottom:KITCHEN.window.sill/1000,top:HEIGHT,glass:true}])
-    const fridge=KITCHEN_REFRIGERATOR
     const kitchenXScale=X(kb[2]-kb[0])/(KITCHEN.width/1000)
     const fridgeFrontX=X(kb[2])-fridge.fromKitchenWestMm/1000*kitchenXScale
     const fridgeNorthZ=Z(kb[1])-fridge.southWallThicknessMm/1000
@@ -845,7 +848,8 @@ function LiveWholeHome3D({onOpenRoom}){
         <button onClick={()=>setShowWalls(value=>!value)} style={buttonStyle(showWalls)}>{showWalls?'Hide walls':'Show walls'}</button>
         <button onClick={()=>setShowPoojaPerson(value=>!value)} style={buttonStyle(showPoojaPerson)}>{showPoojaPerson?'Hide seated person':'Show seated person'}</button>
         <button onClick={()=>setShowIroningBoard(value=>!value)} style={buttonStyle(showIroningBoard)}>{showIroningBoard?'Stow ironing board':'Pull out ironing board'}</button>
-        <button onClick={()=>setStorageCoverOpen(value=>!value)} style={buttonStyle(storageCoverOpen)}>{storageCoverOpen?'Close storage cover':'Open storage cover'}</button>
+        <button onClick={()=>setStorageCoverOpen(value=>!value)} title="Floor-to-ceiling louvre slider with fixed slats above the fridge; close the cover before opening the fridge doors" style={buttonStyle(storageCoverOpen)}>{storageCoverOpen?'Close storage cover':'Open storage cover'}</button>
+        {storageCoverOpen&&<span style={{alignSelf:'center'}}>Close the louvred storage cover before opening the fridge doors.</span>}
         <button onClick={()=>setMirrorOpen(value=>!value)} style={buttonStyle(mirrorOpen)}>{mirrorOpen?'Close dressing mirror (south-east)':'Open dressing mirror (south-east)'}</button>
         <button onClick={()=>setMedicineCabinetOpen(value=>!value)} aria-pressed={medicineCabinetOpen} style={buttonStyle(medicineCabinetOpen)}>{medicineCabinetOpen?'Close medicine cabinet':'Open medicine cabinet'}</button>
         <label style={{display:'flex',alignItems:'center',gap:6,fontWeight:800,fontSize:13}}>Drawing Room layout

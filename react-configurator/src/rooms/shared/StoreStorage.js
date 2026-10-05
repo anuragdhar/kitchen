@@ -1,9 +1,10 @@
 import {tagSurfaceMaterial} from '../../render/surfaceRoles.mjs'
 import * as THREE from 'three'
-import {KITCHEN_STORE_STORAGE} from '../../config/kitchenConfig.js'
+import {KITCHEN_STORE_STORAGE,KITCHEN_REFRIGERATOR} from '../../config/kitchenConfig.js'
+import {storeStorageLouvre} from '../../domain/storeStorageLouvre.mjs'
 
 // Shared millimetre boxes: kitchen west-to-east X, southward Z, vertical Y.
-export function storeStorageParts(){
+export function storeStorageParts(fridge=KITCHEN_REFRIGERATOR){
   const s=KITCHEN_STORE_STORAGE,parts=[],r=s.racks
   const add=(name,x,y,z,w,h,d,color='#26282b')=>parts.push({name,x,y,z,w,h,d,color})
   const margin=(s.widthMm-2*r.widthMm-r.gapMm)/2
@@ -21,26 +22,36 @@ export function storeStorageParts(){
       add('shelf centre support',x+12,y+8,z+width/2-3,length-24,6,6)
     }
   }
-  const cover=s.slidingCover
-  if(cover){
-    const px=s.fromKitchenWestMm-cover.frontOffsetMm
-    add('storage sliding track',px-12,cover.heightMm+35,cover.fromSouthMm-cover.travelMm,65,45,cover.widthMm+cover.travelMm,'#65625d')
-    add('storage sliding cover front',px,12,cover.fromSouthMm,28,cover.heightMm-12,cover.widthMm,'#c5b49e')
-    parts[parts.length-1].sliding=true
-    add('storage sliding cover handle',px-20,950,cover.fromSouthMm+cover.widthMm-85,20,180,18,'#756650')
-    parts[parts.length-1].sliding=true
+  if(s.slidingCover){
+    const {slider,fixed,track,guide,handle}=storeStorageLouvre(s,fridge),l=s.louvre
+    for(const panel of [slider,fixed])parts.push({...panel,name:panel.id,x:panel.x+l.slatDepthMm,w:l.backingMm,color:l.backingColor})
+    parts.push(track,guide,handle)
   }
   return parts
 }
-export function createStoreStorage(){
+export function createStoreStorage({fridge=KITCHEN_REFRIGERATOR}={}){
   const group=new THREE.Group();group.name='Two sideways five-shelf rolling racks beside refrigerator'
   const sliding=[]
-  for(const p of storeStorageParts()){
+  for(const p of storeStorageParts(fridge)){
     const mesh=new THREE.Mesh(new THREE.BoxGeometry(p.w/1000,p.h/1000,p.d/1000),new THREE.MeshStandardMaterial({color:p.color,roughness:.72}))
-    if(p.name==='storage sliding cover front')tagSurfaceMaterial(mesh.material,'wood','storage')
     mesh.name=p.name;mesh.position.set((p.x+p.w/2)/1000,(p.y+p.h/2)/1000,(p.z+p.d/2)/1000)
     mesh.castShadow=true;mesh.receiveShadow=true;group.add(mesh)
     if(p.sliding)sliding.push({mesh,z:mesh.position.z})
+  }
+  if(KITCHEN_STORE_STORAGE.slidingCover){
+    const l=KITCHEN_STORE_STORAGE.louvre,{slider,fixed}=storeStorageLouvre(KITCHEN_STORE_STORAGE,fridge)
+    for(const panel of [slider,fixed]){
+      // One draw call per panel, including edge slats clipped to the shared pitch grid.
+      const material=tagSurfaceMaterial(new THREE.MeshStandardMaterial({color:l.woodColor,roughness:l.roughness}),'wood','storage')
+      const mesh=new THREE.InstancedMesh(new THREE.BoxGeometry(1,1,1),material,panel.slats.length),matrix=new THREE.Matrix4()
+      panel.slats.forEach((slat,i)=>{
+        matrix.makeScale(l.slatDepthMm/1000,panel.h/1000,slat.widthMm/1000)
+        matrix.setPosition((panel.x+l.slatDepthMm/2)/1000,(panel.y+panel.h/2)/1000,(slat.fromMm+slat.widthMm/2)/1000)
+        mesh.setMatrixAt(i,matrix)
+      })
+      mesh.instanceMatrix.needsUpdate=true;mesh.name=`${panel.id} slats`;mesh.castShadow=true;mesh.receiveShadow=true;group.add(mesh)
+      if(panel.sliding)sliding.push({mesh,z:mesh.position.z})
+    }
   }
   group.userData.setCoverOpen=open=>sliding.forEach(({mesh,z})=>{mesh.position.z=z-(open?KITCHEN_STORE_STORAGE.slidingCover.travelMm/1000:0)})
   return group

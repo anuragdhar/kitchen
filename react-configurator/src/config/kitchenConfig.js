@@ -37,7 +37,23 @@ export const KITCHEN_STORE_STORAGE = {
   fromKitchenWestMm:1000,widthMm:1092,fromKitchenSouthMm:1058,depthMm:1000,heightMm:2600,faces:'west',
   shelfLevelsMm:[850,1150,1450,1750,2050],pantryWidthMm:700,
   racks:{lengthMm:762,widthMm:355.6,heightMm:1644.65,gapMm:150,shelfLevelsMm:[150,500,850,1200,1615]},
-  slidingCover:{fromSouthMm:1100,widthMm:1000,heightMm:2200,travelMm:1000,frontOffsetMm:120},
+  // Owner 2026-10-06: "let's use louvre cover from ceiling to the floor, and hide space above the fridge also".
+  // PROPOSAL: cover the entire existing recess (1058..2150), retaining the old travel and backing plane.
+  // Height is the leaf itself: scene ceiling minus proposed 15 mm floor / 50 mm track clearances.
+  slidingCover:{fromSouthMm:1058,widthMm:1092,heightMm:ROOM_HEIGHT-15-50,travelMm:1000,frontOffsetMm:120},
+  louvre:{
+    ceilingHeightMm:ROOM_HEIGHT, // Existing 2700 mm scene ceiling, not the unapplied scan height.
+    // PROPOSAL 2026-10-06: all clearances, slat/backing sizes and hardware below need joiner approval.
+    floorClearanceMm:15,ceilingClearanceMm:50,slatWidthMm:30,slatDepthMm:20,pitchMm:45,backingMm:18,
+    ventilationGapMm:50,passingGapMm:10, // Fridge needs air; manufacturer clearances NOT verified.
+    // PROPOSAL: bridge the existing 100 mm fridge/recess gap above fridge height for a continuous elevation.
+    bridgeToStorage:true,
+    track:{frontOverhangMm:12,depthMm:65,heightMm:45},
+    guide:{depthMm:10,heightMm:20,widthMm:30},
+    // Existing handle dimensions/position, now explicit config (not a newly measured fitting).
+    handle:{depthMm:20,heightMm:180,widthMm:18,bottomMm:950,endInsetMm:85},
+    woodColor:'#c5b49e',backingColor:'#26282b',hardwareColor:'#65625d',handleColor:'#756650',roughness:.72,
+  },
 }
 
 // Current configuration: west wet wall and east cooking/appliance wall.
