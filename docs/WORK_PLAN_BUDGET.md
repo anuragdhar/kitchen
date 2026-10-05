@@ -16,7 +16,7 @@ re-run the script (or tell the assistant which rate is wrong).
 
 ## Total
 
-**Rs 16,13,000 to Rs 30,78,000** (Rs 16.1 lakh to Rs 30.8 lakh) for the 105 tasks that could be
+**Rs 16,15,000 to Rs 30,81,000** (Rs 16.1 lakh to Rs 30.8 lakh) for the 105 tasks that could be
 estimated, out of 112. 7 tasks are not estimated (listed below), so the true total is higher.
 The total includes the OPTIONAL skirting replacement (Rs 17,000 to Rs 35,000).
 
@@ -27,7 +27,7 @@ The total includes the OPTIONAL skirting replacement (Rs 17,000 to Rs 35,000).
 | 1. Measure, decide and get approvals | 27 | Rs 18,500 | Rs 50,000 | 1 |
 | 2. Demolition and civil work | 12 | Rs 97,000 | Rs 1,95,000 | 1 |
 | 3. Plumbing first fix | 1 | not estimated | not estimated | 1 |
-| 4. Electrical first fix and AC piping (before plaster) | 25 | Rs 1,22,000 | Rs 2,88,500 | 1 |
+| 4. Electrical first fix and AC piping (before plaster) | 25 | Rs 1,24,000 | Rs 2,91,500 | 1 |
 | 5. Plaster, making good and flooring | 4 | Rs 52,000 | Rs 97,500 |  |
 | 6. Carpentry and steel fabrication | 20 | Rs 9,40,000 | Rs 15,39,000 | 1 |
 | 7. Painting and polish | 3 | Rs 95,000 | Rs 3,21,500 |  |
@@ -39,7 +39,7 @@ The total includes the OPTIONAL skirting replacement (Rs 17,000 to Rs 35,000).
 | Trade | Tasks | Low | High | Not estimated |
 | --- | ---: | ---: | ---: | ---: |
 | Civil / structure | 11 | Rs 1,08,000 | Rs 2,31,500 |  |
-| Electrical | 38 | Rs 2,59,500 | Rs 5,46,000 | 1 |
+| Electrical | 38 | Rs 2,61,500 | Rs 5,49,000 | 1 |
 | Plumbing | 3 | Rs 0 | Rs 0 | 2 |
 | Carpentry | 20 | Rs 9,39,500 | Rs 15,38,500 | 1 |
 | Steel fabrication | 5 | Rs 50,500 | Rs 88,500 | 1 |
@@ -54,7 +54,7 @@ The total includes the OPTIONAL skirting replacement (Rs 17,000 to Rs 35,000).
 | Room | Tasks | Low | High | Not estimated |
 | --- | ---: | ---: | ---: | ---: |
 | Main entry | 12 | Rs 1,08,500 | Rs 1,90,000 | 1 |
-| Drawing Room | 30 | Rs 3,52,000 | Rs 6,57,500 | 1 |
+| Drawing Room | 30 | Rs 3,54,000 | Rs 6,60,500 | 1 |
 | Lobby / Dining | 12 | Rs 1,08,000 | Rs 2,59,000 |  |
 | Bedroom 1 | 14 | Rs 2,48,000 | Rs 4,39,500 |  |
 | Bedroom 3 | 7 | Rs 1,36,500 | Rs 2,38,000 |  |
@@ -105,7 +105,7 @@ Rupees, 2025-26, Delhi NCR, mid-range quality. "Used for" is the total quantity 
 | Mild steel, fabricated, primed, painted and fixed | kg | 110 | 170 | 114 |
 | Stainless steel 304 grille door with frame and insect mesh, fabricated and fixed | sq ft | 1,600 | 2,600 | 21.4 |
 | Mortise lock with lever handles, deadbolt and night latch | each | 5,000 | 12,000 | 1 |
-| Light or switch point: conduit, wire, box, modular switch | point | 900 | 1,500 | 26 to 27 |
+| Light or switch point: conduit, wire, box, modular switch | point | 900 | 1,500 | 28 to 29 |
 | 6 A socket or charging point with a modular plate (USB module included) | point | 1,200 | 2,000 | 18 to 21 |
 | 16 A power point with a modular plate | point | 1,800 | 3,000 | 14 |
 | Dedicated circuit from the board: 4 sq mm wire, own breaker, AC or power socket | each | 4,500 | 8,000 | 3 to 7 |
@@ -204,7 +204,7 @@ Rupees, 2025-26, Delhi NCR, mid-range quality. "Used for" is the total quantity 
 | Bedroom 3: take out the existing corner cupboard | Bedroom 3 | Rs 1,500 | Rs 3,500 | low | half a load of debris: 0.5 load x Rs 3,500-6,500. Labour to dismantle is small if it is a wooden cupboard; more if masonry. |
 | Remove debris and make good the cut edges | Whole home | Rs 7,000 | Rs 26,000 | low | loads: 2 to 4 load x Rs 3,500-6,500. Three openings, one closed doorway and the old window. |
 | Plumbing first fix: pipes and drains in walls and floor | As decided |  |  |  | Not estimated: No plumbing change is listed yet (plumbing-scope). |
-| Drawing Room: chase walls and fix conduits and boxes for the remaining points of the 17-point plan | Drawing Room | Rs 13,000 | Rs 22,000 | low | light points: 4 point x Rs 900-1,500; socket and charging points: 5 point x Rs 1,200-2,000; 6/16 A points: 2 point x Rs 1,800-3,000. From the 17-point plan less the TV wall, AC, floor box and the east-wall switchboard (C28); the uplight and reading-light points may go now that the tracks do that work. |
+| Drawing Room: chase walls and fix conduits and boxes for the remaining points of the 17-point plan | Drawing Room | Rs 15,000 | Rs 25,000 | low | light points: 6 point x Rs 900-1,500; socket and charging points: 5 point x Rs 1,200-2,000; 6/16 A points: 2 point x Rs 1,800-3,000. From the 17-point plan less the TV wall, AC, floor box and the east-wall switchboard (C28); the uplight and reading-light points may go now that the tracks do that work. |
 | TV wall: power and cable points behind the TV and the console | Drawing Room | Rs 10,000 | Rs 17,500 | medium | socket boxes: 3 point x Rs 1,800-3,000; own circuit: 1 each x Rs 4,500-8,000; conduit: 1 m x Rs 250-450. |
 | Replace the old Drawing Room switchboard with a modular switch plate | Drawing Room | Rs 4,000 | Rs 9,000 | low | switchboard: 1 each x Rs 4,000-9,000. More if it is moved to another wall (C28). |
 | Drawing Room west wall: the three socket plates behind the west sofa | Drawing Room | Rs 0 | Rs 6,000 | low | plates moved: 0 to 3 point x Rs 1,200-2,000. Nothing if they stay for fixed plugs; three points if they move (C29). |
