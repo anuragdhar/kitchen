@@ -240,47 +240,93 @@
       "phase": "measure",
       "id": "ac-choose",
       "trade": "general",
-      "title": "Drawing Room AC: choose the size, the indoor position and where the outdoor unit goes",
+      "title": "Drawing Room AC: confirm the size with the dealer and where the outdoor unit goes",
       "room": "Drawing Room",
-      "detail": "Owner 2026-10-04: the Drawing Room has no AC; one has to be bought. The room is about 3.35 x 5.34 m (18 sq m, 193 sq ft), but its east side is open to the Lobby/Dining (about 16 sq m more), so the AC cools both unless that opening can be closed. Starting point: an inverter split AC of 1.5 ton if only the Drawing Room is cooled, 2 ton if the opening stays open; ask the dealer to confirm for the top-floor heat and sun on the south window. The electrical plan already has the AC point on the west wall, 3,080 mm from the north wall and 2,300 high, above the west sofa. Decide where the outdoor unit hangs, because that fixes the pipe route and its length. Update 2026-10-04: glass sliding doors between the Drawing Room and the Lobby are decided, so the AC can be sized for the Drawing Room alone (about 1.5 ton), to be confirmed by the dealer. Owner proposal 2026-10-05: stand the outdoor unit on the shoe rack platform at the north end of the entry, in the bottom of the rack, behind a fixed grille, with a service door on the inside (docs/changes/2026-10-05-shoe-rack-ac-bay.md; toggle on the Main entry page). By typical sizes it fits turned lengthwise, not across. Ask the dealer for the chosen model's clearances and the pipe length from the indoor position (about 9-10 m from the west wall, about 4-5 m from the north or east wall near the entry door). SECOND OPTION (owner mark 2026-10-05, docs/changes/2026-10-05-ac-outdoor-units.md): on a wall bracket outside the Drawing Room west wall at its south end, about 2-3 m of pipe from the indoor unit; the better of the two if that face is open air, a technician can reach it and the society allows it. Neither place is decided.",
+      "detail": "The Drawing Room has no AC; one has to be bought. With the glass sliding doors to the Lobby decided, it is sized for the Drawing Room alone: the AC plan estimates about 1.46 ton, so a 1.5 ton inverter split is at its limit on a top floor with a south window; ask the dealer about 1.8 or 2 ton. Indoor unit on the west wall, centred about 2,420 mm from the north wall, where the power point W1 is planned. OUTDOOR UNIT, two places, NOT decided: (1) RECOMMENDED by the AC plan: on a bracket outside the west wall at its south end (owner mark 2026-10-05), 4.3 m of pipe, the shoe rack keeps all its storage; to settle first: how a technician reaches it (no window on that wall; from the roof by rope is the likely way) and where the drain goes (drawn 10 m along the outside to the toilet south of the Lobby); (2) owner proposal 2026-10-05: on the shoe rack platform at the entry, behind a fixed grille (docs/changes/2026-10-05-shoe-rack-ac-bay.md): about 11 m of pipe, about 39 % of the shoe storage lost, a platform projecting about 900 mm. Choosing (1) closes the shoe rack bay question.",
       "dependsOn": [
-        "site-measure"
+        "site-measure",
+        "ac-drain-survey"
       ],
       "status": "todo",
-      "needs": "Owner decision: tonnage and model; indoor wall; outdoor unit position (society rules may apply)",
+      "needs": "Owner decision C15 (west wall recommended) and C39 (tonnage, with the dealer); how the outdoor unit is serviced (B8); society rules",
       "openItems": [
         "C15",
-        "A21",
-        "A22",
-        "D4"
+        "C39",
+        "B8",
+        "D4",
+        "A21"
       ],
       "estimateLow": 0,
       "estimateHigh": 0,
       "estimateBasis": "A decision; the AC itself is priced in the fitting task.",
+      "estimateConfidence": "medium",
+      "source": "docs/AC_PLAN.md"
+    },
+    {
+      "id": "ac-drain-survey",
+      "phase": "measure",
+      "trade": "ac",
+      "title": "AC drains: find where each unit's water can really go",
+      "room": "Whole home",
+      "detail": "Every AC drips condensate and the drain pipe must fall all the way. The AC plan assumes these drain points; none is confirmed: the floor trap of the toilet south of the Lobby (Drawing Room and Bedroom 2 units), the floor drain of the Bedroom 1 balcony (Lobby unit and the window AC), the floor drain of the Bedroom 3 balcony, and any rainwater pipe on the west or south face of the building that stands nearer. Look at each and note it. Also find out how the Drawing Room outdoor unit would be reached for service, and whether the society allows outdoor units on the roof, which on the top floor would be the easiest place of all.",
+      "dependsOn": [],
+      "status": "todo",
+      "needs": "Look on site with the AC installer (B7, B8)",
+      "source": "docs/AC_PLAN.md",
+      "openItems": [
+        "B7",
+        "B8"
+      ],
+      "estimateLow": 0,
+      "estimateHigh": 0,
+      "estimateBasis": "Looked at by the owner with the AC installer; no separate cost.",
+      "estimateConfidence": "medium"
+    },
+    {
+      "id": "ac-record-existing",
+      "phase": "measure",
+      "trade": "ac",
+      "title": "Existing ACs in Bedroom 2 and Bedroom 3: record what is there",
+      "room": "Study / Bedroom 3",
+      "detail": "Read the nameplate of both existing split ACs (tonnage, model, year). Bedroom 2 (Study): note where the indoor unit hangs today; the plan ASSUMES the west wall just north of the Home Office opening, and its power point ST-W2 is assumed too. Trace the pipe and drain routes of both (the Bedroom 3 route is assumed). Confirm with the electrician that each is on its own breaker.",
+      "dependsOn": [],
+      "status": "todo",
+      "needs": "Nameplates and positions (B9, A22)",
+      "source": "docs/AC_PLAN.md",
+      "openItems": [
+        "B9",
+        "A22"
+      ],
+      "estimateLow": 0,
+      "estimateHigh": 0,
+      "estimateBasis": "No contractor cost: the owner's own time.",
       "estimateConfidence": "medium"
     },
     {
       "id": "ac-plan-home",
       "phase": "measure",
       "trade": "general",
-      "title": "Whole-home AC plan: which room gets which AC, and where each outdoor unit goes",
+      "title": "AC for the rest of the home: Bedroom 1 without a split AC, and a Lobby AC (both recommended, not decided)",
       "room": "Whole home",
-      "detail": "PENDING NOTE: a design for this is being written on 2026-10-05 (docs/changes/2026-10-05-*.md, section \"For the work plan\"). This task holds its place; the tasks from that note replace or extend it. Known today (docs/changes/2026-10-05-ac-outdoor-units.md): Bedroom 3 and Bedroom 2 (Study) have split ACs whose outdoor units stay where they are (owner: about 6 ft and 5 ft up). The owner's 1.5 ton window AC is to go in the east side of the Bedroom 1 balcony on an iron frame. A split AC outdoor unit for Bedroom 1 outside the kitchen north wall, above the window AC, is a proposal (\"can we place\"), not decided; if the window AC replaces the Bedroom 1 split AC, that outdoor unit is not needed. The Bedroom 1 design check wants nothing within 600 mm in front of the window AC; in layout A it blows at the bed, in layout B across its foot. The Drawing Room AC has its own tasks.",
+      "detail": "From the whole-home AC plan of 2026-10-05, for the owner to decide. (1) BEDROOM 1: the plan recommends NO split AC; the 1.5 ton window AC already owned covers the bedroom and its balcony (about 1.05 ton needed). It is noisier at night than a split. The electrical plan still carries a split AC point (B1-W1) until this is decided. (2) LOBBY / DINING: the Drawing Room unit cannot cool both rooms with the glass doors shut, so the plan proposes a 1.5 ton split for the Lobby: indoor unit on the north wall beside the Pooja alcove, outdoor unit outside the kitchen north wall in the place the owner marked for Bedroom 1 (free if Bedroom 1 has no split). Even if the machine is bought later, its pipes, drain and power point must go in before plaster, before the Pooja woodwork and before the Bedroom 1 balcony wardrobe. (3) Bedroom 2 (Study) and Bedroom 3 keep their existing split ACs; the Study with the Home Office is a little much for 1.5 ton on hot afternoons, and sun film or blinds on the Home Office west glass would help most (C41). (4) The kitchen gets no AC.",
       "dependsOn": [
-        "site-measure"
+        "site-measure",
+        "ac-drain-survey",
+        "ac-record-existing"
       ],
       "status": "todo",
-      "needs": "The whole-home AC note. Owner decision C31: window AC only in Bedroom 1, or the split AC as well. Measurements A22 and A23",
-      "source": "docs/changes/2026-10-05-ac-outdoor-units.md",
+      "needs": "Owner decisions C31 (Bedroom 1: window AC only) and C40 (Lobby AC: yes or no, now or pipes only); the dealer's visit (D4); measure the window AC (A23)",
+      "source": "docs/AC_PLAN.md",
       "openItems": [
         "C31",
-        "A22",
+        "C40",
+        "C41",
         "A23",
         "D4"
       ],
       "estimateLow": 0,
       "estimateHigh": 0,
-      "estimateBasis": "A decision; pending the whole-home AC note.",
+      "estimateBasis": "Decisions with the AC dealer; the work is priced in the Lobby AC and window AC tasks.",
       "estimateConfidence": "medium"
     },
     {
@@ -308,41 +354,94 @@
       "source": "docs/changes/2026-10-05-bedroom1-design.md"
     },
     {
-      "id": "palette-choose",
+      "id": "palette-floor-record",
       "phase": "measure",
       "trade": "general",
-      "title": "Whole-home palette: choose wall colours, the wood shade and the metal finish",
+      "title": "Record the existing floor in each room, with daylight photographs",
       "room": "Whole home",
-      "detail": "PENDING NOTE: a design for this is being written on 2026-10-05 (docs/changes/2026-10-05-*.md, section \"For the work plan\"). This task holds its place; the tasks from that note replace or extend it. It fixes the wall and ceiling colours for the painter, the one wood tone for the TV panel wall, the console and the south window (C11, C19), and the laminate and metal finishes for the carpenter and the fabricator.",
+      "detail": "Before any sample is chosen: note the tile or stone, its size, colour and finish in each room, and photograph it in daylight. The floor colour in the model is an estimate and no palette asks for new flooring, so every wood and wall colour has to sit well on the floor that is there. Note the colour and condition of the olive wardrobe in Bedroom 3 at the same time.",
       "dependsOn": [],
       "status": "todo",
-      "needs": "The whole-home palette note; owner approval of the colours",
+      "source": "docs/PALETTE.md",
       "openItems": [
-        "C11",
-        "C19"
+        "C43"
       ],
       "estimateLow": 0,
       "estimateHigh": 0,
-      "estimateBasis": "A decision; pending the whole-home palette note. Sample pots are small change.",
+      "estimateBasis": "No contractor cost: the owner's own time.",
       "estimateConfidence": "medium"
+    },
+    {
+      "id": "palette-samples",
+      "phase": "measure",
+      "trade": "general",
+      "title": "Collect samples and look at them in the Drawing Room in afternoon sun",
+      "room": "Whole home",
+      "detail": "Honey oak laminate and veneer, the kitchen's light oak, two ivories and a sand (paint cards or sample pots), one stainless handle, cream, terracotta and olive fabric, one 3000 K and one 4000 K lamp. Lay them on the floor against the wall in the Drawing Room in the afternoon and again under the lamps at night.",
+      "dependsOn": [
+        "palette-floor-record"
+      ],
+      "status": "todo",
+      "needs": "The floor record first",
+      "source": "docs/PALETTE.md",
+      "openItems": [
+        "C42"
+      ],
+      "estimateLow": 1500,
+      "estimateHigh": 4000,
+      "estimateBasis": "samples: 1 set x Rs 1,500-4,000. Most dealers lend laminate and fabric samples; paint sample pots and two lamps are bought.",
+      "estimateConfidence": "medium"
+    },
+    {
+      "id": "palette-choose",
+      "phase": "measure",
+      "trade": "general",
+      "title": "Choose the palette for the whole home, then order the laminate in one lot",
+      "room": "Whole home",
+      "detail": "OWNER DECISION, not taken. The Palette page shows today's finishes and three palettes, each previewed in the 3D views (cabinetry, doors and walls only). RECOMMENDED: \"Honey oak and terracotta\": honey oak (the shade chosen for Bedroom 3) for all cabinetry, doors, the TV console, the fluted panel wall and the south window frame, the kitchen keeping its light oak; warm ivory walls with one soft sand wall in each main room and flat white ceilings; cream fabric with terracotta and olive accents; brushed stainless handles everywhere, brass only in the Pooja unit; 3000 K light everywhere, 4000 K in the kitchen, 2700 K in the Pooja unit. It changes none of the owner's decisions; it would re-polish the existing wooden doors to the honey tone. The two alternatives (Light oak and sage; Teak and brass) do change decisions and say where. Once chosen, order the laminate for the whole home in one lot so the shade matches. No catalogue codes are fixed: pick them from the dealer's shade card with the samples in hand.",
+      "dependsOn": [
+        "palette-samples"
+      ],
+      "status": "todo",
+      "needs": "Owner: which palette (C42), with the samples reviewed in the Drawing Room in afternoon sun. Also the handle finish (C45), the kitchen tile and worktop (C44) and the olive wardrobe in Bedroom 3 (C43)",
+      "openItems": [
+        "C42",
+        "C11",
+        "C19",
+        "C45",
+        "C44",
+        "C43"
+      ],
+      "estimateLow": 0,
+      "estimateHigh": 0,
+      "estimateBasis": "A decision; samples are priced in their own task.",
+      "estimateConfidence": "medium",
+      "source": "docs/PALETTE.md"
     },
     {
       "id": "elec-other-rooms",
       "phase": "measure",
       "trade": "electrical",
-      "title": "Electrical point plans for the other rooms",
-      "room": "Other rooms",
-      "detail": "Only the Drawing Room has a full point plan (the Home Office has a preliminary one). PENDING: the electrical plans for all rooms being drawn on 2026-10-05 (docs/changes/2026-10-05-*.md, section \"For the work plan\"). Their tasks replace the two \"other rooms\" placeholders in phases 4 and 8, and settle what happens to the Drawing Room points drawn before the track lights were decided.",
+      "title": "Agree the electrical point plans for the Lobby, Bedroom 1, Bedroom 3, Study, Home Office and Main entry",
+      "room": "Whole home",
+      "detail": "Six more rooms now have a proposed point plan like the Drawing Room's (docs/ELECTRICAL_PLAN.md; button \"Show electrical points\" on each room page): Lobby 12 points, Bedroom 1 11, Bedroom 3 11, Study 9, Home Office 9, Main entry 11, each with its circuits and a rough load. They are proposals for a licensed electrician. Go through each table with the electrician and mark what stays, moves or goes. To settle here: the plans move the Drawing Room switchboard to the east wall beside the entry door, which the owner had ruled out on 2026-10-04 (C28); Bedroom 1 is planned for layout A, and in layout B its bedside points move to the south wall (C35); Bedroom 1 carries a split AC point (B1-W1) that comes out if the window AC is enough (C31), taking about 1,700 W off the room. The kitchen is not in these plans: it has its own services plan in the kitchen planner.",
       "dependsOn": [
         "finalise-layouts",
         "electrician-survey"
       ],
       "status": "todo",
-      "needs": "The electrical plans note (being written 2026-10-05)",
+      "needs": "The electrician's survey first: where each feed really comes from, earthing, breaker ratings. Decisions C28, C31, C35; the switch range and colour (C14)",
       "estimateLow": 0,
       "estimateHigh": 0,
-      "estimateBasis": "A plan on paper; pending the electrical plans note.",
-      "estimateConfidence": "medium"
+      "estimateBasis": "A review of the drawn plans with the electrician; the work is priced room by room.",
+      "estimateConfidence": "medium",
+      "source": "docs/ELECTRICAL_PLAN.md",
+      "openItems": [
+        "C28",
+        "C31",
+        "C35",
+        "C14"
+      ]
     },
     {
       "id": "drawing-switchboard-decide",
@@ -350,7 +449,7 @@
       "trade": "electrical",
       "title": "Drawing Room switchboard behind the TV: decide whether the board or the TV moves",
       "room": "Drawing Room",
-      "detail": "The phone scan puts the existing switchboard on the north wall at 1,710-1,905 mm from the west wall and 1,235-1,495 high: behind the TV (both sizes) and inside the fluted panelling. The owner decided on 2026-10-04 that there is no switchboard on the east wall, so the earlier answer (move it there) is off the table. Options to settle with the electrician: (a) move the board along the north wall to the strip between the TV and the entry door, if the taped width allows; (b) keep the board and shift the TV west so it clears; (c) keep a small access panel behind the TV for a junction box and bring the switches out to a new plate. Nothing is decided.",
+      "detail": "The phone scan puts the existing switchboard on the north wall at 1,710-1,905 mm from the west wall and 1,235-1,495 high: behind the TV (both sizes) and inside the fluted panelling. The owner decided on 2026-10-04 that there is no switchboard on the east wall, so the earlier answer (move it there) is off the table. Options to settle with the electrician: (a) move the board along the north wall to the strip between the TV and the entry door, if the taped width allows; (b) keep the board and shift the TV west so it clears; (c) keep a small access panel behind the TV for a junction box and bring the switches out to a new plate. Nothing is decided. UPDATE 2026-10-05: the electrical plan proposes to move it to a new main switchboard on the east wall just past the swing of the entry door, 350 mm from the distribution board, with the old box emptied and plastered over before the panelling. That is the same east-wall position the owner dropped on 2026-10-04, so it needs the owner's yes or no.",
       "dependsOn": [
         "electrician-survey",
         "finalise-layouts"
@@ -621,14 +720,14 @@
       "trade": "electrical",
       "title": "Lobby: move the switchboard out of the way of the new Bedroom 1 doorway",
       "room": "Lobby / Dining",
-      "detail": "The Lobby switchboard is on the north wall about 375-575 mm from the west corner and 1,215-1,495 high (phone scan), inside the planned doorway (100-1,000 mm). Before the wall is cut: find out what it controls, choose its new place (for example just east of the new door frame, on the latch side), extend the wires in conduit to a modular box there, and make the old position dead. Done in the civil phase because the wall cannot be cut until the board is gone.",
+      "detail": "The Lobby switchboard is on the north wall about 375-575 mm from the west corner and 1,215-1,495 high (phone scan), inside the planned doorway (100-1,000 mm). Proposed in the electrical plan: a new main switchboard (L-N1) on the latch side of the new door, and the old riser ended in a junction box above the new door head (L-N2) with a screwed blank plate that stays reachable and is never plastered over. This assumes the feed comes down from above, which the electrician must check first. Find out what the board controls, extend the wires in conduit, and make the old position dead. Done in the civil phase because the wall cannot be cut until the board is gone.",
       "dependsOn": [
         "electrician-survey",
         "bedroom1-design-freeze"
       ],
       "status": "todo",
       "needs": "What the board controls and where it goes (A14, C30)",
-      "source": "docs/changes/2026-10-04-existing-electrical.md",
+      "source": "docs/ELECTRICAL_PLAN.md",
       "openItems": [
         "A14",
         "C30"
@@ -807,7 +906,7 @@
       "trade": "carpentry",
       "title": "Bedroom 3: take out the existing corner cupboard",
       "room": "Bedroom 3",
-      "detail": "The phone scan shows a cupboard in the north-east corner (690 deep x 970 along the north wall, 1,990 high). The planned mirror dressing cabinet stands in its footprint and replaces it. Empty it, dismantle it and make good the wall and floor behind. The existing olive wardrobe in the south bay and the existing AC stay.",
+      "detail": "The phone scan shows a cupboard in the north-east corner (690 deep x 970 along the north wall, 1,990 high). The planned cabinet on the north side of the bed (since 2026-10-05 a floor-to-ceiling storage cabinet; the mirror dressing cabinet moves to the south side) stands in its footprint and replaces it. Empty it, dismantle it and make good the wall and floor behind. The existing olive wardrobe in the south bay and the existing AC stay.",
       "dependsOn": [
         "finalise-layouts"
       ],
@@ -877,7 +976,7 @@
       ],
       "estimateLow": 13000,
       "estimateHigh": 22000,
-      "estimateBasis": "light points: 4 point x Rs 900-1,500; socket and charging points: 5 point x Rs 1,200-2,000; 6/16 A points: 2 point x Rs 1,800-3,000. From the 17-point plan less the TV wall, AC, floor box and the dropped east switchboard; some points may go once the electrical plans note arrives.",
+      "estimateBasis": "light points: 4 point x Rs 900-1,500; socket and charging points: 5 point x Rs 1,200-2,000; 6/16 A points: 2 point x Rs 1,800-3,000. From the 17-point plan less the TV wall, AC, floor box and the east-wall switchboard (C28); the uplight and reading-light points may go now that the tracks do that work.",
       "estimateConfidence": "low"
     },
     {
@@ -932,7 +1031,7 @@
       "trade": "electrical",
       "title": "Drawing Room west wall: the three socket plates behind the west sofa",
       "room": "Drawing Room",
-      "detail": "The phone scan shows three socket plates low on the west wall (4,050-4,500 mm from the north wall, 260-375 high), partly behind the west sofa in layout C: plugs there cannot be reached without moving the sofa. Either keep them for things that stay plugged in (a lamp, the sofa glow driver), or move them clear of the sofa while the walls are open. The proposed plan already adds charging points beside the seats.",
+      "detail": "The phone scan shows three socket plates low on the west wall (4,050-4,500 mm from the north wall, 260-375 high), partly behind the west sofa in layout C: plugs there cannot be reached without moving the sofa. Either keep them for things that stay plugged in (a lamp, the sofa glow driver), or move them clear of the sofa while the walls are open. The proposed plan already adds charging points beside the seats. PROPOSED in the electrical plan (2026-10-05): they stay, hidden on purpose, and feed two new outlets above the sofa back and above the corner table; two get blank plates and the third, in the gap south of the sofa, stays in use.",
       "dependsOn": [
         "electrician-survey",
         "finalise-layouts"
@@ -988,41 +1087,163 @@
       "estimateConfidence": "medium"
     },
     {
-      "id": "elec-chase-other-rooms",
+      "id": "elec-first-fix-lobby",
       "phase": "electrical-rough",
       "trade": "electrical",
-      "title": "Other rooms: chase walls and fix conduits and boxes",
-      "room": "Other rooms",
-      "detail": "PENDING NOTE: a design for this is being written on 2026-10-05 (docs/changes/2026-10-05-*.md, section \"For the work plan\"). This task holds its place; the tasks from that note replace or extend it. Placeholder for the first fix in the Lobby, the bedrooms, the Study, the Home Office and the Kitchen once their point plans exist. The kitchen points must be in before the kitchen cabinets.",
+      "title": "Lobby / Dining: electrical first fix (conduits and boxes for the room's point plan)",
+      "room": "Lobby / Dining",
+      "detail": "Electrician. Chase the walls and fix the conduits and boxes for the 12 points of this room's table in docs/ELECTRICAL_PLAN.md, at the heights given there (switchboards 1,200, low sockets 300). Dining point with USB, the iron point (16 A with an indicator lamp) by the ironing storage, a utility socket, the toilet switches, the fan point (existing, reused), and the Pooja alcove's light switch and socket (L-P1) on its west return, which also feeds the new round ceiling light of the Pooja Ghar. The new main switchboard and the junction box above the door are in the switchboard-move task; the dining pendant point follows decision C33. The track driver feeds and the AC points are in their own tasks.",
+      "dependsOn": [
+        "elec-other-rooms",
+        "electrician-survey",
+        "lobby-switchboard-move",
+        "lobby-pendant-decide"
+      ],
+      "status": "todo",
+      "needs": "The pendant decision (C33)",
+      "source": "docs/ELECTRICAL_PLAN.md",
+      "openItems": [
+        "C33"
+      ],
+      "estimateLow": 7500,
+      "estimateHigh": 12500,
+      "estimateBasis": "light, fan and switch points: 3 point x Rs 900-1,500; socket and charging points: 1 point x Rs 1,200-2,000; 16 A points: 2 point x Rs 1,800-3,000. 6 of the 12 points in docs/ELECTRICAL_PLAN.md; the rest are priced in the track-feed, switchboard, pendant and AC tasks. Existing points that are reused are counted as new, so expect the low end. Includes the Pooja light switch and socket (L-P1).",
+      "estimateConfidence": "low"
+    },
+    {
+      "id": "elec-first-fix-bedroom1",
+      "phase": "electrical-rough",
+      "trade": "electrical",
+      "title": "Bedroom 1: electrical first fix (conduits and boxes for the room's point plan)",
+      "room": "Bedroom 1",
+      "detail": "Electrician. Chase the walls and fix the conduits and boxes for the 11 points of this room's table in docs/ELECTRICAL_PLAN.md, at the heights given there (switchboards 1,200, low sockets 300). Main switchboard on the latch side of the new door (two track dimmers, fan regulator), a utility socket, the washroom switches with the water heater switch, the fan point, a balcony table point, and a bedside point for each sleeper with USB and a two-way switch for the reading track. The bedside points are drawn for layout A; in layout B they go on the south wall either side of the bed (1,150-2,674 mm from the west wall). The split AC point B1-W1 is NOT built unless the owner keeps a split AC here (C31). The track driver feeds and the AC points are in their own tasks.",
+      "dependsOn": [
+        "elec-other-rooms",
+        "electrician-survey",
+        "bedroom1-design-freeze",
+        "ac-plan-home",
+        "lobby-bedroom3-opening"
+      ],
+      "status": "todo",
+      "needs": "Layout A or B before the bedside points are chased (C35); split AC point yes or no (C31)",
+      "source": "docs/ELECTRICAL_PLAN.md",
+      "openItems": [
+        "C35",
+        "C31"
+      ],
+      "estimateLow": 8000,
+      "estimateHigh": 13500,
+      "estimateBasis": "light, fan and switch points: 3 point x Rs 900-1,500; socket and charging points: 3 point x Rs 1,200-2,000; 16 A points: 1 point x Rs 1,800-3,000. 7 of the 11 points in docs/ELECTRICAL_PLAN.md; the rest are priced in the track-feed, switchboard, pendant and AC tasks. Existing points that are reused are counted as new, so expect the low end. Planned for layout A; in layout B the two bedside points move to the south wall (C35). The split AC point B1-W1 is left out until C31 is decided.",
+      "estimateConfidence": "low"
+    },
+    {
+      "id": "elec-first-fix-bedroom3",
+      "phase": "electrical-rough",
+      "trade": "electrical",
+      "title": "Bedroom 3: electrical first fix (conduits and boxes for the room's point plan)",
+      "room": "Bedroom 3",
+      "detail": "Electrician. Chase the walls and fix the conduits and boxes for the 11 points of this room's table in docs/ELECTRICAL_PLAN.md, at the heights given there (switchboards 1,200, low sockets 300). A new modular plate in the existing switchboard box, the toilet switches with a dressing socket, a utility socket, a bedside point for each sleeper, a chest-top point, the existing picture-light and fan points, and the AC point B3-E3 inside the overhead cabinet next to the AC bay (the existing point was not seen in the scan). The dressing cabinet is moving to the south side (owner 2026-10-05): the dressing socket follows it. The track driver feeds and the AC points are in their own tasks.",
       "dependsOn": [
         "elec-other-rooms",
         "electrician-survey"
       ],
       "status": "todo",
-      "needs": "The electrical plans note",
-      "estimateBasis": "Not estimated: The point plans for the other rooms are not in the project yet (pending the electrical plans note)."
+      "needs": "Where the dressing cabinet ends up; the existing AC point",
+      "source": "docs/ELECTRICAL_PLAN.md",
+      "openItems": [
+        "A19"
+      ],
+      "estimateLow": 9500,
+      "estimateHigh": 24500,
+      "estimateBasis": "light, fan and switch points: 3 point x Rs 900-1,500; socket and charging points: 3 point x Rs 1,200-2,000; 16 A points: 2 point x Rs 1,800-3,000; own circuit for an existing AC or water heater, if it has none: 0 to 1 each x Rs 4,500-8,000. 9 of the 11 points in docs/ELECTRICAL_PLAN.md; the rest are priced in the track-feed, switchboard, pendant and AC tasks. Existing points that are reused are counted as new, so expect the low end.",
+      "estimateConfidence": "low"
+    },
+    {
+      "id": "elec-first-fix-study",
+      "phase": "electrical-rough",
+      "trade": "electrical",
+      "title": "Study: electrical first fix (conduits and boxes for the room's point plan)",
+      "room": "Study",
+      "detail": "Electrician. Chase the walls and fix the conduits and boxes for the 9 points of this room's table in docs/ELECTRICAL_PLAN.md, at the heights given there (switchboards 1,200, low sockets 300). Main switchboard on the latch side of the door, a bedside point and a desk point with USB (CAT6 optional), a switch and socket at the terrace door, a utility socket, the fan point, and the AC point ST-W2, whose position is ASSUMED until the existing unit is recorded. The track driver feeds and the AC points are in their own tasks.",
+      "dependsOn": [
+        "elec-other-rooms",
+        "electrician-survey",
+        "ac-record-existing"
+      ],
+      "status": "todo",
+      "needs": "The kids layout (C25); where the existing AC really hangs (B9)",
+      "source": "docs/ELECTRICAL_PLAN.md",
+      "openItems": [
+        "C25",
+        "B9"
+      ],
+      "estimateLow": 7500,
+      "estimateHigh": 21000,
+      "estimateBasis": "light, fan and switch points: 2 point x Rs 900-1,500; socket and charging points: 2 point x Rs 1,200-2,000; 16 A points: 2 point x Rs 1,800-3,000; own circuit for an existing AC or water heater, if it has none: 0 to 1 each x Rs 4,500-8,000. 7 of the 9 points in docs/ELECTRICAL_PLAN.md; the rest are priced in the track-feed, switchboard, pendant and AC tasks. Existing points that are reused are counted as new, so expect the low end.",
+      "estimateConfidence": "low"
+    },
+    {
+      "id": "elec-first-fix-office",
+      "phase": "electrical-rough",
+      "trade": "electrical",
+      "title": "Home Office: electrical first fix (conduits and boxes for the room's point plan)",
+      "room": "Home Office",
+      "detail": "Electrician. Chase the walls and fix the conduits and boxes for the 9 points of this room's table in docs/ELECTRICAL_PLAN.md, at the heights given there (switchboards 1,200, low sockets 300). The room light and its switch with a socket; the desk feed in the rear cabinet for the moving power rail, the PC / UPS points, the printer point and two CAT6 runs. The water heater point and the router point exist: check that the heater is on its own 16 A circuit with a reachable double-pole isolator. The track driver feeds and the AC points are in their own tasks.",
+      "dependsOn": [
+        "elec-other-rooms",
+        "electrician-survey"
+      ],
+      "status": "todo",
+      "needs": "Tape the room and the heater (A15, A16)",
+      "source": "docs/ELECTRICAL_PLAN.md",
+      "openItems": [
+        "A15",
+        "A16"
+      ],
+      "estimateLow": 9500,
+      "estimateHigh": 24500,
+      "estimateBasis": "light, fan and switch points: 2 point x Rs 900-1,500; socket and charging points: 4 point x Rs 1,200-2,000; 16 A points: 1 point x Rs 1,800-3,000; data points: 1 run x Rs 1,200-2,200; own circuit for an existing AC or water heater, if it has none: 0 to 1 each x Rs 4,500-8,000. 9 of the 9 points in docs/ELECTRICAL_PLAN.md; the rest are priced in the track-feed, switchboard, pendant and AC tasks. Existing points that are reused are counted as new, so expect the low end. The water heater and router points exist already.",
+      "estimateConfidence": "low"
+    },
+    {
+      "id": "elec-first-fix-kitchen",
+      "phase": "electrical-rough",
+      "trade": "electrical",
+      "title": "Kitchen: electrical first fix from the kitchen services plan",
+      "room": "Kitchen",
+      "detail": "The kitchen is not part of the six room plans: its points are worked out in the kitchen planner from where the appliances stand (hob and chimney, microwave, appliance garage, dishwasher, washing machine, water purifier, under-cabinet LED strips). Freeze the kitchen layout, print the services plan, and have the electrician fix the conduits and boxes before the cabinets go in.",
+      "dependsOn": [
+        "finalise-layouts",
+        "electrician-survey"
+      ],
+      "status": "todo",
+      "needs": "Freeze the kitchen layout first",
+      "source": "docs/ELECTRICAL_PLAN.md",
+      "estimateBasis": "Not estimated: The kitchen has its own services plan, worked out in the kitchen planner from where the appliances stand; it has no fixed point schedule to count until the kitchen layout is frozen."
     },
     {
       "id": "elec-entry-ceiling",
       "phase": "electrical-rough",
       "trade": "electrical",
-      "title": "Entry ceiling: run the wiring for the lights and their switch",
+      "title": "Main entry: first fix for the 11 points (lights and switches, bell, door phone conduit, socket, shoe rack light)",
       "room": "Main entry",
-      "detail": "Owner 2026-10-04 (electrician). Before the PVC ceiling goes up: chase a conduit from a switch box beside the main door up the wall, and run it on the slab above the ceiling line to each light position, leaving about 300 mm of spare wire at each point. Two light points are proposed in the corridor, on one switch. Take the supply from the nearest lighting circuit. Mark the light positions on the slab from the plank layout so they land where the cut-outs will be. Inner gallery (the part after the wooden main door, past the shoe rack to the Drawing Room door, which has no light today and keeps its plaster ceiling): two more points for surface-mounted round panels of the same type, one about 780 mm in front of the shoe rack's mirror doors (over the fold-down seat and the key tray) and one about 660 mm from the Drawing Room wall in front of the open east cabinet, on their own switch beside the Drawing Room door (a two-way switch at the main door is an option). Answer to the owner's question of 2026-10-04 whether this 4th section needs a spotlight or a track light: no; the round panels do the job, see docs/changes/2026-10-04-entry.md.",
+      "detail": "Owner 2026-10-04 (electrician), widened on 2026-10-05 to the entry's full point plan (docs/ELECTRICAL_PLAN.md). Before the PVC ceiling goes up: chase a conduit from the switch box beside the main door up the wall and run it on the slab above the ceiling line to the two corridor light positions (recessed round panels), leaving about 300 mm of spare wire at each; mark the positions from the plank layout so they land where the cut-outs will be. Inner gallery (past the shoe rack to the Drawing Room door; it keeps its plaster ceiling): two points for surface-mounted round panels, about 780 mm in front of the shoe rack's mirror doors and about 660 mm from the Drawing Room wall, on two-way switches at the arrival door and at the Drawing Room door. Also: the corridor switch with a 6 A socket, a bell push on the landing face, a 25 mm conduit with CAT6 and a 12 V pair for a video door phone (ending in a blank plate), a utility socket, and a feed for the shoe rack light with a door-contact switch.",
       "dependsOn": [
         "entry-ceiling-plan",
-        "electrician-survey"
+        "electrician-survey",
+        "elec-other-rooms"
       ],
       "status": "todo",
-      "needs": "Light count and positions, and the switch position, from the entry ceiling plan; owner to agree the two gallery lights and their switch",
+      "needs": "Light colour (3000 K is now recommended by the palette in place of 4000 K: C6) and the ceiling drop (C5); owner to agree the gallery lights and their switches",
       "openItems": [
         "C5",
         "C6"
       ],
-      "estimateLow": 5000,
-      "estimateHigh": 9000,
-      "estimateBasis": "light points: 4 point x Rs 900-1,500; switch drops: 2 point x Rs 900-1,500.",
-      "estimateConfidence": "medium"
+      "estimateLow": 11000,
+      "estimateHigh": 19500,
+      "estimateBasis": "light, fan and switch points: 8 point x Rs 900-1,500; 16 A points: 1 point x Rs 1,800-3,000; data points: 2 run x Rs 1,200-2,200. 11 of the 11 points in docs/ELECTRICAL_PLAN.md; the rest are priced in the track-feed, switchboard, pendant and AC tasks. Existing points that are reused are counted as new, so expect the low end. The four ceiling light points and their switches are in this count.",
+      "estimateConfidence": "low",
+      "source": "docs/ELECTRICAL_PLAN.md"
     },
     {
       "phase": "electrical-rough",
@@ -1188,40 +1409,46 @@
       "trade": "ac",
       "title": "Drawing Room AC: lay the copper pipes, drain pipe and cable before plaster",
       "room": "Drawing Room",
-      "detail": "AC installer, before plastering and painting. Core a 65-75 mm hole through the outer wall, sloping slightly down to the outside. Run the insulated copper pipe pair, the drain pipe and the link cable from the indoor position to the outdoor unit, either chased into the wall or in a neat PVC casing. The drain must fall all the way (at least 1 in 100) and end at a proper drain point, not drip on a neighbour. Keep the pipe run as short as possible (ideally under 5 m) with few bends. Leave the pipe ends sealed and labelled.",
+      "detail": "AC installer, before plastering and painting. For the recommended place (outdoor unit on the west wall): core a 65 mm hole through the west wall behind the indoor unit, 2,850 mm from the north wall and 2,290 high, sloping slightly down to the outside; run the insulated copper pipe pair and the link cable down the outside of the wall to the unit at its south end, 4.3 m in all. The drain leaves through the same hole and, as drawn, runs down the west face, round the corner and along the south face below the window sill to the toilet at the south-east corner, about 10 m; a nearer rainwater pipe would shorten it. The drain must fall all the way (at least 1 in 100) and must not drip on a neighbour. If the shoe rack place is chosen instead, the pipe run is about 11 m and needs extra refrigerant. Leave the pipe ends sealed and labelled.",
       "dependsOn": [
         "ac-choose",
-        "society-permission"
+        "society-permission",
+        "ac-drain-survey"
       ],
       "status": "todo",
-      "needs": "The AC model, so the pipe sizes match; the outdoor unit position",
+      "needs": "The outdoor unit place (C15) and the AC model, so the pipe sizes match; the real drain point (B7)",
       "openItems": [
-        "C15"
+        "C15",
+        "B7"
       ],
-      "estimateLow": 3000,
-      "estimateHigh": 15500,
-      "estimateBasis": "extra pipe: 0 to 7 m x Rs 800-1,300; core cut and fixing: 1 each x Rs 3,000-6,000. About 3 m to a bracket on the west wall (inside the kit) or about 10 m to the shoe rack (C15).",
-      "estimateConfidence": "low"
+      "estimateLow": 5500,
+      "estimateHigh": 19500,
+      "estimateBasis": "pipe beyond the 3 m kit: 1.3 to 8 m x Rs 800-1,300; drain: 10 m x Rs 150-300; core cut and fixing: 1 each x Rs 3,000-6,000. Route lengths from docs/AC_PLAN.md: 4.3 m of pipe to the west wall (recommended) or 11 m to the shoe rack (C15); the drain is drawn 10 m along the outside to the toilet.",
+      "estimateConfidence": "low",
+      "source": "docs/AC_PLAN.md"
     },
     {
       "phase": "electrical-rough",
       "id": "elec-ac-point",
       "trade": "electrical",
-      "title": "Drawing Room AC: dedicated power line and socket",
-      "room": "Drawing Room",
-      "detail": "Electrician. A separate circuit for the AC from the distribution board: its own 20 A breaker, 4 sq mm copper wire with earth, to a 20/25 A AC socket or a switch with indicator beside the indoor unit (planned on the west wall, 2,300 high). Nothing else on this circuit. Add a voltage stabiliser point only if the chosen AC needs one.",
+      "title": "AC power points: Drawing Room, and the Lobby if agreed; each AC on its own breaker",
+      "room": "Drawing Room / Lobby",
+      "detail": "Electrician. Each AC gets a separate circuit from the distribution board: its own 20 A breaker, 4 sq mm copper wire with earth, to a 16 A socket or isolator BESIDE the unit, never behind it, with nothing else on the circuit. Drawing Room: point W1 on the west wall, 3,080 mm from the north wall, 2,300 high. Lobby, only if the Lobby AC is agreed (C40): point L-N4 on the north wall, 2,473 mm from the west wall, 2,300 high, 150 mm west of the unit. Confirm that the existing Bedroom 2 and Bedroom 3 ACs are each on their own breaker (their points ST-W2 and B3-E3 are in those rooms' first fix). Add a voltage stabiliser point only if the chosen AC needs one. The window AC's socket is its own task.",
       "dependsOn": [
         "ac-choose",
-        "electrician-survey"
+        "electrician-survey",
+        "ac-plan-home"
       ],
       "status": "todo",
       "openItems": [
-        "C15"
+        "C15",
+        "C40"
       ],
       "estimateLow": 4500,
-      "estimateHigh": 8000,
-      "estimateBasis": "AC circuit: 1 each x Rs 4,500-8,000.",
-      "estimateConfidence": "medium"
+      "estimateHigh": 16000,
+      "estimateBasis": "AC circuits: Drawing Room, and the Lobby if agreed: 1 to 2 each x Rs 4,500-8,000.",
+      "estimateConfidence": "medium",
+      "source": "docs/AC_PLAN.md"
     },
     {
       "id": "elec-ac-window-point",
@@ -1229,7 +1456,7 @@
       "trade": "electrical",
       "title": "Bedroom 1 balcony: dedicated power socket for the window AC",
       "room": "Bedroom 1",
-      "detail": "A separate circuit from the distribution board for the 1.5 ton window AC: its own 20 A breaker, 4 sq mm copper wire with earth, to a 16/20 A socket within reach of the AC's own cable, clear of rain. Nothing else on this circuit.",
+      "detail": "A separate circuit from the distribution board for the 1.5 ton window AC (point B1-B1 in the electrical plan): a 16 A socket in an AC starter box with a 20 A double-pole breaker, 4 sq mm copper wire with earth, on the inside face of the balcony parapet 100 mm north of the casing and 850 mm high, clear of rain and within reach of the AC's own cable. Nothing else on this circuit.",
       "dependsOn": [
         "ac-plan-home",
         "electrician-survey"
@@ -1243,22 +1470,33 @@
       "estimateLow": 4500,
       "estimateHigh": 8000,
       "estimateBasis": "AC circuit: 1 each x Rs 4,500-8,000.",
-      "estimateConfidence": "medium"
+      "estimateConfidence": "medium",
+      "source": "docs/AC_PLAN.md"
     },
     {
       "id": "ac-piping-other",
       "phase": "electrical-rough",
       "trade": "ac",
-      "title": "Other rooms: AC copper, drain and cable runs before plaster",
-      "room": "Other rooms",
-      "detail": "PENDING NOTE: a design for this is being written on 2026-10-05 (docs/changes/2026-10-05-*.md, section \"For the work plan\"). This task holds its place; the tasks from that note replace or extend it. Placeholder for any new or moved AC piping outside the Drawing Room (for example a Bedroom 1 split AC, if it is kept).",
+      "title": "Lobby AC, if agreed: lay the pipes, drain and cable through the Pooja alcove and the balcony",
+      "room": "Lobby / Dining",
+      "detail": "ONLY IF the owner agrees to a Lobby AC (C40); it is a proposal. It has to be done before plaster, before the Pooja woodwork and before the Bedroom 1 balcony wardrobe, even if the machine is bought later. Route as drawn in the AC plan, 4.4 m of pipe: from the indoor unit on the Lobby north wall east into the Pooja alcove, along its west cheek at ceiling level, through its back wall (core cut) into the top of the balcony wardrobe space, along the balcony's east side and out through a solid panel fitted in the glazing head to the outdoor unit outside the kitchen north wall. The drain runs in the same casing as far as the balcony, then down the corner to the balcony floor drain. Leave the ends sealed and labelled. If no Lobby AC is wanted, mark this task done without work.",
       "dependsOn": [
         "ac-plan-home",
-        "society-permission"
+        "society-permission",
+        "ac-drain-survey"
       ],
       "status": "todo",
-      "needs": "The whole-home AC note",
-      "estimateBasis": "Not estimated: Which rooms get new piping is not decided (pending the whole-home AC note)."
+      "needs": "Owner decision C40; a floor drain in the Bedroom 1 balcony (B7); the outdoor place is free only if Bedroom 1 has no split AC (C31)",
+      "estimateBasis": "pipe beyond the 3 m kit: 0 to 1.4 m x Rs 800-1,300; drain: 0 to 4.8 m x Rs 150-300; two core cuts and fixing: 0 to 1 each x Rs 3,000-6,000; solid panel in the balcony glazing head: 0 to 1 job x Rs 2,500-6,000. Nothing if no Lobby AC is wanted (C40). Route from docs/AC_PLAN.md: 4.4 m of pipe and 4.8 m of drain.",
+      "source": "docs/AC_PLAN.md",
+      "openItems": [
+        "C40",
+        "C31",
+        "B7"
+      ],
+      "estimateLow": 0,
+      "estimateHigh": 15500,
+      "estimateConfidence": "low"
     },
     {
       "id": "plaster",
@@ -1273,7 +1511,12 @@
         "elec-drawing-switchboard",
         "elec-drawing-west-sockets",
         "elec-data",
-        "elec-chase-other-rooms",
+        "elec-first-fix-lobby",
+        "elec-first-fix-bedroom1",
+        "elec-first-fix-bedroom3",
+        "elec-first-fix-study",
+        "elec-first-fix-office",
+        "elec-first-fix-kitchen",
         "elec-entry-ceiling",
         "elec-track-feed",
         "elec-track-feed-lobby",
@@ -1293,9 +1536,9 @@
         "elec-lobby-pendant-feed"
       ],
       "status": "todo",
-      "estimateLow": 11000,
-      "estimateHigh": 20000,
-      "estimateBasis": "chases, about 35 points x 8 ft: 280 running ft x Rs 40-70. Only the points priced above; the other rooms add to it. Opening reveals are priced with each opening.",
+      "estimateLow": 25000,
+      "estimateHigh": 44500,
+      "estimateBasis": "chases, about 79 points x 8 ft: 632 running ft x Rs 40-70. About 30 points in the Drawing Room, track feeds and AC lines plus the counted points of the six room plans; the kitchen adds to it. Opening reveals are priced with each opening.",
       "estimateConfidence": "low"
     },
     {
@@ -1372,7 +1615,8 @@
         "north-wall-door",
         "plaster",
         "west-cabinet-frame",
-        "pocket-partition"
+        "pocket-partition",
+        "palette-choose"
       ],
       "status": "todo",
       "source": "docs/ENTRY_WALL_CAVITY.md",
@@ -1416,7 +1660,8 @@
       "detail": "Console 1600 x 400 x 400 on 200 legs with glides, 500-2100 from the west wall, free-standing so it can be dragged 600 out when the hidden door is used: router bay and Bass Module bay with open lattice, storage with a lattice door. Inside, screw a 6-way surge-protected power strip to the back panel; the router, set-top box, soundbar and Bass Module plug into it, so only ONE mains lead, one LAN cable and one HDMI or optical cable leave the console, each with about 1 m of slack. Cut a 60 mm cable hole with a brush grommet in the back panel and in each bay divider, and leave vent slots behind the router and Bass Module.",
       "dependsOn": [
         "plaster",
-        "carp-tv-panel"
+        "carp-tv-panel",
+        "palette-choose"
       ],
       "status": "todo",
       "source": "docs/DRAWING_ROOM_TV_WALL.md",
@@ -1434,7 +1679,8 @@
       "detail": "Built to sit on the support frame in the opening where the window and the wall below it were. Depth: 15 in (381 mm) overall, decided by the owner 2026-10-04, so shoes go in lengthwise, toe to the back; that leaves about 340 mm clear inside after an 18 mm door and the back panel. Height about 6 1/2 ft (about 1,980 mm): the owner will confirm, so treat it as provisional. Width to suit the opening. The back and sides that face outside need a weatherproof finish (exterior-grade board or a metal or tile cladding) and a sealed joint to the wall. The 3D model draws the rack 865 wide x 2,134 (7 ft) high x 381 deep; width and height are updated once confirmed. If the AC outdoor unit goes under the rack (owner proposal 2026-10-05, not decided), the bottom 840 mm becomes its bay: a closed, insulated divider under the shoes and a sealed, lined service door the full width of the bay on the gallery side; about 1,290 mm of a 7 ft rack is left for shoes.",
       "dependsOn": [
         "shoe-rack-support",
-        "plaster"
+        "plaster",
+        "palette-choose"
       ],
       "status": "todo",
       "needs": "TO BE CONFIRMED: height (about 6 1/2 ft) and width; measure the opening and the wall thickness",
@@ -1457,7 +1703,8 @@
       "detail": "Owner 2026-09-29, added to the plan 2026-10-04: a wall-hinged seat a person can sit on to change shoes, which folds flat against the wall when not in use. As drawn in the 3D model: on the west wall beside the shoe rack, seat 360 wide x 340 deep, 460 mm above the floor, on two folding support brackets with a hinge along the wall edge; these are model sizes, not site measurements. Use heavy-duty folding brackets rated for at least 120 kg and fix them into solid masonry with anchor bolts, not into plaster alone. Folded, it should project no more than about 60 mm so the 1.0 m wide entry stays clear.",
       "dependsOn": [
         "plaster",
-        "carp-shoe-rack"
+        "carp-shoe-rack",
+        "palette-choose"
       ],
       "status": "todo",
       "needs": "Confirm the wall and position once the shoe rack is in; choose the seat finish",
@@ -1479,7 +1726,8 @@
       "dependsOn": [
         "lobby-bedroom3-opening",
         "plaster",
-        "flooring"
+        "flooring",
+        "palette-choose"
       ],
       "status": "todo",
       "needs": "Choose door and frame material, finish and hardware; confirm final size, hinge side and swing (C36)",
@@ -1501,7 +1749,8 @@
       "dependsOn": [
         "bedroom1-old-door-close",
         "bedroom1-design-freeze",
-        "plaster"
+        "plaster",
+        "palette-choose"
       ],
       "status": "todo",
       "needs": "Wall thickness (A24); the Bedroom 1 design note",
@@ -1524,7 +1773,9 @@
       "detail": "The same in layout A and layout B. A three-door wardrobe on the west wall (1,800 x 2,400, 508 deep); a two-door wardrobe in the north-east recess (850 x 2,700, 400 deep); and a wardrobe on the balcony side of the Pooja wall (1,200 x 2,700, 508 deep) with two SLIDING panels, because the window AC stops a hinged door at 41 degrees. Check the depth of the niche in the Pooja wall before fixing the balcony wardrobe's depth and position; its clearance to the window AC (217 mm in the model) depends on the AC's real casing. Suggested, not decided: sliding doors on the west wardrobe too, which would ease the west walkway of layout B (its hinged doors clear the bed by only 42 mm).",
       "dependsOn": [
         "bedroom1-design-freeze",
-        "plaster"
+        "plaster",
+        "palette-choose",
+        "ac-piping-other"
       ],
       "status": "todo",
       "needs": "Tape the room, the Pooja wall niche and the window AC (A27, A23). West wardrobe doors hinged or sliding (C37)",
@@ -1548,7 +1799,8 @@
       "detail": "NOT DECIDED (C35). Layout B adds a dressing table on the north wall between the washroom door and the recess wardrobe (900 wide x 350 deep x 750 high, 1,510 mm from the west wall) with a wall mirror 700 x 900 above it and a stool, and one bedside table east of the bed head (400 x 350 x 550 high). The sizes are the design note's proposals. The side by the Lobby door has no room for a table: a headboard ledge or a small wall shelf would serve that sleeper. If layout A stays, mark this task done without work.",
       "dependsOn": [
         "bedroom1-design-freeze",
-        "plaster"
+        "plaster",
+        "palette-choose"
       ],
       "status": "todo",
       "needs": "Owner decision C35",
@@ -1565,16 +1817,17 @@
       "id": "carp-bedroom3-east",
       "phase": "carpentry",
       "trade": "carpentry",
-      "title": "Bedroom 3: cabinets on both sides of the bed, the overhead run and the slatted AC bay",
+      "title": "Bedroom 3: cabinets on both sides of the bed (storage north, mirror dressing cabinet south), the overhead run and the slatted AC bay",
       "room": "Bedroom 3",
-      "detail": "Owner 2026-10-03, honey oak, 18 in (457 mm) deep overall. North of the bed: a mirror dressing cabinet 750 wide x 2,200 high. South of the bed: a low cabinet 750 x 600 with two drawers. Above: an overhead run 3,426 wide x 450 high from 2,200 to 2,650, with a central 1,200 mm slatted bay, open underneath, around the existing AC (about 30 mm of headroom by the scan). A headboard shelf between the cabinets. Model sizes, checked against the phone scan: the dressing cabinet clears the toilet door by about 200 mm.",
+      "detail": "Honey oak, 18 in (457 mm) deep overall (owner 2026-10-03). CHANGE BY THE OWNER 2026-10-05, being drawn in the 3D model now: the mirror dressing cabinet moves to the SOUTH side of the bed, and a floor-to-ceiling storage cabinet takes its place on the NORTH side. Until that change is in the model the sizes below are the earlier ones (a 750 x 2,200 dressing cabinet north of the bed and a 750 x 600 low cabinet south of it), and this task's estimate will be regenerated from the new sizes. Unchanged: the overhead run 3,426 wide x 450 high from 2,200 to 2,650 with a central 1,200 mm slatted bay, open underneath, around the existing AC (about 30 mm of headroom by the scan), and a headboard shelf between the cabinets. From the AC plan: the slatted front must lift off for service and have enough open area for the air; the AC pipes can run inside the overhead run, and the AC point B3-E3 sits in it next to the bay.",
       "dependsOn": [
         "bedroom3-cupboard-remove",
         "finalise-layouts",
-        "plaster"
+        "plaster",
+        "palette-choose"
       ],
       "status": "todo",
-      "needs": "Tape the door approach and the AC (A19, A20). The slatted panel must lift off for AC service",
+      "needs": "The new arrangement finished in the model, then re-run the estimate. Tape the door approach and the AC (A19, A20): the full-height north cabinet stands beside the toilet door",
       "source": "docs/CURRENT_STATE.md",
       "openItems": [
         "A19",
@@ -1582,7 +1835,7 @@
       ],
       "estimateLow": 63500,
       "estimateHigh": 101000,
-      "estimateBasis": "dressing cabinet 750 x 2200: 17.8 sq ft x Rs 1,500-2,300; overhead run 3426 x 450: 16.6 sq ft x Rs 1,500-2,300; low cabinet 750: 2.5 running ft x Rs 3,500-6,000; mirror: 12.5 sq ft x Rs 150-280; headboard shelf: 5.2 sq ft x Rs 350-600. The slatted AC bay is priced as overhead cabinet front.",
+      "estimateBasis": "north cabinet 750 x 2200: 17.8 sq ft x Rs 1,500-2,300; south low cabinet 750 long: 2.5 running ft x Rs 3,500-6,000; overhead run 3426 x 450: 16.6 sq ft x Rs 1,500-2,300; mirror: 12.5 sq ft x Rs 150-280; headboard shelf: 5.2 sq ft x Rs 350-600. Sizes as the model stands today. The cabinets are being rearranged (dressing cabinet to the south side, full-height storage on the north side); this figure is regenerated when that change is in the model. The slatted AC bay is priced as overhead cabinet front.",
       "estimateConfidence": "low"
     },
     {
@@ -1594,7 +1847,8 @@
       "detail": "Owner 2026-10-04. Honey-oak chest 1,400 long x 450 deep x 800 high, six drawers, centred opposite the bed (1,163 mm from the north wall). A framed artwork 1,100 x 700 hangs 250 mm above it.",
       "dependsOn": [
         "finalise-layouts",
-        "plaster"
+        "plaster",
+        "palette-choose"
       ],
       "status": "todo",
       "source": "docs/CURRENT_STATE.md",
@@ -1614,8 +1868,9 @@
         "finalise-layouts",
         "plaster",
         "plumbing-rough",
-        "elec-chase-other-rooms",
-        "elec-track-feed-kitchen"
+        "elec-first-fix-kitchen",
+        "elec-track-feed-kitchen",
+        "palette-choose"
       ],
       "status": "todo",
       "needs": "Freeze the kitchen layout; choose laminate, counter stone and handles. Appliances are bought separately",
@@ -1633,7 +1888,8 @@
       "detail": "As drawn in the model: west-facing pull-out storage in the former store recess beside the refrigerator, about 1,092 wide x 2,600 high x 1,000 deep, with pull-out racks and a sliding cover about 1,000 x 2,200.",
       "dependsOn": [
         "finalise-layouts",
-        "plaster"
+        "plaster",
+        "palette-choose"
       ],
       "status": "todo",
       "needs": "Freeze with the kitchen layout",
@@ -1651,7 +1907,8 @@
       "detail": "Owner 2026-10-04: the long desk is split. A 1,500 x 762 x 25 mm top on the sit-stand frame, set 25 mm (one inch) off the west wall; a FIXED section at the south end, 743 long in the model and cut on site to the taped length, top at 838 mm (level with the seated height), with a full-depth cabinet below (printer shelf, one shelf, two sliding fronts, no hinged doors or pull-outs because only about 270 mm of floor is free in front); a one-inch gap between the two. Under the moving top a low rear cabinet 1,500 long x 305 deep x 680 high in two bays with slots for the desk feet.",
       "dependsOn": [
         "finalise-layouts",
-        "plaster"
+        "plaster",
+        "palette-choose"
       ],
       "status": "todo",
       "needs": "Tape the room length, the south-east column and the boxing under the south window (A15, A17). Check the frame's real feet before cutting the slots",
@@ -1674,7 +1931,8 @@
       "detail": "Floor-to-ceiling cabinet on the north wall, 914 wide: an upper part 864 high x 406 deep with the water heater bay (500) and the router bay, and a shallow book section below (127 deep). By the phone scan the heater would overlap the bay's west side panel by about 35 mm: widen the bay toward the wall or shift the cabinet.",
       "dependsOn": [
         "finalise-layouts",
-        "plaster"
+        "plaster",
+        "palette-choose"
       ],
       "status": "todo",
       "needs": "Tape the heater (A16) and the room (A15)",
@@ -1697,7 +1955,8 @@
       "detail": "As drawn in the model: a low unit 1,450 long x 400 deep x 1,000 high on the east wall, three doors, with a pull-out ironing board (950 x 300) in the centre bay.",
       "dependsOn": [
         "finalise-layouts",
-        "plaster"
+        "plaster",
+        "palette-choose"
       ],
       "status": "todo",
       "needs": "Confirm the design",
@@ -1715,7 +1974,9 @@
       "detail": "As drawn in the model: the alcove on the Lobby north wall is 1,200 wide x 1,000 deep, with a 190 mm platform, drawers and a 254 mm deep temple. There is no detailed design yet.",
       "dependsOn": [
         "finalise-layouts",
-        "plaster"
+        "plaster",
+        "palette-choose",
+        "ac-piping-other"
       ],
       "status": "todo",
       "needs": "A design for the Pooja unit; materials (wood, stone, brass)",
@@ -1733,7 +1994,8 @@
       "detail": "Not designed yet. The existing three-bay glazed bookshelf on the north wall and the raised south-wall cabinet stay. The bed and desk of the kids layout are drawn but have no agreed sizes.",
       "dependsOn": [
         "finalise-layouts",
-        "plaster"
+        "plaster",
+        "palette-choose"
       ],
       "status": "todo",
       "needs": "Settle the kids layout first (C25)",
@@ -1750,7 +2012,8 @@
       "room": "Drawing Room",
       "detail": "Owner 2026-10-04 (carpenter). The south window has a wooden frame in three sections; the two side sections have shutters opening outward and the centre section is fixed. Take out the fixed centre panel and make two wooden shutters for it that open outward, so all three sections match: two shutters each, six in all. Copy the existing shutters exactly (wood, section sizes, mouldings, rail heights) so the new pair cannot be told apart. Hardware to match the old: hinges, a tower bolt top and bottom, a handle, and a stay or hook to hold each shutter open in wind. Glass: 5 mm clear glass, toughened if the pane is large or low, bedded in sealant and fixed with wooden beading; check the old panes at the same time and replace any that are cracked or loose. The owner confirms (2026-10-04) that nothing outside blocks the centre shutters; keep it that way when the AC outdoor unit is placed. PHONE SCAN 2026-10-04 (approximate, tape before ordering; now drawn in the 3D model): the frame is 2,700 wide in three bays of about 934 / 899 / 867, sill 935, a transom at 2,040 and fixed top lights above it to the head at 2,430. The new centre pair is about 899 wide x 1,105 high. Note (owner 2026-10-04): the top of the window, about 1 ft, is a fixed band across the sections; the new centre shutters are made for the opening part below it, the same height as the existing side shutters.",
       "dependsOn": [
-        "site-measure"
+        "site-measure",
+        "palette-choose"
       ],
       "status": "todo",
       "needs": "Measure the three sections; glass type (clear, frosted or tinted)",
@@ -1803,11 +2066,35 @@
       "status": "todo",
       "needs": "The wood shade",
       "openItems": [
-        "C19"
+        "C19",
+        "C42"
       ],
       "estimateLow": 21500,
       "estimateHigh": 39500,
       "estimateBasis": "frame and six shutters, both faces: 86.9 sq ft x Rs 250-450. Stripping old paint is slow; the outside face needs an exterior finish.",
+      "estimateConfidence": "low"
+    },
+    {
+      "id": "doors-repolish",
+      "phase": "paint",
+      "trade": "painting",
+      "title": "Existing wooden doors: re-polish to the chosen wood tone (only if the palette asks for it)",
+      "room": "Whole home",
+      "detail": "NOT DECIDED (C42). The recommended palette re-polishes the existing wooden doors to the honey tone so that the home has one wood colour: strip or sand each door and frame, stain and finish with PU or melamine polish, both faces, together with the south window frame so the shade is the same. The number of doors and their present finish are not in the model. If the chosen palette leaves the doors as they are, mark this task done without work.",
+      "dependsOn": [
+        "plaster",
+        "palette-choose"
+      ],
+      "status": "todo",
+      "needs": "Owner decision C42; count the doors (A28)",
+      "source": "docs/PALETTE.md",
+      "openItems": [
+        "C42",
+        "A28"
+      ],
+      "estimateLow": 0,
+      "estimateHigh": 147000,
+      "estimateBasis": "doors, both faces, 8 assumed: 0 to 326 sq ft x Rs 250-450. Nothing if the palette chosen keeps the doors as they are (C42). The number of wooden doors is not in the model: count them (A28).",
       "estimateConfidence": "low"
     },
     {
@@ -1842,12 +2129,13 @@
         "carp-study",
         "carp-window-centre",
         "ac-window-frame",
-        "carp-bedroom1-layout-b"
+        "carp-bedroom1-layout-b",
+        "doors-repolish"
       ],
       "status": "todo",
       "estimateLow": 73500,
       "estimateHigh": 135000,
-      "estimateBasis": "walls and ceilings: 3359 sq ft x Rs 22-40. Eight spaces from the model, less 20 % for openings and cabinets; toilets and balconies not included. Colours pending the palette note.",
+      "estimateBasis": "walls and ceilings: 3359 sq ft x Rs 22-40. Eight spaces from the model, less 20 % for openings and cabinets; toilets and balconies not included. Colours from the palette once it is chosen (C42); an accent wall per room costs the same.",
       "estimateConfidence": "medium"
     },
     {
@@ -1877,16 +2165,29 @@
       "id": "elec-second-fix-other",
       "phase": "second-fix",
       "trade": "electrical",
-      "title": "Other rooms: fit switches and sockets; test every circuit",
-      "room": "Other rooms",
-      "detail": "PENDING NOTE: a design for this is being written on 2026-10-05 (docs/changes/2026-10-05-*.md, section \"For the work plan\"). This task holds its place; the tasks from that note replace or extend it. Placeholder for the second fix of the other rooms' points.",
+      "title": "Other rooms: fit switches, sockets and plates; test every circuit",
+      "room": "Whole home",
+      "detail": "After painting, in the Lobby, Bedroom 1, Bedroom 3, Study, Home Office, Main entry and Kitchen: fit the modular plates, switches, dimmers, fan regulators and sockets of each room's table in docs/ELECTRICAL_PLAN.md, one range and colour for the whole home; RCBO and earth tests; label the distribution board circuit by circuit.",
       "dependsOn": [
         "paint",
-        "elec-chase-other-rooms"
+        "elec-first-fix-lobby",
+        "elec-first-fix-bedroom1",
+        "elec-first-fix-bedroom3",
+        "elec-first-fix-study",
+        "elec-first-fix-office",
+        "elec-first-fix-kitchen",
+        "elec-entry-ceiling"
       ],
       "status": "todo",
-      "needs": "The electrical plans note",
-      "estimateBasis": "Not estimated: Follows the point plans for the other rooms (pending the electrical plans note)."
+      "needs": "Switch range and colour (C14; the palette recommends white or ivory plates)",
+      "estimateBasis": "fit and test, rooms: 6 job x Rs 2,000-4,000. Lobby, Bedroom 1, Bedroom 3, Study, Home Office, Main entry. The plates and switches are inside the point rates.",
+      "source": "docs/ELECTRICAL_PLAN.md",
+      "openItems": [
+        "C14"
+      ],
+      "estimateLow": 12000,
+      "estimateHigh": 24000,
+      "estimateConfidence": "medium"
     },
     {
       "id": "lights-track-drawing",
@@ -2041,6 +2342,25 @@
       "estimateConfidence": "medium"
     },
     {
+      "id": "lights-pooja",
+      "phase": "second-fix",
+      "trade": "electrical",
+      "title": "Pooja Ghar: fit the round ceiling light",
+      "room": "Lobby / Dining",
+      "detail": "Owner 2026-10-05: a light on the ceiling of the Pooja Ghar, the circular one used earlier in the home. One 8 W round surface LED panel (about 170 mm across, 35 mm deep; size typical, not measured), centred on the alcove ceiling, switched from the Pooja point L-P1 on the alcove's west return. The warm light inside the Pooja unit is separate and stays. The palette recommends 2700 K in the Pooja unit.",
+      "dependsOn": [
+        "paint",
+        "elec-first-fix-lobby",
+        "carp-pooja"
+      ],
+      "status": "todo",
+      "source": "docs/ELECTRICAL_PLAN.md",
+      "estimateLow": 0,
+      "estimateHigh": 1000,
+      "estimateBasis": "round panel: 1 each x Rs 350-700. One 8 W round surface panel; its switch point is in the Lobby first fix.",
+      "estimateConfidence": "medium"
+    },
+    {
       "id": "plumbing-second-fix",
       "phase": "second-fix",
       "trade": "plumbing",
@@ -2077,7 +2397,7 @@
       "trade": "ac",
       "title": "Drawing Room AC: fit the indoor and outdoor units and commission",
       "room": "Drawing Room",
-      "detail": "After painting. Fix the indoor unit level on its plate and the outdoor unit on a rust-proof stand, connect the pipes, vacuum the lines, release the gas, check the drain by pouring water, and run a cooling test. Keep the warranty card and the installer's details in the task notes.",
+      "detail": "After painting. Fix the indoor unit level on its plate and the outdoor unit on a rust-proof stand, connect the pipes, vacuum the lines, release the gas, check the drain by pouring water, and run a cooling test. Keep the warranty card and the installer's details in the task notes. Size as agreed with the dealer (1.5 ton is at its limit here: C39).",
       "dependsOn": [
         "ac-piping",
         "elec-ac-point",
@@ -2095,7 +2415,7 @@
       "trade": "ac",
       "title": "Bedroom 1 balcony: fit the window AC on its frame",
       "room": "Bedroom 1",
-      "detail": "Cut one glazing panel to the casing size, lift the AC onto the frame, seal the gap around the casing, fit a drain tray and pipe so the condensate does not fall on the floors below, plug it into its own socket and run a cooling test. It cools the balcony first: cold air reaches the bedroom through the 2.2 m opening, which must stay open and clear. It is louder in the room than a split AC.",
+      "detail": "Cut one glazing panel to the casing size, lift the AC onto the frame, seal the gap around the casing, fit a drain tray and pipe so the condensate does not fall on the floors below, plug it into its own socket and run a cooling test. It cools the balcony first: cold air reaches the bedroom through the 2.2 m opening, which must stay open and clear. It is louder in the room than a split AC. The drain tube goes to the balcony floor drain, if there is one (B7).",
       "dependsOn": [
         "ac-window-frame",
         "elec-ac-window-point",
@@ -2105,7 +2425,8 @@
       "needs": "Which glazing panel is at the mark (A23)",
       "source": "docs/changes/2026-10-05-ac-outdoor-units.md",
       "openItems": [
-        "A23"
+        "A23",
+        "B7"
       ],
       "estimateLow": 5000,
       "estimateHigh": 12000,
@@ -2116,16 +2437,24 @@
       "id": "ac-install-other",
       "phase": "second-fix",
       "trade": "ac",
-      "title": "Other rooms: fit or refit AC units after painting",
-      "room": "Other rooms",
-      "detail": "PENDING NOTE: a design for this is being written on 2026-10-05 (docs/changes/2026-10-05-*.md, section \"For the work plan\"). This task holds its place; the tasks from that note replace or extend it. Placeholder for any AC bought or moved outside the Drawing Room.",
+      "title": "Lobby AC, if bought now: fit the indoor and outdoor units and commission",
+      "room": "Lobby / Dining",
+      "detail": "ONLY IF the Lobby AC is agreed and bought now (C40). After painting: a 1.5 ton inverter split, indoor unit on the north wall beside the Pooja alcove, outdoor unit on a bracket outside the kitchen north wall. Connect to the pipes laid earlier, vacuum the lines, check the drain by pouring water, run a cooling test. If only the pipes go in now, or no Lobby AC is wanted, mark this task done without work.",
       "dependsOn": [
         "ac-piping-other",
+        "elec-ac-point",
         "paint"
       ],
       "status": "todo",
-      "needs": "The whole-home AC note",
-      "estimateBasis": "Not estimated: Which rooms get a new or moved AC is not decided (pending the whole-home AC note)."
+      "needs": "Owner decision C40",
+      "estimateBasis": "1.5 ton split AC: 0 to 1 each x Rs 38,000-55,000. Nothing if the Lobby AC is not wanted, or if only its pipes go in now and the machine is bought later (C40).",
+      "source": "docs/AC_PLAN.md",
+      "openItems": [
+        "C40"
+      ],
+      "estimateLow": 0,
+      "estimateHigh": 55000,
+      "estimateConfidence": "low"
     },
     {
       "phase": "second-fix",
@@ -2228,6 +2557,7 @@
         "lights-track-study",
         "lights-track-kitchen",
         "elec-entry-lights",
+        "lights-pooja",
         "plumbing-second-fix",
         "tv-mount",
         "ac-install",

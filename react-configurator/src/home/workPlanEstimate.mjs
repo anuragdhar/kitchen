@@ -24,6 +24,9 @@ import {STUDY_LIGHTING} from '../config/studyLightingConfig.js'
 import {KITCHEN_LIGHTING} from '../config/kitchenLightingConfig.js'
 import {BEDROOM1_CLOSED_DOOR} from '../config/bedroom1ClosedDoor.js'
 import {BEDROOM1_DESIGN} from '../config/bedroom1LayoutConfig.js'
+import {AC_PLAN} from '../config/acPlanConfig.js'
+import {pipeRoute, resolveRoute} from '../domain/acPlan.mjs'
+import {roomElectricalReport} from '../domain/roomElectricalModels.mjs'
 import {CABINET_RUNS, WEST_INIT, KITCHEN, KITCHEN_STORE_STORAGE, BACKSPLASH_HEIGHT} from '../config/kitchenConfig.js'
 
 /** One table of every rate used. `unit` is what the quantity is counted in; low/high are INR per unit. */
@@ -84,6 +87,8 @@ export const RATES = {
   tvMount: {label: 'TV wall bracket and mounting, cables dressed', unit: 'job', low: 2500, high: 6000},
   acSplit: {label: '1.5 ton inverter split AC, 3 to 5 star, with the standard installation kit', unit: 'each', low: 38000, high: 55000},
   acExtras: {label: 'AC installation extras: bracket or stand, core cut, labour', unit: 'each', low: 3000, high: 6000},
+  acDrain: {label: 'AC condensate drain pipe, clipped or cased, laid to a fall', unit: 'm', low: 150, high: 300},
+  samples: {label: 'Sample boards, fabric swatches, a handle and two test lamps', unit: 'set', low: 1500, high: 4000},
   acPipe: {label: 'Extra copper pipe pair with insulation, drain and cable beyond the 3 m in the kit', unit: 'm', low: 800, high: 1300},
   windowAcFit: {label: 'Fit a window AC on its frame: seal, drain tray and pipe', unit: 'job', low: 2500, high: 6000},
   glazingCut: {label: 'Alter one aluminium glazing panel to take the AC casing', unit: 'job', low: 2500, high: 6000},
@@ -137,9 +142,29 @@ const elecPoints = DRAWING_ELECTRICAL.points
 const remainingPoints = elecPoints.filter(point => !['N1', 'N2', 'N4', 'W1', 'E1', 'F1'].includes(point.id)) // those six have their own tasks or are dropped
 const windowAc = bedroom1.balconyExtension.windowAc
 
+// AC routes (docs/AC_PLAN.md): refrigerant pipe length with the plan's own allowance, and the drawn drain length, in metres.
+const KIT_PIPE_M = 3 // the pipe that usually comes with the machine
+const acSpace = id => AC_PLAN.spaces.find(space => space.id === id)
+const acRun = route => ({pipeM: pipeRoute(route.pipe, AC_PLAN).lengthM, drainM: route.drain ? Math.round(resolveRoute(route.drain, AC_PLAN).lengthMm / 100) / 10 : 0})
+const AC_RUNS = {drawing: acRun(acSpace('drawing')), drawingShoeRack: acRun({pipe: acSpace('drawing').alternatives[0].pipe}), lobby: acRun(acSpace('lobby'))}
+const extraPipe = metres => Math.max(0, Math.round((metres - KIT_PIPE_M) * 10) / 10)
+
+// Electrical points per room (docs/ELECTRICAL_PLAN.md), less the points that are priced in a task of their own: the track
+// driver feeds (the track-feed tasks), the Lobby switchboard and its junction box (the switchboard move), the dining pendant point (its own feed task), the Lobby and
+// window AC points and the undecided Bedroom 1 split AC point (the AC tasks).
+const OWN_TASK_POINTS = ['L-N1', 'L-N2', 'L-N4', 'L-C1', 'B1-B1', 'B1-W1']
+const roomPoints = key => {
+  const all = roomElectricalReport(key).points, points = all.filter(point => !/Track \d driver feed/.test(point.name) && !OWN_TASK_POINTS.includes(point.id))
+  const count = test => points.filter(test).length, heavy = point => /16 A/.test(String(point.outlets ?? ''))
+  return {all: all.length, counted: points.length, light: count(point => point.kind === 'lighting'), socket: count(point => point.kind === 'charging' || (point.kind === 'power' && !heavy(point))),
+    power: count(point => point.kind === 'power' && heavy(point)), data: count(point => point.kind === 'data'), dedicated: count(point => point.kind === 'dedicated')}
+}
+const ROOM_POINTS = Object.fromEntries(['lobby', 'bedroom1', 'bedroom3', 'study', 'office', 'entry'].map(key => [key, roomPoints(key)]))
+
 export const QUANTITIES = {
   tracks: TRACKS, paintSqft: PAINT_SQFT, skirtingRft: SKIRTING_RFT, outerDoor, slidingOpening, windowBays, oldB1DoorWidthMm,
   kitchen: {eastRunMm: run('east-base-run').width, westRunMm, openAppliancesMm}, remainingDrawingPoints: remainingPoints.map(point => point.id),
+  acRuns: AC_RUNS, roomPoints: ROOM_POINTS,
 }
 
 // ---- One estimator per task -----------------------------------------------------------------------------------------
@@ -156,6 +181,10 @@ const trackLights = (track, note = '') => priced('medium', [
   item('reading heads', track.reading, 'headReading'), item('60 W drivers', track.driver60, 'driver60'), item('100 W drivers', track.driver100, 'driver100'),
   item('dimmers', track.runs, 'dimmer'), item('fixing', track.runs, 'trackFit'),
 ].filter(line => line.quantity > 0), `Counts from the lighting config; one maker for track, heads and drivers.${note}`)
+const firstFix = (key, note = '') => { const p = ROOM_POINTS[key]; return priced('low', [
+  item('light, fan and switch points', p.light, 'pointLight'), item('socket and charging points', p.socket, 'pointSocket'), item('16 A points', p.power, 'pointPower'),
+  item('data points', p.data, 'pointData'), item('own circuit for an existing AC or water heater, if it has none', [0, p.dedicated], 'circuit'),
+].filter(line => lowHigh(line.quantity)[1] > 0), `${p.counted} of the ${p.all} points in docs/ELECTRICAL_PLAN.md; the rest are priced in the track-feed, switchboard, pendant and AC tasks. Existing points that are reused are counted as new, so expect the low end.${note}`) }
 const opening = (widthMm, heightMm, what) => [item(`${what} ${Math.round(widthMm)} x ${heightMm}`, sqft(widthMm, heightMm), 'wallCut'), item('lintel', 1, 'lintel'), item('reveals', 1, 'reveal')]
 
 export const ESTIMATORS = {
@@ -169,13 +198,17 @@ export const ESTIMATORS = {
   'plumbing-scope': () => free(OWNER_TIME),
   'finalise-layouts': () => free(OWNER_TIME),
   'ac-choose': () => free('A decision; the AC itself is priced in the fitting task.'),
-  'ac-plan-home': () => free('A decision; pending the whole-home AC note.'),
+  'ac-plan-home': () => free('Decisions with the AC dealer; the work is priced in the Lobby AC and window AC tasks.'),
+  'ac-drain-survey': () => free('Looked at by the owner with the AC installer; no separate cost.'),
+  'ac-record-existing': () => free(OWNER_TIME),
+  'palette-floor-record': () => free(OWNER_TIME),
+  'palette-samples': () => priced('medium', [item('samples', 1, 'samples')], 'Most dealers lend laminate and fabric samples; paint sample pots and two lamps are bought.'),
   'lighting-plan-drawing': () => free(OWNER_TIME), 'lighting-plan-lobby': () => free(OWNER_TIME), 'lighting-plan-bedroom1': () => free(OWNER_TIME),
   'lighting-plan-bedroom3': () => free(OWNER_TIME), 'lighting-plan-study': () => free(OWNER_TIME), 'lighting-plan-kitchen': () => free(OWNER_TIME),
   'lighting-track-mouldings': () => free(OWNER_TIME),
   'lobby-pendant-decide': () => free('A decision; the new feed is priced in its own task.'),
-  'elec-other-rooms': () => free('A plan on paper; pending the electrical plans note.'),
-  'palette-choose': () => free('A decision; pending the whole-home palette note. Sample pots are small change.'),
+  'elec-other-rooms': () => free('A review of the drawn plans with the electrician; the work is priced room by room.'),
+  'palette-choose': () => free('A decision; samples are priced in their own task.'),
   'bedroom1-design-freeze': () => free('A decision between two drawn layouts; what layout B adds is priced in its own task.'),
   'drawing-switchboard-decide': () => free('A decision with the electrician; the work is priced in the switchboard task.'),
   'window-screen-trial': () => priced('medium', [item('trial blind', 1, 'outdoorBlind')], 'One ready-made piece for one section.'),
@@ -202,25 +235,36 @@ export const ESTIMATORS = {
     item('light points', remainingPoints.filter(point => point.kind === 'lighting').length, 'pointLight'),
     item('socket and charging points', remainingPoints.filter(point => point.kind === 'charging' || (point.kind === 'power' && !/16 A/.test(point.outlets))).length, 'pointSocket'),
     item('6/16 A points', remainingPoints.filter(point => point.kind === 'power' && /16 A/.test(point.outlets)).length, 'pointPower'),
-  ], 'From the 17-point plan less the TV wall, AC, floor box and the dropped east switchboard; some points may go once the electrical plans note arrives.'),
+  ], 'From the 17-point plan less the TV wall, AC, floor box and the east-wall switchboard (C28); the uplight and reading-light points may go now that the tracks do that work.'),
   'elec-tv-wall': () => priced('medium', [item('socket boxes', 3, 'pointPower'), item('own circuit', 1, 'circuit'), item('conduit', 1, 'conduit50')]),
   'elec-drawing-switchboard': () => priced('low', [item('switchboard', 1, 'switchboard')], 'More if it is moved to another wall (C28).'),
   'elec-drawing-west-sockets': () => priced('low', [item('plates moved', [0, 3], 'pointSocket')], 'Nothing if they stay for fixed plugs; three points if they move (C29).'),
   'elec-floor-box': () => priced('low', [item('floor box', [0, 1], 'floorBox')], 'Optional (C32).'),
   'elec-data': () => priced('medium', [item('cable runs', 4, 'pointData')], 'CAT6, coax, phone, intercom.'),
-  'elec-entry-ceiling': () => priced('medium', [item('light points', ENTRY_LIGHTING.fittings.length, 'pointLight'), item('switch drops', ENTRY_LIGHTING.switching.length, 'pointLight')]),
-  'ac-piping': () => priced('low', [item('extra pipe', [0, 7], 'acPipe'), item('core cut and fixing', 1, 'acExtras')], 'About 3 m to a bracket on the west wall (inside the kit) or about 10 m to the shoe rack (C15).'),
-  'elec-ac-point': () => priced('medium', [item('AC circuit', 1, 'circuit')]),
+  'elec-entry-ceiling': () => firstFix('entry', ' The four ceiling light points and their switches are in this count.'),
+  'ac-piping': () => priced('low', [
+    item(`pipe beyond the ${KIT_PIPE_M} m kit`, [extraPipe(AC_RUNS.drawing.pipeM), extraPipe(AC_RUNS.drawingShoeRack.pipeM)], 'acPipe'),
+    item('drain', AC_RUNS.drawing.drainM, 'acDrain'), item('core cut and fixing', 1, 'acExtras'),
+  ], `Route lengths from docs/AC_PLAN.md: ${AC_RUNS.drawing.pipeM} m of pipe to the west wall (recommended) or ${AC_RUNS.drawingShoeRack.pipeM} m to the shoe rack (C15); the drain is drawn ${AC_RUNS.drawing.drainM} m along the outside to the toilet.`),
+  'elec-ac-point': () => priced('medium', [item('AC circuits: Drawing Room, and the Lobby if agreed', [1, 2], 'circuit')]),
+  'elec-first-fix-lobby': () => firstFix('lobby', ' Includes the Pooja light switch and socket (L-P1).'),
+  'elec-first-fix-bedroom1': () => firstFix('bedroom1', ' Planned for layout A; in layout B the two bedside points move to the south wall (C35). The split AC point B1-W1 is left out until C31 is decided.'),
+  'elec-first-fix-bedroom3': () => firstFix('bedroom3'),
+  'elec-first-fix-study': () => firstFix('study'),
+  'elec-first-fix-office': () => firstFix('office', ' The water heater and router points exist already.'),
+  'elec-first-fix-kitchen': () => none('The kitchen has its own services plan, worked out in the kitchen planner from where the appliances stand; it has no fixed point schedule to count until the kitchen layout is frozen.'),
   'elec-ac-window-point': () => priced('medium', [item('AC circuit', 1, 'circuit')]),
   'elec-track-feed': () => trackFeeds(TRACKS.drawing), 'elec-track-feed-lobby': () => trackFeeds(TRACKS.lobby), 'elec-track-feed-bedroom1': () => trackFeeds(TRACKS.bedroom1),
   'elec-track-feed-bedroom3': () => trackFeeds(TRACKS.bedroom3), 'elec-track-feed-study': () => trackFeeds(TRACKS.study), 'elec-track-feed-kitchen': () => trackFeeds(TRACKS.kitchen),
   'elec-track-setout': () => free('Part of the electrician\'s first fix for the track feeds; no separate charge expected.'),
   'elec-lobby-pendant-feed': () => priced('low', [item('new ceiling point', [0, 1], 'pointLight')], 'Nothing if the pendant is dropped or goes on an existing point (C33).'),
-  'elec-chase-other-rooms': () => none('The point plans for the other rooms are not in the project yet (pending the electrical plans note).'),
-  'ac-piping-other': () => none('Which rooms get new piping is not decided (pending the whole-home AC note).'),
+  'ac-piping-other': () => priced('low', [
+    item(`pipe beyond the ${KIT_PIPE_M} m kit`, [0, extraPipe(AC_RUNS.lobby.pipeM)], 'acPipe'), item('drain', [0, AC_RUNS.lobby.drainM], 'acDrain'),
+    item('two core cuts and fixing', [0, 1], 'acExtras'), item('solid panel in the balcony glazing head', [0, 1], 'glazingCut'),
+  ], `Nothing if no Lobby AC is wanted (C40). Route from docs/AC_PLAN.md: ${AC_RUNS.lobby.pipeM} m of pipe and ${AC_RUNS.lobby.drainM} m of drain.`),
 
   // 5. Plaster, making good, flooring
-  plaster: () => priced('low', [item('chases, about 35 points x 8 ft', 280, 'chase')], 'Only the points priced above; the other rooms add to it. Opening reveals are priced with each opening.'),
+  plaster: () => { const points = 30 + Object.values(ROOM_POINTS).reduce((total, room) => total + room.counted, 0); return priced('low', [item(`chases, about ${points} points x 8 ft`, points * 8, 'chase')], 'About 30 points in the Drawing Room, track feeds and AC lines plus the counted points of the six room plans; the kitchen adds to it. Opening reveals are priced with each opening.') },
   flooring: () => priced('low', [item('patches at three openings and the closed doorway', 30, 'floorPatch')], 'Area assumed; matching an old floor is the risk.'),
   skirting: () => priced('low', [item('skirting', SKIRTING_RFT, 'skirting')], 'OPTIONAL. Room perimeters less a quarter for doors and cabinets; flush skirting costs more than the range.'),
   'entry-ceiling': () => priced('medium', [item(`corridor ${ENTRY.approachLengthMm} x ${ENTRY.clearWidthMm}`, entryAreaSqft, 'pvcCeiling')], 'A small job: expect a minimum charge near the high figure.'),
@@ -243,13 +287,18 @@ export const ESTIMATORS = {
     item(`wall mirror ${b.dressingTable.mirror.widthMm} x ${b.dressingTable.mirror.heightMm}`, [0, sqft(b.dressingTable.mirror.widthMm, b.dressingTable.mirror.heightMm)], 'mirror'),
     item(`bedside table ${b.bedsideTable.widthMm} long`, [0, rft(b.bedsideTable.widthMm)], 'carpLow'),
   ], 'Nothing if layout A stays (C35). The stool and any acoustic board behind the bed head are not included.') },
-  'carp-bedroom3-east': () => priced('low', [
-    item(`dressing cabinet ${east.north.widthMm} x ${east.north.heightMm}`, sqft(east.north.widthMm, east.north.heightMm), 'carpTall'),
-    item(`overhead run ${east.bridge.widthMm} x ${east.bridge.heightMm}`, sqft(east.bridge.widthMm, east.bridge.heightMm), 'carpTall'),
-    item(`low cabinet ${east.south.widthMm}`, rft(east.south.widthMm), 'carpLow'),
-    item('mirror', sqft(east.north.widthMm, east.north.mirrorTopMm - east.north.mirrorBottomMm), 'mirror'),
-    item('headboard shelf', sqft(east.shelf.widthMm, east.shelf.depthMm), 'carpTop'),
-  ], 'The slatted AC bay is priced as overhead cabinet front.'),
+  // Written to follow the config whichever side the tall and the low cabinet stand on (the mirror dressing cabinet is
+  // moving to the south side and a floor-to-ceiling storage cabinet to the north side, owner 2026-10-05).
+  'carp-bedroom3-east': () => {
+    const cabinet = (side, c) => c.heightMm > 1000 ? item(`${side} cabinet ${c.widthMm} x ${c.heightMm}`, sqft(c.widthMm, c.heightMm), 'carpTall') : item(`${side} low cabinet ${c.widthMm} long`, rft(c.widthMm), 'carpLow')
+    const sides = [['north', east.north], ['south', east.south]].filter(([, c]) => c?.widthMm && c?.heightMm), mirrored = sides.map(([, c]) => c).find(c => c.mirrorTopMm)
+    return priced('low', [
+      ...sides.map(([side, c]) => cabinet(side, c)),
+      ...(east.bridge ? [item(`overhead run ${east.bridge.widthMm} x ${east.bridge.heightMm}`, sqft(east.bridge.widthMm, east.bridge.heightMm), 'carpTall')] : []),
+      ...(mirrored ? [item('mirror', sqft(mirrored.widthMm, mirrored.mirrorTopMm - mirrored.mirrorBottomMm), 'mirror')] : []),
+      ...(east.shelf ? [item('headboard shelf', sqft(east.shelf.widthMm, east.shelf.depthMm), 'carpTop')] : []),
+    ], 'Sizes as the model stands today. The cabinets are being rearranged (dressing cabinet to the south side, full-height storage on the north side); this figure is regenerated when that change is in the model. The slatted AC bay is priced as overhead cabinet front.')
+  },
   'carp-bedroom3-chest': () => priced('medium', [item(`chest ${chest.widthMm} long, six drawers`, rft(chest.widthMm), 'carpLow')], 'The artwork is the owner\'s purchase and is not included.'),
   'carp-kitchen': () => { const k = QUANTITIES.kitchen, uppers = run('east-lower-upper').height + run('east-top-upper').height; return priced('low', [
     item(`base cabinets, ${k.eastRunMm} east + ${k.westRunMm - k.openAppliancesMm} west, 900 high`, sqft(k.eastRunMm + k.westRunMm - k.openAppliancesMm, run('east-base-run').height), 'kitchenBase'),
@@ -276,12 +325,14 @@ export const ESTIMATORS = {
   'ac-window-frame': () => priced('low', [item('angle frame, about', 22, 'msSteel')], `For a casing about ${windowAc.widthMm} x ${windowAc.heightMm} x ${windowAc.depthMm}, ${windowAc.weightKg} kg; the real unit is not measured (A23).`),
 
   // 7. Paint
-  paint: () => priced('medium', [item('walls and ceilings', PAINT_SQFT, 'paint')], 'Eight spaces from the model, less 20 % for openings and cabinets; toilets and balconies not included. Colours pending the palette note.'),
+  paint: () => priced('medium', [item('walls and ceilings', PAINT_SQFT, 'paint')], 'Eight spaces from the model, less 20 % for openings and cabinets; toilets and balconies not included. Colours from the palette once it is chosen (C42); an accent wall per room costs the same.'),
   'window-wood-finish': () => priced('low', [item('frame and six shutters, both faces', 2 * sqft(southWindow.widthMm, southWindow.topMm - southWindow.bottomMm), 'woodRefinish')], 'Stripping old paint is slow; the outside face needs an exterior finish.'),
 
   // 8. Fit-out
   'elec-second-fix': () => priced('medium', [item('fit and test', 1, 'testing')], 'The plates and switches are inside the point rates.'),
-  'elec-second-fix-other': () => none('Follows the point plans for the other rooms (pending the electrical plans note).'),
+  'elec-second-fix-other': () => priced('medium', [item('fit and test, rooms', 6, 'testing')], 'Lobby, Bedroom 1, Bedroom 3, Study, Home Office, Main entry. The plates and switches are inside the point rates.'),
+  'lights-pooja': () => priced('medium', [item('round panel', 1, 'panelLight')], `One ${lobby.poojaAlcove.ceilingLight?.watts ?? 8} W round surface panel; its switch point is in the Lobby first fix.`),
+  'doors-repolish': () => priced('low', [item('doors, both faces, 8 assumed', [0, 8 * 2 * sqft(900, 2100)], 'woodRefinish')], 'Nothing if the palette chosen keeps the doors as they are (C42). The number of wooden doors is not in the model: count them (A28).'),
   'lights-track-drawing': () => trackLights(TRACKS.drawing), 'lights-track-lobby': () => trackLights(TRACKS.lobby), 'lights-track-bedroom1': () => trackLights(TRACKS.bedroom1),
   'lights-track-bedroom3': () => trackLights(TRACKS.bedroom3), 'lights-track-study': () => trackLights(TRACKS.study),
   'lights-track-kitchen': () => trackLights(TRACKS.kitchen, ' The under-cabinet strips are part of the kitchen cabinets.'),
@@ -290,7 +341,7 @@ export const ESTIMATORS = {
   'elec-entry-lights': () => priced('medium', [item('round panels', ENTRY_LIGHTING.fittings.length, 'panelLight')]),
   'ac-install': () => priced('medium', [item('1.5 ton split AC', 1, 'acSplit')], 'Tonnage to be confirmed by the dealer; a stabiliser, if needed, is extra.'),
   'ac-window-install': () => priced('low', [item('fitting', 1, 'windowAcFit'), item('glazing panel', 1, 'glazingCut')], 'The AC itself is already owned.'),
-  'ac-install-other': () => none('Which rooms get a new or moved AC is not decided (pending the whole-home AC note).'),
+  'ac-install-other': () => priced('low', [item('1.5 ton split AC', [0, 1], 'acSplit')], 'Nothing if the Lobby AC is not wanted, or if only its pipes go in now and the machine is bought later (C40).'),
   'window-mosquito-net': () => priced('medium', [item('three nets', sqft(southWindow.widthMm, transomMm - southWindow.bottomMm), 'rollerNet')], 'Sizes from the phone scan.'),
   'lobby-shutter': () => priced('low', [item(`opening ${slidingOpening.widthMm} x ${slidingOpening.heightMm}`, sqft(slidingOpening.widthMm, slidingOpening.heightMm), 'alumSliding')], 'Model sizes (scan: about 3100 x 2445). Toughened fluted glass may not be stocked locally.'),
   'window-outside-chick': () => priced('low', [item('pieces', [2, 3], 'outdoorBlind')], 'After the trial piece; a made-to-measure bamboo chick is in the same range.'),

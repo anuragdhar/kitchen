@@ -61,7 +61,7 @@ task before paint; every fitting after paint; and every task leads to the snag l
 to happen in another phase is placed by WHEN it happens: moving the Lobby switchboard is electrical work in the civil phase,
 because the wall cannot be cut until the board is gone.
 
-## What is in it now (101 tasks) and what is not
+## What is in it now (112 tasks) and what is not
 
 Seeded from what the project records. Since 2026-10-05 it also has: the ventilated stainless steel outer door and the four
 round entry lights; one feed, driver and dimmer per track run in six rooms, with a buy-and-fit task per room; the three
@@ -79,8 +79,25 @@ Folded in later on 2026-10-05: the tracks moved off the ceiling mouldings (new l
 Room, Lobby and Bedroom 3; a task to tape the mouldings and photograph the unscanned ceilings; a task to set out every
 track on site before any feed is fixed) and the Bedroom 1 design.
 
-Placeholders, marked PENDING in their detail, hold a place for three notes still being written: the electrical plans for
-all rooms, the whole-home palette and the whole-home AC plan. Still missing altogether: plumbing (no change is listed), the Study furniture, dates and contractors.
+Also folded in on 2026-10-05, so that no placeholder is left:
+
+- **Electrical plans** (`docs/ELECTRICAL_PLAN.md`): a first-fix task per room priced from the room's point count (Lobby,
+  Bedroom 1, Bedroom 3, Study, Home Office; the Main entry task covers its 11 points), one second-fix task, and the Pooja
+  Ghar round ceiling light. Points that have a task of their own (track driver feeds, the Lobby switchboard, the dining
+  pendant, AC points) are left out of the room counts so nothing is priced twice. The kitchen has its own services plan
+  and no point schedule to count, so its first fix is not estimated.
+- **AC plan** (`docs/AC_PLAN.md`): a drain survey and a record of the existing ACs; the Drawing Room pipes priced from the
+  drawn route (4.3 m to the west wall, about 11 m to the shoe rack); and, as "only if agreed" tasks priced from nothing,
+  the Lobby AC's pipes, power point and machine.
+- **Palette** (`docs/PALETTE.md`): record the floor, collect samples, choose the palette (an owner decision), and
+  re-polish the existing doors only if the chosen palette asks for it. Every carpentry task waits for the palette.
+
+More proposals kept as decisions: no split AC in Bedroom 1 (C31; the electrical plan carries its point B1-W1 until then),
+a Lobby AC (C40), the west wall for the Drawing Room outdoor unit (C15), the Drawing Room AC size (C39), and which palette
+(C42). The Bedroom 3 cabinetry task is worded for the change in progress (storage cabinet north, mirror dressing cabinet
+south); its estimate follows the config and is regenerated when that change is in the model.
+
+Still missing altogether: plumbing (no change is listed), the Study furniture, dates and contractors.
 
 ## Budget: how it is made and how to correct it
 

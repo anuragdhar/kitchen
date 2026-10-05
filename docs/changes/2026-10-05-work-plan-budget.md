@@ -24,7 +24,38 @@ generated documents and the Work plan page always show the current figures.
   the doors open), C37 (west wardrobe sliding?), C38 (is the balcony table used?).
 - **What to do first** now starts: C12 TV size, A12 Drawing Room width, A2 and D2 electrician's survey, A25 mouldings,
   A26 ceiling photographs, B3 society permission, C35 Bedroom 1 layout, A24 Bedroom 1 door wall, A5 the shaft.
-- Still holding a place: the electrical plans, the palette and the AC plan.
+
+## Second update, 2026-10-05: electrical plans, AC plan and palette folded in
+
+No placeholder is left. The plan has **112 tasks**; **105 are estimated** and 7 are not. The range is
+**Rs 15,92,500 to Rs 30,47,500** (about Rs 15.9 to 30.5 lakh). The low end rose by about Rs 78,000 and the high end by
+about Rs 3.9 lakh. The other rooms' electrical work had no figure before and now has one (about Rs 80,000 to 1,65,000
+with fitting, testing and its share of plaster). Two things that are still your decision are priced "from nothing to
+the full cost", which widens the range: a Lobby AC (up to about Rs 78,000 with its pipes and power point) and
+re-polishing the existing doors (up to Rs 1,47,000, for 8 doors assumed).
+
+- **Electrical.** Each of the Lobby, Bedroom 1, Bedroom 3, Study and Home Office has a first-fix task priced from its
+  point table; the Main entry task now covers all 11 of its points; one task fits and tests the plates in all of them.
+  The Pooja Ghar round ceiling light is a task. The kitchen's electrical first fix is listed but not estimated (its
+  points come from the kitchen planner once the layout is frozen).
+- **Three things the electrical plan proposes that are yours to confirm:** moving the Drawing Room switchboard to the
+  east wall by the entry door, which you ruled out on 2026-10-04 (C28); leaving the three sockets behind the sofa as
+  hidden feeds (C29); the new Lobby switchboard on the latch side of the new Bedroom 1 door (C30).
+- **AC.** Recommended by the AC plan, not decided: the Drawing Room outdoor unit on the west wall (C15; 4.3 m of pipe
+  against about 11 m to the shoe rack), 1.5 against 1.8 or 2 ton there (C39), no split AC in Bedroom 1 (C31), and a
+  1.5 ton Lobby AC using the outdoor place marked for Bedroom 1 (C40). New tasks: find the real drain points, record the
+  two existing ACs. If you want a Lobby AC at all, its pipes must go in before plaster, the Pooja woodwork and the
+  balcony wardrobe, even if the machine is bought later.
+- **Palette.** Record the floor, collect samples, then choose (C42; "Honey oak and terracotta" is recommended). Every
+  carpentry task now waits for that choice, so the laminate can be ordered in one lot. Also asked: handle finish (C45),
+  kitchen tile and worktop (C44), the olive wardrobe in Bedroom 3 (C43), how many wooden doors there are (A28).
+- **Bedroom 3.** The cabinetry task is reworded for your change of today (storage cabinet on the north side, mirror
+  dressing cabinet on the south side). Its figure is still from the earlier sizes and is recomputed when the new
+  arrangement is in the model.
+- **Still not estimated (7):** society fee, the entry shaft cover, plumbing (two tasks), the kitchen's electrical first
+  fix, the Study furniture, and the loose furniture.
+- **What to do first** now starts: C12 TV size, A12 Drawing Room width, A2 and D2 electrician's survey, C35 Bedroom 1
+  layout, A25 mouldings, A26 ceiling photographs, A24 Bedroom 1 door wall, C36 door swings, A27 tape Bedroom 1.
 
 ## 1. What changed in the plan
 

@@ -118,7 +118,7 @@ test('the order of work is buildable: approvals, civil, first fix and AC pipes b
 
 test('the catch-up of 2026-10-05 is in the plan, and proposals stay proposals', () => {
   const plan = load(), byId = Object.fromEntries(plan.tasks.map(task => [task.id, task]))
-  assert.equal(plan.tasks.length, 101)
+  assert.equal(plan.tasks.length, 112)
   assert.ok(plan.tasks.every(task => task.status === 'todo'))
   assert.match(byId['main-gate'].detail, /VENTILATED/); assert.match(byId['elec-entry-lights'].title, /four round lights/)
   for (const room of ['bedroom1', 'bedroom3', 'study', 'kitchen', 'lobby']) assert.ok(byId[`elec-track-feed-${room}`] && byId[`lights-track-${room}`], `track tasks for ${room}`)
@@ -127,13 +127,28 @@ test('the catch-up of 2026-10-05 is in the plan, and proposals stay proposals', 
   assert.match(byId['lobby-bedroom3-opening'].title, /Bedroom 1 door/); assert.doesNotMatch(byId['lobby-bedroom3-opening'].title, /Bedroom 3/)
   assert.match(byId['carp-office-desk'].detail, /1,500 x 762/); assert.match(byId['carp-office-desk'].detail, /743/)
   assert.match(byId['ac-window-frame'].title, /iron frame for the window AC/); assert.equal(byId['ac-window-frame'].trade, 'fabrication')
-  assert.match(byId['ac-choose'].detail, /Neither place is decided/); assert.match(byId['shoe-rack-support'].detail, /not decided/)
+  assert.match(byId['ac-choose'].detail, /two places, NOT decided/); assert.match(byId['shoe-rack-support'].detail, /not decided/)
   assert.match(byId['window-screen-trial'].detail, /ONE ready-made outdoor HDPE roll-up blind/)
-  // Room for the three notes still being written (AC plan, palette, electrical plans).
-  const pending = plan.tasks.filter(task => /PENDING/.test(task.detail)).map(task => task.id)
-  for (const id of ['ac-plan-home', 'palette-choose', 'elec-other-rooms']) assert.ok(pending.includes(id), `${id} holds a place for its note`)
-  // Folded in: tracks moved off the ceiling mouldings, and the Bedroom 1 design.
-  for (const id of ['lighting-track-mouldings', 'bedroom1-design-freeze', 'carp-bedroom1']) assert.ok(!pending.includes(id), `${id} is no longer a placeholder`)
+  // All five notes of 2026-10-05 are folded in: no placeholder is left.
+  assert.deepEqual(plan.tasks.filter(task => /PENDING/.test(task.detail)).map(task => task.id), [])
+  // Electrical plans: a first-fix task per room, priced from the point counts; the entry task covers its 11 points.
+  for (const room of ['lobby', 'bedroom1', 'bedroom3', 'study', 'office', 'kitchen']) {
+    assert.ok(byId.plaster.dependsOn.includes(`elec-first-fix-${room}`) && byId['elec-second-fix-other'].dependsOn.includes(`elec-first-fix-${room}`), `first fix for ${room}`)
+    assert.ok(byId[`elec-first-fix-${room}`].dependsOn.includes('electrician-survey'), `${room} waits for the survey`)
+  }
+  assert.ok(!byId['elec-chase-other-rooms']); assert.match(byId['elec-entry-ceiling'].title, /11 points/)
+  assert.ok(byId['elec-first-fix-bedroom1'].estimateLow > 0); assert.equal(byId['elec-first-fix-kitchen'].estimateLow, undefined)
+  // Proposals stay decisions: no Bedroom 1 split AC, a Lobby AC, the west wall for the Drawing Room unit, the palette.
+  assert.match(byId['elec-first-fix-bedroom1'].detail, /B1-W1 is NOT built unless/); assert.ok(byId['elec-first-fix-bedroom1'].openItems.includes('C31'))
+  for (const id of ['ac-piping-other', 'ac-install-other']) { assert.match(byId[id].detail, /^ONLY IF/); assert.equal(byId[id].estimateLow, 0); assert.ok(byId[id].openItems.includes('C40')) }
+  assert.match(byId['ac-plan-home'].title, /not decided/); assert.ok(byId['ac-choose'].openItems.includes('C15'))
+  assert.match(byId['palette-choose'].detail, /^OWNER DECISION, not taken/); assert.equal(byId['doors-repolish'].estimateLow, 0)
+  for (const task of plan.tasks.filter(task => task.phase === 'carpentry' && task.trade === 'carpentry')) assert.ok(task.dependsOn.includes('palette-choose'), `${task.id} waits for the palette`)
+  // The Lobby AC pipes go in before the Pooja woodwork and the balcony wardrobe.
+  assert.ok(byId['carp-pooja'].dependsOn.includes('ac-piping-other') && byId['carp-bedroom1'].dependsOn.includes('ac-piping-other'))
+  assert.match(byId['lights-pooja'].detail, /8 W round surface LED panel/); assert.ok(byId['lights-pooja'].dependsOn.includes('elec-first-fix-lobby'))
+  assert.match(byId['carp-bedroom3-east'].detail, /dressing cabinet moves to the SOUTH side/); assert.match(byId['carp-bedroom3-east'].estimateBasis, /regenerated/)
+  // Folded in earlier: tracks moved off the ceiling mouldings, and the Bedroom 1 design.
   assert.match(byId['lighting-plan-drawing'].detail, /Totals: 3\.95 m of track/); assert.match(byId['lighting-plan-lobby'].detail, /Totals: 3\.5 m of track/); assert.match(byId['lighting-plan-bedroom3'].detail, /Totals: 5\.5 m of track/)
   for (const room of ['', '-lobby', '-bedroom1', '-bedroom3', '-study', '-kitchen']) assert.ok(byId[`elec-track-feed${room}`].dependsOn.includes('elec-track-setout'), `the ${room || 'drawing'} feed waits for the set-out`)
   assert.match(byId['lobby-pendant-decide'].detail, /NO ceiling point/); assert.ok(byId['elec-lobby-pendant-feed'].dependsOn.includes('lobby-pendant-decide'))
@@ -177,7 +192,7 @@ test('"what to do first" is computed from the tasks that name each open item and
 test('estimates: optional fields, validated; a plan without them still loads', () => {
   const old = load(); for (const task of old.tasks) for (const key of ['estimateLow', 'estimateHigh', 'estimateBasis', 'estimateConfidence', 'openItems']) delete task[key]
   assert.equal(old.schemaVersion, 1); validateWorkPlan(old)
-  assert.deepEqual(budgetTotals(old).all, {id: 'all', name: 'Whole plan', tasks: 101, estimated: 0, notEstimated: 101, low: 0, high: 0})
+  assert.deepEqual(budgetTotals(old).all, {id: 'all', name: 'Whole plan', tasks: 112, estimated: 0, notEstimated: 112, low: 0, high: 0})
   const bad = values => { const plan = load(); Object.assign(plan.tasks[0], values); return () => validateWorkPlan(plan) }
   assert.throws(bad({estimateLow: 100, estimateHigh: undefined}), /both a low and a high/)
   assert.throws(bad({estimateLow: 200, estimateHigh: 100}), /above the high/)
@@ -193,7 +208,7 @@ test('estimates: optional fields, validated; a plan without them still loads', (
 test('budget totals add up by phase, trade and room; unestimated tasks are counted, not guessed', () => {
   const plan = load(), totals = budgetTotals(plan), sum = (rows, key) => rows.reduce((total, row) => total + row[key], 0)
   for (const rows of [totals.byPhase, totals.byTrade, totals.byRoom]) for (const key of ['low', 'high', 'tasks', 'estimated', 'notEstimated']) assert.equal(sum(rows, key), totals.all[key], key)
-  assert.equal(totals.all.estimated + totals.all.notEstimated, 101)
+  assert.equal(totals.all.estimated + totals.all.notEstimated, 112)
   assert.equal(totals.notEstimated.length, totals.all.notEstimated)
   for (const row of totals.notEstimated) assert.match(row.reason, /^Not estimated: /, row.id)
   assert.ok(totals.all.low > 500000 && totals.all.high < 6000000 && totals.all.low < totals.all.high, 'a few lakh to a few tens of lakh')
@@ -212,8 +227,12 @@ test('estimates are quantity x rate from the configs, and the stored figures mat
   assert.deepEqual([QUANTITIES.outerDoor.widthMm, QUANTITIES.outerDoor.heightMm], [905, 2200])
   assert.deepEqual(QUANTITIES.kitchen, {eastRunMm: 4746, westRunMm: 3298, openAppliancesMm: 1200})
   assert.deepEqual(QUANTITIES.windowBays.map(Math.round), [934, 899, 867])
-  // One worked example: the entry wiring is four light points and two switch drops at the light-point rate.
-  assert.deepEqual(estimateTask('elec-entry-ceiling'), {estimateLow: 5000, estimateHigh: 9000, estimateBasis: 'light points: 4 point x Rs 900-1,500; switch drops: 2 point x Rs 900-1,500.', estimateConfidence: 'medium'})
+  assert.deepEqual(Object.fromEntries(Object.entries(QUANTITIES.roomPoints).map(([room, points]) => [room, points.all])), {lobby: 12, bedroom1: 11, bedroom3: 11, study: 9, office: 9, entry: 11})
+  assert.deepEqual(QUANTITIES.roomPoints.lobby.counted, 6) // less two track feeds, the switchboard, its junction box, the pendant point and the AC point
+  assert.deepEqual([QUANTITIES.acRuns.drawing.pipeM, QUANTITIES.acRuns.lobby.pipeM], [4.3, 4.4])
+  assert.ok(QUANTITIES.acRuns.drawingShoeRack.pipeM > 9 && QUANTITIES.acRuns.drawing.drainM > 8)
+  // One worked example: four cable runs at the data-point rate, rounded down and up to Rs 500.
+  assert.deepEqual(estimateTask('elec-data'), {estimateLow: 4500, estimateHigh: 9000, estimateBasis: 'cable runs: 4 run x Rs 1,200-2,200. CAT6, coax, phone, intercom.', estimateConfidence: 'medium'})
   assert.deepEqual(estimateTask('plumbing-rough'), {estimateBasis: 'Not estimated: No plumbing change is listed yet (plumbing-scope).'})
   assert.equal(estimateTask('no-such-task'), null)
   const plan = load(), fresh = structuredClone(plan)
