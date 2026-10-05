@@ -145,7 +145,8 @@ src/
       `StorageGallery3D.jsx`, `StudyRoom3D.jsx`, `WholeHome3D.jsx`) and the
       files' own relative imports of `render/`/`config/` fixed to match the
       new depth. `LobbyNorthStorage.js` (already-known dead code, no
-      importers) moved as-is rather than deleted.
+      importers) moved as-is rather than deleted. (It was deleted on
+      2026-10-05 in the cleanup recorded in `docs/changes/2026-10-05-cleanup.md`.)
   - Verified: `npm test`/`npm run build` pass. Also visually verified with the
     dev server + Playwright screenshots (no console/page errors) across every
     consumer, both the "Editable workspace"/"Editable 3D" tab and the
@@ -172,7 +173,8 @@ and after (a build is not sufficient per `AGENTS.md` "Completion"):
      for now, code preserved" and the project-zip manifest already says
      "Coohom guide export is currently paused." Left as-is inline in App.jsx;
      removing it outright is a product decision for the user, not bundled
-     into this refactor.
+     into this refactor. (Removed on 2026-10-05 after the owner asked for old
+     artifacts to be removed; see `docs/changes/2026-10-05-cleanup.md`.)
    - Verified three ways: (a) `npm run build` passes; (b) a live-browser
      snapshot of `kitchenAPI.getPlanSvg()`/`getPlanDxf()`/`getBOM()`/
      `getProjectData()` taken immediately before and after the change is
