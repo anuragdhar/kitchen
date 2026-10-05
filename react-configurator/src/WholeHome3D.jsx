@@ -68,6 +68,8 @@ const Z=y=>y*Z_METRES_PER_PIXEL
 const W=X(PLAN_WIDTH),L=Z(PLAN_HEIGHT),HEIGHT=2.7
 // Drawn thickness of every plan wall span (m); shared by addSpan and the closed-door cabinet.
 const WALL_THICKNESS_M=.085
+// Inside face of a drawn wall, measured from the wall's plan line (mm): half its thickness. Builders that sit against a wall take it.
+const WALL_FACE_MM=WALL_THICKNESS_M*500
 const PLAN_MARK_KEY='a501-whole-home-plan-mark-v1'
 
 const ROOMS=HOME_ROOM_LAYOUTS
@@ -298,11 +300,11 @@ function LiveWholeHome3D({onOpenRoom}){
     const drawing=EMPTY_ROOM_SHELLS.drawing,db=boundsFor('Drawing Room')
     const dg=roomGroup(db,drawing.widthMm,drawing.lengthMm)
     dg.add(createRoomAirConditioning(drawing))
-    const drawingLayouts=createDrawingRoomLayouts(drawing,{wallFaceMm:WALL_THICKNESS_M*500,initial:drawingLayoutRef.current});dg.add(drawingLayouts.built,drawingLayouts.furniture)
+    const drawingLayouts=createDrawingRoomLayouts(drawing,{wallFaceMm:WALL_FACE_MM,initial:drawingLayoutRef.current});dg.add(drawingLayouts.built,drawingLayouts.furniture)
     drawingLayouts.setLabels(tvLabelsRef.current)
     const partition=createDrawingLobbyPartition(drawing,'drawing');dg.add(partition)
     partition.userData.setOpen(partitionOpen)
-    const existingDrawing=createExistingElectricalPoints('drawing',drawing,{wallFaceMm:WALL_THICKNESS_M*500});if(existingDrawing){existingDrawing.visible=false;dg.add(existingDrawing)}
+    const existingDrawing=createExistingElectricalPoints('drawing',drawing,{wallFaceMm:WALL_FACE_MM});if(existingDrawing){existingDrawing.visible=false;dg.add(existingDrawing)}
     const dw=drawing.windows[0],dd=drawing.doors[0],open=drawing.wallOpenings.east
     roomEdge(db,drawing.widthMm,drawing.lengthMm,'south',[{start:dw.fromMm,end:dw.fromMm+dw.widthMm,bottom:dw.bottomMm/1000,top:dw.topMm/1000,glass:true}])
     // Window design (bays, transom, shutters, nets, outside screen) from the same shared builder as the room page, in room metres.
@@ -320,7 +322,7 @@ function LiveWholeHome3D({onOpenRoom}){
     lg.add(createRoomAirConditioning(lobby))
     lg.add(createRoomTaskLighting(lobby))
     lg.add(createLobbyConcealedDoor(lobby))
-    const existingLobby=createExistingElectricalPoints('lobby',lobby,{wallFaceMm:WALL_THICKNESS_M*500});if(existingLobby){existingLobby.visible=false;lg.add(existingLobby)}
+    const existingLobby=createExistingElectricalPoints('lobby',lobby,{wallFaceMm:WALL_FACE_MM});if(existingLobby){existingLobby.visible=false;lg.add(existingLobby)}
     const toilet=lobby.doors.find(door=>door.wall==='south'),bedDoor=lobby.doors.find(door=>door.wall==='north')
     roomEdge(lb,lobby.widthMm,lobby.lengthMm,'south',[{start:toilet.fromMm,end:toilet.fromMm+toilet.widthMm,top:toilet.heightMm/1000}])
     // The old plan door on this wall is closed (owner, 2026-09-29): sheet on the lobby face, medicine cabinet behind it.
