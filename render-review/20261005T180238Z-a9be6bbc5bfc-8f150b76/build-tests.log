@@ -1,0 +1,3146 @@
+
+> home-interior@1.0.0 check
+> npm test && npm run build
+
+
+> home-interior@1.0.0 test
+> node --test "tests/*.test.mjs" ../scripts/windows/launchers.test.mjs
+
+TAP version 13
+# Subtest: start-server.bat is the only root Windows command script
+ok 1 - start-server.bat is the only root Windows command script
+  ---
+  duration_ms: 1.1869
+  type: 'test'
+  ...
+# Subtest: the five specialist utilities are preserved outside the root
+ok 2 - the five specialist utilities are preserved outside the root
+  ---
+  duration_ms: 1.2612
+  type: 'test'
+  ...
+# Subtest: the FreeCAD opener calls its relocated generator and returns
+ok 3 - the FreeCAD opener calls its relocated generator and returns
+  ---
+  duration_ms: 0.2151
+  type: 'test'
+  ...
+# Subtest: startup uses the lockfile, loopback and Vite browser opening
+ok 4 - startup uses the lockfile, loopback and Vite browser opening
+  ---
+  duration_ms: 0.2345
+  type: 'test'
+  ...
+# Subtest: launcher documentation uses the single root entry point
+ok 5 - launcher documentation uses the single root entry point
+  ---
+  duration_ms: 0.4024
+  type: 'test'
+  ...
+# Subtest: Windows: fresh checkout installs before starting, from a spaced path
+ok 6 - Windows: fresh checkout installs before starting, from a spaced path
+  ---
+  duration_ms: 130.0771
+  type: 'test'
+  ...
+# Subtest: Windows: existing dependencies are reused
+ok 7 - Windows: existing dependencies are reused
+  ---
+  duration_ms: 169.075
+  type: 'test'
+  ...
+# Subtest: Windows: failed install stops startup and preserves its exit code
+ok 8 - Windows: failed install stops startup and preserves its exit code
+  ---
+  duration_ms: 118.0918
+  type: 'test'
+  ...
+# Subtest: Windows: failed server preserves its exit code
+ok 9 - Windows: failed server preserves its exit code
+  ---
+  duration_ms: 109.6239
+  type: 'test'
+  ...
+# Subtest: Windows: missingPackage fails before npm is invoked
+ok 10 - Windows: missingPackage fails before npm is invoked
+  ---
+  duration_ms: 57.7764
+  type: 'test'
+  ...
+# Subtest: Windows: missingNode fails before npm is invoked
+ok 11 - Windows: missingNode fails before npm is invoked
+  ---
+  duration_ms: 98.3354
+  type: 'test'
+  ...
+# Subtest: Windows: missingNpm fails before npm is invoked
+ok 12 - Windows: missingNpm fails before npm is invoked
+  ---
+  duration_ms: 116.488
+  type: 'test'
+  ...
+# Subtest: four outdoor units stand at the owner's plan marks of 2026-10-05, at a typical 1.5 ton casing size
+ok 13 - four outdoor units stand at the owner's plan marks of 2026-10-05, at a typical 1.5 ton casing size
+  ---
+  duration_ms: 1.4826
+  type: 'test'
+  ...
+# Subtest: the Bedroom 3 unit stands inside the east end of its balcony, fan toward the open east side
+ok 14 - the Bedroom 3 unit stands inside the east end of its balcony, fan toward the open east side
+  ---
+  duration_ms: 0.2259
+  type: 'test'
+  ...
+# Subtest: the Home Office and kitchen-wall units hang outside their walls with air behind the coil
+ok 15 - the Home Office and kitchen-wall units hang outside their walls with air behind the coil
+  ---
+  duration_ms: 0.8991
+  type: 'test'
+  ...
+# Subtest: Bedroom 3 unit is on the wall about 6 ft up; the owner's window AC sits in the Bedroom 1 balcony side with the outdoor unit moved up above it
+ok 16 - Bedroom 3 unit is on the wall about 6 ft up; the owner's window AC sits in the Bedroom 1 balcony side with the outdoor unit moved up above it
+  ---
+  duration_ms: 0.6082
+  type: 'test'
+  ...
+# Subtest: one entry per conditioned space: what cools it, at what size and status
+ok 17 - one entry per conditioned space: what cools it, at what size and status
+  ---
+  duration_ms: 1.228
+  type: 'test'
+  ...
+# Subtest: the plan as drawn has no faults; its compromises and assumptions are listed, not hidden
+ok 18 - the plan as drawn has no faults; its compromises and assumptions are listed, not hidden
+  ---
+  duration_ms: 0.2796
+  type: 'test'
+  ...
+# Subtest: load estimate: area, top floor, sun-facing glass, people and equipment, by the stated rule of thumb
+ok 19 - load estimate: area, top floor, sun-facing glass, people and equipment, by the stated rule of thumb
+  ---
+  duration_ms: 0.8774
+  type: 'test'
+  ...
+# Subtest: frames: a room point lands on the plan where Whole home 3D puts it, and routes end on the outdoor units
+ok 20 - frames: a room point lands on the plan where Whole home 3D puts it, and routes end on the outdoor units
+  ---
+  duration_ms: 0.4562
+  type: 'test'
+  ...
+# Subtest: refrigerant pipes: every run is inside the usual factory charge of 5 m; the shoe rack alternative is not
+ok 21 - refrigerant pipes: every run is inside the usual factory charge of 5 m; the shoe rack alternative is not
+  ---
+  duration_ms: 1.5969
+  type: 'test'
+  ...
+# Subtest: drains: every stretch falls at least 1 in 100, all the way to a discharge point
+ok 22 - drains: every stretch falls at least 1 in 100, all the way to a discharge point
+  ---
+  duration_ms: 0.3451
+  type: 'test'
+  ...
+# Subtest: Drawing Room unit: west wall where the electrical plan expects it, clear of the tracks, fans and seats
+ok 23 - Drawing Room unit: west wall where the electrical plan expects it, clear of the tracks, fans and seats
+  ---
+  duration_ms: 1.2009
+  type: 'test'
+  ...
+# Subtest: Lobby unit: north wall beside the Pooja alcove, not over the table, not against the Drawing Room unit
+ok 24 - Lobby unit: north wall beside the Pooja alcove, not over the table, not against the Drawing Room unit
+  ---
+  duration_ms: 0.5304
+  type: 'test'
+  ...
+# Subtest: Bedroom 1: the window AC is the machine; the split AC stays on record as not recommended
+ok 25 - Bedroom 1: the window AC is the machine; the split AC stays on record as not recommended
+  ---
+  duration_ms: 0.5571
+  type: 'test'
+  ...
+# Subtest: Bedroom 2 (Study): the unit belongs on the west wall just north of the Home Office opening
+ok 26 - Bedroom 2 (Study): the unit belongs on the west wall just north of the Home Office opening
+  ---
+  duration_ms: 0.2881
+  type: 'test'
+  ...
+# Subtest: Bedroom 3: the scanned unit fits the planned cabinet bay; a bay that misses it is a fault
+ok 27 - Bedroom 3: the scanned unit fits the planned cabinet bay; a bay that misses it is a fault
+  ---
+  duration_ms: 0.3593
+  type: 'test'
+  ...
+# Subtest: outdoor units: how each is reached for service is recorded
+ok 28 - outdoor units: how each is reached for service is recorded
+  ---
+  duration_ms: 0.2076
+  type: 'test'
+  ...
+# Subtest: every AC has a defined power point, the same point as in the electrical plans (owner 2026-10-05)
+ok 29 - every AC has a defined power point, the same point as in the electrical plans (owner 2026-10-05)
+  ---
+  duration_ms: 35.5359
+  type: 'test'
+  ...
+# Subtest: capture validation preserves measured values and source identity
+ok 30 - capture validation preserves measured values and source identity
+  ---
+  duration_ms: 2.1239
+  type: 'test'
+  ...
+# Subtest: refuses wrong units, axes, versions and nonfinite scale
+ok 31 - refuses wrong units, axes, versions and nonfinite scale
+  ---
+  duration_ms: 0.3886
+  type: 'test'
+  ...
+# Subtest: refuses missing, duplicate or corrupt geometry evidence
+ok 32 - refuses missing, duplicate or corrupt geometry evidence
+  ---
+  duration_ms: 0.2276
+  type: 'test'
+  ...
+# Subtest: requires a reconstructable source camera
+ok 33 - requires a reconstructable source camera
+  ---
+  duration_ms: 0.1154
+  type: 'test'
+  ...
+# Subtest: gallery accepts only immutable local PNG paths
+ok 34 - gallery accepts only immutable local PNG paths
+  ---
+  duration_ms: 0.2646
+  type: 'test'
+  ...
+# Subtest: every room has a measured-scene-independent photographic profile
+ok 35 - every room has a measured-scene-independent photographic profile
+  ---
+  duration_ms: 4.3277
+  type: 'test'
+  ...
+# Subtest: affected rooms require their own editable scene identity
+ok 36 - affected rooms require their own editable scene identity
+  ---
+  duration_ms: 1.0352
+  type: 'test'
+  ...
+# Subtest: owner defaults of 2026-10-04: 1500 mm sit-stand top, one-inch gap, 743 mm fixed south section at the seated preset
+ok 37 - owner defaults of 2026-10-04: 1500 mm sit-stand top, one-inch gap, 743 mm fixed south section at the seated preset
+  ---
+  duration_ms: 1.0006
+  type: 'test'
+  ...
+# Subtest: the layout puts the fixed section in the south corner and the moving top one inch north of it, both an inch off the wall
+ok 38 - the layout puts the fixed section in the south corner and the moving top one inch north of it, both an inch off the wall
+  ---
+  duration_ms: 0.9003
+  type: 'test'
+  ...
+# Subtest: the frame feet sit 105 mm inside each end of the top and their slots stay inside the rear cabinet end panels
+ok 39 - the frame feet sit 105 mm inside each end of the top and their slots stay inside the rear cabinet end panels
+  ---
+  duration_ms: 0.3184
+  type: 'test'
+  ...
+# Subtest: the moving top, its beam and the clamp clear the fixed section, walls and cabinets by an inch over the whole height range
+ok 40 - the moving top, its beam and the clamp clear the fixed section, walls and cabinets by an inch over the whole height range
+  ---
+  duration_ms: 18.5484
+  type: 'test'
+  ...
+# Subtest: the check catches a gap under an inch, a top outside the frame range, a fixed section at the wrong height and a moving top into the wall
+ok 41 - the check catches a gap under an inch, a top outside the frame range, a fixed section at the wrong height and a moving top into the wall
+  ---
+  duration_ms: 128.7021
+  type: 'test'
+  ...
+# Subtest: without a fixed section the moving top runs to the south wall and the laptop goes back on it
+ok 42 - without a fixed section the moving top runs to the south wall and the laptop goes back on it
+  ---
+  duration_ms: 0.4005
+  type: 'test'
+  ...
+# Subtest: box helpers: solid runs around openings, and clearance is the axis gap or negative on overlap
+ok 43 - box helpers: solid runs around openings, and clearance is the axis gap or negative on overlap
+  ---
+  duration_ms: 0.2888
+  type: 'test'
+  ...
+# Subtest: the phone scan of 2026-10-04 is recorded, not applied: room box and envelope unchanged, scanned plates listed
+ok 44 - the phone scan of 2026-10-04 is recorded, not applied: room box and envelope unchanged, scanned plates listed
+  ---
+  duration_ms: 0.1049
+  type: 'test'
+  ...
+# Subtest: Bedroom 1: each layout's bed stands on its configured footprint with the heights the checks use
+ok 45 - Bedroom 1: each layout's bed stands on its configured footprint with the heights the checks use
+  ---
+  duration_ms: 99.0373
+  type: 'test'
+  ...
+# Subtest: Whole home 3D draws the Bedroom 1 bed of layout A, and click-for-dimensions reports the footprint
+ok 46 - Whole home 3D draws the Bedroom 1 bed of layout A, and click-for-dimensions reports the footprint
+  ---
+  duration_ms: 16.731
+  type: 'test'
+  ...
+# Subtest: Bedroom 3: the square bed keeps its footprint, heights and the 48.5 mm to the bedside cabinets
+ok 47 - Bedroom 3: the square bed keeps its footprint, heights and the 48.5 mm to the bedside cabinets
+  ---
+  duration_ms: 8.406
+  type: 'test'
+  ...
+# Subtest: Study (Bedroom 2): the kids bed and the day seat keep the footprint the reading lights aim at
+ok 48 - Study (Bedroom 2): the kids bed and the day seat keep the footprint the reading lights aim at
+  ---
+  duration_ms: 40.9967
+  type: 'test'
+  ...
+# Subtest: bed materials: wood tags kept for the palette, fabric maps in linear colour space, decor kept out of the archviz export
+ok 49 - bed materials: wood tags kept for the palette, fabric maps in linear colour space, decor kept out of the archviz export
+  ---
+  duration_ms: 38.0069
+  type: 'test'
+  ...
+# Subtest: closed door sits on the Lobby/Bedroom 1 wall, in the plan area the owner marked
+ok 50 - closed door sits on the Lobby/Bedroom 1 wall, in the plan area the owner marked
+  ---
+  duration_ms: 0.5598
+  type: 'test'
+  ...
+# Subtest: opening span converts plan px to lobby-local mm and clears every other opening
+ok 51 - opening span converts plan px to lobby-local mm and clears every other opening
+  ---
+  duration_ms: 0.214
+  type: 'test'
+  ...
+# Subtest: cavity depth is what remains after the sheet, and the cabinet must fit it
+ok 52 - cavity depth is what remains after the sheet, and the cabinet must fit it
+  ---
+  duration_ms: 0.3098
+  type: 'test'
+  ...
+# Subtest: rejects reversed or out-of-room jambs
+ok 53 - rejects reversed or out-of-room jambs
+  ---
+  duration_ms: 0.1022
+  type: 'test'
+  ...
+# Subtest: Bedroom 1: the proposed plan passes every rule
+ok 54 - Bedroom 1: the proposed plan passes every rule
+  ---
+  duration_ms: 5.9781
+  type: 'test'
+  ...
+# Subtest: Bedroom 1: the bedside points follow the bed, above the headboard, on solid wall
+ok 55 - Bedroom 1: the bedside points follow the bed, above the headboard, on solid wall
+  ---
+  duration_ms: 3.3132
+  type: 'test'
+  ...
+# Subtest: Bedroom 1: switchboards at the latch side of both doors, clear of the bed and the wardrobe
+ok 56 - Bedroom 1: switchboards at the latch side of both doors, clear of the bed and the wardrobe
+  ---
+  duration_ms: 2.7603
+  type: 'test'
+  ...
+# Subtest: Bedroom 1: one dedicated point beside each AC, the window AC point from its config
+ok 57 - Bedroom 1: one dedicated point beside each AC, the window AC point from its config
+  ---
+  duration_ms: 2.2926
+  type: 'test'
+  ...
+# Subtest: Bedroom 1: a feed at the end of each track run and at the fan
+ok 58 - Bedroom 1: a feed at the end of each track run and at the fan
+  ---
+  duration_ms: 0.8417
+  type: 'test'
+  ...
+# Subtest: the present layout is the default and its fixed furniture is exactly roomShellConfig's
+ok 59 - the present layout is the default and its fixed furniture is exactly roomShellConfig's
+  ---
+  duration_ms: 3.5256
+  type: 'test'
+  ...
+# Subtest: the medicine cabinet sits on the south wall behind the present bed
+ok 60 - the medicine cabinet sits on the south wall behind the present bed
+  ---
+  duration_ms: 0.5201
+  type: 'test'
+  ...
+# Subtest: before 2026-10-05: the hamper stood in the lobby door swing and the window AC stopped a balcony wardrobe door
+ok 61 - before 2026-10-05: the hamper stood in the lobby door swing and the window AC stopped a balcony wardrobe door
+  ---
+  duration_ms: 25.7374
+  type: 'test'
+  ...
+# Subtest: present layout after the small fixes: what is left cannot be fixed without moving the bed
+ok 62 - present layout after the small fixes: what is left cannot be fixed without moving the bed
+  ---
+  duration_ms: 18.5924
+  type: 'test'
+  ...
+# Subtest: layout B: bed head on the south wall passes every check
+ok 63 - layout B: bed head on the south wall passes every check
+  ---
+  duration_ms: 15.942
+  type: 'test'
+  ...
+# Subtest: the checks catch the mistakes they are there for
+ok 64 - the checks catch the mistakes they are there for
+  ---
+  duration_ms: 81.4232
+  type: 'test'
+  ...
+# Subtest: a hinged leaf stops at the first thing it meets; touching an edge is not a hit
+ok 65 - a hinged leaf stops at the first thing it meets; touching an edge is not a hit
+  ---
+  duration_ms: 3.6481
+  type: 'test'
+  ...
+# Subtest: a walkway needs its full width: a 500 mm gap is not a 600 mm route
+ok 66 - a walkway needs its full width: a 500 mm gap is not a 600 mm route
+  ---
+  duration_ms: 4.9619
+  type: 'test'
+  ...
+# Subtest: lighting: the default config is untouched for layout A; layout B turns the bed track and still passes
+ok 67 - lighting: the default config is untouched for layout A; layout B turns the bed track and still passes
+  ---
+  duration_ms: 1.6764
+  type: 'test'
+  ...
+# Subtest: the review brief: default layout keeps its title and gains checks; layout B is named and described
+ok 68 - the review brief: default layout keeps its title and gains checks; layout B is named and described
+  ---
+  duration_ms: 17.8224
+  type: 'test'
+  ...
+# Subtest: Bedroom 1: a wardrobe/general track and a bed track, each its own circuit, clear of the assumed ceiling fan
+ok 69 - Bedroom 1: a wardrobe/general track and a bed track, each its own circuit, clear of the assumed ceiling fan
+  ---
+  duration_ms: 2.6141
+  type: 'test'
+  ...
+# Subtest: the fan is assumed at the room centre until measured, and every run keeps well clear of its blades
+ok 70 - the fan is assumed at the room centre until measured, and every run keeps well clear of its blades
+  ---
+  duration_ms: 0.7231
+  type: 'test'
+  ...
+# Subtest: track 1 grazes the wardrobe doors; track 2 puts a reading head over each sleeper, 750 mm from the headboard
+ok 71 - track 1 grazes the wardrobe doors; track 2 puts a reading head over each sleeper, 750 mm from the headboard
+  ---
+  duration_ms: 0.3319
+  type: 'test'
+  ...
+# Subtest: the checks catch a reading head off the bed, a spot aimed across the room and a run through the fan
+ok 72 - the checks catch a reading head off the bed, a spot aimed across the room and a run through the fan
+  ---
+  duration_ms: 1.0531
+  type: 'test'
+  ...
+# Subtest: owner east-cabinet layout keeps the bed and openings, removes the west run
+ok 73 - owner east-cabinet layout keeps the bed and openings, removes the west run
+  ---
+  duration_ms: 1.466
+  type: 'test'
+  ...
+# Subtest: owner swap 2026-10-05: the mirror dressing cabinet is the south unit, a full-height storage cabinet the north one
+ok 74 - owner swap 2026-10-05: the mirror dressing cabinet is the south unit, a full-height storage cabinet the north one
+  ---
+  duration_ms: 0.4074
+  type: 'test'
+  ...
+# Subtest: the swapped cabinetry passes the pure checks: doors open, a person stands at the mirror, the toilet door is clear
+ok 75 - the swapped cabinetry passes the pure checks: doors open, a person stands at the mirror, the toilet door is clear
+  ---
+  duration_ms: 1.1638
+  type: 'test'
+  ...
+# Subtest: what the swap leaves for the owner: an open storage door narrows the toilet doorway; the dressing cabinet stands in front of part of the window
+ok 76 - what the swap leaves for the owner: an open storage door narrows the toilet doorway; the dressing cabinet stands in front of part of the window
+  ---
+  duration_ms: 0.5425
+  type: 'test'
+  ...
+# Subtest: the checks catch a deeper north cabinet at the toilet door, a south-hinged mirror door at the window, and clashes
+ok 77 - the checks catch a deeper north cabinet at the toilet door, a south-hinged mirror door at the window, and clashes
+  ---
+  duration_ms: 2.4867
+  type: 'test'
+  ...
+# Subtest: AC placeholder fits a distinct open-bottom slatted bay above the bed
+ok 78 - AC placeholder fits a distinct open-bottom slatted bay above the bed
+  ---
+  duration_ms: 0.2683
+  type: 'test'
+  ...
+# Subtest: review plan names the storage and dressing cabinets and reports the window finding
+ok 79 - review plan names the storage and dressing cabinets and reports the window finding
+  ---
+  duration_ms: 3.5244
+  type: 'test'
+  ...
+# Subtest: west chest stays clear of the bed, entry swing envelope and south storage
+ok 80 - west chest stays clear of the bed, entry swing envelope and south storage
+  ---
+  duration_ms: 0.5424
+  type: 'test'
+  ...
+# Subtest: Bedroom 3: the proposed plan passes every rule
+ok 81 - Bedroom 3: the proposed plan passes every rule
+  ---
+  duration_ms: 5.3447
+  type: 'test'
+  ...
+# Subtest: Bedroom 3 (dressing swap 2026-10-05): the dressing socket follows the mirror cabinet to the south end
+ok 82 - Bedroom 3 (dressing swap 2026-10-05): the dressing socket follows the mirror cabinet to the south end
+  ---
+  duration_ms: 2.9721
+  type: 'test'
+  ...
+# Subtest: Bedroom 3: the scanned switchboard, wall light and fan point are reused where they are
+ok 83 - Bedroom 3: the scanned switchboard, wall light and fan point are reused where they are
+  ---
+  duration_ms: 0.9791
+  type: 'test'
+  ...
+# Subtest: Bedroom 3: bedside points above the headboard, AC point hidden in the overhead cabinet beside the AC bay
+ok 84 - Bedroom 3: bedside points above the headboard, AC point hidden in the overhead cabinet beside the AC bay
+  ---
+  duration_ms: 1.805
+  type: 'test'
+  ...
+# Subtest: Bedroom 3: toilet board, chest point and utility socket stay clear of doors, cabinets and the artwork
+ok 85 - Bedroom 3: toilet board, chest point and utility socket stay clear of doors, cabinets and the artwork
+  ---
+  duration_ms: 2.2027
+  type: 'test'
+  ...
+# Subtest: Bedroom 3: a feed at the west end of each track run
+ok 86 - Bedroom 3: a feed at the west end of each track run
+  ---
+  duration_ms: 0.7452
+  type: 'test'
+  ...
+# Subtest: Bedroom 3: a north and a south track, each its own circuit, clear of the fan, the east cabinet bridge and the full-height cabinet
+ok 87 - Bedroom 3: a north and a south track, each its own circuit, clear of the fan, the east cabinet bridge and the full-height cabinet
+  ---
+  duration_ms: 3.0675
+  type: 'test'
+  ...
+# Subtest: the fan point is one field, at the scanned medallion; the checks hold with the fan anywhere within 150 mm of it
+ok 88 - the fan point is one field, at the scanned medallion; the checks hold with the fan anywhere within 150 mm of it
+  ---
+  duration_ms: 6.9731
+  type: 'test'
+  ...
+# Subtest: the Bedroom 3 mouldings are recorded and both tracks sit on flat slab inboard of the corner rings, with nothing crossing
+ok 89 - the Bedroom 3 mouldings are recorded and both tracks sit on flat slab inboard of the corner rings, with nothing crossing
+  ---
+  duration_ms: 1.3335
+  type: 'test'
+  ...
+# Subtest: reading heads are aimed at each sleeper's chest from the foot side with a gentle tilt, plus a dressing down light on the south run (moved 2026-10-05)
+ok 90 - reading heads are aimed at each sleeper's chest from the foot side with a gentle tilt, plus a dressing down light on the south run (moved 2026-10-05)
+  ---
+  duration_ms: 1.0846
+  type: 'test'
+  ...
+# Subtest: the checks catch a run into the bridge, a reading head tilted too far, and an aimed head that misses the bed
+ok 91 - the checks catch a run into the bridge, a reading head tilted too far, and an aimed head that misses the bed
+  ---
+  duration_ms: 1.5108
+  type: 'test'
+  ...
+# Subtest: every individual room has a Blender model region and a rendered preview
+ok 92 - every individual room has a Blender model region and a rendered preview
+  ---
+  duration_ms: 2.952
+  type: 'test'
+  ...
+# Subtest: interactive lighting exports contain embedded atlases with usable UVs and linear range metadata
+ok 93 - interactive lighting exports contain embedded atlases with usable UVs and linear range metadata
+  ---
+  duration_ms: 75.1564
+  type: 'test'
+  ...
+# Subtest: CLI accepts separated and equals arguments
+ok 94 - CLI accepts separated and equals arguments
+  ---
+  duration_ms: 2.9199
+  type: 'test'
+  ...
+# Subtest: CLI rejects missing values, unknown flags, and unsupported schemes
+ok 95 - CLI rejects missing values, unknown flags, and unsupported schemes
+  ---
+  duration_ms: 0.8028
+  type: 'test'
+  ...
+# Subtest: help does not require Playwright
+ok 96 - help does not require Playwright
+  ---
+  duration_ms: 0.3656
+  type: 'test'
+  ...
+# Subtest: inspection records unavailable optional APIs explicitly
+ok 97 - inspection records unavailable optional APIs explicitly
+  ---
+  duration_ms: 0.5916
+  type: 'test'
+  ...
+# Subtest: missing required API is an error, not an empty result
+ok 98 - missing required API is an error, not an empty result
+  ---
+  duration_ms: 0.4519
+  type: 'test'
+  ...
+# Subtest: thrown API calls are not swallowed
+ok 99 - thrown API calls are not swallowed
+  ---
+  duration_ms: 0.1209
+  type: 'test'
+  ...
+# Subtest: malformed required returns fail
+ok 100 - malformed required returns fail
+  ---
+  duration_ms: 0.2789
+  type: 'test'
+  ...
+# Subtest: strict mode rejects false and inconsistent validation
+ok 101 - strict mode rejects false and inconsistent validation
+  ---
+  duration_ms: 0.0902
+  type: 'test'
+  ...
+# Subtest: whole-home page is opened before waiting for kitchen API
+ok 102 - whole-home page is opened before waiting for kitchen API
+  ---
+  duration_ms: 0.3911
+  type: 'test'
+  ...
+# Subtest: already mounted kitchen needs no navigation click
+ok 103 - already mounted kitchen needs no navigation click
+  ---
+  duration_ms: 0.5135
+  type: 'test'
+  ...
+# Subtest: missing canvas fails smoke inspection
+ok 104 - missing canvas fails smoke inspection
+  ---
+  duration_ms: 0.3408
+  type: 'test'
+  ...
+# Subtest: import clauses: default, named, renamed and namespace bindings
+ok 105 - import clauses: default, named, renamed and namespace bindings
+  ---
+  duration_ms: 2.1534
+  type: 'test'
+  ...
+# Subtest: an unused import is reported; uses by call, spread, JSX and shorthand are not
+ok 106 - an unused import is reported; uses by call, spread, JSX and shorthand are not
+  ---
+  duration_ms: 0.7977
+  type: 'test'
+  ...
+# Subtest: a .jsx file must import React; React itself is not reported unused there
+ok 107 - a .jsx file must import React; React itself is not reported unused there
+  ---
+  duration_ms: 0.572
+  type: 'test'
+  ...
+# Subtest: the app, scripts and tests have no import problems
+ok 108 - the app, scripts and tests have no import problems
+  ---
+  duration_ms: 272.653
+  type: 'test'
+  ...
+# Subtest: room, opening and clearance baseline is preserved
+ok 109 - room, opening and clearance baseline is preserved
+  ---
+  duration_ms: 2.0767
+  type: 'test'
+  ...
+# Subtest: active east geometry stays on the cooking/appliance wall
+ok 110 - active east geometry stays on the cooking/appliance wall
+  ---
+  duration_ms: 0.3596
+  type: 'test'
+  ...
+# Subtest: active west geometry stays on the wet wall
+ok 111 - active west geometry stays on the wet wall
+  ---
+  duration_ms: 0.1972
+  type: 'test'
+  ...
+# Subtest: historical placeholders remain hidden, with stable IDs
+ok 112 - historical placeholders remain hidden, with stable IDs
+  ---
+  duration_ms: 0.1381
+  type: 'test'
+  ...
+# Subtest: baseline and airy variants pass the documented basic checks
+ok 113 - baseline and airy variants pass the documented basic checks
+  ---
+  duration_ms: 0.7227
+  type: 'test'
+  ...
+# Subtest: airy option changes only the intended y positions
+ok 114 - airy option changes only the intended y positions
+  ---
+  duration_ms: 0.2102
+  type: 'test'
+  ...
+# Subtest: shaft ends at the north wall and rack follows baseline sink
+ok 115 - shaft ends at the north wall and rack follows baseline sink
+  ---
+  duration_ms: 0.2613
+  type: 'test'
+  ...
+# Subtest: module fill preserves run lengths including fractional fillers
+ok 116 - module fill preserves run lengths including fractional fillers
+  ---
+  duration_ms: 0.5061
+  type: 'test'
+  ...
+# Subtest: real baseline configuration has a lossless v1 round trip
+ok 117 - real baseline configuration has a lossless v1 round trip
+  ---
+  duration_ms: 5.6993
+  type: 'test'
+  ...
+# Subtest: real airy configuration has a lossless v1 round trip
+ok 118 - real airy configuration has a lossless v1 round trip
+  ---
+  duration_ms: 1.363
+  type: 'test'
+  ...
+# Subtest: real custom hob and shelf elevation survive legacy migration without changing configuration
+ok 119 - real custom hob and shelf elevation survive legacy migration without changing configuration
+  ---
+  duration_ms: 0.8449
+  type: 'test'
+  ...
+# Subtest: real model-only format maps shaft dimensions and does not reset the stored hob
+ok 120 - real model-only format maps shaft dimensions and does not reset the stored hob
+  ---
+  duration_ms: 0.9272
+  type: 'test'
+  ...
+# Subtest: actual baseline configuration passes with baseline east
+ok 121 - actual baseline configuration passes with baseline east
+  ---
+  duration_ms: 3.118
+  type: 'test'
+  ...
+# Subtest: actual baseline configuration passes with refined east
+ok 122 - actual baseline configuration passes with refined east
+  ---
+  duration_ms: 0.767
+  type: 'test'
+  ...
+# Subtest: actual airy configuration passes with baseline east
+ok 123 - actual airy configuration passes with baseline east
+  ---
+  duration_ms: 0.433
+  type: 'test'
+  ...
+# Subtest: actual airy configuration passes with refined east
+ok 124 - actual airy configuration passes with refined east
+  ---
+  duration_ms: 0.3346
+  type: 'test'
+  ...
+# Subtest: with no offset, sunrise comes from plan east and sunset from plan west
+ok 125 - with no offset, sunrise comes from plan east and sunset from plan west
+  ---
+  duration_ms: 1.201
+  type: 'test'
+  ...
+# Subtest: solar noon is the highest sun and lies toward plan south
+ok 126 - solar noon is the highest sun and lies toward plan south
+  ---
+  duration_ms: 0.2497
+  type: 'test'
+  ...
+# Subtest: direction is always a unit vector and hour is validated
+ok 127 - direction is always a unit vector and hour is validated
+  ---
+  duration_ms: 1.4823
+  type: 'test'
+  ...
+# Subtest: the true-north offset rotates the whole sun path by the same angle
+ok 128 - the true-north offset rotates the whole sun path by the same angle
+  ---
+  duration_ms: 0.1359
+  type: 'test'
+  ...
+# Subtest: presets: night before sunrise and after sunset, golden near horizon, day at noon
+ok 129 - presets: night before sunrise and after sunset, golden near horizon, day at noon
+  ---
+  duration_ms: 0.4532
+  type: 'test'
+  ...
+# Subtest: the layout C electrical plan passes: no point in an opening, behind a sofa or behind the AC
+ok 130 - the layout C electrical plan passes: no point in an opening, behind a sofa or behind the AC
+  ---
+  duration_ms: 2.8497
+  type: 'test'
+  ...
+# Subtest: every sofa seat has a charging point within 1.5 m, without counting the optional floor box
+ok 131 - every sofa seat has a charging point within 1.5 m, without counting the optional floor box
+  ---
+  duration_ms: 0.4167
+  type: 'test'
+  ...
+# Subtest: the TV box stays hidden behind both TV sizes and the router point is behind the console router bay
+ok 132 - the TV box stays hidden behind both TV sizes and the router point is behind the console router bay
+  ---
+  duration_ms: 1.2503
+  type: 'test'
+  ...
+# Subtest: the checks catch points in openings, behind furniture or out of reach
+ok 133 - the checks catch points in openings, behind furniture or out of reach
+  ---
+  duration_ms: 0.8458
+  type: 'test'
+  ...
+# Subtest: the AC the checks keep clear of is the indoor unit the AC plan places and the room pages draw
+ok 134 - the AC the checks keep clear of is the indoor unit the AC plan places and the room pages draw
+  ---
+  duration_ms: 0.5256
+  type: 'test'
+  ...
+# Subtest: point positions land on the right wall
+ok 135 - point positions land on the right wall
+  ---
+  duration_ms: 0.3746
+  type: 'test'
+  ...
+# Subtest: each track has a feed at its end, a dimmer and a cable route from the switchboard beside the TV (owner 2026-10-06)
+ok 136 - each track has a feed at its end, a dimmer and a cable route from the switchboard beside the TV (owner 2026-10-06)
+  ---
+  duration_ms: 0.8797
+  type: 'test'
+  ...
+# Subtest: layout C has two tracks with spot and diffused heads, clear of both ceiling fans and the chandelier
+ok 137 - layout C has two tracks with spot and diffused heads, clear of both ceiling fans and the chandelier
+  ---
+  duration_ms: 2.6346
+  type: 'test'
+  ...
+# Subtest: one run = one circuit: each run has its own driver loaded to 80% at most, and one slider per circuit
+ok 138 - one run = one circuit: each run has its own driver loaded to 80% at most, and one slider per circuit
+  ---
+  duration_ms: 0.663
+  type: 'test'
+  ...
+# Subtest: the chandelier stays; the old north-west wall light is removed in layout C only
+ok 139 - the chandelier stays; the old north-west wall light is removed in layout C only
+  ---
+  duration_ms: 0.2645
+  type: 'test'
+  ...
+# Subtest: track 1 grazes the TV panel wall and track 2 runs along the west wall over the sofa
+ok 140 - track 1 grazes the TV panel wall and track 2 runs along the west wall over the sofa
+  ---
+  duration_ms: 0.1546
+  type: 'test'
+  ...
+# Subtest: track 2 is one circuit of mixed reading and diffused heads over the seats, not a swing-arm wall light
+ok 141 - track 2 is one circuit of mixed reading and diffused heads over the seats, not a swing-arm wall light
+  ---
+  duration_ms: 2.3835
+  type: 'test'
+  ...
+# Subtest: the checks catch a track under a fan, a diffused head near the blades, a spot aimed across the room and an overloaded run
+ok 142 - the checks catch a track under a fan, a diffused head near the blades, a spot aimed across the room and an overloaded run
+  ---
+  duration_ms: 2.3599
+  type: 'test'
+  ...
+# Subtest: the ceiling mouldings from the phone scan are recorded per wall, with source, accuracy and an assumed projection
+ok 143 - the ceiling mouldings from the phone scan are recorded per wall, with source, accuracy and an assumed projection
+  ---
+  duration_ms: 0.5985
+  type: 'test'
+  ...
+# Subtest: both tracks sit on flat slab: clear of the border, the corner rings and the rosettes, with nothing crossing
+ok 144 - both tracks sit on flat slab: clear of the border, the corner rings and the rosettes, with nothing crossing
+  ---
+  duration_ms: 1.4275
+  type: 'test'
+  ...
+# Subtest: the checks catch a run on a moulding, a head on one, and a crossing that is undeclared, vague or stale
+ok 145 - the checks catch a run on a moulding, a head on one, and a crossing that is undeclared, vague or stale
+  ---
+  duration_ms: 3.572
+  type: 'test'
+  ...
+# Subtest: the folding partition stands under the hanging beam over the Drawing Room / Lobby opening
+ok 146 - the folding partition stands under the hanging beam over the Drawing Room / Lobby opening
+  ---
+  duration_ms: 5.2879
+  type: 'test'
+  ...
+# Subtest: the partition height follows the beam in the shell config, not a copied number
+ok 147 - the partition height follows the beam in the shell config, not a copied number
+  ---
+  duration_ms: 1.309
+  type: 'test'
+  ...
+# Subtest: the 18-inch low console fits east of the coffee table with a walkway of at least 800 mm
+ok 148 - the 18-inch low console fits east of the coffee table with a walkway of at least 800 mm
+  ---
+  duration_ms: 7.4729
+  type: 'test'
+  ...
+# Subtest: both the 55-inch now and the 65-inch later fit the same solid stretch of wall
+ok 149 - both the 55-inch now and the 65-inch later fit the same solid stretch of wall
+  ---
+  duration_ms: 3.6723
+  type: 'test'
+  ...
+# Subtest: a floor-to-ceiling 18-inch unit is rejected: no walkway beside the north sofa and no room for a TV bay
+ok 150 - a floor-to-ceiling 18-inch unit is rejected: no walkway beside the north sofa and no room for a TV bay
+  ---
+  duration_ms: 0.1815
+  type: 'test'
+  ...
+# Subtest: the wall arm improves the north-sofa PICTURE angle but barely the head turn, and worsens the west sofa picture
+ok 151 - the wall arm improves the north-sofa PICTURE angle but barely the head turn, and worsens the west sofa picture
+  ---
+  duration_ms: 0.6505
+  type: 'test'
+  ...
+# Subtest: the arm blocks the walkway at full reach, so it must be folded away when walking through
+ok 152 - the arm blocks the walkway at full reach, so it must be folded away when walking through
+  ---
+  duration_ms: 0.4662
+  type: 'test'
+  ...
+# Subtest: arm geometry: turning north brings the SOUTH end of the screen forward
+ok 153 - arm geometry: turning north brings the SOUTH end of the screen forward
+  ---
+  duration_ms: 0.1449
+  type: 'test'
+  ...
+# Subtest: the console checker catches a console too close to the sofa, too deep, or with an oversized TV
+ok 154 - the console checker catches a console too close to the sofa, too deep, or with an oversized TV
+  ---
+  duration_ms: 4.7668
+  type: 'test'
+  ...
+# Subtest: the ceiling projector option fits: an 80-inch 16:9 screen, projector over open floor, hung above head height
+ok 155 - the ceiling projector option fits: an 80-inch 16:9 screen, projector over open floor, hung above head height
+  ---
+  duration_ms: 0.5709
+  type: 'test'
+  ...
+# Subtest: console geometry sits on the solid east wall south of the north sofa
+ok 156 - console geometry sits on the solid east wall south of the north sofa
+  ---
+  duration_ms: 0.2768
+  type: 'test'
+  ...
+# Subtest: review briefs describe each corner option and state the full-height rejection
+ok 157 - review briefs describe each corner option and state the full-height rejection
+  ---
+  duration_ms: 4.8278
+  type: 'test'
+  ...
+# Subtest: with the door opening inward, a pulled-out arm TV stops the door; a flat one does not
+ok 158 - with the door opening inward, a pulled-out arm TV stops the door; a flat one does not
+  ---
+  duration_ms: 0.3794
+  type: 'test'
+  ...
+# Subtest: the Drawing Room TV wall and two-sofa layout fit with no issues
+ok 159 - the Drawing Room TV wall and two-sofa layout fit with no issues
+  ---
+  duration_ms: 5.488
+  type: 'test'
+  ...
+# Subtest: the brief is encoded: 65-inch TV, one-foot cabinet, two same-size 3-seaters, no window seat
+ok 160 - the brief is encoded: 65-inch TV, one-foot cabinet, two same-size 3-seaters, no window seat
+  ---
+  duration_ms: 0.2022
+  type: 'test'
+  ...
+# Subtest: the entry door has not moved, and it opens INTO the room (owner, 2026-09-30)
+ok 161 - the entry door has not moved, and it opens INTO the room (owner, 2026-09-30)
+  ---
+  duration_ms: 0.1521
+  type: 'test'
+  ...
+# Subtest: every device sits where the brief put it
+ok 162 - every device sits where the brief put it
+  ---
+  duration_ms: 0.0798
+  type: 'test'
+  ...
+# Subtest: the checker catches an oversized TV, a blocked door, a bass module that does not fit or sits in the corner
+ok 163 - the checker catches an oversized TV, a blocked door, a bass module that does not fit or sits in the corner
+  ---
+  duration_ms: 4.4687
+  type: 'test'
+  ...
+# Subtest: layout B as drawn fits with the owner-confirmed door (the north sofa does not touch it)
+ok 164 - layout B as drawn fits with the owner-confirmed door (the north sofa does not touch it)
+  ---
+  duration_ms: 1.8989
+  type: 'test'
+  ...
+# Subtest: that only holds for an east hinge and a leaf up to about 855 mm: the sofa is the limit
+ok 165 - that only holds for an east hinge and a leaf up to about 855 mm: the sofa is the limit
+  ---
+  duration_ms: 8.0711
+  type: 'test'
+  ...
+# Subtest: if the real leaf is wider, or the hinge is not settled, the north sofa stops the door
+ok 166 - if the real leaf is wider, or the hinge is not settled, the north sofa stops the door
+  ---
+  duration_ms: 3.3602
+  type: 'test'
+  ...
+# Subtest: shortening both corner sofas to 2100 mm clears the door whatever the leaf or hinge
+ok 167 - shortening both corner sofas to 2100 mm clears the door whatever the leaf or hinge
+  ---
+  duration_ms: 4.972
+  type: 'test'
+  ...
+# Subtest: layout A is clear of the door swing on either hinge side
+ok 168 - layout A is clear of the door swing on either hinge side
+  ---
+  duration_ms: 2.8831
+  type: 'test'
+  ...
+# Subtest: layout B keeps the two sofas the same size as each other and as layout A
+ok 169 - layout B keeps the two sofas the same size as each other and as layout A
+  ---
+  duration_ms: 0.1567
+  type: 'test'
+  ...
+# Subtest: layout B known trade-offs: west sofa sees the TV well, north sofa sees it side-on, the walkway passes it
+ok 170 - layout B known trade-offs: west sofa sees the TV well, north sofa sees it side-on, the walkway passes it
+  ---
+  duration_ms: 0.3409
+  type: 'test'
+  ...
+# Subtest: layout B checker catches a TV too close to the door, a blocked lane and a low cabinet
+ok 171 - layout B checker catches a TV too close to the door, a blocked lane and a low cabinet
+  ---
+  duration_ms: 4.7157
+  type: 'test'
+  ...
+# Subtest: layout C passes its checks: south sofa against the window wall, west sofa in an L with it, table inside
+ok 172 - layout C passes its checks: south sofa against the window wall, west sofa in an L with it, table inside
+  ---
+  duration_ms: 4.3668
+  type: 'test'
+  ...
+# Subtest: the west sofa moved south and the old north-wall sofa is now on the south wall
+ok 173 - the west sofa moved south and the old north-wall sofa is now on the south wall
+  ---
+  duration_ms: 0.1831
+  type: 'test'
+  ...
+# Subtest: the TV is on the north wall between the west cabinet door and the entry door, in both sizes
+ok 174 - the TV is on the north wall between the west cabinet door and the entry door, in both sizes
+  ---
+  duration_ms: 0.5907
+  type: 'test'
+  ...
+# Subtest: the TV console is one free-standing piece, clear of the west wall, overlapping the hidden door only a little
+ok 175 - the TV console is one free-standing piece, clear of the west wall, overlapping the hidden door only a little
+  ---
+  duration_ms: 4.5895
+  type: 'test'
+  ...
+# Subtest: fluted wall panelling runs from the west wall to the entry door frame, floor to door head, with the door edges on grooves
+ok 176 - fluted wall panelling runs from the west wall to the entry door frame, floor to door head, with the door edges on grooves
+  ---
+  duration_ms: 0.5588
+  type: 'test'
+  ...
+# Subtest: the TV console holds the router, landline and intercom; there is no east-wall cabinet
+ok 177 - the TV console holds the router, landline and intercom; there is no east-wall cabinet
+  ---
+  duration_ms: 0.0956
+  type: 'test'
+  ...
+# Subtest: the south sofa moved east and a small lamp table stands at its west end
+ok 178 - the south sofa moved east and a small lamp table stands at its west end
+  ---
+  duration_ms: 0.4095
+  type: 'test'
+  ...
+# Subtest: the west cabinet leaf opens outward; in layout C only the draggable TV console stands in front of it
+ok 179 - the west cabinet leaf opens outward; in layout C only the draggable TV console stands in front of it
+  ---
+  duration_ms: 0.5212
+  type: 'test'
+  ...
+# Subtest: the review sheet describes layout C and is the default
+ok 180 - the review sheet describes layout C and is the default
+  ---
+  duration_ms: 3.8954
+  type: 'test'
+  ...
+# Subtest: the owner-marked area lies inside the pocket and the pocket is 3 ft deep
+ok 181 - the owner-marked area lies inside the pocket and the pocket is 3 ft deep
+  ---
+  duration_ms: 0.683
+  type: 'test'
+  ...
+# Subtest: the wall between the pocket and the Drawing Room is about 220 mm, the size of a 9-inch wall, and the pocket runs floor to ceiling
+ok 182 - the wall between the pocket and the Drawing Room is about 220 mm, the size of a 9-inch wall, and the pocket runs floor to ceiling
+  ---
+  duration_ms: 0.119
+  type: 'test'
+  ...
+# Subtest: the pocket lines up with the free north wall of the Drawing Room, left of the entry door
+ok 183 - the pocket lines up with the free north wall of the Drawing Room, left of the entry door
+  ---
+  duration_ms: 0.0698
+  type: 'test'
+  ...
+# Subtest: usable depth: about 1.1 m if the wall may be opened into the pocket, about 110 mm if the wall must stay
+ok 184 - usable depth: about 1.1 m if the wall may be opened into the pocket, about 110 mm if the wall must stay
+  ---
+  duration_ms: 0.0887
+  type: 'test'
+  ...
+# Subtest: recess options: the TV bay and the router cabinet fit the pocket completely, the whole 2100 mm cabinet does not
+ok 185 - recess options: the TV bay and the router cabinet fit the pocket completely, the whole 2100 mm cabinet does not
+  ---
+  duration_ms: 0.7082
+  type: 'test'
+  ...
+# Subtest: the east cabinet is open over its whole east side onto the Entry gallery, as in the Blender model
+ok 186 - the east cabinet is open over its whole east side onto the Entry gallery, as in the Blender model
+  ---
+  duration_ms: 0.6195
+  type: 'test'
+  ...
+# Subtest: a full-height partition splits the pocket into an east and a west cabinet
+ok 187 - a full-height partition splits the pocket into an east and a west cabinet
+  ---
+  duration_ms: 0.151
+  type: 'test'
+  ...
+# Subtest: the existing east cabinet fills the east compartment and faces the Entry gallery
+ok 188 - the existing east cabinet fills the east compartment and faces the Entry gallery
+  ---
+  duration_ms: 0.1194
+  type: 'test'
+  ...
+# Subtest: Main entry: the proposed plan passes every rule
+ok 189 - Main entry: the proposed plan passes every rule
+  ---
+  duration_ms: 2.9594
+  type: 'test'
+  ...
+# Subtest: Main entry: the named walls sit on the plan lines the page draws
+ok 190 - Main entry: the named walls sit on the plan lines the page draws
+  ---
+  duration_ms: 1.0741
+  type: 'test'
+  ...
+# Subtest: Main entry: a switch at each door, on the latch side where there is a wall
+ok 191 - Main entry: a switch at each door, on the latch side where there is a wall
+  ---
+  duration_ms: 1.3496
+  type: 'test'
+  ...
+# Subtest: Main entry: lights sit on the fittings; nothing in the plain landing opening, behind the seat or the rack
+ok 192 - Main entry: lights sit on the fittings; nothing in the plain landing opening, behind the seat or the rack
+  ---
+  duration_ms: 0.7902
+  type: 'test'
+  ...
+# Subtest: the entry has four sections in walking order; the corridor and the inner gallery are the two a person walks through
+ok 193 - the entry has four sections in walking order; the corridor and the inner gallery are the two a person walks through
+  ---
+  duration_ms: 1.4372
+  type: 'test'
+  ...
+# Subtest: owner 2026-10-06: steel moves to arrivalDoor; landing remains an unchanged plain opening
+ok 194 - owner 2026-10-06: steel moves to arrivalDoor; landing remains an unchanged plain opening
+  ---
+  duration_ms: 0.486
+  type: 'test'
+  ...
+# Subtest: proposed paired leaves clear complete arcs, walls, fittings, AC bay and controls, but warn about access
+ok 195 - proposed paired leaves clear complete arcs, walls, fittings, AC bay and controls, but warn about access
+  ---
+  duration_ms: 35.2535
+  type: 'test'
+  ...
+# Subtest: pair rejects the old wooden swing, untrimmed leaf, wall strike, crossing leaves and displaced controls
+ok 196 - pair rejects the old wooden swing, untrimmed leaf, wall strike, crossing leaves and displaced controls
+  ---
+  duration_ms: 276.3735
+  type: 'test'
+  ...
+# Subtest: bell, future lock conduit and corridor switch follow the new locked line with stable electrical IDs
+ok 197 - bell, future lock conduit and corridor switch follow the new locked line with stable electrical IDs
+  ---
+  duration_ms: 3.2105
+  type: 'test'
+  ...
+# Subtest: the door checks catch a gap between panels, a lock on the grille, a solid door and an inward swing
+ok 198 - the door checks catch a gap between panels, a lock on the grille, a solid door and an inward swing
+  ---
+  duration_ms: 1.454
+  type: 'test'
+  ...
+# Subtest: the entry lights are round panels: two recessed in the corridor, two surface-mounted in the gallery, nothing linear
+ok 199 - the entry lights are round panels: two recessed in the corridor, two surface-mounted in the gallery, nothing linear
+  ---
+  duration_ms: 1.3927
+  type: 'test'
+  ...
+# Subtest: the light checks catch a strip, a light over the shaft, one against a wall and a dark end of the gallery
+ok 200 - the light checks catch a strip, a light over the shaft, one against a wall and a dark end of the gallery
+  ---
+  duration_ms: 1.0931
+  type: 'test'
+  ...
+# Subtest: the AC outdoor unit under the shoe rack (owner proposal 2026-10-05) fits lengthwise, not across, at the drawn 865 mm width
+ok 201 - the AC outdoor unit under the shoe rack (owner proposal 2026-10-05) fits lengthwise, not across, at the drawn 865 mm width
+  ---
+  duration_ms: 1.1105
+  type: 'test'
+  ...
+# Subtest: every room with existing points is a real room, every point is well formed and sourced
+ok 202 - every room with existing points is a real room, every point is well formed and sourced
+  ---
+  duration_ms: 2.0923
+  type: 'test'
+  ...
+# Subtest: the lobby x figures are converted from the beam face to the room frame once, z is not touched
+ok 203 - the lobby x figures are converted from the beam face to the room frame once, z is not touched
+  ---
+  duration_ms: 0.2054
+  type: 'test'
+  ...
+# Subtest: plates land on the right wall at the right height, ceiling points on the ceiling
+ok 204 - plates land on the right wall at the right height, ceiling points on the ceiling
+  ---
+  duration_ms: 0.3082
+  type: 'test'
+  ...
+# Subtest: the Lobby switchboard is reported inside the planned Bedroom 1 door
+ok 205 - the Lobby switchboard is reported inside the planned Bedroom 1 door
+  ---
+  duration_ms: 0.7646
+  type: 'test'
+  ...
+# Subtest: Drawing Room layout C: the switchboard is behind the panelling and the TV, the east boards behind the open door leaf, the south-west sockets behind the west sofa
+ok 206 - Drawing Room layout C: the switchboard is behind the panelling and the TV, the east boards behind the open door leaf, the south-west sockets behind the west sofa
+  ---
+  duration_ms: 1.2107
+  type: 'test'
+  ...
+# Subtest: the Drawing Room conflicts follow the layout
+ok 207 - the Drawing Room conflicts follow the layout
+  ---
+  duration_ms: 0.492
+  type: 'test'
+  ...
+# Subtest: a synthetic point in a window, in an open side or in the hidden cabinet door is caught; a clear one is not
+ok 208 - a synthetic point in a window, in an open side or in the hidden cabinet door is caught; a clear one is not
+  ---
+  duration_ms: 0.6298
+  type: 'test'
+  ...
+# Subtest: the review brief lists the existing points and the conflicts, and skips rooms without a scan
+ok 209 - the review brief lists the existing points and the conflicts, and skips rooms without a scan
+  ---
+  duration_ms: 32.9264
+  type: 'test'
+  ...
+# Subtest: every existing point has a disposition, and every point it names is in a proposed plan
+ok 210 - every existing point has a disposition, and every point it names is in a proposed plan
+  ---
+  duration_ms: 1.1957
+  type: 'test'
+  ...
+# Subtest: the three known clashes are resolved: X-D1 moves to E1, X-D5 stays as a hidden feed for W4 and W6, X-L1 moves to L-N1
+ok 211 - the three known clashes are resolved: X-D1 moves to E1, X-D5 stays as a hidden feed for W4 and W6, X-L1 moves to L-N1
+  ---
+  duration_ms: 1.201
+  type: 'test'
+  ...
+# Subtest: a clash stays open without a disposition, or when a kept point is not marked as accepted
+ok 212 - a clash stays open without a disposition, or when a kept point is not marked as accepted
+  ---
+  duration_ms: 1.3689
+  type: 'test'
+  ...
+# Subtest: the dining table is the configured 700 x 1200 x 745 at its configured centre, long side north-south
+ok 213 - the dining table is the configured 700 x 1200 x 745 at its configured centre, long side north-south
+  ---
+  duration_ms: 46.2757
+  type: 'test'
+  ...
+# Subtest: the four dining chairs stand on the configured spots, 440 x 440 (acPlanConfig DINING_CHAIR_MM), clear of the table
+ok 214 - the four dining chairs stand on the configured spots, 440 x 440 (acPlanConfig DINING_CHAIR_MM), clear of the table
+  ---
+  duration_ms: 21.742
+  type: 'test'
+  ...
+# Subtest: the coffee tables of every Drawing Room layout keep their configured footprint and the drawn 457.5 mm height
+ok 215 - the coffee tables of every Drawing Room layout keep their configured footprint and the drawn 457.5 mm height
+  ---
+  duration_ms: 490.5005
+  type: 'test'
+  ...
+# Subtest: the corner lamp table of layout C is the configured 400 across and 550 high, at its centre
+ok 216 - the corner lamp table of layout C is the configured 400 across and 550 high, at its centre
+  ---
+  duration_ms: 15.3955
+  type: 'test'
+  ...
+# Subtest: Bedroom 1: balcony table, balcony chair and dressing stool fill exactly the plan rectangles the checks use
+ok 217 - Bedroom 1: balcony table, balcony chair and dressing stool fill exactly the plan rectangles the checks use
+  ---
+  duration_ms: 61.3195
+  type: 'test'
+  ...
+# Subtest: decor keeps its earlier size: floor lamp 400 x 1580, hamper 400 x 490; decor is kept out of the Blender renders
+ok 218 - decor keeps its earlier size: floor lamp 400 x 1580, hamper 400 x 490; decor is kept out of the Blender renders
+  ---
+  duration_ms: 9.3153
+  type: 'test'
+  ...
+# Subtest: colour maths: luminance, contrast and warmth behave as documented
+ok 219 - colour maths: luminance, contrast and warmth behave as documented
+  ---
+  duration_ms: 1.2744
+  type: 'test'
+  ...
+# Subtest: veneer tint reaches a darker target exactly and caps a lighter one
+ok 220 - veneer tint reaches a darker target exactly and caps a lighter one
+  ---
+  duration_ms: 0.2616
+  type: 'test'
+  ...
+# Subtest: there is one recommended palette and two alternatives, after today
+ok 221 - there is one recommended palette and two alternatives, after today
+  ---
+  duration_ms: 1.3059
+  type: 'test'
+  ...
+# Subtest: every proposed palette passes every check for every room
+ok 222 - every proposed palette passes every check for every room
+  ---
+  duration_ms: 1.2976
+  type: 'test'
+  ...
+# Subtest: each palette is a small, buildable set with a buying specification and no catalogue codes
+ok 223 - each palette is a small, buildable set with a buying specification and no catalogue codes
+  ---
+  duration_ms: 0.7171
+  type: 'test'
+  ...
+# Subtest: the checks catch the problems they are meant to catch
+ok 224 - the checks catch the problems they are meant to catch
+  ---
+  duration_ms: 3.0746
+  type: 'test'
+  ...
+# Subtest: today is recorded honestly: it fails the scheme checks it is supposed to fail, and only those
+ok 225 - today is recorded honestly: it fails the scheme checks it is supposed to fail, and only those
+  ---
+  duration_ms: 0.5282
+  type: 'test'
+  ...
+# Subtest: today matches the material system defaults it describes
+ok 226 - today matches the material system defaults it describes
+  ---
+  duration_ms: 0.1897
+  type: 'test'
+  ...
+# Subtest: what would change: the recommendation keeps every owner decision; the alternatives flag the ones they change
+ok 227 - what would change: the recommendation keeps every owner decision; the alternatives flag the ones they change
+  ---
+  duration_ms: 1.2596
+  type: 'test'
+  ...
+# Subtest: room swatches resolve defaults and overrides
+ok 228 - room swatches resolve defaults and overrides
+  ---
+  duration_ms: 0.4681
+  type: 'test'
+  ...
+# Subtest: live preview: today decides nothing, a palette decides tagged wood and plaster only
+ok 229 - live preview: today decides nothing, a palette decides tagged wood and plaster only
+  ---
+  duration_ms: 0.8031
+  type: 'test'
+  ...
+# Subtest: palette choice: default is today, ids are validated, storage is separate from the appearance key
+ok 230 - palette choice: default is today, ids are validated, storage is separate from the appearance key
+  ---
+  duration_ms: 0.3543
+  type: 'test'
+  ...
+# Subtest: the palette is appearance only: no dimensions, and no room builder or room config reads it
+ok 231 - the palette is appearance only: no dimensions, and no room builder or room config reads it
+  ---
+  duration_ms: 8.5566
+  type: 'test'
+  ...
+# Subtest: photo schema remains optional and legacy libraries round-trip unchanged
+ok 232 - photo schema remains optional and legacy libraries round-trip unchanged
+  ---
+  duration_ms: 1.9123
+  type: 'test'
+  ...
+# Subtest: unsafe or remote photo locations and invalid IDs are rejected
+ok 233 - unsafe or remote photo locations and invalid IDs are rejected
+  ---
+  duration_ms: 1.0565
+  type: 'test'
+  ...
+# Subtest: photo limits, duplicate IDs and invalid metadata fail before persistence
+ok 234 - photo limits, duplicate IDs and invalid metadata fail before persistence
+  ---
+  duration_ms: 0.4098
+  type: 'test'
+  ...
+# Subtest: explicit merge enriches matching old references while preserving local captions, order and decisions
+ok 235 - explicit merge enriches matching old references while preserving local captions, order and decisions
+  ---
+  duration_ms: 0.4074
+  type: 'test'
+  ...
+# Subtest: merge deduplicates media paths and never attaches photos from unrelated ID collisions
+ok 236 - merge deduplicates media paths and never attaches photos from unrelated ID collisions
+  ---
+  duration_ms: 0.2717
+  type: 'test'
+  ...
+# Subtest: merge respects per-reference cap and does not resurrect removed photos until requested
+ok 237 - merge respects per-reference cap and does not resurrect removed photos until requested
+  ---
+  duration_ms: 0.3704
+  type: 'test'
+  ...
+# Subtest: sniffImage accepts only real JPG, PNG and WebP bytes
+ok 238 - sniffImage accepts only real JPG, PNG and WebP bytes
+  ---
+  duration_ms: 0.7094
+  type: 'test'
+  ...
+# Subtest: photo ids cannot escape the media folder
+ok 239 - photo ids cannot escape the media folder
+  ---
+  duration_ms: 0.2057
+  type: 'test'
+  ...
+# Subtest: upsert replaces by id, appends new references and never removes any
+ok 240 - upsert replaces by id, appends new references and never removes any
+  ---
+  duration_ms: 1.5422
+  type: 'test'
+  ...
+# Subtest: upsert keeps sources as given; the server route and client enforce project-relative paths
+ok 241 - upsert keeps sources as given; the server route and client enforce project-relative paths
+  ---
+  duration_ms: 0.3486
+  type: 'test'
+  ...
+# Subtest: room IDs unique and tour covers entry to balcony
+ok 242 - room IDs unique and tour covers entry to balcony
+  ---
+  duration_ms: 1.3878
+  type: 'test'
+  ...
+# Subtest: reference JSON round trip and no mutation
+ok 243 - reference JSON round trip and no mutation
+  ---
+  duration_ms: 2.2723
+  type: 'test'
+  ...
+# Subtest: unsupported schemas, duplicate IDs and unknown rooms rejected
+ok 244 - unsupported schemas, duplicate IDs and unknown rooms rejected
+  ---
+  duration_ms: 0.6988
+  type: 'test'
+  ...
+# Subtest: unsafe reference URLs rejected
+ok 245 - unsafe reference URLs rejected
+  ---
+  duration_ms: 0.3084
+  type: 'test'
+  ...
+# Subtest: repository reference library is valid
+ok 246 - repository reference library is valid
+  ---
+  duration_ms: 1.6007
+  type: 'test'
+  ...
+# Subtest: requested Pinterest ideas are assigned to the correct rooms with design notes
+ok 247 - requested Pinterest ideas are assigned to the correct rooms with design notes
+  ---
+  duration_ms: 1.0511
+  type: 'test'
+  ...
+# Subtest: project references can be added to an existing empty browser library
+ok 248 - project references can be added to an existing empty browser library
+  ---
+  duration_ms: 0.6821
+  type: 'test'
+  ...
+# Subtest: merge preserves local edits and decisions, adds missing references and does not mutate
+ok 249 - merge preserves local edits and decisions, adds missing references and does not mutate
+  ---
+  duration_ms: 0.3631
+  type: 'test'
+  ...
+# Subtest: merge deduplicates a Pinterest pin across regional hosts, tracking queries and IDs
+ok 250 - merge deduplicates a Pinterest pin across regional hosts, tracking queries and IDs
+  ---
+  duration_ms: 0.2566
+  type: 'test'
+  ...
+# Subtest: same reference can be used in another room but ID collisions never overwrite local data
+ok 251 - same reference can be used in another room but ID collisions never overwrite local data
+  ---
+  duration_ms: 1.1266
+  type: 'test'
+  ...
+# Subtest: merge deduplicates other HTTPS references without treating lookalike hosts as Pinterest
+ok 252 - merge deduplicates other HTTPS references without treating lookalike hosts as Pinterest
+  ---
+  duration_ms: 0.2134
+  type: 'test'
+  ...
+# Subtest: merge rejects invalid input and combined overflow without changing the browser library
+ok 253 - merge rejects invalid input and combined overflow without changing the browser library
+  ---
+  duration_ms: 5.9296
+  type: 'test'
+  ...
+# Subtest: every named room has a layered lighting proposal
+ok 254 - every named room has a layered lighting proposal
+  ---
+  duration_ms: 2.5386
+  type: 'test'
+  ...
+# Subtest: auto schedule handles boundaries and midnight, cooler day warmer night
+ok 255 - auto schedule handles boundaries and midnight, cooler day warmer night
+  ---
+  duration_ms: 0.4822
+  type: 'test'
+  ...
+# Subtest: room overrides and individual layer switches do not leak to other rooms
+ok 256 - room overrides and individual layer switches do not leak to other rooms
+  ---
+  duration_ms: 0.2675
+  type: 'test'
+  ...
+# Subtest: invalid lighting parameters are rejected
+ok 257 - invalid lighting parameters are rejected
+  ---
+  duration_ms: 0.3705
+  type: 'test'
+  ...
+# Subtest: all layers can be independently disabled and master intensity scales them
+ok 258 - all layers can be independently disabled and master intensity scales them
+  ---
+  duration_ms: 0.3511
+  type: 'test'
+  ...
+# Subtest: Kelvin approximation is bounded and night contains less blue
+ok 259 - Kelvin approximation is bounded and night contains less blue
+  ---
+  duration_ms: 0.2754
+  type: 'test'
+  ...
+# Subtest: four independently sourced wood species and plaster finishes exist
+ok 260 - four independently sourced wood species and plaster finishes exist
+  ---
+  duration_ms: 1.2753
+  type: 'test'
+  ...
+# Subtest: appearance roundtrip and inheritance preserve distinct room overrides
+ok 261 - appearance roundtrip and inheritance preserve distinct room overrides
+  ---
+  duration_ms: 0.336
+  type: 'test'
+  ...
+# Subtest: unknown IDs, room and invalid grain scales fail closed
+ok 262 - unknown IDs, room and invalid grain scales fail closed
+  ---
+  duration_ms: 0.3265
+  type: 'test'
+  ...
+# Subtest: surface tags do not alter material properties
+ok 263 - surface tags do not alter material properties
+  ---
+  duration_ms: 0.1717
+  type: 'test'
+  ...
+# Subtest: bundled PBR maps match their documented source checksums
+ok 264 - bundled PBR maps match their documented source checksums
+  ---
+  duration_ms: 17.4458
+  type: 'test'
+  ...
+# Subtest: buildBOM counts modules/drawers and excludes power points from the appliance list
+ok 265 - buildBOM counts modules/drawers and excludes power points from the appliance list
+  ---
+  duration_ms: 1.3677
+  type: 'test'
+  ...
+# Subtest: buildBOM does not mutate its input
+ok 266 - buildBOM does not mutate its input
+  ---
+  duration_ms: 0.2501
+  type: 'test'
+  ...
+# Subtest: buildBOMCsv quotes every field and includes one row per appliance and note
+ok 267 - buildBOMCsv quotes every field and includes one row per appliance and note
+  ---
+  duration_ms: 0.4954
+  type: 'test'
+  ...
+# Subtest: buildBOMMarkdown lists every module row and every appliance
+ok 268 - buildBOMMarkdown lists every module row and every appliance
+  ---
+  duration_ms: 0.337
+  type: 'test'
+  ...
+# Subtest: svgY converts south-origin Y to SVG top-origin Y
+ok 269 - svgY converts south-origin Y to SVG top-origin Y
+  ---
+  duration_ms: 0.5605
+  type: 'test'
+  ...
+# Subtest: buildPlanSvg renders room, openings, runs and both active items without mutating its input
+ok 270 - buildPlanSvg renders room, openings, runs and both active items without mutating its input
+  ---
+  duration_ms: 2.4124
+  type: 'test'
+  ...
+# Subtest: buildPlanSvg draws grid lines only when grid is 50 or 100
+ok 271 - buildPlanSvg draws grid lines only when grid is 50 or 100
+  ---
+  duration_ms: 0.4748
+  type: 'test'
+  ...
+# Subtest: buildPlanSvg marks a filler module with a dashed outline
+ok 272 - buildPlanSvg marks a filler module with a dashed outline
+  ---
+  duration_ms: 0.1638
+  type: 'test'
+  ...
+# Subtest: buildPlanDxf emits a valid entities section with room, openings and labeled appliances
+ok 273 - buildPlanDxf emits a valid entities section with room, openings and labeled appliances
+  ---
+  duration_ms: 0.4636
+  type: 'test'
+  ...
+# Subtest: buildPlanDxf includes GRID-layer lines only when grid is 50 or 100
+ok 274 - buildPlanDxf includes GRID-layer lines only when grid is 50 or 100
+  ---
+  duration_ms: 0.7651
+  type: 'test'
+  ...
+# Subtest: buildPlanSvg and buildPlanDxf agree on which depth each wall uses
+ok 275 - buildPlanSvg and buildPlanDxf agree on which depth each wall uses
+  ---
+  duration_ms: 0.2933
+  type: 'test'
+  ...
+# Subtest: Kitchen: one track down the middle of the walkway, clear of the wall cabinets that reach the ceiling and of the shaft
+ok 276 - Kitchen: one track down the middle of the walkway, clear of the wall cabinets that reach the ceiling and of the shaft
+  ---
+  duration_ms: 1.6689
+  type: 'test'
+  ...
+# Subtest: the down lights follow the hob and the sink of the default layout (z measured from the north wall)
+ok 277 - the down lights follow the hob and the sink of the default layout (z measured from the north wall)
+  ---
+  duration_ms: 0.1687
+  type: 'test'
+  ...
+# Subtest: the mirrored config for the planner view flips both axes and swaps aims, and mirrors back to itself
+ok 278 - the mirrored config for the planner view flips both axes and swaps aims, and mirrors back to itself
+  ---
+  duration_ms: 0.3239
+  type: 'test'
+  ...
+# Subtest: the checks catch a run under the east wall cabinets and a down light off the hob
+ok 279 - the checks catch a run under the east wall cabinets and a down light off the hob
+  ---
+  duration_ms: 0.8124
+  type: 'test'
+  ...
+# Subtest: normal and unknown view requests keep the existing 3D default
+ok 280 - normal and unknown view requests keep the existing 3D default
+  ---
+  duration_ms: 0.5556
+  type: 'test'
+  ...
+# Subtest: recognized view preference is explicit and works with other query parameters
+ok 281 - recognized view preference is explicit and works with other query parameters
+  ---
+  duration_ms: 0.1908
+  type: 'test'
+  ...
+# Subtest: derives water, drain, gas and power points that follow appliance centres
+ok 282 - derives water, drain, gas and power points that follow appliance centres
+  ---
+  duration_ms: 0.8029
+  type: 'test'
+  ...
+# Subtest: hidden appliances contribute no points and moving an appliance moves its points
+ok 283 - hidden appliances contribute no points and moving an appliance moves its points
+  ---
+  duration_ms: 0.2387
+  type: 'test'
+  ...
+# Subtest: routes hug the walls: every vertex lies on a wall line
+ok 284 - routes hug the walls: every vertex lies on a wall line
+  ---
+  duration_ms: 0.6863
+  type: 'test'
+  ...
+# Subtest: does not mutate its input
+ok 285 - does not mutate its input
+  ---
+  duration_ms: 0.3059
+  type: 'test'
+  ...
+# Subtest: summary requires every rule, including non-order rules
+ok 286 - summary requires every rule, including non-order rules
+  ---
+  duration_ms: 1.4556
+  type: 'test'
+  ...
+# Subtest: empty, missing, duplicate and unknown-status rows cannot pass
+ok 287 - empty, missing, duplicate and unknown-status rows cannot pass
+  ---
+  duration_ms: 0.3394
+  type: 'test'
+  ...
+# Subtest: nominal plan dimensions use both actual base depths
+ok 288 - nominal plan dimensions use both actual base depths
+  ---
+  duration_ms: 0.159
+  type: 'test'
+  ...
+# Subtest: all-pair checking finds a non-neighbor overlapping an enclosing interval
+ok 289 - all-pair checking finds a non-neighbor overlapping an enclosing interval
+  ---
+  duration_ms: 0.6332
+  type: 'test'
+  ...
+# Subtest: 3D separation and face contact do not collide; true overlap does
+ok 290 - 3D separation and face contact do not collide; true overlap does
+  ---
+  duration_ms: 0.182
+  type: 'test'
+  ...
+# Subtest: baseline fixture passes without mutation
+ok 291 - baseline fixture passes without mutation
+  ---
+  duration_ms: 0.791
+  type: 'test'
+  ...
+# Subtest: both orders pass but misaligned rack makes overall result fail
+ok 292 - both orders pass but misaligned rack makes overall result fail
+  ---
+  duration_ms: 0.2346
+  type: 'test'
+  ...
+# Subtest: nominal aisle below the configured minimum is a real failure
+ok 293 - nominal aisle below the configured minimum is a real failure
+  ---
+  duration_ms: 0.1687
+  type: 'test'
+  ...
+# Subtest: fixed objects are checked for door clearance, bounds and collision
+ok 294 - fixed objects are checked for door clearance, bounds and collision
+  ---
+  duration_ms: 0.3266
+  type: 'test'
+  ...
+# Subtest: collisions are checked across walls, not only within each run
+ok 295 - collisions are checked across walls, not only within each run
+  ---
+  duration_ms: 0.2959
+  type: 'test'
+  ...
+# Subtest: hidden placeholders stay inactive; malformed visibility fails closed
+ok 296 - hidden placeholders stay inactive; malformed visibility fails closed
+  ---
+  duration_ms: 0.1945
+  type: 'test'
+  ...
+# Subtest: invalid coordinates do not produce a successful or partial success
+ok 297 - invalid coordinates do not produce a successful or partial success
+  ---
+  duration_ms: 0.1751
+  type: 'test'
+  ...
+# Subtest: materials do not alter the geometry-validation result
+ok 298 - materials do not alter the geometry-validation result
+  ---
+  duration_ms: 0.9328
+  type: 'test'
+  ...
+# Subtest: valid fixture passes without mutation
+ok 299 - valid fixture passes without mutation
+  ---
+  duration_ms: 2.446
+  type: 'test'
+  ...
+# Subtest: a real reduction in the nominal aisle fails
+ok 300 - a real reduction in the nominal aisle fails
+  ---
+  duration_ms: 0.2238
+  type: 'test'
+  ...
+# Subtest: door-zone violation reports its object and overlap
+ok 301 - door-zone violation reports its object and overlap
+  ---
+  duration_ms: 0.1937
+  type: 'test'
+  ...
+# Subtest: full-height clear zone also checks fixed items
+ok 302 - full-height clear zone also checks fixed items
+  ---
+  duration_ms: 0.1148
+  type: 'test'
+  ...
+# Subtest: out-of-room x fails
+ok 303 - out-of-room x fails
+  ---
+  duration_ms: 0.083
+  type: 'test'
+  ...
+# Subtest: out-of-room y fails
+ok 304 - out-of-room y fails
+  ---
+  duration_ms: 0.0503
+  type: 'test'
+  ...
+# Subtest: out-of-room z fails
+ok 305 - out-of-room z fails
+  ---
+  duration_ms: 0.0952
+  type: 'test'
+  ...
+# Subtest: out-of-room h fails
+ok 306 - out-of-room h fails
+  ---
+  duration_ms: 0.0542
+  type: 'test'
+  ...
+# Subtest: out-of-room d fails
+ok 307 - out-of-room d fails
+  ---
+  duration_ms: 0.1937
+  type: 'test'
+  ...
+# Subtest: invalid dimension NaN fails
+ok 308 - invalid dimension NaN fails
+  ---
+  duration_ms: 0.2686
+  type: 'test'
+  ...
+# Subtest: invalid dimension Infinity fails
+ok 309 - invalid dimension Infinity fails
+  ---
+  duration_ms: 0.1196
+  type: 'test'
+  ...
+# Subtest: invalid dimension 600 fails
+ok 310 - invalid dimension 600 fails
+  ---
+  duration_ms: 0.0493
+  type: 'test'
+  ...
+# Subtest: invalid dimension null fails
+ok 311 - invalid dimension null fails
+  ---
+  duration_ms: 0.0291
+  type: 'test'
+  ...
+# Subtest: invalid dimension 0 fails
+ok 312 - invalid dimension 0 fails
+  ---
+  duration_ms: 0.0267
+  type: 'test'
+  ...
+# Subtest: invalid dimension -1 fails
+ok 313 - invalid dimension -1 fails
+  ---
+  duration_ms: 0.0251
+  type: 'test'
+  ...
+# Subtest: malformed layout fails rather than reporting an empty success
+ok 314 - malformed layout fails rather than reporting an empty success
+  ---
+  duration_ms: 0.0751
+  type: 'test'
+  ...
+# Subtest: constraints must be explicit, finite and in-room
+ok 315 - constraints must be explicit, finite and in-room
+  ---
+  duration_ms: 0.7252
+  type: 'test'
+  ...
+# Subtest: duplicate IDs across walls fail
+ok 316 - duplicate IDs across walls fail
+  ---
+  duration_ms: 0.1058
+  type: 'test'
+  ...
+# Subtest: hidden zero-sized placeholders are retained but inactive
+ok 317 - hidden zero-sized placeholders are retained but inactive
+  ---
+  duration_ms: 0.0659
+  type: 'test'
+  ...
+# Subtest: a string hidden flag must not hide an invalid item
+ok 318 - a string hidden flag must not hide an invalid item
+  ---
+  duration_ms: 0.0976
+  type: 'test'
+  ...
+# Subtest: material changes do not change basic geometry-check results
+ok 319 - material changes do not change basic geometry-check results
+  ---
+  duration_ms: 0.1125
+  type: 'test'
+  ...
+# Subtest: touching an interval end is allowed; missing z means floor level
+ok 320 - touching an interval end is allowed; missing z means floor level
+  ---
+  duration_ms: 0.0591
+  type: 'test'
+  ...
+# Subtest: Lobby / Dining: the proposed plan passes every rule
+ok 321 - Lobby / Dining: the proposed plan passes every rule
+  ---
+  duration_ms: 4.1214
+  type: 'test'
+  ...
+# Subtest: Lobby: the new switchboard stands clear of the planned Bedroom 1 door, on its latch side, and takes over from X-L1
+ok 322 - Lobby: the new switchboard stands clear of the planned Bedroom 1 door, on its latch side, and takes over from X-L1
+  ---
+  duration_ms: 3.1293
+  type: 'test'
+  ...
+# Subtest: Lobby: existing ceiling and tube-light points are reused for the fan and the two track drivers
+ok 323 - Lobby: existing ceiling and tube-light points are reused for the fan and the two track drivers
+  ---
+  duration_ms: 1.4285
+  type: 'test'
+  ...
+# Subtest: Lobby: dining, iron, AC and toilet points follow the furniture and stay clear of it
+ok 324 - Lobby: dining, iron, AC and toilet points follow the furniture and stay clear of it
+  ---
+  duration_ms: 2.355
+  type: 'test'
+  ...
+# Subtest: 2026-10-06 proposal adds a north bay while preserving original bays and board position
+ok 325 - 2026-10-06 proposal adds a north bay while preserving original bays and board position
+  ---
+  duration_ms: 2.5801
+  type: 'test'
+  ...
+# Subtest: tall unit clears east opening, L2, its head envelopes and probable fan; open gap avoids corner ring
+ok 326 - tall unit clears east opening, L2, its head envelopes and probable fan; open gap avoids corner ring
+  ---
+  duration_ms: 0.7952
+  type: 'test'
+  ...
+# Subtest: the Lobby has two wall-hugging tracks with wall spots, diffused heads and a down spot over the ironing board
+ok 327 - the Lobby has two wall-hugging tracks with wall spots, diffused heads and a down spot over the ironing board
+  ---
+  duration_ms: 3.3429
+  type: 'test'
+  ...
+# Subtest: each track is its own circuit with its own driver, and the sliders are pendant, track 1, track 2
+ok 328 - each track is its own circuit with its own driver, and the sliders are pendant, track 1, track 2
+  ---
+  duration_ms: 0.3805
+  type: 'test'
+  ...
+# Subtest: the old strip lights are gone from the Lobby and the Pooja alcove; the pendant and tracks stay
+ok 329 - the old strip lights are gone from the Lobby and the Pooja alcove; the pendant and tracks stay
+  ---
+  duration_ms: 0.0793
+  type: 'test'
+  ...
+# Subtest: both tracks leave the middle of the ceiling free and stay clear of the doors and the dining pendant
+ok 330 - both tracks leave the middle of the ceiling free and stay clear of the doors and the dining pendant
+  ---
+  duration_ms: 1.0188
+  type: 'test'
+  ...
+# Subtest: the checks catch a down spot that misses the ironing board, a spot aimed across the room and an overloaded run
+ok 331 - the checks catch a down spot that misses the ironing board, a spot aimed across the room and an overloaded run
+  ---
+  duration_ms: 0.695
+  type: 'test'
+  ...
+# Subtest: the centre medallion is modelled as a probable fan, and both tracks are clear of its blades
+ok 332 - the centre medallion is modelled as a probable fan, and both tracks are clear of its blades
+  ---
+  duration_ms: 0.3363
+  type: 'test'
+  ...
+# Subtest: the Lobby mouldings are recorded and both tracks sit on flat slab, with nothing crossing
+ok 333 - the Lobby mouldings are recorded and both tracks sit on flat slab, with nothing crossing
+  ---
+  duration_ms: 0.5984
+  type: 'test'
+  ...
+# Subtest: the dining shelf keeps the table and circuit, avoids the north moulding, and still has no ceiling feed
+ok 334 - the dining shelf keeps the table and circuit, avoids the north moulding, and still has no ceiling feed
+  ---
+  duration_ms: 0.8857
+  type: 'test'
+  ...
+# Subtest: the shelf report exposes standing/leaning conflicts and wet weight without claiming engineered support
+ok 335 - the shelf report exposes standing/leaning conflicts and wet weight without claiming engineered support
+  ---
+  duration_ms: 0.5517
+  type: 'test'
+  ...
+# Subtest: rod checks follow the configured axis and catch moulding clashes and mounts outside the room
+ok 336 - rod checks follow the configured axis and catch moulding clashes and mounts outside the room
+  ---
+  duration_ms: 1.0077
+  type: 'test'
+  ...
+# Subtest: the Pooja Ghar has one round ceiling light in the middle of the alcove (owner 2026-10-05)
+ok 337 - the Pooja Ghar has one round ceiling light in the middle of the alcove (owner 2026-10-05)
+  ---
+  duration_ms: 0.1371
+  type: 'test'
+  ...
+# Subtest: update requests require local or exact private Codespaces origin
+ok 338 - update requests require local or exact private Codespaces origin
+  ---
+  duration_ms: 1.1767
+  type: 'test'
+  ...
+# Subtest: updates a clean checkout by fast forward and preserves local edits
+ok 339 - updates a clean checkout by fast forward and preserves local edits
+  ---
+  duration_ms: 1778.9156
+  type: 'test'
+  ...
+# Subtest: bronze mirror proposal uses live dimensions and existing slider face
+ok 340 - bronze mirror proposal uses live dimensions and existing slider face
+  ---
+  duration_ms: 1.9955
+  type: 'test'
+  ...
+# Subtest: hob mirror follows moves and resized appliances without changing saved items
+ok 341 - hob mirror follows moves and resized appliances without changing saved items
+  ---
+  duration_ms: 0.4297
+  type: 'test'
+  ...
+# Subtest: sink mirror follows the airy layout and independent sink movement
+ok 342 - sink mirror follows the airy layout and independent sink movement
+  ---
+  duration_ms: 0.1321
+  type: 'test'
+  ...
+# Subtest: panels clip to both run ends and keep the west door clear
+ok 343 - panels clip to both run ends and keep the west door clear
+  ---
+  duration_ms: 0.1327
+  type: 'test'
+  ...
+# Subtest: absent, hidden, zero-width appliances and disabled feature produce no panels
+ok 344 - absent, hidden, zero-width appliances and disabled feature produce no panels
+  ---
+  duration_ms: 0.1378
+  type: 'test'
+  ...
+# Subtest: counter-height neighbours clip margins, while lower base appliances do not
+ok 345 - counter-height neighbours clip margins, while lower base appliances do not
+  ---
+  duration_ms: 1.225
+  type: 'test'
+  ...
+# Subtest: shaft and overlapping splash-zone storage never receive sink mirror
+ok 346 - shaft and overlapping splash-zone storage never receive sink mirror
+  ---
+  duration_ms: 0.3533
+  type: 'test'
+  ...
+# Subtest: lowest overlapping overhead limits height; no overhead falls back to tile top
+ok 347 - lowest overlapping overhead limits height; no overhead falls back to tile top
+  ---
+  duration_ms: 0.173
+  type: 'test'
+  ...
+# Subtest: hidden east slider reveals wall finish; moved/shorter slider splits the finish without moving it
+ok 348 - hidden east slider reveals wall finish; moved/shorter slider splits the finish without moving it
+  ---
+  duration_ms: 0.381
+  type: 'test'
+  ...
+# Subtest: BOM, CSV and Markdown report proposed panels without increasing gross backsplash area
+ok 349 - BOM, CSV and Markdown report proposed panels without increasing gross backsplash area
+  ---
+  duration_ms: 0.8039
+  type: 'test'
+  ...
+# Subtest: Home Office: the plan integrates balconyOfficeConfig.js electrical instead of repeating it
+ok 350 - Home Office: the plan integrates balconyOfficeConfig.js electrical instead of repeating it
+  ---
+  duration_ms: 5.3157
+  type: 'test'
+  ...
+# Subtest: Home Office: circuits keep the heater on its own and the electronics together
+ok 351 - Home Office: circuits keep the heater on its own and the electronics together
+  ---
+  duration_ms: 0.9316
+  type: 'test'
+  ...
+# Subtest: Home Office: the light switch is on the east return south of the Study opening; the desk is served by the rail
+ok 352 - Home Office: the light switch is on the east return south of the Study opening; the desk is served by the rail
+  ---
+  duration_ms: 1.2047
+  type: 'test'
+  ...
+# Subtest: v1 to independently owned v2 round trip preserves every profile setting
+ok 353 - v1 to independently owned v2 round trip preserves every profile setting
+  ---
+  duration_ms: 4.8646
+  type: 'test'
+  ...
+# Subtest: production profiles retain supported rooms and source routing
+ok 354 - production profiles retain supported rooms and source routing
+  ---
+  duration_ms: 3.5295
+  type: 'test'
+  ...
+# Subtest: editing one room never mutates another room or the source documents
+ok 355 - editing one room never mutates another room or the source documents
+  ---
+  duration_ms: 4.3779
+  type: 'test'
+  ...
+# Subtest: missing files and path traversal fail instead of using historical defaults
+ok 356 - missing files and path traversal fail instead of using historical defaults
+  ---
+  duration_ms: 1.2899
+  type: 'test'
+  ...
+# Subtest: malformed camera, native source and quality settings are rejected
+ok 357 - malformed camera, native source and quality settings are rejected
+  ---
+  duration_ms: 2.3152
+  type: 'test'
+  ...
+# Subtest: shared Pooja builder selects all 20 style/state/floor combinations above the step
+ok 358 - shared Pooja builder selects all 20 style/state/floor combinations above the step
+  ---
+  duration_ms: 70.4836
+  type: 'test'
+  ...
+# Subtest: cabinet shared builder preserves deployed ironing board centre and top after north extension
+ok 359 - cabinet shared builder preserves deployed ironing board centre and top after north extension
+  ---
+  duration_ms: 1.7776
+  type: 'test'
+  ...
+# Subtest: 2026-10-06 owner inward west bi-fold is default; four former choices remain
+ok 360 - 2026-10-06 owner inward west bi-fold is default; four former choices remain
+  ---
+  duration_ms: 2.2445
+  type: 'test'
+  ...
+# Subtest: west fold shares a middle hinge throughout travel and parks wholly inside, short of shelf and back wall
+ok 361 - west fold shares a middle hinge throughout travel and parks wholly inside, short of shelf and back wall
+  ---
+  duration_ms: 0.605
+  type: 'test'
+  ...
+# Subtest: occupied position and west electrical access honestly conflict, including after folding
+ok 362 - occupied position and west electrical access honestly conflict, including after folding
+  ---
+  duration_ms: 35.4089
+  type: 'test'
+  ...
+# Subtest: proposed step and narrower drawer retain the back, gain depth, and clear cabinet through full travel
+ok 363 - proposed step and narrower drawer retain the back, gain depth, and clear cabinet through full travel
+  ---
+  duration_ms: 45.8983
+  type: 'test'
+  ...
+# Subtest: obstacles are checked without overriding the owner style or mutating inputs
+ok 364 - obstacles are checked without overriding the owner style or mutating inputs
+  ---
+  duration_ms: 21.3617
+  type: 'test'
+  ...
+# Subtest: v1 round trip preserves custom positions, elevations, metadata, zeros and modules
+ok 365 - v1 round trip preserves custom positions, elevations, metadata, zeros and modules
+  ---
+  duration_ms: 2.4147
+  type: 'test'
+  ...
+# Subtest: returned states/documents share no mutable references with input/defaults
+ok 366 - returned states/documents share no mutable references with input/defaults
+  ---
+  duration_ms: 1.1657
+  type: 'test'
+  ...
+# Subtest: legacy array shape never resets a non-preset hob or zero-sized placeholders
+ok 367 - legacy array shape never resets a non-preset hob or zero-sized placeholders
+  ---
+  duration_ms: 0.4579
+  type: 'test'
+  ...
+# Subtest: legacy partial settings use defaults not the currently open project
+ok 368 - legacy partial settings use defaults not the currently open project
+  ---
+  duration_ms: 0.293
+  type: 'test'
+  ...
+# Subtest: legacy layoutModel conversion preserves z, hidden, fixed and shaft axis semantics
+ok 369 - legacy layoutModel conversion preserves z, hidden, fixed and shaft axis semantics
+  ---
+  duration_ms: 0.2273
+  type: 'test'
+  ...
+# Subtest: explicit legacy short aliases take precedence over rich shaft extents
+ok 370 - explicit legacy short aliases take precedence over rich shaft extents
+  ---
+  duration_ms: 0.1517
+  type: 'test'
+  ...
+# Subtest: live arrays are authoritative over obsolete derived layoutModel geometry
+ok 371 - live arrays are authoritative over obsolete derived layoutModel geometry
+  ---
+  duration_ms: 0.2901
+  type: 'test'
+  ...
+# Subtest: draft rule violations remain loadable rather than reset to preset geometry
+ok 372 - draft rule violations remain loadable rather than reset to preset geometry
+  ---
+  duration_ms: 0.2507
+  type: 'test'
+  ...
+# Subtest: unsupported schema 0 rejected
+ok 373 - unsupported schema 0 rejected
+  ---
+  duration_ms: 0.5415
+  type: 'test'
+  ...
+# Subtest: unsupported schema 2 rejected
+ok 374 - unsupported schema 2 rejected
+  ---
+  duration_ms: 0.9734
+  type: 'test'
+  ...
+# Subtest: unsupported schema "1" rejected
+ok 375 - unsupported schema "1" rejected
+  ---
+  duration_ms: 0.3552
+  type: 'test'
+  ...
+# Subtest: unsupported schema null rejected
+ok 376 - unsupported schema null rejected
+  ---
+  duration_ms: 0.2276
+  type: 'test'
+  ...
+# Subtest: room width mismatch rejected
+ok 377 - room width mismatch rejected
+  ---
+  duration_ms: 0.2326
+  type: 'test'
+  ...
+# Subtest: room length mismatch rejected
+ok 378 - room length mismatch rejected
+  ---
+  duration_ms: 0.149
+  type: 'test'
+  ...
+# Subtest: room height mismatch rejected
+ok 379 - room height mismatch rejected
+  ---
+  duration_ms: 0.1113
+  type: 'test'
+  ...
+# Subtest: invalid document d=>{d.format='other-app';} rejected without mutation
+ok 380 - invalid document d=>{d.format='other-app';} rejected without mutation
+  ---
+  duration_ms: 0.4496
+  type: 'test'
+  ...
+# Subtest: invalid document d=>{d.unit='cm';} rejected without mutation
+ok 381 - invalid document d=>{d.unit='cm';} rejected without mutation
+  ---
+  duration_ms: 0.5433
+  type: 'test'
+  ...
+# Subtest: invalid document d=>{d.east='bad';} rejected without mutation
+ok 382 - invalid document d=>{d.east='bad';} rejected without mutation
+  ---
+  duration_ms: 0.3186
+  type: 'test'
+  ...
+# Subtest: invalid document d=>{delete d.west;} rejected without mutation
+ok 383 - invalid document d=>{delete d.west;} rejected without mutation
+  ---
+  duration_ms: 0.3799
+  type: 'test'
+  ...
+# Subtest: invalid document d=>{d.west[1].id=d.east[0].id;} rejected without mutation
+ok 384 - invalid document d=>{d.west[1].id=d.east[0].id;} rejected without mutation
+  ---
+  duration_ms: 0.6059
+  type: 'test'
+  ...
+# Subtest: invalid document d=>{d.east[0].y='2255';} rejected without mutation
+ok 385 - invalid document d=>{d.east[0].y='2255';} rejected without mutation
+  ---
+  duration_ms: 0.5452
+  type: 'test'
+  ...
+# Subtest: invalid document d=>{d.east[0].hidden='false';} rejected without mutation
+ok 386 - invalid document d=>{d.east[0].hidden='false';} rejected without mutation
+  ---
+  duration_ms: 0.4399
+  type: 'test'
+  ...
+# Subtest: invalid document d=>{d.east[0].color='red" onclick="bad';} rejected without mutation
+ok 387 - invalid document d=>{d.east[0].color='red" onclick="bad';} rejected without mutation
+  ---
+  duration_ms: 0.3449
+  type: 'test'
+  ...
+# Subtest: invalid document d=>{d.materials.cabinetBody='url(bad)';} rejected without mutation
+ok 388 - invalid document d=>{d.materials.cabinetBody='url(bad)';} rejected without mutation
+  ---
+  duration_ms: 0.3644
+  type: 'test'
+  ...
+# Subtest: invalid document d=>{d.modules.west=[{id:'bad',width:-1}];} rejected without mutation
+ok 389 - invalid document d=>{d.modules.west=[{id:'bad',width:-1}];} rejected without mutation
+  ---
+  duration_ms: 0.511
+  type: 'test'
+  ...
+# Subtest: invalid document d=>{d.modules='bad';} rejected without mutation
+ok 390 - invalid document d=>{d.modules='bad';} rejected without mutation
+  ---
+  duration_ms: 0.8762
+  type: 'test'
+  ...
+# Subtest: invalid document d=>{d.grid=30;} rejected without mutation
+ok 391 - invalid document d=>{d.grid=30;} rejected without mutation
+  ---
+  duration_ms: 0.4326
+  type: 'test'
+  ...
+# Subtest: invalid document d=>{d.viewOptions.hide3DObstructions='false';} rejected without mutation
+ok 392 - invalid document d=>{d.viewOptions.hide3DObstructions='false';} rejected without mutation
+  ---
+  duration_ms: 0.3909
+  type: 'test'
+  ...
+# Subtest: invalid document d=>{d.eastTopUpperDepth=0;} rejected without mutation
+ok 393 - invalid document d=>{d.eastTopUpperDepth=0;} rejected without mutation
+  ---
+  duration_ms: 0.412
+  type: 'test'
+  ...
+# Subtest: invalid document d=>{delete d.materials;} rejected without mutation
+ok 394 - invalid document d=>{delete d.materials;} rejected without mutation
+  ---
+  duration_ms: 0.4433
+  type: 'test'
+  ...
+# Subtest: invalid document d=>{d.east[0].d=0;} rejected without mutation
+ok 395 - invalid document d=>{d.east[0].d=0;} rejected without mutation
+  ---
+  duration_ms: 0.5655
+  type: 'test'
+  ...
+# Subtest: nonfinite numbers are rejected before stringify can conceal them
+ok 396 - nonfinite numbers are rejected before stringify can conceal them
+  ---
+  duration_ms: 0.2939
+  type: 'test'
+  ...
+# Subtest: invalid JSON, missing arrays and nonsupported payloads are rejected
+ok 397 - invalid JSON, missing arrays and nonsupported payloads are rejected
+  ---
+  duration_ms: 0.429
+  type: 'test'
+  ...
+# Subtest: byte order mark is accepted
+ok 398 - byte order mark is accepted
+  ---
+  duration_ms: 0.3778
+  type: 'test'
+  ...
+# Subtest: oversized and too deeply nested documents fail predictably
+ok 399 - oversized and too deeply nested documents fail predictably
+  ---
+  duration_ms: 2.5376
+  type: 'test'
+  ...
+# Subtest: prototype-pollution keys and non-JSON values are rejected
+ok 400 - prototype-pollution keys and non-JSON values are rejected
+  ---
+  duration_ms: 0.5085
+  type: 'test'
+  ...
+# Subtest: explicit null fields are invalid, not silently replaced by legacy defaults
+ok 401 - explicit null fields are invalid, not silently replaced by legacy defaults
+  ---
+  duration_ms: 0.7544
+  type: 'test'
+  ...
+# Subtest: known colorless hidden placeholders retain absent color during legacy migration
+ok 402 - known colorless hidden placeholders retain absent color during legacy migration
+  ---
+  duration_ms: 0.3864
+  type: 'test'
+  ...
+# Subtest: legacy autosave migrates to a new key and original bytes are retained
+ok 403 - legacy autosave migrates to a new key and original bytes are retained
+  ---
+  duration_ms: 3.1874
+  type: 'test'
+  ...
+# Subtest: saving before load is rejected
+ok 404 - saving before load is rejected
+  ---
+  duration_ms: 0.3089
+  type: 'test'
+  ...
+# Subtest: new key takes precedence over old legacy state
+ok 405 - new key takes precedence over old legacy state
+  ---
+  duration_ms: 0.4773
+  type: 'test'
+  ...
+# Subtest: corrupt versioned autosave is protected, not replaced by valid legacy or defaults
+ok 406 - corrupt versioned autosave is protected, not replaced by valid legacy or defaults
+  ---
+  duration_ms: 0.4022
+  type: 'test'
+  ...
+# Subtest: corrupt legacy autosave remains untouched
+ok 407 - corrupt legacy autosave remains untouched
+  ---
+  duration_ms: 0.2732
+  type: 'test'
+  ...
+# Subtest: previous valid autosave is recoverable without mutating primary
+ok 408 - previous valid autosave is recoverable without mutating primary
+  ---
+  duration_ms: 1.0236
+  type: 'test'
+  ...
+# Subtest: unchanged saves do not consume backup writes
+ok 409 - unchanged saves do not consume backup writes
+  ---
+  duration_ms: 0.5627
+  type: 'test'
+  ...
+# Subtest: quota failure on backup leaves primary unchanged
+ok 410 - quota failure on backup leaves primary unchanged
+  ---
+  duration_ms: 0.757
+  type: 'test'
+  ...
+# Subtest: failed primary write preserves both old primary and backup
+ok 411 - failed primary write preserves both old primary and backup
+  ---
+  duration_ms: 1.819
+  type: 'test'
+  ...
+# Subtest: another tab changing or clearing storage blocks stale autosave
+ok 412 - another tab changing or clearing storage blocks stale autosave
+  ---
+  duration_ms: 2.1164
+  type: 'test'
+  ...
+# Subtest: explicit resume backs up unreadable/conflicting bytes before replacement
+ok 413 - explicit resume backs up unreadable/conflicting bytes before replacement
+  ---
+  duration_ms: 0.8208
+  type: 'test'
+  ...
+# Subtest: failed recovery backup never overwrites the damaged original
+ok 414 - failed recovery backup never overwrites the damaged original
+  ---
+  duration_ms: 0.3805
+  type: 'test'
+  ...
+# Subtest: blocked storage access is reported, not swallowed
+ok 415 - blocked storage access is reported, not swallowed
+  ---
+  duration_ms: 0.285
+  type: 'test'
+  ...
+# Subtest: malformed state never replaces the last stored project
+ok 416 - malformed state never replaces the last stored project
+  ---
+  duration_ms: 0.5298
+  type: 'test'
+  ...
+# Subtest: named versions share v1 format and retain original legacy slots
+ok 417 - named versions share v1 format and retain original legacy slots
+  ---
+  duration_ms: 0.9883
+  type: 'test'
+  ...
+# Subtest: named-slot backup failure preserves original named project
+ok 418 - named-slot backup failure preserves original named project
+  ---
+  duration_ms: 0.7942
+  type: 'test'
+  ...
+# Subtest: missing slot and missing previous save are explicit errors
+ok 419 - missing slot and missing previous save are explicit errors
+  ---
+  duration_ms: 0.2061
+  type: 'test'
+  ...
+# Subtest: quality levels spend more from Draft to High and Auto is a choice, not a level
+ok 420 - quality levels spend more from Draft to High and Auto is a choice, not a level
+  ---
+  duration_ms: 1.8396
+  type: 'test'
+  ...
+# Subtest: auto quality: High on a discrete card, Standard on integrated or unknown graphics, Draft on software rendering
+ok 421 - auto quality: High on a discrete card, Standard on integrated or unknown graphics, Draft on software rendering
+  ---
+  duration_ms: 0.596
+  type: 'test'
+  ...
+# Subtest: the quality preference fails closed
+ok 422 - the quality preference fails closed
+  ---
+  duration_ms: 0.3982
+  type: 'test'
+  ...
+# Subtest: lamp colour follows Kelvin: 3000 K warm, 4000 K neutral, 4500 K white, and 3000 K stays near the old warm tint
+ok 423 - lamp colour follows Kelvin: 3000 K warm, 4000 K neutral, 4500 K white, and 3000 K stays near the old warm tint
+  ---
+  duration_ms: 0.5689
+  type: 'test'
+  ...
+# Subtest: the generic check passes a sound plan and reports one row per rule
+ok 424 - the generic check passes a sound plan and reports one row per rule
+  ---
+  duration_ms: 4.2931
+  type: 'test'
+  ...
+# Subtest: points resolve from anchors, track ends, fans and existing points, and land on the right wall
+ok 425 - points resolve from anchors, track ends, fans and existing points, and land on the right wall
+  ---
+  duration_ms: 1.4528
+  type: 'test'
+  ...
+# Subtest: a point in an opening, behind furniture or a door leaf, or out of reach is caught; hidden points may be covered
+ok 426 - a point in an opening, behind furniture or a door leaf, or out of reach is caught; hidden points may be covered
+  ---
+  duration_ms: 2.6887
+  type: 'test'
+  ...
+# Subtest: every door needs a switchboard on its latch side at switch height
+ok 427 - every door needs a switchboard on its latch side at switch height
+  ---
+  duration_ms: 0.8633
+  type: 'test'
+  ...
+# Subtest: charging reach, AC points, driver and fan feeds, switches
+ok 428 - charging reach, AC points, driver and fan feeds, switches
+  ---
+  duration_ms: 2.7817
+  type: 'test'
+  ...
+# Subtest: circuits: every loaded point on exactly one, dedicated points alone, at most 80% of the breaker
+ok 429 - circuits: every loaded point on exactly one, dedicated points alone, at most 80% of the breaker
+  ---
+  duration_ms: 0.6459
+  type: 'test'
+  ...
+# Subtest: every room with a plan has a model, passes, and is well formed
+ok 430 - every room with a plan has a model, passes, and is well formed
+  ---
+  duration_ms: 5.7952
+  type: 'test'
+  ...
+# Subtest: docs/ELECTRICAL_PLAN.md lists every point of every plan, with its place, the circuits and the load totals
+ok 431 - docs/ELECTRICAL_PLAN.md lists every point of every plan, with its place, the circuits and the load totals
+  ---
+  duration_ms: 19.8034
+  type: 'test'
+  ...
+# Subtest: openings come from the shell config, sorted along each wall, in metres
+ok 432 - openings come from the shell config, sorted along each wall, in metres
+  ---
+  duration_ms: 2.5272
+  type: 'test'
+  ...
+# Subtest: a full-height passage cuts the whole wall; the storage recess keeps wall above and below it
+ok 433 - a full-height passage cuts the whole wall; the storage recess keeps wall above and below it
+  ---
+  duration_ms: 0.2763
+  type: 'test'
+  ...
+# Subtest: Bedroom 1 cuts its north-east recess wardrobe; Bedroom 3 opens its south wall onto the balcony extension
+ok 434 - Bedroom 1 cuts its north-east recess wardrobe; Bedroom 3 opens its south wall onto the balcony extension
+  ---
+  duration_ms: 0.3534
+  type: 'test'
+  ...
+# Subtest: drawing room review carries orientation, openings, layout, measurements and tasks
+ok 435 - drawing room review carries orientation, openings, layout, measurements and tasks
+  ---
+  duration_ms: 10.8237
+  type: 'test'
+  ...
+# Subtest: layouts A and B describe different arrangements of the same room
+ok 436 - layouts A and B describe different arrangements of the same room
+  ---
+  duration_ms: 2.0738
+  type: 'test'
+  ...
+# Subtest: other rooms still produce a usable brief from generic config
+ok 437 - other rooms still produce a usable brief from generic config
+  ---
+  duration_ms: 22.1994
+  type: 'test'
+  ...
+# Subtest: references are listed as links with tags and notes, and the limits are stated
+ok 438 - references are listed as links with tags and notes, and the limits are stated
+  ---
+  duration_ms: 6.7795
+  type: 'test'
+  ...
+# Subtest: the text names the picture it belongs with, so a stale image is easy to spot
+ok 439 - the text names the picture it belongs with, so a stale image is easy to spot
+  ---
+  duration_ms: 1.0079
+  type: 'test'
+  ...
+# Subtest: the lobby and bedrooms get labelled plan boxes and their exact ranges in the text
+ok 440 - the lobby and bedrooms get labelled plan boxes and their exact ranges in the text
+  ---
+  duration_ms: 17.7525
+  type: 'test'
+  ...
+# Subtest: the lobby brief mentions the closed old Bedroom 1 door as plain wall
+ok 441 - the lobby brief mentions the closed old Bedroom 1 door as plain wall
+  ---
+  duration_ms: 0.4156
+  type: 'test'
+  ...
+# Subtest: layout A (northTv): each sofa's built box is its configured footprint and height
+ok 442 - layout A (northTv): each sofa's built box is its configured footprint and height
+  ---
+  duration_ms: 257.9173
+  type: 'test'
+  ...
+# Subtest: layout A (northTv): the rug covers its configured area, 15 mm thick, and stays decor
+ok 443 - layout A (northTv): the rug covers its configured area, 15 mm thick, and stays decor
+  ---
+  duration_ms: 10.6199
+  type: 'test'
+  ...
+# Subtest: layout B, B2, B3 (corner): each sofa's built box is its configured footprint and height
+ok 444 - layout B, B2, B3 (corner): each sofa's built box is its configured footprint and height
+  ---
+  duration_ms: 146.7312
+  type: 'test'
+  ...
+# Subtest: layout B, B2, B3 (corner): the rug covers its configured area, 15 mm thick, and stays decor
+ok 445 - layout B, B2, B3 (corner): the rug covers its configured area, 15 mm thick, and stays decor
+  ---
+  duration_ms: 9.2302
+  type: 'test'
+  ...
+# Subtest: layout C (southSofas): each sofa's built box is its configured footprint and height
+ok 446 - layout C (southSofas): each sofa's built box is its configured footprint and height
+  ---
+  duration_ms: 21.756
+  type: 'test'
+  ...
+# Subtest: layout C (southSofas): the rug covers its configured area, 15 mm thick, and stays decor
+ok 447 - layout C (southSofas): the rug covers its configured area, 15 mm thick, and stays decor
+  ---
+  duration_ms: 14.3759
+  type: 'test'
+  ...
+# Subtest: the sofa keeps believable proportions: seat about 445 mm high, back 925 mm, a shadow gap under the base
+ok 448 - the sofa keeps believable proportions: seat about 445 mm high, back 925 mm, a shadow gap under the base
+  ---
+  duration_ms: 0.4105
+  type: 'test'
+  ...
+# Subtest: the scatter cushions are decor, the upholstery is not, and nothing is hidden
+ok 449 - the scatter cushions are decor, the upholstery is not, and nothing is hidden
+  ---
+  duration_ms: 6.8802
+  type: 'test'
+  ...
+# Subtest: polygon budget: a sofa is a few thousand triangles and identical sofas share geometry and materials
+ok 450 - polygon budget: a sofa is a few thousand triangles and identical sofas share geometry and materials
+  ---
+  duration_ms: 14.2026
+  type: 'test'
+  ...
+# Subtest: fabric maps: colour map in sRGB, relief and roughness as linear data, tileable and shared
+ok 451 - fabric maps: colour map in sRGB, relief and roughness as linear data, tileable and shared
+  ---
+  duration_ms: 1.2871
+  type: 'test'
+  ...
+# Subtest: softBoxGeometry keeps its outer size and crowns only the faces asked for
+ok 452 - softBoxGeometry keeps its outer size and crowns only the faces asked for
+  ---
+  duration_ms: 1.3234
+  type: 'test'
+  ...
+# Subtest: "Stand here" defaults: eye height 1600 mm, a 60 degree view, limits on pitch, view angle and eye height
+ok 453 - "Stand here" defaults: eye height 1600 mm, a 60 degree view, limits on pitch, view angle and eye height
+  ---
+  duration_ms: 1.1556
+  type: 'test'
+  ...
+# Subtest: heading 0 looks along -z (north on a room page) and 90 along +x (east); headingOf is its inverse
+ok 454 - heading 0 looks along -z (north on a room page) and 90 along +x (east); headingOf is its inverse
+  ---
+  duration_ms: 0.2911
+  type: 'test'
+  ...
+# Subtest: walking: forward follows the heading, strafing is at right angles, diagonals are no faster, long frames are capped
+ok 455 - walking: forward follows the heading, strafing is at right angles, diagonals are no faster, long frames are capped
+  ---
+  duration_ms: 0.2205
+  type: 'test'
+  ...
+# Subtest: arrow keys and W A S D walk; other keys do not; the readout is whole millimetres and degrees
+ok 456 - arrow keys and W A S D walk; other keys do not; the readout is whole millimetres and degrees
+  ---
+  duration_ms: 1.1548
+  type: 'test'
+  ...
+# Subtest: owner 2026-10-06: full-height louvre covers the existing recess without moving racks or fridge
+ok 457 - owner 2026-10-06: full-height louvre covers the existing recess without moving racks or fridge
+  ---
+  duration_ms: 2.2872
+  type: 'test'
+  ...
+# Subtest: closed slats share one pitch lattice across the joint, including a split edge slat
+ok 458 - closed slats share one pitch lattice across the joint, including a split edge slat
+  ---
+  duration_ms: 0.5709
+  type: 'test'
+  ...
+# Subtest: slider clears the fixed panel throughout travel and exposes both rack fronts
+ok 459 - slider clears the fixed panel throughout travel and exposes both rack fronts
+  ---
+  duration_ms: 0.8662
+  type: 'test'
+  ...
+# Subtest: Whole home upper panel covers the unscaled fridge while retaining the existing scaled rack placement
+ok 460 - Whole home upper panel covers the unscaled fridge while retaining the existing scaled rack placement
+  ---
+  duration_ms: 25.7877
+  type: 'test'
+  ...
+# Subtest: negative checks reject short/narrow covers, missing ventilation, colliding planes and oversized hardware
+ok 461 - negative checks reject short/narrow covers, missing ventilation, colliding planes and oversized hardware
+  ---
+  duration_ms: 1.7306
+  type: 'test'
+  ...
+# Subtest: shared Three builder matches pure panel bounds and reversibly slides only the moving leaf
+ok 462 - shared Three builder matches pure panel bounds and reversibly slides only the moving leaf
+  ---
+  duration_ms: 18.8544
+  type: 'test'
+  ...
+# Subtest: Study: the proposed plan passes every rule
+ok 463 - Study: the proposed plan passes every rule
+  ---
+  duration_ms: 5.0411
+  type: 'test'
+  ...
+# Subtest: Study: the switchboard fits between the entry door and the bed; bedside and desk points follow the kids layout
+ok 464 - Study: the switchboard fits between the entry door and the bed; bedside and desk points follow the kids layout
+  ---
+  duration_ms: 3.1585
+  type: 'test'
+  ...
+# Subtest: Study: nothing in the Home Office opening, the terrace door, the south cabinet or behind the bookshelf
+ok 465 - Study: nothing in the Home Office opening, the terrace door, the south cabinet or behind the bookshelf
+  ---
+  duration_ms: 1.9501
+  type: 'test'
+  ...
+# Subtest: Study: a feed at the end of each track run and at the fan
+ok 466 - Study: a feed at the end of each track run and at the fan
+  ---
+  duration_ms: 0.5071
+  type: 'test'
+  ...
+# Subtest: Study (Bedroom 2): a bookshelf/general track and a bed/desk track, each its own circuit, clear of the assumed fan
+ok 467 - Study (Bedroom 2): a bookshelf/general track and a bed/desk track, each its own circuit, clear of the assumed fan
+  ---
+  duration_ms: 3.3091
+  type: 'test'
+  ...
+# Subtest: track 1 puts a spot on each bookshelf bay; track 2 lights the bed from the foot side and the desk from above
+ok 468 - track 1 puts a spot on each bookshelf bay; track 2 lights the bed from the foot side and the desk from above
+  ---
+  duration_ms: 0.4666
+  type: 'test'
+  ...
+# Subtest: the checks catch a desk light that misses the desk and a run too close to the east wall
+ok 469 - the checks catch a desk light that misses the desk and a run too close to the east wall
+  ---
+  duration_ms: 0.967
+  type: 'test'
+  ...
+# Subtest: the slat strip is an owner idea marked as not chosen; full panelling stays the default
+ok 470 - the slat strip is an owner idea marked as not chosen; full panelling stays the default
+  ---
+  duration_ms: 7.1276
+  type: 'test'
+  ...
+# Subtest: the strip: 12 round-fronted slats 40 x 14 every 50 mm, x 40-645, floor to ceiling; 10 of them on the door leaf
+ok 471 - the strip: 12 round-fronted slats 40 x 14 every 50 mm, x 40-645, floor to ceiling; 10 of them on the door leaf
+  ---
+  duration_ms: 0.8471
+  type: 'test'
+  ...
+# Subtest: both door edges fall in the middle of a 10 mm gap and no slat is cut; the head joint sits in the reveal
+ok 472 - both door edges fall in the middle of a 10 mm gap and no slat is cut; the head joint sits in the reveal
+  ---
+  duration_ms: 22.605
+  type: 'test'
+  ...
+# Subtest: the leaf opens outward past 90 degrees on an offset pivot; an ordinary hinge would hit the fixed corner slat
+ok 473 - the leaf opens outward past 90 degrees on an offset pivot; an ordinary hinge would hit the fixed corner slat
+  ---
+  duration_ms: 3.2767
+  type: 'test'
+  ...
+# Subtest: the console drag-out rule still holds; the console and the TV in both sizes stay clear of the strip
+ok 474 - the console drag-out rule still holds; the console and the TV in both sizes stay clear of the strip
+  ---
+  duration_ms: 8.8922
+  type: 'test'
+  ...
+# Subtest: ceiling mouldings, Track 1, planned points and cable routes against the full-height strip
+ok 475 - ceiling mouldings, Track 1, planned points and cable routes against the full-height strip
+  ---
+  duration_ms: 4.0918
+  type: 'test'
+  ...
+# Subtest: existing electrical: with the strip the old switchboard X-D1 is behind the TV only; the default text is unchanged
+ok 476 - existing electrical: with the strip the old switchboard X-D1 is behind the TV only; the default text is unchanged
+  ---
+  duration_ms: 1.698
+  type: 'test'
+  ...
+# Subtest: the review sheet describes the chosen TV wall; the default sheet is unchanged
+ok 477 - the review sheet describes the chosen TV wall; the default sheet is unchanged
+  ---
+  duration_ms: 8.5386
+  type: 'test'
+  ...
+# Subtest: the west cabinet fits west of the partition, inside the pocket depth, clear of the entry door
+ok 478 - the west cabinet fits west of the partition, inside the pocket depth, clear of the entry door
+  ---
+  duration_ms: 3.049
+  type: 'test'
+  ...
+# Subtest: the narrow hidden door lies inside the Blender door position (plan x 653-684, 2100 high); the closet is unchanged
+ok 479 - the narrow hidden door lies inside the Blender door position (plan x 653-684, 2100 high); the closet is unchanged
+  ---
+  duration_ms: 0.2177
+  type: 'test'
+  ...
+# Subtest: the router cabinet is wall-hung again, above the north sofa, and clear of the west cabinet door
+ok 480 - the router cabinet is wall-hung again, above the north sofa, and clear of the west cabinet door
+  ---
+  duration_ms: 5.8575
+  type: 'test'
+  ...
+# Subtest: the furniture standing in front of the west cabinet door is reported for every layout
+ok 481 - the furniture standing in front of the west cabinet door is reported for every layout
+  ---
+  duration_ms: 0.6071
+  type: 'test'
+  ...
+# Subtest: the checks catch a door wider than the closet, past the partition, too deep or too tall
+ok 482 - the checks catch a door wider than the closet, past the partition, too deep or too tall
+  ---
+  duration_ms: 1.6958
+  type: 'test'
+  ...
+# Subtest: the shared Drawing Room / Entry wall is cut only across the door, from the floor to the door head
+ok 483 - the shared Drawing Room / Entry wall is cut only across the door, from the floor to the door head
+  ---
+  duration_ms: 0.3055
+  type: 'test'
+  ...
+# Subtest: the hidden door is only as wide as the owner (5 ft 7 in, 80 kg) needs to walk through
+ok 484 - the hidden door is only as wide as the owner (5 ft 7 in, 80 kg) needs to walk through
+  ---
+  duration_ms: 0.7568
+  type: 'test'
+  ...
+# Subtest: with nothing saved the whole-home kitchen draws the default runs
+ok 485 - with nothing saved the whole-home kitchen draws the default runs
+  ---
+  duration_ms: 1.4032
+  type: 'test'
+  ...
+# Subtest: default base spans: the east run is solid, the west run stops at the washing machine, sink and dishwasher
+ok 486 - default base spans: the east run is solid, the west run stops at the washing machine, sink and dishwasher
+  ---
+  duration_ms: 0.7587
+  type: 'test'
+  ...
+# Subtest: default upper runs: the west lower wall cabinets stop either side of the dish rack
+ok 487 - default upper runs: the west lower wall cabinets stop either side of the dish rack
+  ---
+  duration_ms: 0.2354
+  type: 'test'
+  ...
+# Subtest: saved modules, depths and items are used; a hob saved at the old y 1350 moves to the north option
+ok 488 - saved modules, depths and items are used; a hob saved at the old y 1350 moves to the north option
+  ---
+  duration_ms: 0.2354
+  type: 'test'
+  ...
+# Subtest: the whole home shows what the kitchen page autosaved (versioned document first, legacy autosave as fallback)
+ok 489 - the whole home shows what the kitchen page autosaved (versioned document first, legacy autosave as fallback)
+  ---
+  duration_ms: 1.0979
+  type: 'test'
+  ...
+# Subtest: exports the existing plan directions into Blender metres without mutation
+ok 490 - exports the existing plan directions into Blender metres without mutation
+  ---
+  duration_ms: 1.2175
+  type: 'test'
+  ...
+# Subtest: supports all preset and quality combinations
+ok 491 - supports all preset and quality combinations
+  ---
+  duration_ms: 0.2013
+  type: 'test'
+  ...
+# Subtest: exports a selected artifact and its exact support ID
+ok 492 - exports a selected artifact and its exact support ID
+  ---
+  duration_ms: 0.7783
+  type: 'test'
+  ...
+# Subtest: refuses invalid presets, scales, dimensions and output IDs
+ok 493 - refuses invalid presets, scales, dimensions and output IDs
+  ---
+  duration_ms: 0.5681
+  type: 'test'
+  ...
+# Subtest: refuses floating, unknown and overlapping artifact selections
+ok 494 - refuses floating, unknown and overlapping artifact selections
+  ---
+  duration_ms: 0.2324
+  type: 'test'
+  ...
+# Subtest: accepts only generated same-origin PNG paths
+ok 495 - accepts only generated same-origin PNG paths
+  ---
+  duration_ms: 0.4047
+  type: 'test'
+  ...
+# Subtest: refuses shared support across room boundaries
+ok 496 - refuses shared support across room boundaries
+  ---
+  duration_ms: 0.1746
+  type: 'test'
+  ...
+# Subtest: Drawing Room south window: scanned frame, three bays, transom and the decided additions
+ok 497 - Drawing Room south window: scanned frame, three bays, transom and the decided additions
+  ---
+  duration_ms: 1.7757
+  type: 'test'
+  ...
+# Subtest: a window without design fields is a plain frame: no bays design, no leaves, no nets
+ok 498 - a window without design fields is a plain frame: no bays design, no leaves, no nets
+  ---
+  duration_ms: 0.2473
+  type: 'test'
+  ...
+# Subtest: the checker rejects a transom outside the frame, a bay count mismatch and a screen roll that does not park
+ok 499 - the checker rejects a transom outside the frame, a bay count mismatch and a screen roll that does not park
+  ---
+  duration_ms: 0.3791
+  type: 'test'
+  ...
+# Subtest: Bedroom 3 south side as scanned: wardrobe bay, balcony door and window with top lights and a mid rail
+ok 500 - Bedroom 3 south side as scanned: wardrobe bay, balcony door and window with top lights and a mid rail
+  ---
+  duration_ms: 0.2531
+  type: 'test'
+  ...
+# Subtest: Bedroom 3 design check against the scan: toilet door, corner cupboard, AC unit and the east cabinetry
+ok 501 - Bedroom 3 design check against the scan: toilet door, corner cupboard, AC unit and the east cabinetry
+  ---
+  duration_ms: 11.1335
+  type: 'test'
+  ...
+# Subtest: the project work plan is valid and has no ordering warnings
+ok 502 - the project work plan is valid and has no ordering warnings
+  ---
+  duration_ms: 39.8525
+  type: 'test'
+  ...
+# Subtest: tasks come out in phase order with every dependency first
+ok 503 - tasks come out in phase order with every dependency first
+  ---
+  duration_ms: 23.7872
+  type: 'test'
+  ...
+# Subtest: the owner's civil items are in the plan and wait for structural approval
+ok 504 - the owner's civil items are in the plan and wait for structural approval
+  ---
+  duration_ms: 40.3949
+  type: 'test'
+  ...
+# Subtest: ready tasks follow status changes; started work with unfinished prerequisites is flagged
+ok 505 - ready tasks follow status changes; started work with unfinished prerequisites is flagged
+  ---
+  duration_ms: 40.0102
+  type: 'test'
+  ...
+# Subtest: validation refuses unknown references, duplicates and loops
+ok 506 - validation refuses unknown references, duplicates and loops
+  ---
+  duration_ms: 3.3164
+  type: 'test'
+  ...
+# Subtest: new task ids are unique and safe
+ok 507 - new task ids are unique and safe
+  ---
+  duration_ms: 0.7446
+  type: 'test'
+  ...
+# Subtest: saving validates first, replaces the file and keeps a backup
+ok 508 - saving validates first, replaces the file and keeps a backup
+  ---
+  duration_ms: 42.0049
+  type: 'test'
+  ...
+# Subtest: the dependency check passes on the project plan and finds missing tasks, loops and later-phase dependencies
+ok 509 - the dependency check passes on the project plan and finds missing tasks, loops and later-phase dependencies
+  ---
+  duration_ms: 4.4073
+  type: 'test'
+  ...
+# Subtest: the order of work is buildable: approvals, civil, first fix and AC pipes before plaster, carpentry, paint, fit-out, snag
+ok 510 - the order of work is buildable: approvals, civil, first fix and AC pipes before plaster, carpentry, paint, fit-out, snag
+  ---
+  duration_ms: 45.1846
+  type: 'test'
+  ...
+# Subtest: the catch-up of 2026-10-05 is in the plan, and proposals stay proposals
+ok 511 - the catch-up of 2026-10-05 is in the plan, and proposals stay proposals
+  ---
+  duration_ms: 1.7063
+  type: 'test'
+  ...
+# Subtest: every open item a task names exists in OPEN_ITEMS.md and is still open
+ok 512 - every open item a task names exists in OPEN_ITEMS.md and is still open
+  ---
+  duration_ms: 9.732
+  type: 'test'
+  ...
+# Subtest: "what to do first" is computed from the tasks that name each open item and everything behind them
+ok 513 - "what to do first" is computed from the tasks that name each open item and everything behind them
+  ---
+  duration_ms: 35.4066
+  type: 'test'
+  ...
+# Subtest: estimates: optional fields, validated; a plan without them still loads
+ok 514 - estimates: optional fields, validated; a plan without them still loads
+  ---
+  duration_ms: 30.2136
+  type: 'test'
+  ...
+# Subtest: budget totals add up by phase, trade and room; unestimated tasks are counted, not guessed
+ok 515 - budget totals add up by phase, trade and room; unestimated tasks are counted, not guessed
+  ---
+  duration_ms: 1.0557
+  type: 'test'
+  ...
+# Subtest: estimates are quantity x rate from the configs, and the stored figures match the estimator
+ok 516 - estimates are quantity x rate from the configs, and the stored figures match the estimator
+  ---
+  duration_ms: 35.7539
+  type: 'test'
+  ...
+# Subtest: the plan file is written the way the Work plan page writes it
+ok 517 - the plan file is written the way the Work plan page writes it
+  ---
+  duration_ms: 1.2388
+  type: 'test'
+  ...
+1..517
+# tests 517
+# suites 0
+# pass 517
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 2334.4667
+
+> home-interior@1.0.0 build
+> vite build
+
+vite v5.4.21 building for production...
+transforming...
+✓ 962 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                             0.38 kB │ gzip:     0.28 kB
+dist/assets/shoe-rack-wood-DN05ZZCn.png                    34.05 kB
+dist/assets/home a 501 floor - unmodified-ysNysRCF.png    141.67 kB
+dist/assets/arrival-door-wood-8ZZDJ-c-.png                150.43 kB
+dist/assets/floorplan_final-Di7c9Q31.dxf                  355.62 kB
+dist/assets/index-BjKwVxW5.css                              4.84 kB │ gzip:     1.40 kB
+dist/assets/purify.es-BnINGy_Y.js                          28.93 kB │ gzip:    11.14 kB
+dist/assets/index.es-BYMeEeTm.js                          150.85 kB │ gzip:    51.62 kB
+dist/assets/html2canvas.esm-CBrSDip1.js                   201.42 kB │ gzip:    48.03 kB
+dist/assets/jspdf.es.min-hIkAOpKi.js                      390.44 kB │ gzip:   128.78 kB
+dist/assets/index-DpF6WdjG.js                           3,705.86 kB │ gzip: 1,075.54 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 7.95s
