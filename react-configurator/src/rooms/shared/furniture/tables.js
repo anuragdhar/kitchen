@@ -32,21 +32,21 @@ export function createDiningTable(table, mat = diningMaterials()) {
   markItem(group, `Dining table · oval ${table.lengthMm} x ${table.widthMm}, ${table.heightMm} high`)
   const topT = .032, apronH = .058, apronInset = .085, footT = .036, footL = Math.min(.76, L * .62), footW = Math.min(.56, W * .8)
   // Parts whose grain runs along the table are built with their length on local x and turned by GRAIN_ALONG_Z.
-  const top = easedSlab(ellipseOutline(L, W), topT, .011, {curveSegments: 40, bevelSegments: 3})
+  const top = easedSlab(ellipseOutline(L, W), topT, .011, {curveSegments: 32, bevelSegments: 3})
   top.translate(0, H - topT, 0); grainUV(top, grainScaleOf(mat.oak))
   const apron = easedSlab(ellipseRingOutline(L - 2 * apronInset, W - 2 * apronInset, .02), apronH, .004, {curveSegments: 32, bevelSegments: 1})
   apron.translate(0, H - topT - apronH + .001, 0)
-  const foot = easedSlab(ellipseOutline(footL, footW), footT, .012, {curveSegments: 32, bevelSegments: 2})
+  const foot = easedSlab(ellipseOutline(footL, footW), footT, .012, {curveSegments: 24, bevelSegments: 2})
   const along = merged([apron, foot]); grainUV(along, grainScaleOf(mat.oakDark))
   const topMesh = solid(top, mat.oak, 'dining table top'); topMesh.rotation.y = GRAIN_ALONG_Z
   const lowMesh = solid(along, mat.oakDark, 'dining table apron and foot'); lowMesh.rotation.y = GRAIN_ALONG_Z
   // Turned column, standing; built along local x (grain along the column) and turned upright.
   const y0 = footT - .002, y1 = H - topT + .001, h = y1 - y0
-  const column = turned([[0, 0], [.105, 0], [.1, .012], [.07, .03], [.058, .07], [.05, h * .45], [.047, h * .7], [.052, h - .06], [.07, h - .022], [.085, h - .008], [.085, h], [0, h]], 28)
+  const column = turned([[0, 0], [.105, 0], [.1, .012], [.07, .03], [.058, .07], [.05, h * .45], [.047, h * .7], [.052, h - .06], [.07, h - .022], [.085, h - .008], [.085, h], [0, h]], 20)
   column.translate(0, y0, 0); column.rotateZ(-Math.PI / 2); grainUV(column, grainScaleOf(mat.oakDark))
   const columnMesh = solid(column, mat.oakDark, 'dining table column'); columnMesh.rotation.z = Math.PI / 2
-  const collar = turned([[.049, 0], [.066, .004], [.066, .022], [.049, .026]], 28); collar.translate(0, y1 - .09, 0)
-  const footRing = new THREE.TorusGeometry(1, .006, 6, 48); footRing.rotateX(Math.PI / 2); footRing.scale((footL / 2 - .03), 1, (footW / 2 - .03)); footRing.translate(0, footT + .002, 0)
+  const collar = turned([[.049, 0], [.066, .004], [.066, .022], [.049, .026]], 20); collar.translate(0, y1 - .09, 0)
+  const footRing = new THREE.TorusGeometry(1, .006, 5, 36); footRing.rotateX(Math.PI / 2); footRing.scale((footL / 2 - .03), 1, (footW / 2 - .03)); footRing.translate(0, footT + .002, 0)
   // the torus scale makes its tube elliptical in plan; that is invisible at 6 mm
   const brass = solid(merged([collar, footRing]), mat.brass, 'dining table brass'); brass.rotation.y = GRAIN_ALONG_Z
   group.add(topMesh, lowMesh, columnMesh, brass)
@@ -85,7 +85,7 @@ export function createCoffeeTable(t, {heightM = .4575, material = walnut()} = {}
   const group = new THREE.Group(); group.name = 'Coffee table'
   markItem(group, `Coffee table · oval ${t.lengthMm} x ${t.widthMm}`)
   const topT = .034, apronH = .05, inset = .07
-  const top = easedSlab(ellipseOutline(W, L), topT, .012, {curveSegments: 40, bevelSegments: 3}); top.translate(0, H - topT, 0)
+  const top = easedSlab(ellipseOutline(W, L), topT, .012, {curveSegments: 32, bevelSegments: 3}); top.translate(0, H - topT, 0)
   grainAlong(top, [0, 0, 1], grainScaleOf(material))
   const band = .018, apron = easedSlab(ellipseRingOutline(W - 2 * inset, L - 2 * inset, band), apronH, .004, {curveSegments: 32, bevelSegments: 1})
   apron.translate(0, H - topT - apronH + .001, 0); grainAlong(apron, [0, 0, 1], grainScaleOf(material))
@@ -94,7 +94,7 @@ export function createCoffeeTable(t, {heightM = .4575, material = walnut()} = {}
   const legs = [], ai = W / 2 - inset - band - .021, bi = L / 2 - inset - band - .021, a = 50 * Math.PI / 180
   for (const sx of [-1, 1]) for (const sz of [-1, 1]) {
     const tx = sx * ai * Math.cos(a), tz = sz * bi * Math.sin(a)
-    const leg = legBetween([tx * 1.22, 0, tz * 1.13], [tx, H - topT + .001, tz], .011, .02, 14)
+    const leg = legBetween([tx * 1.22, 0, tz * 1.13], [tx, H - topT + .001, tz], .011, .02, 10)
     grainAlong(leg, [0, 1, 0], grainScaleOf(material)); legs.push(leg)
   }
   group.add(solid(merged([top, apron, ...legs]), material, 'coffee table'))
@@ -110,11 +110,11 @@ export function createRoundSideTable({xMm, zMm, diameterMm = 380, heightMm = 550
   const D = mm(diameterMm), H = mm(heightMm), group = new THREE.Group(); group.name = name
   markItem(group, `${name} · ${diameterMm} across, ${heightMm} high`)
   const topT = .028, footT = .024, footD = D * .62
-  const top = easedSlab(ellipseOutline(D, D), topT, .01, {curveSegments: 28, bevelSegments: 3}); top.translate(0, H - topT, 0)
+  const top = easedSlab(ellipseOutline(D, D), topT, .01, {curveSegments: 24, bevelSegments: 3}); top.translate(0, H - topT, 0)
   grainAlong(top, [1, 0, 0], grainScaleOf(material))
   const foot = easedSlab(ellipseOutline(footD, footD), footT, .009, {curveSegments: 24, bevelSegments: 2}); grainAlong(foot, [1, 0, 0], grainScaleOf(material))
   const h = H - topT - footT
-  const column = turned([[footD * .3, 0], [footD * .26, .01], [.05, .035], [.036, .07], [.028, h * .5], [.03, h * .78], [.042, h - .03], [.07, h - .008], [.07, h], [0, h]], 24)
+  const column = turned([[footD * .3, 0], [footD * .26, .01], [.05, .035], [.036, .07], [.028, h * .5], [.03, h * .78], [.042, h - .03], [.07, h - .008], [.07, h], [0, h]], 20)
   column.translate(0, footT, 0); grainAlong(column, [0, 1, 0], grainScaleOf(material))
   group.add(solid(merged([top, foot, column]), material, name.toLowerCase()))
   group.position.set(mm(xMm), 0, mm(zMm))

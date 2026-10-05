@@ -15,9 +15,9 @@ const seeded = seed => () => { seed = (seed * 1664525 + 1013904223) >>> 0; retur
  * double-sided cylinder; an open one crashed Cycles once). Returns {outer, inner} so the inside can glow more than the outside.
  */
 function shadeForms(rTop, rBottom, height, wall = .004) {
-  const outer = turned([[rBottom - wall, 0], [rBottom - .0015, 0], [rBottom, .004], [rTop, height - .004], [rTop - .0015, height], [rTop - wall, height]], 40)
+  const outer = turned([[rBottom - wall, 0], [rBottom - .0015, 0], [rBottom, .004], [rTop, height - .004], [rTop - .0015, height], [rTop - wall, height]], 32)
   // Listed downwards, it closes the outer profile's loop, so its faces point at the axis (into the shade).
-  const inner = turned([[rTop - wall, height], [rBottom - wall, 0]], 40)
+  const inner = turned([[rTop - wall, height], [rBottom - wall, 0]], 32)
   return {outer, inner}
 }
 
@@ -34,13 +34,13 @@ function shadeMaterials(color = '#f1e4cd') {
  */
 export function createFloorLamp() {
   const group = decorGroup('decor floor lamp')
-  const base = turned([[0, 0], [.152, 0], [.16, .004], [.16, .016], [.148, .026], [.06, .034], [.024, .042], [.016, .05], [0, .05]], 32)
+  const base = turned([[0, 0], [.152, 0], [.16, .004], [.16, .016], [.148, .026], [.06, .034], [.024, .042], [.016, .05], [0, .05]], 24)
   const shadeBottom = 1.32, shadeH = .26
   const stem = rodThrough([[0, .045, 0], [0, shadeBottom + .14, 0]], .0105, {radial: 14})
   const switchBox = turned([[0, 0], [.017, .002], [.018, .03], [.016, .045], [0, .047]], 16); switchBox.translate(0, .62, 0)
   const spokes = [], ringTop = shadeBottom + shadeH - .01
   for (let i = 0; i < 3; i++) { const a = i / 3 * Math.PI * 2; spokes.push(rodThrough([[0, ringTop, 0], [Math.cos(a) * .155, ringTop, Math.sin(a) * .155]], .0025, {radial: 6})) }
-  const ring = new THREE.TorusGeometry(.155, .003, 6, 40); ring.rotateX(Math.PI / 2); ring.translate(0, ringTop, 0)
+  const ring = new THREE.TorusGeometry(.155, .003, 4, 32); ring.rotateX(Math.PI / 2); ring.translate(0, ringTop, 0)
   const socket = turned([[0, 0], [.022, 0], [.022, .055], [0, .055]], 20); socket.translate(0, shadeBottom + .09, 0)
   const bronze = metalMaterial('#4a4038', {roughness: .32, metalness: .75}), dark = metalMaterial('#3a362f', {roughness: .45, metalness: .6})
   const {outer, inner} = shadeForms(.16, .2, shadeH); outer.translate(0, shadeBottom, 0); inner.translate(0, shadeBottom, 0)
@@ -63,7 +63,7 @@ export function createFloorLamp() {
  */
 export function createTableLamp(glow) {
   const group = new THREE.Group(); group.name = 'table lamp'
-  const body = turned([[0, 0], [.055, 0], [.058, .006], [.085, .06], [.092, .12], [.078, .2], [.045, .24], [.028, .26], [0, .26]], 40)
+  const body = turned([[0, 0], [.055, 0], [.058, .006], [.085, .06], [.092, .12], [.078, .2], [.045, .24], [.028, .26], [0, .26]], 28)
   const neck = turned([[0, 0], [.03, 0], [.03, .01], [.012, .016], [.011, .1], [0, .1]], 20); neck.translate(0, .26, 0)
   const {outer, inner} = shadeForms(.13, .19, .22); outer.translate(0, .29, 0); inner.translate(0, .29, 0)
   const ceramic = new THREE.MeshPhysicalMaterial({color: '#3b2a1e', roughness: .25, clearcoat: .8, clearcoatRoughness: .12})
@@ -75,7 +75,7 @@ export function createTableLamp(glow) {
 }
 
 /** One leaf: an ovate blade folded along its midrib and arched, tip along +x. Vertex colours vary the green. */
-function leafGeometry(length, width, {fold = .35, arch = .25, along = 6, across = 2} = {}) {
+function leafGeometry(length, width, {fold = .35, arch = .25, along = 5, across = 1} = {}) {
   const positions = [], indices = []
   for (let i = 0; i <= along; i++) {
     const t = i / along, half = width / 2 * Math.sin(Math.PI * Math.pow(t, .8)) * (1 - .15 * t)
@@ -102,7 +102,7 @@ export function createPottedPlant(size = 1) {
   const random = seeded(Math.round(H * 1000) * 31 + 7)
   // Planter in unit proportions, fitted with the plant below.
   const potH = .26, potR = .135
-  const pot = turned([[0, .004], [potR * .7, 0], [potR * .72, .008], [potR * .9, potH * .55], [potR, potH - .025], [potR + .014, potH - .016], [potR + .016, potH - .004], [potR + .008, potH], [potR - .008, potH], [potR - .01, potH - .03], [0, potH - .03]], 28)
+  const pot = turned([[0, .004], [potR * .7, 0], [potR * .72, .008], [potR * .9, potH * .55], [potR, potH - .025], [potR + .014, potH - .016], [potR + .016, potH - .004], [potR + .008, potH], [potR - .008, potH], [potR - .01, potH - .03], [0, potH - .03]], 22)
   const soil = new THREE.CircleGeometry(potR - .01, 24); soil.rotateX(-Math.PI / 2); soil.translate(0, potH - .035, 0)
   const stems = [], leaves = []
   const greens = ['#4c7a4a', '#3f6e3d', '#5a8a4f', '#466f40', '#6a9a5a', '#55804a']
@@ -110,11 +110,11 @@ export function createPottedPlant(size = 1) {
   for (let s = 0; s < stemCount; s++) {
     const a = s / stemCount * Math.PI * 2 + random() * .4, lean = .1 + random() * .2, top = potH + .3 + random() * .45 * (s % 3 ? 1 : .6)
     const pts = [[Math.cos(a) * .02, potH - .035, Math.sin(a) * .02], [Math.cos(a) * lean * .35, (potH + top) / 2, Math.sin(a) * lean * .35], [Math.cos(a) * lean * .6, top, Math.sin(a) * lean * .6]]
-    stems.push(rodThrough(pts, .0035, {tubular: 8, radial: 5}))
+    stems.push(rodThrough(pts, .0028, {tubular: 6, radial: 4}))
     const curve = new THREE.CatmullRomCurve3(pts.map(p => new THREE.Vector3(...p)))
     const count = 5 + Math.floor(random() * 3)
     for (let k = 0; k < count; k++) {
-      const t = .18 + .82 * (k + .5) / count, at = curve.getPointAt(Math.min(t, 1))
+      const t = .18 + .82 * (k + 1) / count, at = curve.getPointAt(Math.min(t, 1)) // the last leaf crowns the stem
       const length = .12 + random() * .07 + (1 - t) * .06, leaf = leafGeometry(length, length * (.5 + random() * .14), {fold: .2 + random() * .25, arch: .18 + random() * .25})
       leaf.rotateZ(.35 + random() * .5) // rises from the stem, then the arch bends it down
       leaf.rotateY(-(a + (k % 2 ? 1 : -1) * (.6 + random() * .8)))
@@ -158,7 +158,7 @@ function mergeWithColor(list) {
  */
 export function createLaundryHamper() {
   const group = new THREE.Group(); group.name = 'laundry hamper'
-  const body = turned([[0, 0], [.15, 0], [.158, .006], [.162, .02], [.19, .455], [.182, .46], [0, .46]], 36)
+  const body = turned([[0, 0], [.15, 0], [.158, .006], [.162, .02], [.19, .455], [.182, .46], [0, .46]], 28)
   const weave = weaveTexture({cells: 16, strands: 4, contrast: .55})
   const weaveMaterial = new THREE.MeshStandardMaterial({color: '#c9a876', roughness: .92})
   if (weave) {
@@ -168,8 +168,8 @@ export function createLaundryHamper() {
     weaveMaterial.addEventListener('dispose', () => map.dispose())
   }
   const rim = new THREE.MeshStandardMaterial({color: '#8a6f4a', roughness: .6})
-  const bands = [.1, .36].map(y => { const r = .162 + (.19 - .162) * (y - .02) / .435, t = new THREE.TorusGeometry(r + .004, .009, 6, 36); t.rotateX(Math.PI / 2); t.translate(0, y, 0); return t })
-  const lid = turned([[0, .462], [.186, .462], [.186, .456], [.2, .458], [.2, .468], [.17, .485], [.04, .494], [0, .495]], 36)
+  const bands = [.1, .36].map(y => { const r = .162 + (.19 - .162) * (y - .02) / .435, t = new THREE.TorusGeometry(r + .004, .009, 5, 28); t.rotateX(Math.PI / 2); t.translate(0, y, 0); return t })
+  const lid = turned([[0, .462], [.186, .462], [.186, .456], [.2, .458], [.2, .468], [.17, .485], [.04, .494], [0, .495]], 28)
   const knob = turned([[0, 0], [.012, 0], [.009, .006], [.016, .012], [.014, .02], [0, .022]], 16); knob.translate(0, .494, 0)
   // Rope handles: half loops lying on the body's sides (in the x-y plane, at the body's surface).
   const handles = [-1, 1].map(s => { const h = new THREE.TorusGeometry(.045, .006, 6, 16, Math.PI); h.translate(0, .37, s * .188); return h })

@@ -15,15 +15,15 @@ import {easedBox, legBetween, rodThrough, bentPanel, merged, fitGeometries, grai
 function sideChairForms({depth, width, seatH, backTop, backStyle = 'panel'}) {
   const hx = depth / 2, hz = width / 2
   const padT = .05, padFront = hx, padBack = -hx + .02
-  const seat = easedBox(padFront - padBack, padT, width, .018, .05, {curveSegments: 4, bevelSegments: 3})
+  const seat = easedBox(padFront - padBack, padT, width, .018, .05, {curveSegments: 3, bevelSegments: 2})
   seat.translate((padFront + padBack) / 2, seatH - padT, 0)
   const railY = seatH - padT - .006
   // Legs: tapered round steel, splayed a little; feet inside the footprint.
   const fx = hx - .025, fz = hz - .025, tx = hx - .05, tz = hz - .045, bx = -hx + .025, btx = -hx + .055
   const frame = []
   for (const s of [-1, 1]) {
-    frame.push(legBetween([fx, 0, s * fz], [tx, railY, s * tz], .0085, .0125, 12))
-    frame.push(legBetween([bx, 0, s * fz], [btx, railY, s * tz], .0085, .0125, 12))
+    frame.push(legBetween([fx, 0, s * fz], [tx, railY, s * tz], .0085, .0125, 10))
+    frame.push(legBetween([bx, 0, s * fz], [btx, railY, s * tz], .0085, .0125, 10))
   }
   // Seat rail under the pad.
   frame.push(rodThrough([[tx, railY, -tz], [tx, railY, tz]], .009), rodThrough([[btx, railY, -tz], [btx, railY, tz]], .009))
@@ -37,10 +37,10 @@ function sideChairForms({depth, width, seatH, backTop, backStyle = 'panel'}) {
   const panelCentreY = backTop - backH / 2 - .004
   let back
   if (backStyle === 'pad') {
-    back = easedBox(.05, backH, width - .04, .02, .03, {curveSegments: 4, bevelSegments: 3})
+    back = easedBox(.05, backH, width - .04, .02, .03, {curveSegments: 3, bevelSegments: 2})
     back.translate(0, -backH / 2, 0); back.rotateZ(rake); back.translate(-hx + .058, panelCentreY, 0)
   } else {
-    back = bentPanel(width - .04, backH, .014, .5, rake, 18) // radius .5 m: keep equal to R below
+    back = bentPanel(width - .04, backH, .014, .5, rake, 12) // radius .5 m: keep equal to R below
     back.rotateY(Math.PI / 2) // width along z, concave front towards +x
     back.translate(-hx + .02, panelCentreY, 0)
   }
@@ -49,7 +49,7 @@ function sideChairForms({depth, width, seatH, backTop, backStyle = 'panel'}) {
   const postZ = hz - .05, postR = .0095, R = .5, dy = backH * .3, lean = dy * Math.sin(rake)
   const rearX = backStyle === 'pad' ? -hx + .058 - .025 * Math.cos(rake) - lean : -hx + .02 - .007 + R * (1 - Math.cos(postZ / R)) - lean
   const postTopX = rearX - postR - .001, postTopY = panelCentreY + dy
-  for (const s of [-1, 1]) frame.push(rodThrough([[btx, railY, s * tz], [(btx + postTopX) / 2 - .006, (railY + postTopY) / 2, s * (tz + postZ) / 2], [postTopX, postTopY, s * postZ]], postR, {tubular: 12, radial: 10}))
+  for (const s of [-1, 1]) frame.push(rodThrough([[btx, railY, s * tz], [(btx + postTopX) / 2 - .006, (railY + postTopY) / 2, s * (tz + postZ) / 2], [postTopX, postTopY, s * postZ]], postR, {tubular: 6, radial: 8}))
   const metal = merged(frame)
   fitGeometries([metal, seat, back], {x: [-hx, hx], y: [0, backTop], z: [-hz, hz]})
   return {frame: metal, seat, back}

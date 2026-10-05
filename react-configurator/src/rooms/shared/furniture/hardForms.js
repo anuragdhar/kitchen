@@ -143,7 +143,7 @@ export function turned(profile, segments = 32) {
 }
 
 /** A round leg tapering from rTop to rBottom between two points (bottom, top: [x, y, z]); orientation baked in. */
-export function legBetween(bottom, top, rBottom, rTop, radialSegments = 12) {
+export function legBetween(bottom, top, rBottom, rTop, radialSegments = 10) {
   const a = new THREE.Vector3(...bottom), b = new THREE.Vector3(...top), length = a.distanceTo(b)
   const g = new THREE.CylinderGeometry(rTop, rBottom, length, radialSegments, 1, false)
   const q = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 1, 0), b.clone().sub(a).normalize())
@@ -155,7 +155,7 @@ export function legBetween(bottom, top, rBottom, rTop, radialSegments = 12) {
 }
 
 /** A tube of constant radius through points ([x, y, z] list), with closed ends. */
-export function rodThrough(points, radius, {tubular = 16, radial = 10} = {}) {
+export function rodThrough(points, radius, {tubular = 12, radial = 8} = {}) {
   const curve = points.length === 2 ? new THREE.LineCurve3(new THREE.Vector3(...points[0]), new THREE.Vector3(...points[1])) : new THREE.CatmullRomCurve3(points.map(p => new THREE.Vector3(...p)))
   const tube = new THREE.TubeGeometry(curve, points.length === 2 ? 1 : tubular, radius, radial, false)
   const caps = [0, 1].map(t => {
